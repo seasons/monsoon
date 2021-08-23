@@ -980,6 +980,7 @@ model PaymentPlan {
   updatedAt           DateTime             @updatedAt
   tagline             String?
   itemCount           Int?
+  caption             String?
   tier                PaymentPlanTier?
   customerMemberships CustomerMembership[]
 }
@@ -1014,6 +1015,8 @@ model PhysicalProduct {
   reservationsAllProducts      Reservation[]                  @relation("ReservationToAllProducts")
   reservationsNewProducts      Reservation[]                  @relation("ReservationToNewProducts")
   reservationsReturnedProducts Reservation[]                  @relation("ReservationToReturnedProducts")
+  purchasedOnReservationId     String?                        @map("purchasedOnReservation") @db.VarChar(30)
+  purchasedOnReservation       Reservation?                   @relation("ReservationToPurchasedProducts", fields: [purchasedOnReservationId], references: [id])
 }
 
 model PhysicalProductPrice {
@@ -1296,6 +1299,7 @@ model Reservation {
   products          PhysicalProduct[]     @relation("ReservationToAllProducts")
   newProducts       PhysicalProduct[]     @relation("ReservationToNewProducts")
   returnedProducts  PhysicalProduct[]     @relation("ReservationToReturnedProducts")
+  purchasedProducts PhysicalProduct[]     @relation("ReservationToPurchasedProducts")
 }
 
 model ReservationFeedback {

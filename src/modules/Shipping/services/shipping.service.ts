@@ -1,3 +1,5 @@
+import { resourceLimits } from "worker_threads"
+
 import { PrismaService } from "@app/prisma/prisma.service"
 import { UtilsService } from "@modules/Utils/services/utils.service"
 import { Injectable } from "@nestjs/common"

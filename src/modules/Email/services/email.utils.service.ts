@@ -123,7 +123,7 @@ export class EmailUtilsService {
   }
 
   async formatOrderLineItems(
-    order: Order
+    order: Pick<Order, "id">
   ): Promise<
     {
       lineItemName: string
