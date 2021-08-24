@@ -85,19 +85,22 @@ export class ShippoController {
           where: {
             OR: [
               { sentPackage: { transactionID } },
-              { returnedPackage: { transactionID } },
+              { returnPackages: { some: { transactionID } } },
             ],
           },
+          orderBy: { createdAt: "desc" },
           select: {
             id: true,
             status: true,
             receivedAt: true,
             shippedAt: true,
             sentPackage: true,
-            returnedPackage: true,
           },
         })
 
+        // TODO: We may need to update this. If we early return a reservation before it hits the
+        // UPS system, we mark the reservation as Completed. In that case, we wouldn't get the package
+        // transit events, which means we may not know when their rental date ends
         if (reservation.status === "Completed") {
           break
         }
