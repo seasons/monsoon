@@ -14,7 +14,7 @@ import {
 } from "@prisma/client"
 import { PrismaService } from "@prisma1/prisma.service"
 import { ForbiddenError, UserInputError } from "apollo-server"
-import { defaultsDeep } from "lodash"
+import { defaultsDeep, upperFirst } from "lodash"
 import { DateTime } from "luxon"
 import request from "request"
 import zipcodes from "zipcodes"
@@ -518,7 +518,7 @@ export class AuthService {
     const customersWithSameFirstName = await this.prisma.client.customer.findMany(
       {
         where: {
-          user: { firstName: firstName.trim() },
+          user: { firstName: upperFirst(firstName.trim()) },
           referralLink: {
             not: null,
           },
