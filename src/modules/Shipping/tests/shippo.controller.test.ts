@@ -15,7 +15,8 @@ import {
 } from "./shippoEvents.stub"
 
 const PACKAGE_ACCEPTED_TXN_ID_ONE = TRANSACTION_ID_ONE_EVENTS["PackageAccepted"]
-const PACKAGE_ARRIVED_TXN_ID_TWO = TRANSACTION_ID_TWO_EVENTS["PackageArrived"]
+const PACKAGE_ACCEPTED_TXN_ID_TWO = TRANSACTION_ID_TWO_EVENTS["PackageAccepted"]
+const PACKAGE_DELIVERED_TXN_ID_TWO = TRANSACTION_ID_TWO_EVENTS["Delivered"]
 
 describe("Shippo Controller", () => {
   let app: INestApplication
@@ -46,13 +47,35 @@ describe("Shippo Controller", () => {
     const { reservation, cleanupFunc } = await testUtils.createTestReservation({
       sentPackageTransactionID: TRANSACTION_ID_ONE,
       returnPackageTransactionID: TRANSACTION_ID_TWO,
+      select: { packageEvents: { select: { id: true } } },
     })
     testReservation = reservation
     cleanupFuncs.push(cleanupFunc)
+
+    expect((testReservation as any).packageEvents.length).toBe(0)
+
+    // Send an event that won't interfere with other tests, while allowing us to test
+    // the connection between package transit events and reservations
+    return request(app.getHttpServer())
+      .post("/shippo_events")
+      .send(PACKAGE_ACCEPTED_TXN_ID_TWO)
+      .expect(201)
   })
 
   afterAll(async () => {
     await Promise.all(cleanupFuncs.map(a => a()))
+  })
+
+  it("attaches package transit events to reservations", async () => {
+    const testReservationWithData = await prismaService.client.reservation.findFirst(
+      {
+        where: { id: testReservation.id },
+        select: {
+          packageEvents: { select: { id: true } },
+        },
+      }
+    )
+    expect(testReservationWithData.packageEvents.length).toBeGreaterThan(0)
   })
 
   describe("Package Accepted event", () => {
@@ -99,8 +122,46 @@ describe("Shippo Controller", () => {
   })
 
   describe("PackageArrived event", () => {
+    beforeAll(async () => {
+      // expect deliveredAt to be null on return package before sending event
+      const testReservationWithData = await prismaService.client.reservation.findFirst(
+        {
+          where: { id: testReservation.id },
+          select: {
+            returnPackages: {
+              orderBy: { createdAt: "desc" },
+              take: 1,
+              select: { id: true, deliveredAt: true },
+            },
+          },
+        }
+      )
+      const returnPackage = testReservationWithData.returnPackages[0]
+      expect(returnPackage.deliveredAt).toBe(null)
+
+      return request(app.getHttpServer())
+        .post("/shippo_events")
+        .send(PACKAGE_DELIVERED_TXN_ID_TWO)
+        .expect(201)
+    })
+
     it("sets the deliveredAt timestamp on a return package", async () => {
-      expect(1).toBe(0)
+      const testReservationWithData = await prismaService.client.reservation.findFirst(
+        {
+          where: { id: testReservation.id },
+          select: {
+            id: true,
+            returnPackages: {
+              orderBy: { createdAt: "desc" },
+              take: 1,
+              select: { id: true, deliveredAt: true },
+            },
+          },
+        }
+      )
+      const returnPackage = testReservationWithData.returnPackages[0]
+      const fieldIsDate = returnPackage.deliveredAt instanceof Date
+      expect(fieldIsDate).toBe(true)
       return
     })
   })

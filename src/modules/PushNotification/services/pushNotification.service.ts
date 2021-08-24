@@ -122,7 +122,6 @@ export class PushNotificationService {
     debug = false,
   }: PushNotifyUsersInput) {
     if (process.env.TEST === "true") {
-      console.log(`skipping push notify users code in test mode`)
       return
     }
 

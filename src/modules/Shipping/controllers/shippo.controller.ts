@@ -79,10 +79,6 @@ export class ShippoController {
 
     let packageTransitEvent: any
 
-    // If status is "Delivered", update "deliveredAt"
-    // If status is "PreTransit" or "Transit", set enteredDeliverySystemAt
-    // If reservation is lost and on its way to customer, mark package as lost
-    // If reservation is lost and on its way back to us, mark relevant package as lost
     switch (event) {
       case ShippoEventType.TrackUpdated:
         const reservation = await this.prisma.client.reservation.findFirst({
