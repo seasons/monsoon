@@ -1,7 +1,8 @@
 import { PushNotificationID } from "@app/modules/PushNotification/pushNotification.types.d"
 import { PushNotificationService } from "@app/modules/PushNotification/services/pushNotification.service"
+import { TestUtilsService } from "@app/modules/Utils/services/test.service"
 import { PrismaService } from "@app/prisma/prisma.service"
-import { Body, Controller, Logger, Post } from "@nestjs/common"
+import { Body, Controller, Get, Logger, Post } from "@nestjs/common"
 import {
   PackageTransitEventStatus,
   ReservationPhase,
@@ -52,7 +53,8 @@ export class ShippoController {
 
   constructor(
     private readonly prisma: PrismaService,
-    private readonly pushNotification: PushNotificationService
+    private readonly pushNotification: PushNotificationService,
+    private readonly testUtils: TestUtilsService
   ) {}
 
   @Post()
@@ -205,6 +207,15 @@ export class ShippoController {
     }
 
     return packageTransitEvent
+  }
+
+  @Get()
+  async handleGet(@Body() body) {
+    const x = this.testUtils.createTestReservation({
+      sentPackageTransactionID: "yo",
+      returnPackageTransactionID: "momma",
+    })
+    return x
   }
 
   reservationPhase(reservation, transactionID: string): ReservationPhase {

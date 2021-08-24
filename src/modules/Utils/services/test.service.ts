@@ -1,3 +1,4 @@
+import { Inject, forwardRef } from "@nestjs/common"
 import {
   InventoryStatus,
   PhysicalProductStatus,
@@ -20,6 +21,7 @@ import { UtilsService } from "./utils.service"
 export class TestUtilsService {
   constructor(
     private readonly prisma: PrismaService,
+    @Inject(forwardRef(() => UtilsService))
     private readonly utils: UtilsService
   ) {}
 
@@ -387,5 +389,23 @@ export class TestUtilsService {
     return input.physicalProducts.filter(
       pp => pp.inventoryStatus === inventoryStatus
     ).length
+  }
+
+  private async getUniqueReservationNumber(): Promise<number> {
+    let reservationNumber: number
+    let foundUnique = false
+    while (!foundUnique) {
+      reservationNumber = Math.floor(Math.random() * 900000000) + 100000000
+      const reservationWithThatNumber = await this.prisma.client.reservation.findUnique(
+        {
+          where: {
+            reservationNumber,
+          },
+        }
+      )
+      foundUnique = !reservationWithThatNumber
+    }
+
+    return reservationNumber
   }
 }

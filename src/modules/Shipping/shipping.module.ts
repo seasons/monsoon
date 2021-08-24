@@ -7,11 +7,11 @@ import { ShippoController } from "./controllers/shippo.controller"
 import { ShippingMutationsResolver } from "./mutations/shipping.mutations"
 import { ShippingService } from "./services/shipping.service"
 
-export const SHIPPO_MODULE_DEF = {
+export const SHIPPING_MODULE_DEF = {
   controllers: [ShippoController],
   imports: [UtilsModule, PrismaModule, PushNotificationModule],
   providers: [ShippingMutationsResolver, ShippingService],
   exports: [ShippingService],
 }
-@Module(SHIPPO_MODULE_DEF)
+@Module(SHIPPING_MODULE_DEF)
 export class ShippingModule {}
