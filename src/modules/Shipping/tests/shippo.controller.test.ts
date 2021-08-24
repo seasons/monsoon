@@ -1,14 +1,21 @@
 import { APP_MODULE_DEF } from "@app/app.module"
 import { PushNotificationService } from "@app/modules/PushNotification"
 import { TestUtilsService } from "@app/modules/Utils/services/test.service"
-import { UtilsService } from "@app/modules/Utils/services/utils.service"
 import { INestApplication } from "@nestjs/common"
 import { Test } from "@nestjs/testing"
 import { Reservation } from "@prisma/client"
 import request from "supertest"
 
 import { PrismaService } from "../../../prisma/prisma.service"
-import { PackageAccepted, TRANSACTION_ID } from "./shippoEvents.stub"
+import {
+  TRANSACTION_ID_ONE,
+  TRANSACTION_ID_ONE_EVENTS,
+  TRANSACTION_ID_TWO,
+  TRANSACTION_ID_TWO_EVENTS,
+} from "./shippoEvents.stub"
+
+const PACKAGE_ACCEPTED_TXN_ID_ONE = TRANSACTION_ID_ONE_EVENTS["PackageAccepted"]
+const PACKAGE_ARRIVED_TXN_ID_TWO = TRANSACTION_ID_TWO_EVENTS["PackageArrived"]
 
 describe("Shippo Controller", () => {
   let app: INestApplication
@@ -37,10 +44,9 @@ describe("Shippo Controller", () => {
       .mockResolvedValue(Promise.resolve({}) as any)
 
     const { reservation, cleanupFunc } = await testUtils.createTestReservation({
-      sentPackageTransactionID: TRANSACTION_ID,
-      returnPackageTransactionID: "ooglyBoogly",
+      sentPackageTransactionID: TRANSACTION_ID_ONE,
+      returnPackageTransactionID: TRANSACTION_ID_TWO,
     })
-    console.log(reservation)
     testReservation = reservation
     cleanupFuncs.push(cleanupFunc)
   })
@@ -66,10 +72,9 @@ describe("Shippo Controller", () => {
         null
       )
 
-      // Send a "Package Accepted" event to the endpoint
       return request(app.getHttpServer())
         .post("/shippo_events")
-        .send(PackageAccepted)
+        .send(PACKAGE_ACCEPTED_TXN_ID_ONE)
         .expect(201)
     })
 

@@ -1,6 +1,9 @@
-export const TRANSACTION_ID = "cab8f46684034257ba8d72c58347fc26"
+import { update } from "lodash"
 
-export const DeliveryScheduled = {
+export const TRANSACTION_ID_ONE = "cab8f46684034257ba8d72c58347fc26"
+export const TRANSACTION_ID_TWO = "cab8f46684034257ba8d72c58347098u"
+
+const DeliveryScheduledEvent = {
   test: false,
   data: {
     messages: [],
@@ -144,13 +147,13 @@ export const DeliveryScheduled = {
         },
       },
     ],
-    transaction: TRANSACTION_ID,
+    transaction: "FILL_IN",
     test: false,
   },
   event: "track_updated",
 }
 
-export const PackageDeparted = {
+const PackageDepartedEvent = {
   test: false,
   data: {
     messages: [],
@@ -237,13 +240,13 @@ export const PackageDeparted = {
         },
       },
     ],
-    transaction: TRANSACTION_ID,
+    transaction: "FILL_IN",
     test: false,
   },
   event: "track_updated",
 }
 
-export const PackageArrived = {
+const PackageArrivedEvent = {
   test: false,
   data: {
     messages: [],
@@ -350,13 +353,13 @@ export const PackageArrived = {
         },
       },
     ],
-    transaction: TRANSACTION_ID,
+    transaction: "FILL_IN",
     test: false,
   },
   event: "track_updated",
 }
 
-export const PackageAccepted = {
+const PackageAcceptedEvent = {
   test: false,
   data: {
     messages: [],
@@ -423,8 +426,24 @@ export const PackageAccepted = {
         },
       },
     ],
-    transaction: TRANSACTION_ID,
+    transaction: "FILL_IN",
     test: false,
   },
   event: "track_updated",
+}
+
+const withTxnId = (event, txn_id) =>
+  update(event, "data.transaction", () => txn_id)
+
+export const TRANSACTION_ID_ONE_EVENTS = {
+  DeliveryScheduled: withTxnId(DeliveryScheduledEvent, TRANSACTION_ID_ONE),
+  PackageDeparted: withTxnId(PackageDepartedEvent, TRANSACTION_ID_ONE),
+  PackageArrived: withTxnId(PackageArrivedEvent, TRANSACTION_ID_ONE),
+  PackageAccepted: withTxnId(PackageAcceptedEvent, TRANSACTION_ID_ONE),
+}
+export const TRANSACTION_ID_TWO_EVENTS = {
+  DeliveryScheduled: withTxnId(DeliveryScheduledEvent, TRANSACTION_ID_TWO),
+  PackageDeparted: withTxnId(PackageDepartedEvent, TRANSACTION_ID_TWO),
+  PackageArrived: withTxnId(PackageArrivedEvent, TRANSACTION_ID_TWO),
+  PackageAccepted: withTxnId(PackageAcceptedEvent, TRANSACTION_ID_TWO),
 }

@@ -53,8 +53,7 @@ export class ShippoController {
 
   constructor(
     private readonly prisma: PrismaService,
-    private readonly pushNotification: PushNotificationService,
-    private readonly testUtils: TestUtilsService
+    private readonly pushNotification: PushNotificationService
   ) {}
 
   @Post()
