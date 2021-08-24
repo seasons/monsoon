@@ -495,16 +495,20 @@ model AdminActionLogInterpretation {
 }
 
 model BagItem {
-  id               String          @id @default(cuid()) @db.VarChar(30)
-  position         Int?
-  saved            Boolean?
-  status           BagItemStatus
-  customerId       String?         @map("customer") @db.VarChar(30)
-  productVariantId String?         @map("productVariant") @db.VarChar(30)
-  createdAt        DateTime        @default(now())
-  updatedAt        DateTime        @updatedAt
-  customer         Customer?       @relation(fields: [customerId], references: [id])
-  productVariant   ProductVariant? @relation(fields: [productVariantId], references: [id])
+  id                String           @id @default(cuid()) @db.VarChar(30)
+  position          Int?
+  saved             Boolean?
+  status            BagItemStatus
+  customerId        String?          @map("customer") @db.VarChar(30)
+  physicalProductId String?          @map("physicalProduct") @db.VarChar(30)
+  createdAt         DateTime         @default(now())
+  updatedAt         DateTime         @updatedAt
+  customer          Customer?        @relation(fields: [customerId], references: [id])
+  physicalProduct   PhysicalProduct? @relation(fields: [physicalProductId], references: [id])
+  productVariantId  String?          @map("productVariant") @db.VarChar(30)
+  productVariant    ProductVariant?  @relation(fields: [productVariantId], references: [id])
+
+  @@unique([productVariantId, customerId])
 }
 
 model BillingInfo {
@@ -1017,6 +1021,7 @@ model PhysicalProduct {
   reservationsReturnedProducts Reservation[]                  @relation("ReservationToReturnedProducts")
   purchasedOnReservationId     String?                        @map("purchasedOnReservation") @db.VarChar(30)
   purchasedOnReservation       Reservation?                   @relation("ReservationToPurchasedProducts", fields: [purchasedOnReservationId], references: [id])
+  bagItems                     BagItem[]
 }
 
 model PhysicalProductPrice {
@@ -1185,8 +1190,8 @@ model ProductVariant {
   internalSize            Size?                    @relation(fields: [internalSizeId], references: [id])
   price                   ProductVariantPrice?     @relation(fields: [priceId], references: [id])
   product                 Product?                 @relation(fields: [productId], references: [id])
-  bagItems                BagItem[]
   physicalProducts        PhysicalProduct[]
+  bagItems                BagItem[]
   productNotifications    ProductNotification[]
   productVariantFeedbacks ProductVariantFeedback[]
   productVariantWants     ProductVariantWant[]
