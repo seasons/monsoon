@@ -16,6 +16,7 @@ describe("Shippo Controller", () => {
   let prismaService: PrismaService
   let testUtils: TestUtilsService
   let testReservation: Partial<Reservation>
+  let cleanupFuncs = []
 
   beforeAll(async () => {
     // Create the test module and initalize the app
@@ -29,19 +30,23 @@ describe("Shippo Controller", () => {
     )
     prismaService = moduleRef.get<PrismaService>(PrismaService)
     testUtils = moduleRef.get<TestUtilsService>(TestUtilsService)
-    //@ts-ignore
-
-    testReservation = await testUtils.createTestReservation({
-      sentPackageTransactionID: TRANSACTION_ID,
-      returnPackageTransactionID: "ooglyBoogly",
-    })
 
     // Don't send push notifications
     jest
       .spyOn(pushNotificationsService, "pushNotifyUsers")
       .mockResolvedValue(Promise.resolve({}) as any)
 
-    // Create a test reservation, with one sentPackage and one returnPackage
+    const { reservation, cleanupFunc } = await testUtils.createTestReservation({
+      sentPackageTransactionID: TRANSACTION_ID,
+      returnPackageTransactionID: "ooglyBoogly",
+    })
+    console.log(reservation)
+    testReservation = reservation
+    cleanupFuncs.push(cleanupFunc)
+  })
+
+  afterAll(async () => {
+    await Promise.all(cleanupFuncs.map(a => a()))
   })
 
   describe("Package Accepted event", () => {
@@ -69,26 +74,29 @@ describe("Shippo Controller", () => {
     })
 
     it("sets the enteredDeliverySystemAt timestamp on a sent package", async () => {
-      expect(null).toBeDefined()
       const testReservationWithData = await prismaService.client.reservation.findFirst(
         {
           where: { id: testReservation.id },
           select: {
+            id: true,
             sentPackage: {
               select: { id: true, enteredDeliverySystemAt: true },
             },
           },
         }
       )
-      console.log(testReservationWithData.sentPackage.enteredDeliverySystemAt)
-      expect(
+      const fieldIsDate =
         testReservationWithData.sentPackage.enteredDeliverySystemAt instanceof
-          Date
-      ).toBe(true)
+        Date
+      expect(fieldIsDate).toBe(true)
+      return
     })
   })
 
-  it("sets the deliveredAt timestamp on a return package", done => {
-    done()
+  describe("PackageArrived event", () => {
+    it("sets the deliveredAt timestamp on a return package", async () => {
+      expect(1).toBe(0)
+      return
+    })
   })
 })

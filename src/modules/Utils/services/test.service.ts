@@ -130,7 +130,9 @@ export class TestUtilsService {
       select: merge({ id: true }, select),
     })
 
-    return reservation
+    const cleanupFunc = async () =>
+      this.prisma.client.reservation.delete({ where: { id: reservation.id } })
+    return { reservation, cleanupFunc }
   }
 
   /* 

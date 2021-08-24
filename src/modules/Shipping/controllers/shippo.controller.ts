@@ -126,6 +126,7 @@ export class ShippoController {
           where: {
             transactionID,
           },
+          orderBy: { createdAt: "desc" },
           select: {
             id: true,
             enteredDeliverySystemAt: true,
@@ -207,15 +208,6 @@ export class ShippoController {
     }
 
     return packageTransitEvent
-  }
-
-  @Get()
-  async handleGet(@Body() body) {
-    const x = this.testUtils.createTestReservation({
-      sentPackageTransactionID: "yo",
-      returnPackageTransactionID: "momma",
-    })
-    return x
   }
 
   reservationPhase(reservation, transactionID: string): ReservationPhase {
