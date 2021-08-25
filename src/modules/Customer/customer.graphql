@@ -41,6 +41,11 @@ enum DeleteBagItemType {
 }
 
 type Mutation {
+  swapBagItem(
+    customerID: ID
+    oldItemID: ID!
+    physicalProduct: PhysicalProductWhereUniqueInput!
+  ): BagItem! @hasRole(roles: [Admin])
   addToBag(
     item: ID!
     customerID: ID
@@ -104,6 +109,7 @@ enum OnboardingStep {
 type Customer {
   id: ID!
   user: User!
+  isSwapped: Boolean
   shouldRequestFeedback: Boolean
   shouldPayForNextReservation: Boolean
   status: CustomerStatus

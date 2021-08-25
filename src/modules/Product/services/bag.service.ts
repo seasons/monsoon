@@ -82,12 +82,12 @@ export class BagService {
    */
   async addBagItemFromAdmin(
     customerID,
-    productVariantID,
+    physicalProduct,
     status,
     saved
   ): Promise<BagItem> {
     const promises = []
-
+    const productVariantID = physicalProduct?.productVariantId
     if (status === "Reserved" && saved) {
       throw new Error("You cannot add a saved bag item with status Reserved")
     }
@@ -106,7 +106,6 @@ export class BagService {
 
       const [
         productVariantsCountsUpdatePromises,
-        physicalProductsBeingReserved,
         productsBeingReserved,
       ] = await this.productVariantService.updateProductVariantCounts(
         [productVariantID],
@@ -115,7 +114,7 @@ export class BagService {
 
       promises.push(productVariantsCountsUpdatePromises)
 
-      const physicalProductID = physicalProductsBeingReserved[0].id
+      const physicalProductID = physicalProduct.id
 
       promises.push(
         this.prisma.client.reservation.update({
@@ -131,6 +130,15 @@ export class BagService {
             products: {
               connect: {
                 id: physicalProductID,
+              },
+            },
+            sentPackage: {
+              update: {
+                items: {
+                  connect: {
+                    id: physicalProductID,
+                  },
+                },
               },
             },
           },
@@ -247,6 +255,15 @@ export class BagService {
             newProducts: {
               disconnect: {
                 id: physicalProduct.id,
+              },
+            },
+            sentPackage: {
+              update: {
+                items: {
+                  disconnect: {
+                    id: physicalProduct.id,
+                  },
+                },
               },
             },
           },

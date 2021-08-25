@@ -2,6 +2,7 @@ import { Customer, User } from "@app/decorators"
 import { Application } from "@app/decorators/application.decorator"
 import { Select } from "@app/decorators/select.decorator"
 import { Args, Info, Mutation, Resolver } from "@nestjs/graphql"
+import { BagItemStatus } from "@prisma/client"
 import { PrismaService } from "@prisma1/prisma.service"
 
 import { BagService } from "../services/bag.service"
@@ -42,6 +43,37 @@ export class ProductMutationsResolver {
       await this.prisma.client.bagItem.delete({ where: { id: itemID } })
     }
     return true
+  }
+
+  @Mutation()
+  async swapBagItem(
+    @Args() { oldItemID, physicalProduct, customerID },
+    @Application() application
+  ) {
+    if (application === "spring") {
+      const type = "Delete"
+      const status = "Reserved"
+      const saved = false
+
+      const physicalProductForSwap = await this.prisma.client.physicalProduct.findUnique(
+        {
+          where: {
+            seasonsUID: physicalProduct.seasonsUID,
+          },
+        }
+      )
+      if (physicalProductForSwap.inventoryStatus === "Reservable") {
+        await this.bagService.deleteBagItemFromAdmin(oldItemID, type)
+        return await this.bagService.addBagItemFromAdmin(
+          customerID,
+          physicalProductForSwap,
+          status,
+          saved
+        )
+      } else {
+        throw new Error("This item is not reservable")
+      }
+    }
   }
 
   @Mutation()
