@@ -436,13 +436,18 @@ export class ReservationService {
           orderBy: { createdAt: "desc" },
           select: {
             id: true,
+            shippingLabel: { select: { trackingNumber: true } },
           },
         },
       },
     })
   }
 
-  async processReservation(reservationNumber, productStates: ProductState[]) {
+  async processReservation(
+    reservationNumber,
+    productStates: ProductState[],
+    trackingNumber: string
+  ) {
     // Update status on physical products depending on whether
     // the item was returned, and update associated product variant counts
 
@@ -615,7 +620,8 @@ export class ReservationService {
       updateReturnPackagePromise,
     ] = await this.reservationUtils.updateReturnPackageOnCompletedReservation(
       reservation,
-      returnedPhysicalProducts
+      returnedPhysicalProducts,
+      trackingNumber
     )
 
     await this.prisma.client.$transaction([
