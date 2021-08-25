@@ -17,7 +17,11 @@ export class TimeUtilsService {
     return date1.getTime() - date2.getTime() >= 0
   }
 
-  numDaysBetween(date1, date2) {
+  xDaysBeforeDate(date: Date, x: number) {
+    return moment(date.toISOString()).subtract(x, "days").format()
+  }
+
+  numDaysBetween(date1: Date, date2: Date) {
     let beforeDate, afterDate
     if (this.isLaterDate(date1, date2)) {
       beforeDate = date2

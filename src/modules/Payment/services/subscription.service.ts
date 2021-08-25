@@ -2,10 +2,16 @@ import { SegmentService } from "@app/modules/Analytics/services/segment.service"
 import { ErrorService } from "@app/modules/Error/services/error.service"
 import { PaymentUtilsService } from "@app/modules/Utils/services/paymentUtils.service"
 import { TimeUtilsService } from "@app/modules/Utils/services/time.service"
-import { UtilsService } from "@app/modules/Utils/services/utils.service"
 import { EmailService } from "@modules/Email/services/email.service"
 import { Injectable } from "@nestjs/common"
-import { Customer, PauseType, PaymentPlan, User } from "@prisma/client"
+import {
+  Customer,
+  PauseType,
+  PaymentPlan,
+  PhysicalProduct,
+  RentalInvoice,
+  User,
+} from "@prisma/client"
 import { Prisma } from "@prisma/client"
 import { PrismaService } from "@prisma1/prisma.service"
 import chargebee from "chargebee"
@@ -13,7 +19,9 @@ import { head, orderBy, pick } from "lodash"
 import { DateTime } from "luxon"
 import moment from "moment"
 
-import { BillingAddress, Card } from "../payment.types"
+import { BillingAddress, Card, Invoice } from "../payment.types"
+
+const RETURN_PACKAGE_CUSHION = 3 // TODO: Set as an env var
 
 export interface SubscriptionData {
   nextBillingAt: string
@@ -542,12 +550,31 @@ export class SubscriptionService {
       .request()
   }
 
-  async calcDaysRented(invoice, physicalProduct) {
+  async calcDaysRented(
+    invoice: Pick<RentalInvoice, "id">,
+    physicalProduct: Pick<PhysicalProduct, "seasonsUID">
+  ) {
+    const reservationSelect = Prisma.validator<Prisma.ReservationSelect>()({
+      id: true,
+      createdAt: true,
+      completedAt: true,
+      status: true,
+      phase: true,
+      reservationNumber: true,
+      returnPackages: {
+        select: { items: true, enteredDeliverySystemAt: true },
+      },
+      returnedProducts: { select: { seasonsUID: true } },
+    })
     const invoiceWithData = await this.prisma.client.rentalInvoice.findUnique({
       where: { id: invoice.id },
       select: {
         billingStartAt: true,
+        billingEndAt: true,
         membership: { select: { customer: { select: { id: true } } } },
+        reservations: {
+          select: reservationSelect,
+        },
       },
     })
     /*
@@ -605,37 +632,64 @@ export class SubscriptionService {
       select: {
         deliveredAt: true,
         reservationOnSentPackage: {
-          select: {
-            id: true,
-            status: true,
-            phase: true,
-            reservationNumber: true,
-          },
+          select: reservationSelect,
         },
       },
     })
-    const relevantReservation = sentPackage.reservationOnSentPackage
+    const initialReservation = sentPackage.reservationOnSentPackage
 
     let daysRented, rentalStartedAt, rentalEndedAt, comment
-    comment = `Initial reservation: ${relevantReservation.reservationNumber}, status ${relevantReservation.status}.`
-    switch (relevantReservation.status) {
+    comment = `Initial reservation: ${initialReservation.reservationNumber}, status ${initialReservation.status}.`
+
+    const addDeliveryComment = itemDeliveredAt => {
+      const deliveredThisBillingCycle = this.timeUtils.isLaterDate(
+        itemDeliveredAt,
+        invoiceWithData.billingStartAt
+      )
+
+      let billingCycleCommentDetail
+      let deliveredAt
+      if (deliveredThisBillingCycle) {
+        deliveredAt = itemDeliveredAt
+        billingCycleCommentDetail = "this billing cycle"
+      } else {
+        deliveredAt = invoiceWithData.billingStartAt
+        billingCycleCommentDetail = "on a previous billing cycle"
+      }
+      comment += `\nDelivered: ${billingCycleCommentDetail} on ${moment(
+        deliveredAt
+      ).format("lll")}`
+    }
+    const addComment = line => (comment += `\n${line}`)
+
+    const getSafeRentalEndDate = (
+      returnPackageScanDate,
+      reservationCompletionDate
+    ) => {
+      return (
+        returnPackageScanDate ||
+        this.timeUtils.xDaysBeforeDate(
+          reservationCompletionDate,
+          RETURN_PACKAGE_CUSHION
+        )
+      )
+    }
+
+    switch (initialReservation.status) {
       case "Hold":
       case "Blocked":
       case "Unknown":
-        daysRented = 0
-        comment += ` Unknown rental status.`
+        addComment("Unknown rental status")
         break
       case "Queued":
       case "Picked":
       case "Packed":
-        daysRented = 0
-        comment += ` Not yet shipped to customer.`
+        addComment("Not yet shipped to customer.")
         break
 
       case "Shipped":
-        if (relevantReservation.phase === "BusinessToCustomer") {
-          daysRented = 0
-          comment += ` En route to customer.`
+        if (initialReservation.phase === "BusinessToCustomer") {
+          addComment("En route to customer")
         } else {
           /* 
           Simplest case: Customer has one reservation. This item was sent on that reservation, and is now being returned with the label provided on that item.
@@ -646,54 +700,92 @@ export class SubscriptionService {
           */
           // TODO: Figure out this logic. How do we know if the item is on its way back or not?
         }
+        break
 
       case "Delivered":
-        if (relevantReservation.phase === "BusinessToCustomer") {
+        if (initialReservation.phase === "BusinessToCustomer") {
           const itemDeliveredAt = new Date(sentPackage.deliveredAt)
           const deliveredThisBillingCycle = this.timeUtils.isLaterDate(
             itemDeliveredAt,
             invoiceWithData.billingStartAt
           )
 
-          let billingCycleCommentDetail
-          if (deliveredThisBillingCycle) {
-            rentalStartedAt = itemDeliveredAt
-            billingCycleCommentDetail = "this billing cycle"
-          } else {
-            rentalStartedAt = invoiceWithData.billingStartAt
-            billingCycleCommentDetail = "on a previous billing cycle"
-          }
-          comment += `\nDelivered: ${billingCycleCommentDetail} on ${moment(
-            itemDeliveredAt
-          ).format("lll")}`
+          addDeliveryComment(itemDeliveredAt)
+          rentalStartedAt = deliveredThisBillingCycle
+            ? itemDeliveredAt
+            : invoiceWithData.billingStartAt
 
-          rentalEndedAt = new Date()
-          daysRented = this.timeUtils.numDaysBetween(
-            rentalStartedAt,
-            rentalEndedAt
-          )
+          rentalEndedAt = invoiceWithData.billingEndAt
 
-          comment += `\nCurrent status: with customer`
+          addComment("Item status: with customer")
         } else {
           // TODO: FIgure out this logic
         }
         break
+
+      case "Completed":
+        /*        If RR is Completed:
+          deliveryDate = getDeliveryDate(RR)
+          startDate = max(deliveryDate, invoice.startBillingAt)
+
+          If item in reservation.returnedProducts:  
+            endDate = returnedPackage.enteredDeliverySystemAt || reservation.completedAt - Z (data loss cushion. 3 days)
+          Else:
+            // It should be in his bag, with status Reserved or Received. Confirm this is so.
+            endDate = today
+*/
+        // Get rentalStartedAt
+        const itemDeliveredAt = new Date(sentPackage.deliveredAt)
+        const deliveredThisBillingCycle = this.timeUtils.isLaterDate(
+          itemDeliveredAt,
+          invoiceWithData.billingStartAt
+        )
+        addDeliveryComment(itemDeliveredAt)
+        rentalStartedAt = deliveredThisBillingCycle
+          ? itemDeliveredAt
+          : invoiceWithData.billingStartAt
+
+        /*
+          Has this item been returned? 
+
+          */
+        const possibleReturnReservations = [
+          initialReservation,
+          ...invoiceWithData.reservations.filter(a =>
+            this.timeUtils.isLaterDate(
+              a.createdAt,
+              initialReservation.createdAt
+            )
+          ),
+        ]
+        const returnReservation = possibleReturnReservations.find(a =>
+          a.returnedProducts
+            .map(b => b.seasonsUID)
+            .includes(physicalProduct.seasonsUID)
+        )
+        if (!!returnReservation) {
+          const returnPackage = returnReservation.returnPackages.find(b =>
+            b.items.map(c => c.seasonsUID).includes(physicalProduct.seasonsUID)
+          )
+          rentalEndedAt = getSafeRentalEndDate(
+            returnPackage.enteredDeliverySystemAt,
+            returnReservation.completedAt
+          )
+          addComment("Item status: returned")
+        } else {
+          // TODO:
+        }
+        break
       default:
         throw new Error(
-          `Unexpected reservation status: ${relevantReservation.status}`
+          `Unexpected reservation status: ${initialReservation.status}`
         )
     }
 
-    // const receivedPackage = await this.prisma.client.package.findFirst({
-    //   where: {
-    //     items: { some: { seasonsUID: physicalProduct.seasonsUID } },
-    //     reservationOnReturnedPackage: {
-    //       id: sentPackage.reservationOnSentPackage.id,
-    //     },
-    //   },
-    //   orderBy: { createdAt: "desc" },
-    //   select: { enteredDeliverySystemAt: true },
-    // })
+    daysRented =
+      !!rentalStartedAt && !!rentalEndedAt
+        ? this.timeUtils.numDaysBetween(rentalStartedAt, rentalEndedAt)
+        : 0
     return {
       daysRented,
       rentalStartedAt,
