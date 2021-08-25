@@ -3,7 +3,7 @@ import { ReservationService } from "@app/modules/Reservation"
 import { UtilsService } from "@app/modules/Utils/services/utils.service"
 import { PrismaService, SmartPrismaClient } from "@app/prisma/prisma.service"
 import { Test } from "@nestjs/testing"
-import { Prisma } from "@prisma/client"
+import { Prisma, ReservationStatus } from "@prisma/client"
 import { head, merge } from "lodash"
 import moment from "moment"
 
@@ -62,15 +62,13 @@ describe("Rental Service", () => {
       let initialReservation: any
       let custWithData: any
       let twentyThreeDaysAgo
+      const now = new Date()
 
       beforeEach(async () => {
-        initialReservation = (await addToBagAndReserveForCustomer()) as any
+        initialReservation = (await addToBagAndReserveForCustomer(1)) as any
         await setReservationCreatedAt(initialReservation.id, 25)
         await setPackageDeliveredAt(initialReservation.sentPackage.id, 23)
-        await prisma.client.reservation.update({
-          where: { id: initialReservation.id },
-          data: { status: "Delivered" },
-        })
+        await setReservationStatus(initialReservation.id, "Delivered")
         custWithData = await getCustWithData()
         twentyThreeDaysAgo = utils.xDaysAgoISOString(23)
       })
@@ -122,7 +120,46 @@ describe("Rental Service", () => {
       })
 
       it("reserved and returned on later reservation", async () => {
-        expect(0).toBe(1)
+        // Do two more reservation
+        const reservationTwo = (await addToBagAndReserveForCustomer(1)) as any
+        await setReservationStatus(reservationTwo.id, "Delivered")
+        const reservationThree = (await addToBagAndReserveForCustomer(3)) as any
+        await setReservationStatus(reservationThree.id, "Delivered")
+
+        // Return it with the label from the last reservation
+        const returnPackage = head(reservationThree.returnPackages)
+        await setPackageEnteredSystemAt(returnPackage.id, 4)
+        await reservationService.processReservation(
+          reservationThree.reservationNumber,
+          reservationThree.products.map(a => ({
+            productStatus: "Dirty",
+            productUID: a.seasonsUID,
+            returned: true,
+            notes: "",
+          })),
+          returnPackage.shippingLabel.trackingNumber
+        )
+
+        const {
+          daysRented,
+          comment,
+          rentalEndedAt,
+          rentalStartedAt,
+        } = await rentalService.calcDaysRented(
+          custWithData.membership.rentalInvoices[0],
+          initialReservation.products[0]
+        )
+
+        expect(daysRented).toBe(19)
+        expectTimeToEqual(rentalStartedAt, twentyThreeDaysAgo)
+        expectTimeToEqual(rentalEndedAt, utils.xDaysAgoISOString(4))
+
+        expectInitialReservationComment(
+          comment,
+          initialReservation.reservationNumber,
+          "completed"
+        )
+        expectCommentToInclude(comment, `item status: returned`)
       })
 
       it("reserved and held. no new reservations since initial", async () => {
@@ -138,12 +175,8 @@ describe("Rental Service", () => {
         )
 
         expect(daysRented).toBe(23)
-        expect(moment(rentalEndedAt).format("ll")).toEqual(
-          moment().format("ll")
-        )
-        expect(moment(rentalStartedAt).format("ll")).toEqual(
-          moment(twentyThreeDaysAgo).format("ll")
-        )
+        expectTimeToEqual(rentalStartedAt, twentyThreeDaysAgo)
+        expectTimeToEqual(rentalEndedAt, now)
 
         expectInitialReservationComment(
           comment,
@@ -158,6 +191,10 @@ describe("Rental Service", () => {
       })
 
       // Queued, Hold, Picked, Packed, Unknown, Blocked
+
+      // Lost on the way there, lost on the way back
+
+      // Cancelled
     })
 
     describe("Items reserved in a previous billing cycle", () => {})
@@ -390,20 +427,42 @@ const createTestCustomer = async ({
   return { cleanupFunc, customer }
 }
 
-const addToBagAndReserveForCustomer = async () => {
-  const reservableProdVar = await prisma.client.productVariant.findFirst({
-    where: { reservable: { gt: 1 } },
-  })
-  await prisma.client.bagItem.create({
-    data: {
-      customer: { connect: { id: testCustomer.id } },
-      productVariant: { connect: { id: reservableProdVar.id } },
-      status: "Added",
+const addToBagAndReserveForCustomer = async numProductsToAdd => {
+  const reservedBagItems = await prisma.client.bagItem.findMany({
+    where: {
+      customer: { id: testCustomer.id },
+      status: "Reserved",
       saved: false,
     },
+    select: { productVariant: { select: { sku: true } } },
   })
+  const reservedSKUs = reservedBagItems.map(a => a.productVariant.sku)
+  const reservableProdVars = await prisma.client.productVariant.findMany({
+    where: { reservable: { gt: 1 }, sku: { notIn: reservedSKUs } },
+    take: numProductsToAdd,
+  })
+  for (const prodVar of reservableProdVars) {
+    await prisma.client.bagItem.create({
+      data: {
+        customer: { connect: { id: testCustomer.id } },
+        productVariant: { connect: { id: prodVar.id } },
+        status: "Added",
+        saved: false,
+      },
+    })
+  }
+
+  const bagItemsToReserve = await prisma.client.bagItem.findMany({
+    where: {
+      customer: { id: testCustomer.id },
+      status: { in: ["Added", "Reserved"] },
+      saved: false,
+    },
+    select: { productVariant: { select: { id: true } } },
+  })
+  const prodVarsToReserve = bagItemsToReserve.map(a => a.productVariant.id)
   const reservation = await reservationService.reserveItems(
-    [reservableProdVar.id],
+    prodVarsToReserve,
     null,
     testCustomer.user,
     testCustomer as any,
@@ -431,6 +490,15 @@ const setPackageDeliveredAt = async (packageId, numDaysAgo) => {
   })
 }
 
+const setReservationStatus = async (
+  reservationId,
+  status: ReservationStatus
+) => {
+  await prisma.client.reservation.update({
+    where: { id: reservationId },
+    data: { status },
+  })
+}
 const setReservationCreatedAt = async (reservationId, numDaysAgo) => {
   const date = utils.xDaysAgoISOString(numDaysAgo)
   await prisma.client.reservation.update({
@@ -483,4 +551,8 @@ const expectInitialReservationComment = (
 const expectCommentToInclude = (comment, expectedLine) => {
   const doesInclude = comment.toLowerCase().includes(expectedLine)
   expect(doesInclude).toBe(true)
+}
+
+const expectTimeToEqual = (time, expectedValue) => {
+  expect(moment(time).format("ll")).toEqual(moment(expectedValue).format("ll"))
 }
