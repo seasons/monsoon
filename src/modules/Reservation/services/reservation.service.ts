@@ -29,6 +29,7 @@ import { ApolloError } from "apollo-server"
 import chargebee from "chargebee"
 import cuid from "cuid"
 import { intersection } from "lodash"
+import { merge } from "lodash"
 import { DateTime } from "luxon"
 
 import { ReservationUtilsService } from "./reservation.utils.service"
@@ -73,7 +74,7 @@ export class ReservationService {
     shippingCode: ShippingCode,
     user: User,
     customer: Customer,
-    select
+    select: Prisma.ReservationSelect = { id: true }
   ) {
     if (customer.status !== "Active") {
       throw new Error(`Only Active customers can place a reservation`)
@@ -254,12 +255,9 @@ export class ReservationService {
       heldPhysicalProducts,
       shippingOptionID
     )
+
     const reservationPromise = this.prisma.client.reservation.create({
       data: reservationData,
-      select: {
-        ...select,
-        reservationNumber: true,
-      },
     })
 
     promises.push(reservationPromise)
@@ -276,10 +274,17 @@ export class ReservationService {
       })
       promises.push(rentalInvoicePromise)
     }
-    // Resolve all prisma operation in one transaction
-    const result = await this.prisma.client.$transaction(promises.flat())
 
-    const reservation = result.pop()
+    await this.prisma.client.$transaction(promises.flat())
+
+    const reservation = (await this.prisma.client.reservation.findUnique({
+      where: { id: reservationData.id },
+      select: merge(select, {
+        id: true,
+        reservationNumber: true,
+        products: { select: { seasonsUID: true } },
+      }),
+    })) as any
 
     let earlySwapLineItems = []
 
@@ -289,6 +294,7 @@ export class ReservationService {
         customer?.id,
         nextFreeSwapDate
       )
+      console.log(earlySwapLineItems)
       await this.addLineItemsToReservation(
         [...earlySwapLineItems, ...shippingLineItems],
         reservation.id

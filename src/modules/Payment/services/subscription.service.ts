@@ -539,6 +539,12 @@ export class SubscriptionService {
   }
 
   async calcDaysRented(invoice, physicalProduct) {
+    const invoiceWithData = await this.prisma.client.rentalInvoice.findUnique({
+      where: { id: invoice.id },
+      select: {
+        membership: { select: { customer: { select: { id: true } } } },
+      },
+    })
     /*
         Find the package on which it was sent to the customer. Call this RR
         define f getDeliveryDate(RR) => RR.sentPackage.deliveredAt || RR.createdAt + X (3-5)
@@ -584,7 +590,7 @@ export class SubscriptionService {
 
 
         */
-    const customer = invoice.membership.customer
+    const customer = invoiceWithData.membership.customer
     const sentPackage = await this.prisma.client.package.findFirst({
       where: {
         items: { some: { seasonsUID: physicalProduct.seasonsUID } },
