@@ -23,6 +23,7 @@ describe("Subscription Service", () => {
   let testUtils: TestUtilsService
   let utils: UtilsService
   let cleanupFuncs = []
+  let testCustomer: any
 
   beforeAll(async () => {
     const moduleBuilder = await Test.createTestingModule(APP_MODULE_DEF)
@@ -43,27 +44,40 @@ describe("Subscription Service", () => {
     await Promise.all(cleanupFuncs.map(a => a()))
   })
 
-  describe("Calculate Days Rented", () => {
-    it("works for an item on an active reservation that was created this billing cycle", async () => {
-      const { cleanupFunc, customer } = await createTestCustomer({
-        client: prisma.client,
-        utils,
-        select: {
-          id: true,
-          status: true,
-          membership: { select: { plan: { select: { tier: true } } } },
-          user: true,
-        },
-      })
-      cleanupFuncs.push(cleanupFunc)
+  beforeEach(async () => {
+    const { cleanupFunc, customer } = await createTestCustomer({
+      client: prisma.client,
+      utils,
+      select: {
+        id: true,
+        status: true,
+        membership: { select: { plan: { select: { tier: true } } } },
+        user: true,
+      },
+    })
+    cleanupFuncs.push(cleanupFunc)
+    testCustomer = customer
+  })
 
-      // Add some bag items and reserve for the customer. Set createdAt to 15 days ago
+  describe("Calculate Days Rented", () => {
+    // Reserved this billing cycle and...
+    // still has it
+    // returned it
+    // lost on the way there
+    // lost on the way back
+
+    // Reserved in a previous billing cycle and...
+    it("works for an item that was both reserved and returned this billing cycle", async () => {
+      expect(1).toBe(0)
+    })
+    it("works for an item on an active reservation that was created this billing cycle", async () => {
+      /* Create a 15 day old reservation with a sent package that arrived 10 days ago */
       const reservableProdVar = await prisma.client.productVariant.findFirst({
         where: { reservable: { gt: 1 } },
       })
       await prisma.client.bagItem.create({
         data: {
-          customer: { connect: { id: customer.id } },
+          customer: { connect: { id: testCustomer.id } },
           productVariant: { connect: { id: reservableProdVar.id } },
           status: "Added",
           saved: false,
@@ -72,8 +86,8 @@ describe("Subscription Service", () => {
       let reservation = await reservationService.reserveItems(
         [reservableProdVar.id],
         null,
-        customer.user,
-        customer as any
+        testCustomer.user,
+        testCustomer as any
       )
       const fifteenDaysAgo = utils.xDaysAgoISOString(15)
       reservation = await prisma.client.reservation.update({
@@ -94,7 +108,7 @@ describe("Subscription Service", () => {
       })
 
       const custWithData = await prisma.client.customer.findFirst({
-        where: { id: customer.id },
+        where: { id: testCustomer.id },
         select: {
           membership: {
             select: {
@@ -150,17 +164,118 @@ describe("Subscription Service", () => {
       )
     })
 
-    it("correctly uses the fallback if we don't know when a sent package got delivered", async () => {})
+    it("works for an item on an active reservation that was created last billing cycle", async () => {
+      const reservableProdVar = await prisma.client.productVariant.findFirst({
+        where: { reservable: { gt: 1 } },
+      })
+      await prisma.client.bagItem.create({
+        data: {
+          customer: { connect: { id: testCustomer.id } },
+          productVariant: { connect: { id: reservableProdVar.id } },
+          status: "Added",
+          saved: false,
+        },
+      })
+      let reservation = await reservationService.reserveItems(
+        [reservableProdVar.id],
+        null,
+        testCustomer.user,
+        testCustomer as any
+      )
 
-    it("correctly uses the fallback if we don't know when a return package entered the system", async () => {})
+      const fourtyFiveDaysAgo = utils.xDaysAgoISOString(45)
+      reservation = await prisma.client.reservation.update({
+        where: { id: reservation.id },
+        data: { createdAt: fourtyFiveDaysAgo, status: "Delivered" },
+        select: {
+          sentPackage: { select: { id: true } },
+          products: { select: { seasonsUID: true } },
+          reservationNumber: true,
+        },
+      })
 
-    it("works for an item that was both reserved and returned this billing cycle", async () => {
+      // Set the deliveredAt timestamps on the sentPackage
+      const fourtyFourDaysAgo = utils.xDaysAgoISOString(44)
+      await prisma.client.package.update({
+        where: { id: reservation.sentPackage.id },
+        data: { deliveredAt: fourtyFourDaysAgo },
+      })
+
+      const custWithData = await prisma.client.customer.findFirst({
+        where: { id: testCustomer.id },
+        select: {
+          membership: {
+            select: {
+              rentalInvoices: {
+                select: {
+                  id: true,
+                  reservations: true,
+                  products: true,
+                  status: true,
+                  billingStartAt: true,
+                  billingEndAt: true,
+                },
+              },
+            },
+          },
+        },
+      })
+      const physicalProductToBill = reservation.products[0]
+      const rentalInvoiceToBill = custWithData.membership.rentalInvoices[0]
+      const {
+        daysRented,
+        comment,
+        rentalEndedAt,
+        rentalStartedAt,
+      } = await subscriptionService.calcDaysRented(
+        rentalInvoiceToBill,
+        physicalProductToBill
+      )
+
+      expect(daysRented).toBe(30)
+
+      const commentIncludesProperReservation = comment
+        .toLowerCase()
+        .includes(
+          `initial reservation: ${reservation.reservationNumber}, status delivered`
+        )
+      const commentIncludesPackageDelivery = comment
+        .toLowerCase()
+        .includes(
+          `delivered: on a previous billing cycle on ${moment(
+            fourtyFourDaysAgo
+          ).format("lll")}`.toLowerCase()
+        )
+      const commentIncludesCurrentStatus = comment
+        .toLowerCase()
+        .includes(`current status: with customer`)
+      expect(commentIncludesProperReservation).toBe(true)
+      expect(commentIncludesPackageDelivery).toBe(true)
+      expect(commentIncludesCurrentStatus).toBe(true)
+
+      expect(moment(rentalEndedAt).format("ll")).toEqual(moment().format("ll"))
+      expect(moment(rentalStartedAt).format("ll")).toEqual(
+        moment(utils.xDaysAgoISOString(30)).format("ll")
+      )
+    })
+
+    it("works for an item sent on a now completed reservation that was sent the last billing cycle", async () => {
       expect(1).toBe(0)
     })
 
     it("works for an item reserved in the previous billing cycle and returned in this one", async () => {
       expect(1).toBe(0)
     })
+
+    it("correctly uses the fallback if we don't know when a sent package got delivered", async () => {
+      expect(1).toBe(0)
+    })
+
+    it("correctly uses the fallback if we don't know when a return package entered the system", async () => {
+      expect(1).toBe(0)
+    })
+
+    // STOP HERE FOR NOW
 
     it("works for an item that was reserved 3 months ago and is still held by the customer", async () => {
       expect(1).toBe(0)
@@ -276,3 +391,36 @@ const createTestCustomer = async ({
     client.customer.delete({ where: { id: customer.id } })
   return { cleanupFunc, customer }
 }
+
+// const calcDaysRented = async (testCustomerId, client, subscriptionService) => {
+//   const custWithData = await client.customer.findFirst({
+//     where: { id: testCustomerId },
+//     select: {
+//       membership: {
+//         select: {
+//           rentalInvoices: {
+//             select: {
+//               id: true,
+//               reservations: true,
+//               products: true,
+//               status: true,
+//               billingStartAt: true,
+//               billingEndAt: true,
+//             },
+//           },
+//         },
+//       },
+//     },
+//   })
+//   const physicalProductToBill = reservation.products[0]
+//   const rentalInvoiceToBill = custWithData.membership.rentalInvoices[0]
+//   const {
+//     daysRented,
+//     comment,
+//     rentalEndedAt,
+//     rentalStartedAt,
+//   } = await subscriptionService.calcDaysRented(
+//     rentalInvoiceToBill,
+//     physicalProductToBill
+//   )
+// }

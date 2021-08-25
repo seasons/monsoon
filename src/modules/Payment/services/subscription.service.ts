@@ -1,6 +1,7 @@
 import { SegmentService } from "@app/modules/Analytics/services/segment.service"
 import { ErrorService } from "@app/modules/Error/services/error.service"
 import { PaymentUtilsService } from "@app/modules/Utils/services/paymentUtils.service"
+import { TimeUtilsService } from "@app/modules/Utils/services/time.service"
 import { UtilsService } from "@app/modules/Utils/services/utils.service"
 import { EmailService } from "@modules/Email/services/email.service"
 import { Injectable } from "@nestjs/common"
@@ -30,7 +31,7 @@ export class SubscriptionService {
     private readonly prisma: PrismaService,
     private readonly emailService: EmailService,
     private readonly paymentUtils: PaymentUtilsService,
-    private readonly utils: UtilsService,
+    private readonly timeUtils: TimeUtilsService,
     private readonly error: ErrorService,
     private readonly segment: SegmentService
   ) {}
@@ -545,6 +546,7 @@ export class SubscriptionService {
     const invoiceWithData = await this.prisma.client.rentalInvoice.findUnique({
       where: { id: invoice.id },
       select: {
+        billingStartAt: true,
         membership: { select: { customer: { select: { id: true } } } },
       },
     })
@@ -647,15 +649,30 @@ export class SubscriptionService {
 
       case "Delivered":
         if (relevantReservation.phase === "BusinessToCustomer") {
-          rentalStartedAt = new Date(sentPackage.deliveredAt)
-          rentalEndedAt = new Date()
-          daysRented = this.utils.numDaysBetween({
-            beforeDate: rentalStartedAt,
-            afterDate: rentalEndedAt,
-          })
-          comment += `\nDelivered: this billing cycle on ${moment(
-            rentalStartedAt
+          const itemDeliveredAt = new Date(sentPackage.deliveredAt)
+          const deliveredThisBillingCycle = this.timeUtils.isLaterDate(
+            itemDeliveredAt,
+            invoiceWithData.billingStartAt
+          )
+
+          let billingCycleCommentDetail
+          if (deliveredThisBillingCycle) {
+            rentalStartedAt = itemDeliveredAt
+            billingCycleCommentDetail = "this billing cycle"
+          } else {
+            rentalStartedAt = invoiceWithData.billingStartAt
+            billingCycleCommentDetail = "on a previous billing cycle"
+          }
+          comment += `\nDelivered: ${billingCycleCommentDetail} on ${moment(
+            itemDeliveredAt
           ).format("lll")}`
+
+          rentalEndedAt = new Date()
+          daysRented = this.timeUtils.numDaysBetween(
+            rentalStartedAt,
+            rentalEndedAt
+          )
+
           comment += `\nCurrent status: with customer`
         } else {
           // TODO: FIgure out this logic
