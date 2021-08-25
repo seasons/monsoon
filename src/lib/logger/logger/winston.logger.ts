@@ -4,7 +4,7 @@ import { Logger } from "winston"
 export class WinstonLogger implements LoggerService {
   constructor(public readonly logger: Logger) {}
 
-  public log(message: any, context?: string) {
+  public log(message: any, context?: any) {
     return this.logger.info(message, {
       context,
     })
@@ -14,19 +14,19 @@ export class WinstonLogger implements LoggerService {
     return this.logger.log("error", message, { context })
   }
 
-  public warn(message: any, context?: string): any {
+  public warn(message: any, context?: any): any {
     return this.logger.warn(message, {
       context,
     })
   }
 
-  public debug(message: any, context?: string): any {
+  public debug(message: any, context?: any): any {
     return this.logger.debug(message, {
       context,
     })
   }
 
-  public verbose(message: any, context?: string): any {
+  public verbose(message: any, context?: any): any {
     return this.logger.verbose(message, {
       context,
     })

@@ -16,6 +16,7 @@ import { Injectable } from "@nestjs/common"
 import {
   AdminActionLog,
   Customer,
+  Package,
   PhysicalProduct,
   Prisma,
   PrismaPromise,
@@ -105,7 +106,15 @@ export class ReservationService {
     }
 
     // Figure out which items the user is reserving anew and which they already have
-    const lastReservation = await this.utils.getLatestReservation(customer.id)
+    const lastReservation = await this.utils.getLatestReservation(
+      customer.id,
+      undefined,
+      {
+        returnPackages: {
+          select: { id: true, events: { select: { id: true } } },
+        },
+      }
+    )
     await this.validateLastReservation(lastReservation, items)
 
     // Get the most recent reservation that potentially carries products being kept in the new reservation
@@ -163,29 +172,13 @@ export class ReservationService {
       shippingCode
     )
 
-    const bagItemsToUpdateIds = (
-      await this.prisma.client.bagItem.findMany({
-        where: {
-          productVariant: {
-            id: {
-              in: newProductVariantsBeingReserved,
-            },
-          },
-          customer: {
-            id: customer.id,
-          },
-        },
-      })
-    ).map(a => a.id)
-
-    promises.push(
-      this.prisma.client.bagItem.updateMany({
-        where: { id: { in: bagItemsToUpdateIds } },
-        data: {
-          status: "Reserved",
-        },
-      })
-    )
+    // Update bag items
+    const bagItemPromises = await this.updateBagItemsForReservation({
+      newProductVariantsBeingReserved,
+      customerId: customer.id,
+      physicalProductsBeingReserved,
+    })
+    promises.push(...bagItemPromises)
 
     // Create one time charge for shipping addon
     let shippingOptionID
@@ -219,6 +212,7 @@ export class ReservationService {
     const reservationData = await this.createReservationData(
       seasonsToCustomerTransaction,
       customerToSeasonsTransaction,
+      lastReservation as any,
       user,
       customer,
       await this.shippingService.calcShipmentWeightFromProductVariantIDs(
@@ -400,7 +394,7 @@ export class ReservationService {
     }
   }
 
-  async getReservation(reservationNumber: number) {
+  private async getReservation(reservationNumber: number) {
     return await this.prisma.client.reservation.findUnique({
       where: {
         reservationNumber,
@@ -438,7 +432,8 @@ export class ReservationService {
             email: true,
           },
         },
-        returnedPackage: {
+        returnPackages: {
+          orderBy: { createdAt: "desc" },
           select: {
             id: true,
           },
@@ -1016,6 +1011,56 @@ export class ReservationService {
     }
   }
 
+  private async updateBagItemsForReservation({
+    newProductVariantsBeingReserved,
+    customerId,
+    physicalProductsBeingReserved,
+  }) {
+    const promises = []
+    const bagItemsToUpdate = await this.prisma.client.bagItem.findMany({
+      where: {
+        productVariant: {
+          id: {
+            in: newProductVariantsBeingReserved,
+          },
+        },
+        customer: {
+          id: customerId,
+        },
+      },
+      select: {
+        id: true,
+        productVariant: {
+          select: {
+            physicalProducts: { select: { seasonsUID: true } },
+            id: true,
+          },
+        },
+      },
+    })
+    for (const bagItem of bagItemsToUpdate) {
+      const physicalProductToConnect = bagItem.productVariant.physicalProducts.find(
+        a =>
+          physicalProductsBeingReserved
+            .map(a => a.seasonsUID)
+            .includes(a.seasonsUID)
+      )
+      promises.push(
+        this.prisma.client.bagItem.update({
+          where: { id: bagItem.id },
+          data: {
+            physicalProduct: {
+              connect: { seasonsUID: physicalProductToConnect.seasonsUID },
+            },
+            status: "Reserved",
+          },
+        })
+      )
+    }
+
+    return promises
+  }
+
   private async getNewProductVariantsBeingReserved({
     productVariantIDs,
     customerId,
@@ -1063,6 +1108,9 @@ export class ReservationService {
   private async createReservationData(
     seasonsToCustomerTransaction,
     customerToSeasonsTransaction,
+    lastReservation: {
+      returnPackages: Array<Pick<Package, "id"> & { events: { id: string }[] }>
+    },
     user: User,
     customer: Customer,
     shipmentWeight: number,
@@ -1092,6 +1140,8 @@ export class ReservationService {
     }
     const uniqueReservationNumber = await this.reservationUtils.getUniqueReservationNumber()
 
+    const returnPackagesToCarryOver =
+      lastReservation?.returnPackages?.filter(a => a.events.length === 0) || []
     let createData = Prisma.validator<Prisma.ReservationCreateInput>()({
       products: {
         connect: physicalProductSUIDs,
@@ -1143,7 +1193,7 @@ export class ReservationService {
           },
         },
       },
-      returnedPackage: {
+      returnPackages: {
         create: {
           transactionID: customerToSeasonsTransaction.object_id,
           shippingLabel: {
@@ -1167,6 +1217,9 @@ export class ReservationService {
             },
           },
         },
+        connect: returnPackagesToCarryOver.map(a => ({
+          id: a.id,
+        })),
       },
       reservationNumber: uniqueReservationNumber,
       lastLocation: {

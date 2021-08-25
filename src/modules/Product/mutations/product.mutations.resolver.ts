@@ -4,6 +4,7 @@ import { Select } from "@app/decorators/select.decorator"
 import { Args, Info, Mutation, Resolver } from "@nestjs/graphql"
 import { BagItemStatus } from "@prisma/client"
 import { PrismaService } from "@prisma1/prisma.service"
+import slugify from "slugify"
 
 import { BagService } from "../services/bag.service"
 import { ProductService } from "../services/product.service"
@@ -36,68 +37,51 @@ export class ProductMutationsResolver {
   }
 
   @Mutation()
-  async deleteBagItem(@Args() { itemID, type }, @Application() application) {
-    if (application === "spring") {
-      await this.bagService.deleteBagItemFromAdmin(itemID, type)
-    } else {
-      await this.prisma.client.bagItem.delete({ where: { id: itemID } })
-    }
-    return true
-  }
-
-  @Mutation()
   async swapBagItem(
-    @Args() { oldItemID, physicalProduct, customerID },
+    @Args() { oldItemID, physicalProductWhere },
     @Application() application
   ) {
-    if (application === "spring") {
-      const type = "Delete"
-      const status = "Reserved"
-      const saved = false
-
-      const physicalProductForSwap = await this.prisma.client.physicalProduct.findUnique(
-        {
-          where: {
-            seasonsUID: physicalProduct.seasonsUID,
-          },
-        }
-      )
-      if (physicalProductForSwap.inventoryStatus === "Reservable") {
-        await this.bagService.deleteBagItemFromAdmin(oldItemID, type)
-        return await this.bagService.addBagItemFromAdmin(
-          customerID,
-          physicalProductForSwap,
-          status,
-          saved
-        )
-      } else {
-        throw new Error("This item is not reservable")
-      }
+    // throw an explicit error if application !== "spring"
+    if (application !== "spring") {
+      throw new Error("TODO")
     }
+    const physicalProductForSwap = await this.prisma.client.physicalProduct.findUnique(
+      {
+        where: {
+          seasonsUID: physicalProductWhere.seasonsUID,
+        },
+        select: { id: true, inventoryStatus: true, seasonsUID: true },
+      }
+    )
+    if (physicalProductForSwap.inventoryStatus !== "Reservable") {
+      throw new Error("This item is not reservable")
+    }
+
+    const type = "Delete"
+    const status = "Reserved"
+    const saved = false
+
+    return await this.bagService.swapBagItem(oldItemID, physicalProductForSwap)
   }
 
   @Mutation()
-  async addToBag(
-    @Args() args,
-    @Customer() customer,
-    @Select() select,
-    @Application() application
-  ) {
-    if (application === "spring") {
-      const { customerID, item, status, saved } = args
-      return await this.bagService.addBagItemFromAdmin(
-        customerID,
-        item,
-        status,
-        saved
-      )
-    } else {
-      if (!customer) {
-        throw new Error(`Can not add to bag without a logged in customer`)
-      }
-      const { item } = args
-      return await this.bagService.addToBag(item, customer, select)
+  async addToBag(@Args() args, @Customer() customer, @Select() select) {
+    if (!customer) {
+      throw new Error(`Can not add to bag without a logged in customer`)
     }
+    const { item } = args
+    return await this.bagService.addToBag(item, customer, select)
+  }
+
+  @Mutation()
+  async upsertCategory(@Args() { where, data }, @Select() select) {
+    const cat = await this.prisma.client.category.upsert({
+      where,
+      create: { ...data, slug: slugify(data.name).toLowerCase() },
+      update: data,
+      select,
+    })
+    return cat
   }
 
   @Mutation()

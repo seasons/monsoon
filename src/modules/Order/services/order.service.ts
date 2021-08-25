@@ -14,7 +14,6 @@ import {
   PhysicalProduct,
   PhysicalProductPrice,
 } from "@prisma/client"
-import { OrderLineItemRecordType } from "@prisma/client"
 import {
   BillingInfo,
   Category,
@@ -22,13 +21,14 @@ import {
   Location,
   Order,
   OrderLineItem,
+  OrderLineItemRecordType,
   Prisma,
   ProductVariant,
   User,
 } from "@prisma/client"
 import { PrismaService } from "@prisma1/prisma.service"
 import chargebee from "chargebee"
-import { pick } from "lodash"
+import { merge, pick } from "lodash"
 
 type InvoiceCharge = {
   amount: number
@@ -680,9 +680,12 @@ export class OrderService {
     user: User
     select: Prisma.OrderSelect
   }): Promise<Order> {
+    let promises = []
+
     const orderWithData = await this.prisma.client.order.findUnique({
       where: { id: order.id },
       select: {
+        id: true,
         orderNumber: true,
         lineItems: {
           select: { recordType: true, recordID: true, needShipping: true },
@@ -808,50 +811,97 @@ export class OrderService {
         newInventoryStatus: "Offloaded",
       })
     } else {
-      // Item is with the customer
+      // Item is with the customer.
+      // - Delete the bag item.
+      // - If this is the last item in their bag, mark the reservation as Completed
       updateProductVariantData = this.productVariant.getCountsForStatusChange({
         productVariant,
         oldInventoryStatus: "Reserved",
         newInventoryStatus: "Offloaded",
       })
+
+      const reservedBagItems = await this.prisma.client.bagItem.findMany({
+        where: {
+          customer: { id: customer.id },
+          status: { in: ["Received", "Reserved"] },
+        },
+        select: { id: true, productVariant: { select: { id: true } } },
+      })
+      const bagItemToDelete = reservedBagItems.find(
+        a => a.productVariant.id === productVariant.id
+      )
+      promises.push(
+        this.prisma.client.bagItem.delete({ where: { id: bagItemToDelete.id } })
+      )
+
+      const reservationToUpdate = await this.prisma.client.reservation.findFirst(
+        {
+          where: {
+            products: { some: { productVariant: { id: productVariant.id } } },
+            customer: { id: customer.id },
+          },
+          orderBy: { createdAt: "desc" },
+          select: { id: true, status: true },
+        }
+      )
+      const shouldCompleteReservation =
+        reservedBagItems.length === 1 && !!bagItemToDelete
+      promises.push(
+        this.prisma.client.reservation.update({
+          where: { id: reservationToUpdate.id },
+          data: {
+            purchasedProducts: { connect: { id: physicalProductId } },
+            status: shouldCompleteReservation
+              ? "Completed"
+              : reservationToUpdate.status,
+          },
+        })
+      )
     }
 
-    const [updatedOrder] = await this.prisma.client.$transaction([
-      this.prisma.client.order.update({
-        where: { id: order.id },
-        data: {
-          status: orderNeedsShipping ? "Submitted" : "Fulfilled",
-          paymentStatus:
-            chargebeeInvoice.status === "paid" ? "Paid" : "NotPaid",
-          ...orderShippingUpdate,
-        },
-      }),
-      this.prisma.client.physicalProduct.update({
-        where: { id: physicalProductId },
-        data: {
-          inventoryStatus: "Offloaded",
-          offloadMethod: "SoldToUser",
-          offloadNotes: `Order Number: ${orderWithData.orderNumber}`,
-        },
-      }),
-      this.prisma.client.productVariant.update({
-        where: { id: productVariant.id },
-        data: updateProductVariantData,
-      }),
-    ])
+    promises.push(
+      ...[
+        this.prisma.client.physicalProduct.update({
+          where: { id: physicalProductId },
+          data: {
+            inventoryStatus: "Offloaded",
+            offloadMethod: "SoldToUser",
+            offloadNotes: `Order Number: ${orderWithData.orderNumber}`,
+          },
+        }),
+        this.prisma.client.productVariant.update({
+          where: { id: productVariant.id },
+          data: updateProductVariantData,
+        }),
+        this.prisma.client.order.update({
+          where: { id: order.id },
+          data: {
+            status: orderNeedsShipping ? "Submitted" : "Fulfilled",
+            paymentStatus:
+              chargebeeInvoice.status === "paid" ? "Paid" : "NotPaid",
+            ...orderShippingUpdate,
+          },
+          select: merge(
+            select,
+            Prisma.validator<Prisma.OrderSelect>()({
+              id: true,
+              orderNumber: true,
+            })
+          ),
+        }),
+      ]
+    )
+    const results = await this.prisma.client.$transaction(promises)
+    const updatedOrder = results.pop()
 
-    await this.email.sendBuyUsedOrderConfirmationEmail(user, updatedOrder)
+    await this.email.sendBuyUsedOrderConfirmationEmail(user, orderWithData)
 
-    return (await this.prisma.client.order.findUnique({
-      where: { id: updatedOrder.id },
-      select,
-    })) as Order
+    return updatedOrder
   }
 
   async updateOrderStatus({
     orderID,
     status,
-
     select,
   }: {
     orderID: string

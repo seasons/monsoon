@@ -374,14 +374,18 @@ export class DataScheduledJobs {
                 select: {
                   reservationNumber: true,
                   status: true,
-                  returnedPackage: {
+                  returnPackages: {
+                    orderBy: { createdAt: "desc" },
+                    take: 1,
                     select: { items: { select: { seasonsUID: true } } },
                   },
                 },
               }
             )
+            // TODO: This code isn't really accurate, because it assumes the most recent return package is
+            // the one with the items. That may not be the case.
             const returnedItems =
-              lastCompletedReservation?.returnedPackage?.items?.map(
+              head(lastCompletedReservation?.returnPackages)?.items?.map(
                 a => a.seasonsUID
               ) || []
             if (returnedItems.includes(physProd.inventoryStatus))
