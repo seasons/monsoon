@@ -1,6 +1,7 @@
 generator client {
-  provider      = "prisma-client-js"
-  binaryTargets = ["native", "linux-musl", "debian-openssl-1.1.x"]
+  provider        = "prisma-client-js"
+  binaryTargets   = ["native", "linux-musl", "debian-openssl-1.1.x"]
+  previewFeatures = ["referentialActions"]
 }
 
 datasource db {
@@ -654,14 +655,14 @@ model Customer {
   referrerId              String?                          @map("referrer") @db.VarChar(30)
   referrer                Customer?                        @relation("CustomerToCustomer_referrer", fields: [referrerId], references: [id])
   utmId                   String?                          @map("utm") @db.VarChar(30)
-  admissions              CustomerAdmissionsData?          @relation(fields: [admissionsId], references: [id])
+  admissions              CustomerAdmissionsData?          @relation(fields: [admissionsId], references: [id], onDelete: Cascade)
   billingInfo             BillingInfo?                     @relation(fields: [billingInfoId], references: [id])
-  detail                  CustomerDetail?                  @relation(fields: [detailId], references: [id])
+  detail                  CustomerDetail?                  @relation(fields: [detailId], references: [id], onDelete: Cascade)
   user                    User?                            @relation(fields: [userId], references: [id])
   utm                     UTMData?                         @relation(fields: [utmId], references: [id])
   bagItems                BagItem[]
   referrees               Customer[]                       @relation("CustomerToCustomer_referrer")
-  membership              CustomerMembership?
+  membership              CustomerMembership? 
   notificationBarReceipts CustomerNotificationBarReceipt[]
   orders                  Order[]
   productNotifications    ProductNotification[]
@@ -715,7 +716,7 @@ model CustomerDetail {
   topSizes           String[]
   waistSizes         Int[]
   styles             CustomerStyle[]
-  shippingAddress    Location?         @relation(fields: [shippingAddressId], references: [id])
+  shippingAddress    Location?         @relation(fields: [shippingAddressId], references: [id], onDelete: Cascade)
   stylePreferences   StylePreferences? @relation(fields: [stylePreferencesId], references: [id])
   customer           Customer?
 }
@@ -727,7 +728,7 @@ model CustomerMembership {
   planId                   String                              @map("plan") @db.VarChar(30)
   giftId                   String?
   membershipSubscriptionId String?                             @map("subscription") @db.VarChar(30)
-  customer                 Customer                            @relation(fields: [customerId], references: [id])
+  customer                 Customer                            @relation(fields: [customerId], references: [id], onDelete: Cascade)
   plan                     PaymentPlan                         @relation(fields: [planId], references: [id])
   subscription             CustomerMembershipSubscriptionData? @relation(fields: [membershipSubscriptionId], references: [id])
   pauseRequests            PauseRequest[]
@@ -924,7 +925,7 @@ model RentalInvoice {
   createdAt      DateTime                @default(now())
   updatedAt      DateTime                @updatedAt
   membershipId   String                  @map("membership") @db.VarChar(30)
-  membership     CustomerMembership      @relation(fields: [membershipId], references: [id])
+  membership     CustomerMembership      @relation(fields: [membershipId], references: [id], onDelete: Cascade)
   billingStartAt DateTime
   billingEndAt   DateTime
   status         RentalInvoiceStatus     @default(Draft)
@@ -1534,7 +1535,7 @@ model User {
   deviceDataId                  String?                        @map("deviceData") @db.VarChar(30)
   roles                         UserRole[]
   deviceData                    UserDeviceData?                @relation(fields: [deviceDataId], references: [id])
-  pushNotification              UserPushNotification?          @relation(fields: [pushNotificationId], references: [id])
+  pushNotification              UserPushNotification?          @relation(fields: [pushNotificationId], references: [id], onDelete: Cascade)
   activeAdminUser               ActiveAdminUser?
   adminActionLogs               AdminActionLog[]
   customer                      Customer?
@@ -1573,7 +1574,7 @@ model UserPushNotificationInterest {
   status                 Boolean
   userId                 String?                          @map("user") @db.VarChar(30)
   userPushNotificationId String?                          @map("userPushNotification") @db.VarChar(30)
-  user                   User?                            @relation(fields: [userId], references: [id])
+  user                   User?                            @relation(fields: [userId], references: [id], onDelete: Cascade)
   userPushNotification   UserPushNotification?            @relation(fields: [userPushNotificationId], references: [id])
 }
 
