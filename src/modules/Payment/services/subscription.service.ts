@@ -537,4 +537,121 @@ export class SubscriptionService {
       })
       .request()
   }
+
+  async calcDaysRented(invoice, physicalProduct) {
+    /*
+        Find the package on which it was sent to the customer. Call this RR
+        define f getDeliveryDate(RR) => RR.sentPackage.deliveredAt || RR.createdAt + X (3-5)
+
+        If RR is still Queued, Picked, Packed, Hold, Blocked, Unknown OR
+           RR is shipped, in BusinessToCustomerPhase:
+           daysRented = 0
+
+        TODO: Is it possible for it be "Delivered" in "CustomerToBusiness" phase? Address if so
+        If RR is Delivered and its in BusinessToCustomer phase:
+          endDate = today
+
+          deliveryDate = getDeliveryDate(RR)
+          startDate = max(deliveryDate, invoice.startBillingAt)
+
+          daysRented = endDate - startDate + 1
+
+        If RR is Completed:
+          deliveryDate = getDeliveryDate(RR)
+          startDate = max(deliveryDate, invoice.startBillingAt)
+
+          If item in reservation.returnedProducts:  
+            endDate = returnedPackage.enteredDeliverySystemAt || reservation.completedAt - Z (data loss cushion. 3 days)
+          Else:
+            // It should be in his bag, with status Reserved or Received. Confirm this is so.
+            endDate = today
+
+          daysRented = endDate - startDate + 1
+        
+        If RR is Cancelled:
+          daysRented = 0
+
+        If RR is Lost:
+          If the sentPackage got lost, daysRented = 0
+          If the returnedPackage got lost,
+            deliveryDate = getDeliveryDate(RR)
+            startDate = max(deliveryDate, invoice.startBillingAt)
+            endDate = returnedPackage.lostAt
+            daysRented = endDate - startDate + 1 - Y (lostCushion, call it 1-3)
+
+        If RR is Received:
+          // TODO: Only 2 reservations with this status. See if we can deprecate it
+
+
+        */
+    const customer = invoice.membership.customer
+    const sentPackage = await this.prisma.client.package.findFirst({
+      where: {
+        items: { some: { seasonsUID: physicalProduct.seasonsUID } },
+        reservationOnSentPackage: { customer: { id: customer.id } },
+      },
+      orderBy: { createdAt: "desc" },
+      select: {
+        deliveredAt: true,
+        reservationOnSentPackage: {
+          select: {
+            id: true,
+            status: true,
+            phase: true,
+            reservationNumber: true,
+          },
+        },
+      },
+    })
+    const relevantReservation = sentPackage.reservationOnSentPackage
+
+    let daysRented, rentalStartedAt, rentalEndedAt, comment
+    comment = `Sent on reservation ${relevantReservation.reservationNumber} with status ${relevantReservation.status}.`
+    switch (relevantReservation.status) {
+      case "Hold":
+      case "Blocked":
+      case "Unknown":
+        daysRented = 0
+        comment += ` Unknown rental status.`
+        break
+      case "Queued":
+      case "Picked":
+      case "Packed":
+        daysRented = 0
+        comment += ` Not yet shipped to customer.`
+        break
+
+      case "Shipped":
+        if (relevantReservation.phase === "BusinessToCustomer") {
+          daysRented = 0
+          comment += ` En route to customer.`
+        } else {
+          /* 
+          Simplest case: Customer has one reservation. This item was sent on that reservation, and is now being returned with the label provided on that item.
+            See if this item is on the `returnedProducts` array for the reservation. 
+              If it is, the return date is the date the return package entered the carrier network, with today - a cushion as the fallback. 
+              If it isn't, 
+          
+          */
+          // TODO: Figure out this logic. How do we know if the item is on its way back or not?
+        }
+    }
+
+    // const receivedPackage = await this.prisma.client.package.findFirst({
+    //   where: {
+    //     items: { some: { seasonsUID: physicalProduct.seasonsUID } },
+    //     reservationOnReturnedPackage: {
+    //       id: sentPackage.reservationOnSentPackage.id,
+    //     },
+    //   },
+    //   orderBy: { createdAt: "desc" },
+    //   select: { enteredDeliverySystemAt: true },
+    // })
+    return {
+      daysRented: 5,
+      rentalStartedAt: new Date(),
+      rentalEndedAt: new Date(),
+      comment: "",
+    } // TODO: Implement
+  }
 }
