@@ -68,8 +68,53 @@ describe("Subscription Service", () => {
 
     // Reserved in a previous billing cycle and...
     it("works for an item that was both reserved and returned this billing cycle", async () => {
-      expect(1).toBe(0)
+      const reservableProdVar = await prisma.client.productVariant.findFirst({
+        where: { reservable: { gt: 1 } },
+      })
+      await prisma.client.bagItem.create({
+        data: {
+          customer: { connect: { id: testCustomer.id } },
+          productVariant: { connect: { id: reservableProdVar.id } },
+          status: "Added",
+          saved: false,
+        },
+      })
+      let reservation = await reservationService.reserveItems(
+        [reservableProdVar.id],
+        null,
+        testCustomer.user,
+        testCustomer as any,
+        { reservationNumber: true, products: { select: { seasonsUID: true } } }
+      )
+      const twentyDaysAgo = utils.xDaysAgoISOString(20)
+      await prisma.client.reservation.update({
+        where: { id: reservation.id },
+        data: { createdAt: twentyDaysAgo },
+      })
+
+      // Set the deliveredAt timestamps on the sentPackage
+      const eighteenDaysAgo = utils.xDaysAgoISOString(18)
+      await prisma.client.package.update({
+        where: { id: reservation.sentPackage.id },
+        data: { deliveredAt: eighteenDaysAgo },
+      })
+
+      // process the return
+      await reservationService.processReservation(
+        reservation.reservationNumber,
+        [
+          {
+            productStatus: "Dirty",
+            productUID: reservation.products[0].seasonsUID,
+            returned: true,
+            notes: "",
+          },
+        ]
+      )
+
+      // run the expects
     })
+
     it("works for an item on an active reservation that was created this billing cycle", async () => {
       /* Create a 15 day old reservation with a sent package that arrived 10 days ago */
       const reservableProdVar = await prisma.client.productVariant.findFirst({
