@@ -23,7 +23,8 @@ export class ReservationUtilsService {
 
   async updateReturnPackageOnCompletedReservation(
     prismaReservation: any,
-    returnedPhysicalProducts: any[] // fields specified in getPrismaReservationWithNeededFields
+    returnedPhysicalProducts: any[], // fields specified in getPrismaReservationWithNeededFields
+    trackingNumber: string
   ): Promise<[PrismaPromise<Package> | PrismaPromise<Reservation>]> {
     const returnedPhysicalProductIDs: {
       id: string
@@ -37,8 +38,22 @@ export class ReservationUtilsService {
       returnedProductVariantIDs
     )
 
+<<<<<<< HEAD
     // TODO: Update the logic we use get the package to update. Make use of scanned shipping label.
     const packageToUpdate = head(prismaReservation.returnPackages)
+=======
+    let packageToUpdate = prismaReservation.returnPackages.find(
+      a => a.shippingLabel.trackingNumber === trackingNumber
+    )
+    if (!packageToUpdate) {
+      // TODO: Once we get the frontend to send this value, we should no longer default
+      // to the first return package. We should instead throw the error outlined below.
+      packageToUpdate = head(prismaReservation.returnPackages)
+      // throw new Error(
+      //   `No return package found with tracking number: ${trackingNumber}`
+      // )
+    }
+>>>>>>> e2f004a4dc024b38cf4d303d4d9d615f91675214
     return [
       this.prisma.client.package.update({
         data: {

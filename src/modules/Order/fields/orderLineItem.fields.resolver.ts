@@ -7,6 +7,25 @@ export class OrderLineItemFieldsResolver {
   constructor() {}
 
   @ResolveField()
+  async physicalProduct(
+    @Parent() orderItem,
+    @Loader({
+      params: {
+        model: "PhysicalProduct",
+        keyToDataRelationship: "ManyToOne",
+      },
+      includeInfo: true,
+    })
+    physicalProductLoader
+  ) {
+    if (orderItem.recordType && orderItem.recordType === "PhysicalProduct") {
+      return await physicalProductLoader.load(orderItem.recordID)
+    }
+
+    return null
+  }
+
+  @ResolveField()
   async productVariant(
     @Parent() orderItem,
     @Loader({
