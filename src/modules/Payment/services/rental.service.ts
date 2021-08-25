@@ -69,11 +69,6 @@ export class RentalService {
       itemDeliveredAt,
       invoiceWithData.billingStartAt
     )
-    comment = this.addDeliveryComment(
-      comment,
-      itemDeliveredAt,
-      invoiceWithData.billingStartAt
-    )
 
     const rentalStartedAt = deliveredThisBillingCycle
       ? itemDeliveredAt
@@ -160,29 +155,6 @@ export class RentalService {
       rentalEndedAt,
       comment,
     }
-  }
-
-  private addDeliveryComment(comment, itemDeliveredAt, invoiceBillingStartAt) {
-    let billingCycleCommentDetail
-    let deliveredAt
-    const deliveredThisBillingCycle = this.timeUtils.isLaterDate(
-      itemDeliveredAt,
-      invoiceBillingStartAt
-    )
-    if (deliveredThisBillingCycle) {
-      deliveredAt = itemDeliveredAt
-      billingCycleCommentDetail = "this billing cycle"
-    } else {
-      deliveredAt = invoiceBillingStartAt
-      billingCycleCommentDetail = "on a previous billing cycle"
-    }
-
-    let newComment = `${comment}`
-    newComment += `\nDelivered: ${billingCycleCommentDetail} on ${moment(
-      deliveredAt
-    ).format("lll")}`
-
-    return newComment
   }
 
   private getSafeRentalEndDate = (
