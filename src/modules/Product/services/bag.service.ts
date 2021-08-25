@@ -76,7 +76,7 @@ export class BagService {
     })
     return result
   }
-
+  // Mutation for admins to swap a bagItem
   async swapBagItem(
     bagItemID,
     physicalProductWhere: Prisma.PhysicalProductWhereUniqueInput
@@ -112,13 +112,6 @@ export class BagService {
     const lastReservation = (await this.utils.getLatestReservation(
       customerID,
       undefined
-      // {
-      //   products: {
-      //     select: {
-      //       warehouseLocation: true,
-      //     },
-      //   },
-      // }
     )) as any
 
     if (
@@ -278,10 +271,6 @@ export class BagService {
 
     return addedBagItem
   }
-
-  /*
-   * Mutation for admins to delete or return a bagItem from a customer's bag
-   */
 
   async removeFromBag(item, saved, customer): Promise<BagItem> {
     // TODO: removeFromBag has been deprecated, use deleteBagItem

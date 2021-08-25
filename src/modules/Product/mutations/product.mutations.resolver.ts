@@ -35,7 +35,7 @@ export class ProductMutationsResolver {
       select
     )
   }
-
+  /* swapBagitem mutation replaces addBagItemfromAdmin and deleteBagItemFromAdmin */
   @Mutation()
   async swapBagItem(
     @Args() { oldItemID, physicalProductWhere },

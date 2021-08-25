@@ -54,8 +54,6 @@ type Mutation {
   # removeFromBag has been deprecated use deleteBagItem
   removeFromBag(item: ID!, saved: Boolean, customer: ID): BagItem!
     @hasRole(roles: [Customer])
-  # deleteBagItem(itemID: ID!, type: DeleteBagItemType): Boolean!
-  #   @hasRole(roles: [Customer])
   updateCustomer(
     data: CustomerUpdateInput!
     where: CustomerWhereUniqueInput!
