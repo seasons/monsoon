@@ -278,7 +278,6 @@ export class ReservationService {
         customer?.id,
         nextFreeSwapDate
       )
-      console.log(earlySwapLineItems)
       await this.addLineItemsToReservation(
         [...earlySwapLineItems, ...shippingLineItems],
         reservation.id

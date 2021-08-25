@@ -9,18 +9,17 @@ import { head, merge } from "lodash"
 import moment from "moment"
 
 import { PaymentService } from "../services/payment.service"
-import { SubscriptionService } from "../services/subscription.service"
+import { RentalService } from "../services/rental.service"
 
 class PaymentServiceMock {
   addEarlySwapCharge = async () => null
   addShippingCharge = async () => {}
 }
 
-describe("Subscription Service", () => {
+describe("Rental Service", () => {
   let prisma: PrismaService
-  let subscriptionService: SubscriptionService
+  let rentalService: RentalService
   let reservationService: ReservationService
-  let testUtils: TestUtilsService
   let utils: UtilsService
   let cleanupFuncs = []
   let testCustomer: any
@@ -32,10 +31,7 @@ describe("Subscription Service", () => {
     const moduleRef = await moduleBuilder.compile()
 
     prisma = moduleRef.get<PrismaService>(PrismaService)
-    subscriptionService = moduleRef.get<SubscriptionService>(
-      SubscriptionService
-    )
-    testUtils = moduleRef.get<TestUtilsService>(TestUtilsService)
+    rentalService = moduleRef.get<RentalService>(RentalService)
     utils = moduleRef.get<UtilsService>(UtilsService)
     reservationService = moduleRef.get<ReservationService>(ReservationService)
   })
@@ -157,7 +153,7 @@ describe("Subscription Service", () => {
           comment,
           rentalEndedAt,
           rentalStartedAt,
-        } = await subscriptionService.calcDaysRented(
+        } = await rentalService.calcDaysRented(
           rentalInvoiceToBill,
           physicalProductToBill
         )
@@ -258,7 +254,7 @@ describe("Subscription Service", () => {
           comment,
           rentalEndedAt,
           rentalStartedAt,
-        } = await subscriptionService.calcDaysRented(
+        } = await rentalService.calcDaysRented(
           rentalInvoiceToBill,
           physicalProductToBill
         )
@@ -294,6 +290,8 @@ describe("Subscription Service", () => {
       it("reserved and held. made 2 new reservations since initial", async () => {
         expect(0).toBe(1)
       })
+
+      // Queued, Hold, Picked, Packed, Unknown, Blocked
     })
 
     describe("Items reserved in a previous billing cycle", () => {})
@@ -365,7 +363,7 @@ describe("Subscription Service", () => {
         comment,
         rentalEndedAt,
         rentalStartedAt,
-      } = await subscriptionService.calcDaysRented(
+      } = await rentalService.calcDaysRented(
         rentalInvoiceToBill,
         physicalProductToBill
       )
@@ -529,36 +527,3 @@ const createTestCustomer = async ({
     client.customer.delete({ where: { id: customer.id } })
   return { cleanupFunc, customer }
 }
-
-// const calcDaysRented = async (testCustomerId, client, subscriptionService) => {
-//   const custWithData = await client.customer.findFirst({
-//     where: { id: testCustomerId },
-//     select: {
-//       membership: {
-//         select: {
-//           rentalInvoices: {
-//             select: {
-//               id: true,
-//               reservations: true,
-//               products: true,
-//               status: true,
-//               billingStartAt: true,
-//               billingEndAt: true,
-//             },
-//           },
-//         },
-//       },
-//     },
-//   })
-//   const physicalProductToBill = reservation.products[0]
-//   const rentalInvoiceToBill = custWithData.membership.rentalInvoices[0]
-//   const {
-//     daysRented,
-//     comment,
-//     rentalEndedAt,
-//     rentalStartedAt,
-//   } = await subscriptionService.calcDaysRented(
-//     rentalInvoiceToBill,
-//     physicalProductToBill
-//   )
-// }

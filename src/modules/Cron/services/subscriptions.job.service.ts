@@ -1,4 +1,5 @@
 import { ErrorService } from "@app/modules/Error/services/error.service"
+import { RentalService } from "@app/modules/Payment/services/rental.service"
 import { SubscriptionService } from "@app/modules/Payment/services/subscription.service"
 import { ProductUtilsService } from "@app/modules/Product"
 import { PaymentUtilsService } from "@app/modules/Utils/services/paymentUtils.service"
@@ -27,7 +28,8 @@ export class SubscriptionsScheduledJobs {
     private readonly error: ErrorService,
     private readonly paymentUtils: PaymentUtilsService,
     private readonly productUtils: ProductUtilsService,
-    private readonly subscription: SubscriptionService
+    private readonly subscription: SubscriptionService,
+    private readonly rental: RentalService
   ) {}
 
   @Cron(CronExpression.EVERY_DAY_AT_4AM)
@@ -297,7 +299,7 @@ export class SubscriptionsScheduledJobs {
         const {
           daysRented,
           ...daysRentedMetadata
-        } = await this.subscription.calcDaysRented(invoice, physicalProduct)
+        } = await this.rental.calcDaysRented(invoice, physicalProduct)
         const dailyRentalPrice = this.productUtils.calcRentalPrice(
           physicalProduct.productVariant.product,
           "daily"
