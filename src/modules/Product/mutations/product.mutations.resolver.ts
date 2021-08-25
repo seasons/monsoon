@@ -85,17 +85,6 @@ export class ProductMutationsResolver {
   }
 
   @Mutation()
-  async upsertCategory(@Args() { where, data }, @Select() select) {
-    const cat = await this.prisma.client.category.upsert({
-      where,
-      create: { ...data, slug: slugify(data.name).toLowerCase() },
-      update: data,
-      select,
-    })
-    return cat
-  }
-
-  @Mutation()
   async addViewedProduct(
     @Args() { item },
     @Customer() customer,
