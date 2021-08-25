@@ -12,23 +12,14 @@ export class OrderLineItemFieldsResolver {
     @Loader({
       params: {
         model: "PhysicalProduct",
-        formatWhere: keys =>
-          Prisma.validator<Prisma.PhysicalProductWhereInput>()({
-            id: {
-              in: keys,
-            },
-          }),
-        infoFragment: `fragment EnsurePhysicalProduct on PhysicalProduct {id}`,
         keyToDataRelationship: "ManyToOne",
       },
       includeInfo: true,
     })
     physicalProductLoader
   ) {
-    if (orderItem.recordType === "PhysicalProduct") {
-      const result = await physicalProductLoader.load(orderItem.recordID)
-
-      return result
+    if (orderItem.recordType && orderItem.recordType === "PhysicalProduct") {
+      return await physicalProductLoader.load(orderItem.recordID)
     }
 
     return null
