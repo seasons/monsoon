@@ -38,10 +38,6 @@ export class ReservationUtilsService {
       returnedProductVariantIDs
     )
 
-<<<<<<< HEAD
-    // TODO: Update the logic we use get the package to update. Make use of scanned shipping label.
-    const packageToUpdate = head(prismaReservation.returnPackages)
-=======
     let packageToUpdate = prismaReservation.returnPackages.find(
       a => a.shippingLabel.trackingNumber === trackingNumber
     )
@@ -53,7 +49,6 @@ export class ReservationUtilsService {
       //   `No return package found with tracking number: ${trackingNumber}`
       // )
     }
->>>>>>> e2f004a4dc024b38cf4d303d4d9d615f91675214
     return [
       this.prisma.client.package.update({
         data: {
