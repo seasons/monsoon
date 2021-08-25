@@ -72,6 +72,7 @@ type OrderLineItem {
   updatedAt: DateTime!
   # Computed fields
   productVariant: ProductVariant
+  physicalProduct: PhysicalProduct
 }
 
 input CreateDraftedOrderInput {

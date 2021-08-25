@@ -508,6 +508,8 @@ model BagItem {
   customer          Customer?        @relation(fields: [customerId], references: [id])
   productVariant    ProductVariant?  @relation(fields: [productVariantId], references: [id])
   physicalProduct   PhysicalProduct? @relation(fields: [physicalProductId], references: [id])
+
+  @@unique([productVariantId, customerId])
 }
 
 model BillingInfo {
@@ -662,7 +664,7 @@ model Customer {
   utm                     UTMData?                         @relation(fields: [utmId], references: [id])
   bagItems                BagItem[]
   referrees               Customer[]                       @relation("CustomerToCustomer_referrer")
-  membership              CustomerMembership? 
+  membership              CustomerMembership?
   notificationBarReceipts CustomerNotificationBarReceipt[]
   orders                  Order[]
   productNotifications    ProductNotification[]
@@ -1051,7 +1053,6 @@ model PhysicalProduct {
   priceId                      String?                        @map("price") @db.VarChar(30)
   packedAt                     DateTime?
   productVariantId             String?                        @map("productVariant") @db.VarChar(30)
-  bagItem                      BagItem?
   location                     Location?                      @relation(fields: [locationId], references: [id])
   price                        PhysicalProductPrice?          @relation(fields: [priceId], references: [id])
   productVariant               ProductVariant?                @relation(fields: [productVariantId], references: [id])
@@ -1067,6 +1068,7 @@ model PhysicalProduct {
   rentalInvoiceLineItems       RentalInvoiceLineItem[]
   purchasedOnReservationId     String?                        @map("purchasedOnReservation") @db.VarChar(30)
   purchasedOnReservation       Reservation?                   @relation("ReservationToPurchasedProducts", fields: [purchasedOnReservationId], references: [id])
+  bagItems                     BagItem[]
 }
 
 model PhysicalProductPrice {
@@ -1235,8 +1237,8 @@ model ProductVariant {
   internalSize            Size?                    @relation(fields: [internalSizeId], references: [id])
   price                   ProductVariantPrice?     @relation(fields: [priceId], references: [id])
   product                 Product?                 @relation(fields: [productId], references: [id])
-  bagItems                BagItem[]
   physicalProducts        PhysicalProduct[]
+  bagItems                BagItem[]
   productNotifications    ProductNotification[]
   productVariantFeedbacks ProductVariantFeedback[]
   productVariantWants     ProductVariantWant[]

@@ -180,6 +180,7 @@ input ReservationWhereInput {
 input ReservationProcessReturnInput {
   reservationNumber: Int!
   productStates: [ProductStateInput!]!
+  trackingNumber: String
 }
 
 input ProductStateInput {

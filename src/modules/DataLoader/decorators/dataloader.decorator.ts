@@ -103,7 +103,7 @@ export const Loader: (
 const createKey = (type, operationName, variables, data) => {
   const { params } = data
   const name = `${type}-${
-    params ? params.query : ""
+    params ? params.model : ""
   }-${operationName}-${qs.stringify(variables)}`
 
   let paramString = ""
