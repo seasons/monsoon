@@ -17,6 +17,7 @@ import chargebee from "chargebee"
 import httpContext from "express-http-context"
 import { importSchema } from "graphql-import"
 import GraphQLJSON from "graphql-type-json"
+import { GraphQLUpload } from "graphql-upload"
 
 import {
   BlogModule,
@@ -124,7 +125,8 @@ const cache = (() => {
     console.error(e)
   }
 })()
-@Module({
+
+export const APP_MODULE_DEF = {
   imports: [
     ...scheduleModule,
     GraphQLModule.forRootAsync({
@@ -162,10 +164,7 @@ const cache = (() => {
           cacheControl: {
             defaultMaxAge: process.env.CACHE_MAX_AGE || 5,
           },
-          uploads: {
-            maxFileSize: 125000000, // 125 MB
-            maxFiles: 5,
-          },
+          uploads: false,
           introspection: true,
           formatError: error => {
             console.error(util.inspect(error, { depth: null }))
@@ -173,6 +172,7 @@ const cache = (() => {
           },
           resolvers: {
             JSON: GraphQLJSON,
+            Upload: GraphQLUpload,
           },
 
           cache,
@@ -214,5 +214,7 @@ const cache = (() => {
     },
     Logger,
   ],
-})
+}
+
+@Module(APP_MODULE_DEF)
 export class AppModule {}

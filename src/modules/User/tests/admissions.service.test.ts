@@ -545,7 +545,7 @@ const createEmailReceipts = (
   emailsSentXDaysAgoObject,
   emailId: EmailId
 ): Array<any> => {
-  const utils = new UtilsService(null, null)
+  const utils = new UtilsService(null)
 
   return Object.keys(emailsSentXDaysAgoObject).reduce(
     (emailReceipts, currentKey) => {

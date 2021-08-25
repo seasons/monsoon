@@ -16,6 +16,7 @@ import { Injectable } from "@nestjs/common"
 import {
   AdminActionLog,
   Customer,
+  Package,
   PhysicalProduct,
   Prisma,
   PrismaPromise,
@@ -121,7 +122,15 @@ export class ReservationService {
     }
 
     // Figure out which items the user is reserving anew and which they already have
-    const lastReservation = await this.utils.getLatestReservation(customer.id)
+    const lastReservation = await this.utils.getLatestReservation(
+      customer.id,
+      undefined,
+      {
+        returnPackages: {
+          select: { id: true, events: { select: { id: true } } },
+        },
+      }
+    )
     await this.validateLastReservation(lastReservation, items)
 
     // Get the most recent reservation that potentially carries products being kept in the new reservation
@@ -235,6 +244,7 @@ export class ReservationService {
     const reservationData = await this.createReservationData(
       seasonsToCustomerTransaction,
       customerToSeasonsTransaction,
+      lastReservation as any,
       user,
       customer,
       await this.shippingService.calcShipmentWeightFromProductVariantIDs(
@@ -428,7 +438,7 @@ export class ReservationService {
     }
   }
 
-  async getReservation(reservationNumber: number) {
+  private async getReservation(reservationNumber: number) {
     return await this.prisma.client.reservation.findUnique({
       where: {
         reservationNumber,
@@ -466,7 +476,8 @@ export class ReservationService {
             email: true,
           },
         },
-        returnedPackage: {
+        returnPackages: {
+          orderBy: { createdAt: "desc" },
           select: {
             id: true,
           },
@@ -788,6 +799,7 @@ export class ReservationService {
       "Picked",
       "Hold",
     ].includes(reservation.status)
+
     // If setting to cancelled, execute implied updates
     if (changingStatusTo("Cancelled")) {
       if (!canCancelReservation) {
@@ -841,6 +853,10 @@ export class ReservationService {
           `Cannot mark reservation with status ${reservation.status} as Lost.`
         )
       }
+
+      data["lostAt"] = new Date()
+      data["lostInPhase"] = reservation.phase
+
       // If it's on the way to the customer, we know all new products got lost. If it's on the way
       //  back to us and they've used the return flow, we know all the "returnedProducts" got lost.
       const productsToUpdate =
@@ -873,6 +889,24 @@ export class ReservationService {
             this.prisma.client.bagItem.delete({ where: { id: bagItemId } })
           )
         }
+      }
+
+      // Set lostAt on the sent package if appropriate.
+      if (reservation.phase === "BusinessToCustomer") {
+        // We don't try to set a `lostAt` timestamp if the reservation is in CustomerToBusiness
+        // phase because we are not a priori sure which package got lost.
+        const resyWithSentPackage = await this.prisma.client.reservation.findUnique(
+          {
+            where: { id: reservation.id },
+            select: { sentPackage: { select: { id: true } } },
+          }
+        )
+        promises.push(
+          this.prisma.client.package.update({
+            where: { id: resyWithSentPackage.sentPackage.id },
+            data: { lostAt: new Date() },
+          })
+        )
       }
     }
 
@@ -1091,6 +1125,9 @@ export class ReservationService {
   private async createReservationData(
     seasonsToCustomerTransaction,
     customerToSeasonsTransaction,
+    lastReservation: {
+      returnPackages: Array<Pick<Package, "id"> & { events: { id: string }[] }>
+    },
     user: User,
     customer: Customer,
     shipmentWeight: number,
@@ -1118,8 +1155,10 @@ export class ReservationService {
     interface UniqueIDObject {
       id: string
     }
-    const uniqueReservationNumber = await this.reservationUtils.getUniqueReservationNumber()
+    const uniqueReservationNumber = await this.utils.getUniqueReservationNumber()
 
+    const returnPackagesToCarryOver =
+      lastReservation?.returnPackages?.filter(a => a.events.length === 0) || []
     let createData = Prisma.validator<Prisma.ReservationCreateInput>()({
       id: cuid(),
       products: {
@@ -1172,7 +1211,7 @@ export class ReservationService {
           },
         },
       },
-      returnedPackage: {
+      returnPackages: {
         create: {
           transactionID: customerToSeasonsTransaction.object_id,
           shippingLabel: {
@@ -1196,6 +1235,9 @@ export class ReservationService {
             },
           },
         },
+        connect: returnPackagesToCarryOver.map(a => ({
+          id: a.id,
+        })),
       },
       reservationNumber: uniqueReservationNumber,
       lastLocation: {
