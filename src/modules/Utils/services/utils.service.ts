@@ -125,6 +125,31 @@ export class UtilsService {
     return before.isBefore(after) && after.diff(before, "days") === numDays
   }
 
+  numDaysBetween({
+    beforeDate,
+    afterDate,
+  }: {
+    beforeDate: Date
+    afterDate: Date
+  }) {
+    const before = moment(
+      new Date(
+        beforeDate.getFullYear(),
+        beforeDate.getMonth(),
+        beforeDate.getDate()
+      )
+    )
+    const after = moment(
+      new Date(
+        afterDate.getFullYear(),
+        afterDate.getMonth(),
+        afterDate.getDate()
+      )
+    )
+
+    return after.diff(before, "days")
+  }
+
   // pass in an ISO datestring
   isLessThanXDaysFromNow(dateString: string, x: number) {
     var date = moment(dateString)

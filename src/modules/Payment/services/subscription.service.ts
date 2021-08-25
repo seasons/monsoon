@@ -1,6 +1,7 @@
 import { SegmentService } from "@app/modules/Analytics/services/segment.service"
 import { ErrorService } from "@app/modules/Error/services/error.service"
 import { PaymentUtilsService } from "@app/modules/Utils/services/paymentUtils.service"
+import { UtilsService } from "@app/modules/Utils/services/utils.service"
 import { EmailService } from "@modules/Email/services/email.service"
 import { Injectable } from "@nestjs/common"
 import { Customer, PauseType, PaymentPlan, User } from "@prisma/client"
@@ -9,6 +10,7 @@ import { PrismaService } from "@prisma1/prisma.service"
 import chargebee from "chargebee"
 import { head, orderBy, pick } from "lodash"
 import { DateTime } from "luxon"
+import moment from "moment"
 
 import { BillingAddress, Card } from "../payment.types"
 
@@ -28,6 +30,7 @@ export class SubscriptionService {
     private readonly prisma: PrismaService,
     private readonly emailService: EmailService,
     private readonly paymentUtils: PaymentUtilsService,
+    private readonly utils: UtilsService,
     private readonly error: ErrorService,
     private readonly segment: SegmentService
   ) {}
@@ -612,7 +615,7 @@ export class SubscriptionService {
     const relevantReservation = sentPackage.reservationOnSentPackage
 
     let daysRented, rentalStartedAt, rentalEndedAt, comment
-    comment = `Sent on reservation ${relevantReservation.reservationNumber} with status ${relevantReservation.status}.`
+    comment = `Initial reservation: ${relevantReservation.reservationNumber}, status ${relevantReservation.status}.`
     switch (relevantReservation.status) {
       case "Hold":
       case "Blocked":
@@ -641,6 +644,27 @@ export class SubscriptionService {
           */
           // TODO: Figure out this logic. How do we know if the item is on its way back or not?
         }
+
+      case "Delivered":
+        if (relevantReservation.phase === "BusinessToCustomer") {
+          rentalStartedAt = new Date(sentPackage.deliveredAt)
+          rentalEndedAt = new Date()
+          daysRented = this.utils.numDaysBetween({
+            beforeDate: rentalStartedAt,
+            afterDate: rentalEndedAt,
+          })
+          comment += `\nDelivered: this billing cycle on ${moment(
+            rentalStartedAt
+          ).format("lll")}`
+          comment += `\nCurrent status: with customer`
+        } else {
+          // TODO: FIgure out this logic
+        }
+        break
+      default:
+        throw new Error(
+          `Unexpected reservation status: ${relevantReservation.status}`
+        )
     }
 
     // const receivedPackage = await this.prisma.client.package.findFirst({
@@ -654,10 +678,10 @@ export class SubscriptionService {
     //   select: { enteredDeliverySystemAt: true },
     // })
     return {
-      daysRented: 5,
-      rentalStartedAt: new Date(),
-      rentalEndedAt: new Date(),
-      comment: "",
-    } // TODO: Implement
+      daysRented,
+      rentalStartedAt,
+      rentalEndedAt,
+      comment,
+    }
   }
 }

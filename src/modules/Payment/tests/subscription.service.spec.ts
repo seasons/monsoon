@@ -1,15 +1,13 @@
 import { APP_MODULE_DEF } from "@app/app.module"
 import { ReservationService } from "@app/modules/Reservation"
-import { SMSService } from "@app/modules/SMS/services/sms.service"
-import { QueryUtilsService } from "@app/modules/Utils/services/queryUtils.service"
 import { TestUtilsService } from "@app/modules/Utils/services/test.service"
 import { UtilsService } from "@app/modules/Utils/services/utils.service"
 import { PrismaService, SmartPrismaClient } from "@app/prisma/prisma.service"
 import { Test } from "@nestjs/testing"
 import { Prisma } from "@prisma/client"
 import { merge } from "lodash"
+import moment from "moment"
 
-import { PaymentModuleDef } from "../payment.module"
 import { PaymentService } from "../services/payment.service"
 import { SubscriptionService } from "../services/subscription.service"
 
@@ -47,16 +45,16 @@ describe("Subscription Service", () => {
 
   describe("Calculate Days Rented", () => {
     it("works for an item on an active reservation that was created this billing cycle", async () => {
-      const { cleanupFunc, customer } = await createTestCustomer(
-        prisma.client,
+      const { cleanupFunc, customer } = await createTestCustomer({
+        client: prisma.client,
         utils,
-        {
+        select: {
           id: true,
           status: true,
           membership: { select: { plan: { select: { tier: true } } } },
           user: true,
-        }
-      )
+        },
+      })
       cleanupFuncs.push(cleanupFunc)
 
       // Add some bag items and reserve for the customer. Set createdAt to 15 days ago
@@ -77,20 +75,19 @@ describe("Subscription Service", () => {
         customer.user,
         customer as any
       )
-      const fifteenDaysAgo = new Date()
-      fifteenDaysAgo.setDate(fifteenDaysAgo.getDate() - 15)
+      const fifteenDaysAgo = utils.xDaysAgoISOString(15)
       reservation = await prisma.client.reservation.update({
         where: { id: reservation.id },
-        data: { createdAt: fifteenDaysAgo },
+        data: { createdAt: fifteenDaysAgo, status: "Delivered" },
         select: {
           sentPackage: { select: { id: true } },
           products: { select: { seasonsUID: true } },
+          reservationNumber: true,
         },
       })
 
       // Set the deliveredAt timestamps on the sentPackage
-      const tenDaysAgo = new Date()
-      tenDaysAgo.setDate(tenDaysAgo.getDate() - 10)
+      const tenDaysAgo = utils.xDaysAgoISOString(10)
       await prisma.client.package.update({
         where: { id: reservation.sentPackage.id },
         data: { deliveredAt: tenDaysAgo },
@@ -117,14 +114,40 @@ describe("Subscription Service", () => {
       })
       const physicalProductToBill = reservation.products[0]
       const rentalInvoiceToBill = custWithData.membership.rentalInvoices[0]
-      const { daysRented } = await subscriptionService.calcDaysRented(
+      const {
+        daysRented,
+        comment,
+        rentalEndedAt,
+        rentalStartedAt,
+      } = await subscriptionService.calcDaysRented(
         rentalInvoiceToBill,
         physicalProductToBill
       )
       expect(daysRented).toBe(10)
-      // expect comment
-      // expect rentalStartedAt
-      // expect rentalEndedAt
+
+      const commentIncludesProperReservation = comment
+        .toLowerCase()
+        .includes(
+          `initial reservation: ${reservation.reservationNumber}, status delivered`
+        )
+      const commentIncludesPackageDelivery = comment
+        .toLowerCase()
+        .includes(
+          `delivered: this billing cycle on ${moment(tenDaysAgo).format(
+            "lll"
+          )}`.toLowerCase()
+        )
+      const commentIncludesCurrentStatus = comment
+        .toLowerCase()
+        .includes(`current status: with customer`)
+      expect(commentIncludesProperReservation).toBe(true)
+      expect(commentIncludesPackageDelivery).toBe(true)
+      expect(commentIncludesCurrentStatus).toBe(true)
+
+      expect(moment(rentalEndedAt).format("ll")).toEqual(moment().format("ll"))
+      expect(moment(rentalStartedAt).format("ll")).toEqual(
+        moment(tenDaysAgo).format("ll")
+      )
     })
 
     it("correctly uses the fallback if we don't know when a sent package got delivered", async () => {})
@@ -189,54 +212,64 @@ describe("Subscription Service", () => {
   })
 })
 
-const createTestCustomer = async (
-  client: SmartPrismaClient,
+const createTestCustomer = async ({
+  client,
   utils,
-  select: Prisma.CustomerSelect
-) => {
+  create = {},
+  select = { id: true },
+}: {
+  client: SmartPrismaClient
+  utils: UtilsService
+  create?: Partial<Prisma.CustomerCreateInput>
+  select?: Prisma.CustomerSelect
+}) => {
   const upsGroundMethod = await client.shippingMethod.findFirst({
     where: { code: "UPSGround" },
   })
-  const customer = await client.customer.create({
-    data: {
-      status: "Active",
-      user: {
-        create: {
-          auth0Id: utils.randomString(),
-          email: utils.randomString() + "@seasons.nyc",
-          firstName: utils.randomString(),
-          lastName: utils.randomString(),
-        },
+  const defaultCreateData = {
+    status: "Active",
+    user: {
+      create: {
+        auth0Id: utils.randomString(),
+        email: utils.randomString() + "@seasons.nyc",
+        firstName: utils.randomString(),
+        lastName: utils.randomString(),
       },
-      detail: {
-        create: {
-          shippingAddress: {
-            create: {
-              address1: "55 Washingston St",
-              city: "Brooklyn",
-              state: "NY",
-              zipCode: "11201",
-              shippingOptions: {
-                create: {
-                  shippingMethod: { connect: { id: upsGroundMethod.id } },
-                  externalCost: 10,
-                },
+    },
+    detail: {
+      create: {
+        shippingAddress: {
+          create: {
+            address1: "55 Washingston St",
+            city: "Brooklyn",
+            state: "NY",
+            zipCode: "11201",
+            shippingOptions: {
+              create: {
+                shippingMethod: { connect: { id: upsGroundMethod.id } },
+                externalCost: 10,
               },
             },
           },
         },
       },
-      membership: {
-        create: {
-          subscriptionId: utils.randomString(),
-          plan: { connect: { planID: "access-monthly" } },
-          rentalInvoices: {
-            // TODO: Change these dates
-            create: { billingStartAt: new Date(), billingEndAt: new Date() },
+    },
+    membership: {
+      create: {
+        subscriptionId: utils.randomString(),
+        plan: { connect: { planID: "access-monthly" } },
+        rentalInvoices: {
+          create: {
+            billingStartAt: utils.xDaysAgoISOString(30),
+            billingEndAt: new Date(),
           },
         },
       },
     },
+  }
+  const createData = merge(defaultCreateData, create)
+  const customer = await client.customer.create({
+    data: createData,
     select: merge(select, { id: true }),
   })
   const cleanupFunc = async () =>
