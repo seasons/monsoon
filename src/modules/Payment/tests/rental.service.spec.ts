@@ -46,9 +46,10 @@ describe("Rental Service", () => {
     reservationService = moduleRef.get<ReservationService>(ReservationService)
   })
 
-  afterAll(async () => {
-    await Promise.all(cleanupFuncs.map(a => a()))
-  })
+  // Bring this back if we get cascading deletes figured out
+  // afterAll(async () => {
+  //   await Promise.all(cleanupFuncs.map(a => a()))
+  // })
 
   describe("Calculate Days Rented", () => {
     beforeEach(async () => {
