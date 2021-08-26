@@ -15,7 +15,56 @@ import {
 } from "@prisma/client"
 import chargebee from "chargebee"
 
-const DELIVERY_CUSHION = 3 // days
+const invoiceSelect = Prisma.validator<Prisma.RentalInvoiceSelect>()({
+  id: true,
+  products: {
+    select: {
+      id: true,
+      seasonsUID: true,
+      productVariant: {
+        select: {
+          product: {
+            select: {
+              rentalPriceOverride: true,
+              wholesalePrice: true,
+              recoupment: true,
+            },
+          },
+        },
+      },
+    },
+  },
+  reservations: { select: { id: true } },
+  membership: {
+    select: {
+      plan: { select: { planID: true } },
+      subscriptionId: true,
+      customer: {
+        select: {
+          id: true,
+          status: true,
+          user: { select: { id: true } },
+          reservations: {
+            where: {
+              status: {
+                notIn: ["Cancelled", "Completed", "Lost", "Unknown"],
+              },
+            },
+            select: { id: true },
+          },
+          bagItems: {
+            where: { status: { in: ["Received", "Reserved"] } },
+            select: {
+              id: true,
+              physicalProduct: { select: { id: true } },
+            },
+          },
+        },
+      },
+      id: true,
+    },
+  },
+})
 
 @Injectable()
 export class SubscriptionsScheduledJobs {
@@ -28,7 +77,6 @@ export class SubscriptionsScheduledJobs {
     private readonly error: ErrorService,
     private readonly paymentUtils: PaymentUtilsService,
     private readonly productUtils: ProductUtilsService,
-    private readonly subscription: SubscriptionService,
     private readonly rental: RentalService
   ) {}
 
@@ -113,61 +161,13 @@ export class SubscriptionsScheduledJobs {
 
     const invoicesToHandle = await this.prisma.client.rentalInvoice.findMany({
       where: {
+        membership: { plan: { tier: "Access" } },
         billingEndAt: {
           equals: new Date(now.getFullYear(), now.getMonth(), now.getDate()),
         },
         status: "Draft",
       },
-      select: {
-        id: true,
-        products: {
-          select: {
-            id: true,
-            seasonsUID: true,
-            productVariant: {
-              select: {
-                product: {
-                  select: {
-                    rentalPriceOverride: true,
-                    wholesalePrice: true,
-                    recoupment: true,
-                  },
-                },
-              },
-            },
-          },
-        },
-        reservations: { select: { id: true } },
-        membership: {
-          select: {
-            plan: { select: { planID: true } },
-            subscriptionId: true,
-            customer: {
-              select: {
-                id: true,
-                status: true,
-                user: { select: { id: true } },
-                reservations: {
-                  where: {
-                    status: {
-                      notIn: ["Cancelled", "Completed", "Lost", "Unknown"],
-                    },
-                  },
-                  select: { id: true },
-                },
-                bagItems: {
-                  where: { status: { in: ["Received", "Reserved"] } },
-                  select: {
-                    id: true,
-                    physicalProduct: { select: { id: true } },
-                  },
-                },
-              },
-            },
-            id: true,
-          },
-        },
-      },
+      select: invoiceSelect,
     })
 
     // TODO: Add analytics that helps us gauge how accurately we are billing
@@ -175,7 +175,7 @@ export class SubscriptionsScheduledJobs {
       const planID = invoice.membership.plan.planID
 
       // Create the RentalInvoice line items
-      const lineItems = await this.createRentalInvoiceLineItems(invoice)
+      const lineItems = await this.rental.createRentalInvoiceLineItems(invoice)
 
       // Bill the customer
       switch (planID) {
@@ -263,87 +263,6 @@ export class SubscriptionsScheduledJobs {
     }
   }
 
-  private async createRentalInvoiceLineItems(invoice) {
-    const chargebeeCustomerId = invoice.membership.customer.user.id
-
-    const rentalInvoiceLineItemSelect = Prisma.validator<
-      Prisma.RentalInvoiceLineItemSelect
-    >()({
-      id: true,
-      price: true,
-      daysRented: true,
-      rentalStartedAt: true,
-      rentalEndedAt: true,
-      comment: true,
-      physicalProduct: {
-        select: {
-          productVariant: {
-            select: {
-              product: {
-                select: {
-                  name: true,
-                  recoupment: true,
-                  rentalPriceOverride: true,
-                  wholesalePrice: true,
-                },
-              },
-              displayShort: true,
-            },
-          },
-        },
-      },
-    })
-
-    const lineItemCreateDatas = (await Promise.all(
-      invoice.products.map(async physicalProduct => {
-        const {
-          daysRented,
-          ...daysRentedMetadata
-        } = await this.rental.calcDaysRented(invoice, physicalProduct)
-        const dailyRentalPrice = this.productUtils.calcRentalPrice(
-          physicalProduct.productVariant.product,
-          "daily"
-        )
-        return {
-          ...daysRentedMetadata,
-          daysRented,
-          physicalProduct: { connect: { id: physicalProduct.id } },
-          rentalInvoice: { connect: { id: invoice.id } },
-          price: daysRented * dailyRentalPrice,
-          currencyCode: "USD",
-        } as Prisma.RentalInvoiceLineItemCreateInput
-      })
-    )) as any
-    const {
-      estimate: { invoice_estimate },
-    } = await chargebee.estimate
-      .create_invoice({
-        // TODO: Add customer id
-        invoice: { customer_id: chargebeeCustomerId },
-        charges: lineItemCreateDatas.map(a => ({
-          amount: a.price * 100,
-          taxable: true,
-          avalara_tax_code: "", // TODO: Fill in
-        })),
-      })
-      .request()
-    const lineItemCreateDatasWithTaxes = lineItemCreateDatas.map((a, idx) => ({
-      ...a,
-      taxRate: invoice_estimate.line_items?.[idx]?.tax_rate || 0,
-      taxPrice: invoice_estimate.line_items?.[idx]?.tax_amount || 0,
-    }))
-    const lineItemPromises = lineItemCreateDatasWithTaxes.map(data =>
-      this.prisma.client.rentalInvoiceLineItem.create({
-        data,
-        select: rentalInvoiceLineItemSelect,
-      })
-    )
-    const lineItems = await this.prisma.client.$transaction(lineItemPromises)
-
-    return lineItems
-  }
-  private
-
   private lineItemToDescription(
     lineItem: Pick<RentalInvoiceLineItem, "daysRented"> & {
       physicalProduct: {
@@ -366,22 +285,4 @@ export class SubscriptionsScheduledJobs {
 
     return `${productName} -- ${displaySize} for ${lineItem.daysRented} days at ${monthlyRentalPrice} every 30 days.`
   }
-
-  // TODO: Write unit tests
-  private getItemDeliveryRate(
-    reservation: Pick<Reservation, "createdAt"> & {
-      sentPackage: Pick<Package, "deliveredAt">
-    }
-  ) {
-    const fallbackDate = new Date(reservation.createdAt)
-    fallbackDate.setDate(fallbackDate.getDate() + DELIVERY_CUSHION)
-    return reservation.sentPackage.deliveredAt || fallbackDate
-  }
-
-  private getItemReturnDate(
-    reservation: Pick<Reservation, "completedAt"> & {
-      returnPackage: Pick<Package, "enteredDeliverySystemAt">
-    },
-    options: { fallback: "today" | "completedAt" }
-  ) {}
 }

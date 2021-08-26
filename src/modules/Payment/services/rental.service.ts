@@ -1,17 +1,20 @@
+import { ProductUtilsService } from "@app/modules/Product"
 import { TimeUtilsService } from "@app/modules/Utils/services/time.service"
 import { Injectable } from "@nestjs/common"
 import { PhysicalProduct, RentalInvoice } from "@prisma/client"
 import { Prisma } from "@prisma/client"
 import { PrismaService } from "@prisma1/prisma.service"
+import chargebee from "chargebee"
 
-const RETURN_PACKAGE_CUSHION = 3 // TODO: Set as an env var
-const SENT_PACKAGE_CUSHION = 3 // TODO: Set as an env var
+export const RETURN_PACKAGE_CUSHION = 3 // TODO: Set as an env var
+export const SENT_PACKAGE_CUSHION = 3 // TODO: Set as an env var
 
 @Injectable()
 export class RentalService {
   constructor(
     private readonly prisma: PrismaService,
-    private readonly timeUtils: TimeUtilsService
+    private readonly timeUtils: TimeUtilsService,
+    private readonly productUtils: ProductUtilsService
   ) {}
 
   private rentalReservationSelect = Prisma.validator<
@@ -66,14 +69,10 @@ export class RentalService {
     comment = `Initial reservation: ${initialReservation.reservationNumber}, status ${initialReservation.status}.`
     const addComment = line => (comment += `\n${line}`)
 
-    const itemDeliveredAt = !!sentPackage.deliveredAt
-      ? new Date(sentPackage.deliveredAt)
-      : new Date(
-          this.timeUtils.xDaysAfterDate(
-            initialReservation.createdAt,
-            SENT_PACKAGE_CUSHION
-          )
-        )
+    const itemDeliveredAt = this.getSafeSentPackageDeliveryDate(
+      sentPackage.deliveredAt,
+      initialReservation.createdAt
+    )
     const deliveredThisBillingCycle = this.timeUtils.isLaterDate(
       itemDeliveredAt,
       invoiceWithData.billingStartAt
@@ -154,7 +153,7 @@ export class RentalService {
           const returnPackage = returnReservation.returnPackages.find(b =>
             b.items.map(c => c.seasonsUID).includes(physicalProduct.seasonsUID)
           )
-          rentalEndedAt = this.getSafeRentalEndDate(
+          rentalEndedAt = this.getSafeReturnPackageEntryDate(
             returnPackage.enteredDeliverySystemAt,
             returnReservation.completedAt
           )
@@ -191,16 +190,107 @@ export class RentalService {
     }
   }
 
-  private getSafeRentalEndDate = (
-    returnPackageScanDate,
-    reservationCompletionDate
+  async createRentalInvoiceLineItems(invoice) {
+    const chargebeeCustomerId = invoice.membership.customer.user.id
+
+    const rentalInvoiceLineItemSelect = Prisma.validator<
+      Prisma.RentalInvoiceLineItemSelect
+    >()({
+      id: true,
+      price: true,
+      daysRented: true,
+      rentalStartedAt: true,
+      rentalEndedAt: true,
+      comment: true,
+      physicalProduct: {
+        select: {
+          productVariant: {
+            select: {
+              product: {
+                select: {
+                  name: true,
+                  recoupment: true,
+                  rentalPriceOverride: true,
+                  wholesalePrice: true,
+                },
+              },
+              displayShort: true,
+            },
+          },
+        },
+      },
+    })
+
+    const lineItemCreateDatas = (await Promise.all(
+      invoice.products.map(async physicalProduct => {
+        const { daysRented, ...daysRentedMetadata } = await this.calcDaysRented(
+          invoice,
+          physicalProduct
+        )
+        const dailyRentalPrice = this.productUtils.calcRentalPrice(
+          physicalProduct.productVariant.product,
+          "daily"
+        )
+        return {
+          ...daysRentedMetadata,
+          daysRented,
+          physicalProduct: { connect: { id: physicalProduct.id } },
+          rentalInvoice: { connect: { id: invoice.id } },
+          price: daysRented * dailyRentalPrice,
+          currencyCode: "USD",
+        } as Prisma.RentalInvoiceLineItemCreateInput
+      })
+    )) as any
+    const {
+      estimate: { invoice_estimate },
+    } = await chargebee.estimate
+      .create_invoice({
+        // TODO: Add customer id
+        invoice: { customer_id: chargebeeCustomerId },
+        charges: lineItemCreateDatas.map(a => ({
+          amount: a.price * 100,
+          taxable: true,
+          avalara_tax_code: "", // TODO: Fill in
+        })),
+      })
+      .request()
+    const lineItemCreateDatasWithTaxes = lineItemCreateDatas.map((a, idx) => ({
+      ...a,
+      taxRate: invoice_estimate.line_items?.[idx]?.tax_rate || 0,
+      taxPrice: invoice_estimate.line_items?.[idx]?.tax_amount || 0,
+    }))
+    const lineItemPromises = lineItemCreateDatasWithTaxes.map(data =>
+      this.prisma.client.rentalInvoiceLineItem.create({
+        data,
+        select: rentalInvoiceLineItemSelect,
+      })
+    )
+    const lineItems = await this.prisma.client.$transaction(lineItemPromises)
+
+    return lineItems
+  }
+
+  private getSafeSentPackageDeliveryDate = (
+    sentPackageDeliveryDate: Date | undefined,
+    reservationCreatedAtDate: Date
+  ) =>
+    new Date(
+      sentPackageDeliveryDate?.toISOString() ||
+        this.timeUtils.xDaysAfterDate(
+          reservationCreatedAtDate,
+          SENT_PACKAGE_CUSHION
+        )
+    )
+  private getSafeReturnPackageEntryDate = (
+    returnPackageScanDate: Date | undefined,
+    reservationCompletionDate: Date
   ) => {
-    return (
+    return new Date(
       returnPackageScanDate ||
-      this.timeUtils.xDaysBeforeDate(
-        reservationCompletionDate,
-        RETURN_PACKAGE_CUSHION
-      )
+        this.timeUtils.xDaysBeforeDate(
+          reservationCompletionDate,
+          RETURN_PACKAGE_CUSHION
+        )
     )
   }
 }
