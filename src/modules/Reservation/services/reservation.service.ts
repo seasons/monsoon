@@ -172,29 +172,13 @@ export class ReservationService {
       shippingCode
     )
 
-    const bagItemsToUpdateIds = (
-      await this.prisma.client.bagItem.findMany({
-        where: {
-          productVariant: {
-            id: {
-              in: newProductVariantsBeingReserved,
-            },
-          },
-          customer: {
-            id: customer.id,
-          },
-        },
-      })
-    ).map(a => a.id)
-
-    promises.push(
-      this.prisma.client.bagItem.updateMany({
-        where: { id: { in: bagItemsToUpdateIds } },
-        data: {
-          status: "Reserved",
-        },
-      })
-    )
+    // Update bag items
+    const bagItemPromises = await this.updateBagItemsForReservation({
+      newProductVariantsBeingReserved,
+      customerId: customer.id,
+      physicalProductsBeingReserved,
+    })
+    promises.push(...bagItemPromises)
 
     // Create one time charge for shipping addon
     let shippingOptionID
@@ -452,13 +436,18 @@ export class ReservationService {
           orderBy: { createdAt: "desc" },
           select: {
             id: true,
+            shippingLabel: { select: { trackingNumber: true } },
           },
         },
       },
     })
   }
 
-  async processReservation(reservationNumber, productStates: ProductState[]) {
+  async processReservation(
+    reservationNumber,
+    productStates: ProductState[],
+    trackingNumber: string
+  ) {
     // Update status on physical products depending on whether
     // the item was returned, and update associated product variant counts
 
@@ -631,7 +620,8 @@ export class ReservationService {
       updateReturnPackagePromise,
     ] = await this.reservationUtils.updateReturnPackageOnCompletedReservation(
       reservation,
-      returnedPhysicalProducts
+      returnedPhysicalProducts,
+      trackingNumber
     )
 
     await this.prisma.client.$transaction([
@@ -1048,6 +1038,56 @@ export class ReservationService {
         `Last reservation must either be null, completed, cancelled, or lost. Last Reservation number. Last Reservation number, status: ${lastReservation.reservationNumber}, ${lastReservation.status}`
       )
     }
+  }
+
+  private async updateBagItemsForReservation({
+    newProductVariantsBeingReserved,
+    customerId,
+    physicalProductsBeingReserved,
+  }) {
+    const promises = []
+    const bagItemsToUpdate = await this.prisma.client.bagItem.findMany({
+      where: {
+        productVariant: {
+          id: {
+            in: newProductVariantsBeingReserved,
+          },
+        },
+        customer: {
+          id: customerId,
+        },
+      },
+      select: {
+        id: true,
+        productVariant: {
+          select: {
+            physicalProducts: { select: { seasonsUID: true } },
+            id: true,
+          },
+        },
+      },
+    })
+    for (const bagItem of bagItemsToUpdate) {
+      const physicalProductToConnect = bagItem.productVariant.physicalProducts.find(
+        a =>
+          physicalProductsBeingReserved
+            .map(a => a.seasonsUID)
+            .includes(a.seasonsUID)
+      )
+      promises.push(
+        this.prisma.client.bagItem.update({
+          where: { id: bagItem.id },
+          data: {
+            physicalProduct: {
+              connect: { seasonsUID: physicalProductToConnect.seasonsUID },
+            },
+            status: "Reserved",
+          },
+        })
+      )
+    }
+
+    return promises
   }
 
   private async getNewProductVariantsBeingReserved({

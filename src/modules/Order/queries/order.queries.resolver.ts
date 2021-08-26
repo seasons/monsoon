@@ -1,11 +1,7 @@
 import { FindManyArgs } from "@app/decorators/findManyArgs.decorator"
 import { Select } from "@app/decorators/select.decorator"
 import { QueryUtilsService } from "@app/modules/Utils/services/queryUtils.service"
-import { PrismaService } from "@app/prisma/prisma.service"
-import { Args, Context, Info, Query, Resolver } from "@nestjs/graphql"
-import { addFragmentToInfo } from "graphql-binding"
-
-import { OrderService } from "../services/order.service"
+import { Args, Query, Resolver } from "@nestjs/graphql"
 
 @Resolver()
 export class OrderQueriesResolver {
