@@ -6,6 +6,7 @@ import { PrismaService } from "@prisma1/prisma.service"
 import moment from "moment"
 
 const RETURN_PACKAGE_CUSHION = 3 // TODO: Set as an env var
+const SENT_PACKAGE_CUSHION = 3 // TODO: Set as an env var
 
 @Injectable()
 export class RentalService {
@@ -27,6 +28,8 @@ export class RentalService {
       select: { items: true, enteredDeliverySystemAt: true },
     },
     returnedProducts: { select: { seasonsUID: true } },
+    lostAt: true,
+    lostInPhase: true,
   })
 
   async calcDaysRented(
@@ -64,7 +67,14 @@ export class RentalService {
     comment = `Initial reservation: ${initialReservation.reservationNumber}, status ${initialReservation.status}.`
     const addComment = line => (comment += `\n${line}`)
 
-    const itemDeliveredAt = new Date(sentPackage.deliveredAt)
+    const itemDeliveredAt = !!sentPackage.deliveredAt
+      ? new Date(sentPackage.deliveredAt)
+      : new Date(
+          this.timeUtils.xDaysAfterDate(
+            initialReservation.createdAt,
+            SENT_PACKAGE_CUSHION
+          )
+        )
     const deliveredThisBillingCycle = this.timeUtils.isLaterDate(
       itemDeliveredAt,
       invoiceWithData.billingStartAt
@@ -79,6 +89,8 @@ export class RentalService {
       preparing: "Item status: preparing for shipment",
       unknown: "Item status: unknown",
       enRoute: "Item status: en route to customer",
+      lostOnRouteToCustomer: "item status: lost en route to customer",
+      cancelled: "item status: never sent. initial reservation cancelled",
     }
     switch (initialReservation.status) {
       case "Hold":
@@ -93,7 +105,10 @@ export class RentalService {
         addComment(itemStatusComments["preparing"])
         rentalStartedAt = undefined
         break
-
+      case "Cancelled":
+        addComment(itemStatusComments["cancelled"])
+        rentalStartedAt = undefined
+        break
       case "Shipped":
         if (initialReservation.phase === "BusinessToCustomer") {
           rentalStartedAt = undefined
@@ -148,6 +163,15 @@ export class RentalService {
         } else {
           rentalEndedAt = invoiceWithData.billingEndAt
           addComment(itemStatusComments["withCustomer"])
+        }
+        break
+
+      case "Lost":
+        if (initialReservation.lostInPhase === "BusinessToCustomer") {
+          rentalStartedAt = undefined
+          addComment(itemStatusComments["lostOnRouteToCustomer"])
+        } else {
+          // TODO:
         }
         break
       default:

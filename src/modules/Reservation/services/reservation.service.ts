@@ -927,7 +927,11 @@ export class ReservationService {
     }
 
     promises.push(
-      this.prisma.client.reservation.update({ data, where, select })
+      this.prisma.client.reservation.update({
+        data,
+        where,
+        select: merge(select, { id: true }),
+      })
     )
 
     const results = await this.prisma.client.$transaction(promises)

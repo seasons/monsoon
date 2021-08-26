@@ -21,6 +21,10 @@ export class TimeUtilsService {
     return moment(date.toISOString()).subtract(x, "days").format()
   }
 
+  xDaysAfterDate(date: Date, x: number) {
+    return moment(date.toISOString()).add(x, "days").format()
+  }
+
   numDaysBetween(date1: Date, date2: Date) {
     let beforeDate, afterDate
     if (this.isLaterDate(date1, date2)) {

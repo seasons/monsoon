@@ -23,6 +23,8 @@ let cleanupFuncs = []
 let testCustomer: any
 
 describe("Rental Service", () => {
+  const now = new Date()
+
   beforeAll(async () => {
     const moduleBuilder = await Test.createTestingModule(APP_MODULE_DEF)
     moduleBuilder.overrideProvider(PaymentService).useClass(PaymentServiceMock)
@@ -52,18 +54,12 @@ describe("Rental Service", () => {
       cleanupFuncs.push(cleanupFunc)
       testCustomer = customer
     })
-    // Reserved this billing cycle and...
-    // still has it
-    // returned it
-    // lost on the way there
-    // lost on the way back
 
     describe("Items reserved in this billing cycle", () => {
       describe("Core flows", () => {
         let initialReservation: any
         let custWithData: any
         let twentyThreeDaysAgo
-        const now = new Date()
 
         beforeEach(async () => {
           initialReservation = (await addToBagAndReserveForCustomer(1)) as any
@@ -401,187 +397,127 @@ describe("Rental Service", () => {
       })
 
       it("Shipped, on the way back", async () => {
-        // Shipped, on the way back: rentalEndedAt f of whether or not package in system.
+        // Shipped, on the way back: rentalEndedAt function of whether or not package in system.
         expect(0).toBe(1)
       })
 
       it("lost on the way there", async () => {
-        expect(0).toBe(1)
+        // Simulate a package getting lost en route to the customer
+        let initialReservation = (await addToBagAndReserveForCustomer(1)) as any
+        await setReservationCreatedAt(initialReservation.id, 25)
+        await prisma.client.reservation.update({
+          where: { id: initialReservation.id },
+          data: { status: "Shipped" },
+        })
+        await reservationService.updateReservation(
+          { status: "Lost" },
+          { id: initialReservation.id },
+          {}
+        )
+
+        const custWithData = await getCustWithData()
+        const {
+          daysRented,
+          comment,
+          rentalEndedAt,
+          rentalStartedAt,
+        } = await rentalService.calcDaysRented(
+          custWithData.membership.rentalInvoices[0],
+          initialReservation.products[0]
+        )
+
+        expect(daysRented).toBe(0)
+        expect(rentalStartedAt).toBe(undefined)
+        expect(rentalEndedAt).toBe(undefined)
+
+        expectInitialReservationComment(
+          comment,
+          initialReservation.reservationNumber,
+          "lost"
+        )
+        expectCommentToInclude(
+          comment,
+          "item status: lost en route to customer"
+        )
       })
 
       it("lost on the way back", async () => {
         expect(0).toBe(1)
       })
 
-      it("sent on a Cancelled reservation", async () => {})
-    })
-
-    describe("Items reserved in a previous billing cycle", () => {})
-
-    it("works for an item that was returned using a previous reservation's return package label", async () => {
-      expect(0).toBe(1)
-    })
-
-    it("works for an item on an active reservation that was created last billing cycle", async () => {
-      const reservableProdVar = await prisma.client.productVariant.findFirst({
-        where: { reservable: { gt: 1 } },
-      })
-      await prisma.client.bagItem.create({
-        data: {
-          customer: { connect: { id: testCustomer.id } },
-          productVariant: { connect: { id: reservableProdVar.id } },
-          status: "Added",
-          saved: false,
-        },
-      })
-      let reservation = await reservationService.reserveItems(
-        [reservableProdVar.id],
-        null,
-        testCustomer.user,
-        testCustomer as any
-      )
-
-      const fourtyFiveDaysAgo = utils.xDaysAgoISOString(45)
-      reservation = await prisma.client.reservation.update({
-        where: { id: reservation.id },
-        data: { createdAt: fourtyFiveDaysAgo, status: "Delivered" },
-        select: {
-          sentPackage: { select: { id: true } },
-          products: { select: { seasonsUID: true } },
-          reservationNumber: true,
-        },
-      })
-
-      // Set the deliveredAt timestamps on the sentPackage
-      const fourtyFourDaysAgo = utils.xDaysAgoISOString(44)
-      await prisma.client.package.update({
-        where: { id: reservation.sentPackage.id },
-        data: { deliveredAt: fourtyFourDaysAgo },
-      })
-
-      const custWithData = await prisma.client.customer.findFirst({
-        where: { id: testCustomer.id },
-        select: {
-          membership: {
-            select: {
-              rentalInvoices: {
-                select: {
-                  id: true,
-                  reservations: true,
-                  products: true,
-                  status: true,
-                  billingStartAt: true,
-                  billingEndAt: true,
-                },
-              },
-            },
-          },
-        },
-      })
-      const physicalProductToBill = reservation.products[0]
-      const rentalInvoiceToBill = custWithData.membership.rentalInvoices[0]
-      const {
-        daysRented,
-        comment,
-        rentalEndedAt,
-        rentalStartedAt,
-      } = await rentalService.calcDaysRented(
-        rentalInvoiceToBill,
-        physicalProductToBill
-      )
-
-      expect(daysRented).toBe(30)
-
-      const commentIncludesProperReservation = comment
-        .toLowerCase()
-        .includes(
-          `initial reservation: ${reservation.reservationNumber}, status delivered`
+      it("sent on a Cancelled reservation", async () => {
+        // Simulate a package getting Cancelled by Ops
+        let initialReservation = (await addToBagAndReserveForCustomer(1)) as any
+        await setReservationCreatedAt(initialReservation.id, 25)
+        await reservationService.updateReservation(
+          { status: "Cancelled" },
+          { id: initialReservation.id },
+          {}
         )
-      const commentIncludesPackageDelivery = comment
-        .toLowerCase()
-        .includes(
-          `delivered: on a previous billing cycle on ${moment(
-            fourtyFourDaysAgo
-          ).format("lll")}`.toLowerCase()
+
+        const custWithData = await getCustWithData()
+        const {
+          daysRented,
+          comment,
+          rentalEndedAt,
+          rentalStartedAt,
+        } = await rentalService.calcDaysRented(
+          custWithData.membership.rentalInvoices[0],
+          initialReservation.products[0]
         )
-      const commentIncludesItemStatus = comment
-        .toLowerCase()
-        .includes(`item status: with customer`)
-      expect(commentIncludesProperReservation).toBe(true)
-      expect(commentIncludesPackageDelivery).toBe(true)
-      expect(commentIncludesItemStatus).toBe(true)
 
-      expect(moment(rentalEndedAt).format("ll")).toEqual(moment().format("ll"))
-      expect(moment(rentalStartedAt).format("ll")).toEqual(
-        moment(utils.xDaysAgoISOString(30)).format("ll")
-      )
+        expect(daysRented).toBe(0)
+        expect(rentalStartedAt).toBe(undefined)
+        expect(rentalEndedAt).toBe(undefined)
+
+        expectInitialReservationComment(
+          comment,
+          initialReservation.reservationNumber,
+          "cancelled"
+        )
+        expectCommentToInclude(
+          comment,
+          "item status: never sent. initial reservation cancelled"
+        )
+      })
     })
 
-    it("works for an item sent on a now completed reservation that was sent the last billing cycle", async () => {
-      expect(1).toBe(0)
+    describe("Items reserved in a previous billing cycle", () => {
+      it("reserved and held, no new reservations", async () => {
+        let initialReservation = (await addToBagAndReserveForCustomer(1)) as any
+        await setReservationCreatedAt(initialReservation.id, 45)
+        await setReservationStatus(initialReservation.id, "Delivered")
+        await setPackageDeliveredAt(initialReservation.sentPackage.id, 44)
+
+        const custWithData = await getCustWithData()
+        const {
+          daysRented,
+          comment,
+          rentalEndedAt,
+          rentalStartedAt,
+        } = await rentalService.calcDaysRented(
+          custWithData.membership.rentalInvoices[0],
+          initialReservation.products[0]
+        )
+
+        expect(daysRented).toBe(30)
+        expectTimeToEqual(rentalStartedAt, utils.xDaysAgoISOString(30))
+        expectTimeToEqual(rentalEndedAt, now)
+
+        expectInitialReservationComment(
+          comment,
+          initialReservation.reservationNumber,
+          "delivered"
+        )
+        expectCommentToInclude(comment, "Item status: with customer")
+      })
+
+      // TODO: flesh out
     })
 
-    it("works for an item reserved in the previous billing cycle and returned in this one", async () => {
-      expect(1).toBe(0)
-    })
-
-    it("correctly uses the fallback if we don't know when a sent package got delivered", async () => {
-      expect(1).toBe(0)
-    })
-
-    it("correctly uses the fallback if we don't know when a return package entered the system", async () => {
-      expect(1).toBe(0)
-    })
-
-    // STOP HERE FOR NOW
-
-    it("works for an item that was reserved 3 months ago and is still held by the customer", async () => {
-      expect(1).toBe(0)
-    })
-
-    it("works for items on a Queued reservation", async () => {
-      expect(1).toBe(0)
-    })
-
-    it("works for items on a Picked reservation", async () => {
-      expect(1).toBe(0)
-    })
-
-    it("works for items on a Packed reservation", async () => {
-      expect(1).toBe(0)
-    })
-
-    it("works for items on a Cancelled reservation", async () => {
-      expect(1).toBe(0)
-    })
-
-    it("works for items on a reservation with status Hold", async () => {
-      expect(1).toBe(0)
-    })
-
-    it("works for items on a reservation with status Blocked", async () => {
-      expect(1).toBe(0)
-    })
-
-    it("works for items on a reservation with status Unknown", async () => {
-      expect(1).toBe(0)
-    })
-
-    it("works for items on a reservation with status Shipped in BusinessToCustomer phase", async () => {
-      expect(1).toBe(0)
-    })
-
-    it("works for items on a reservation with status Shipped in CustomerToBusiness phase", async () => {
-      expect(1).toBe(0)
-    })
-
-    it("works for items lost on the way to the customer", async () => {
-      expect(1).toBe(0)
-    })
-
-    it("works for items lost on the way back to us", async () => {
-      expect(1).toBe(0)
-    })
+    // TODO: Test fallbacks
+    // TODO: Test using a previous reservation's return label
+    // TODO: Item's initial reservation is cancelled. Then is held and sent on a following reservation
   })
 })
 
@@ -657,7 +593,13 @@ const addToBagAndReserveForCustomer = async numProductsToAdd => {
   })
   const reservedSKUs = reservedBagItems.map(a => a.productVariant.sku)
   const reservableProdVars = await prisma.client.productVariant.findMany({
-    where: { reservable: { gte: 1 }, sku: { notIn: reservedSKUs } },
+    where: {
+      reservable: { gte: 1 },
+      sku: { notIn: reservedSKUs },
+      // We shouldn't need to check this since we're checking counts,
+      // but there's some corrupt data so we do this to circumvent that.
+      physicalProducts: { some: { inventoryStatus: "Reservable" } },
+    },
     take: numProductsToAdd,
   })
   for (const prodVar of reservableProdVars) {
@@ -768,7 +710,7 @@ const expectInitialReservationComment = (
 }
 
 const expectCommentToInclude = (comment, expectedLine) => {
-  const doesInclude = comment.toLowerCase().includes(expectedLine)
+  const doesInclude = comment.toLowerCase().includes(expectedLine.toLowerCase())
   expect(doesInclude).toBe(true)
 }
 
