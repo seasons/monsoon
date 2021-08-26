@@ -392,22 +392,4 @@ export class TestUtilsService {
       pp => pp.inventoryStatus === inventoryStatus
     ).length
   }
-
-  private async getUniqueReservationNumber(): Promise<number> {
-    let reservationNumber: number
-    let foundUnique = false
-    while (!foundUnique) {
-      reservationNumber = Math.floor(Math.random() * 900000000) + 100000000
-      const reservationWithThatNumber = await this.prisma.client.reservation.findUnique(
-        {
-          where: {
-            reservationNumber,
-          },
-        }
-      )
-      foundUnique = !reservationWithThatNumber
-    }
-
-    return reservationNumber
-  }
 }
