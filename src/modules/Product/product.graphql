@@ -200,7 +200,7 @@ type AccessorySize {
 type BagItem {
   id: ID!
   customer: Customer!
-  isSwappable: Boolean
+  isSwappable: Boolean!
   productVariant: ProductVariant!
   position: Int
   saved: Boolean

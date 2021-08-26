@@ -7,6 +7,7 @@ import { ImageService } from "@modules/Image/services/image.service"
 import { Args, Parent, ResolveField, Resolver } from "@nestjs/graphql"
 import { PhysicalProductDamageType, Prisma } from "@prisma/client"
 import { PrismaService } from "@prisma1/prisma.service"
+import { head } from "lodash"
 
 @Resolver("BagItem")
 export class BagItemFieldsResolver {
@@ -19,6 +20,12 @@ export class BagItemFieldsResolver {
         select: Prisma.validator<Prisma.BagItemSelect>()({
           id: true,
           status: true,
+          physicalProduct: {
+            select: {
+              id: true,
+            },
+          },
+          physicalProductId: true,
           productVariant: {
             select: {
               id: true,
@@ -27,61 +34,66 @@ export class BagItemFieldsResolver {
           customer: {
             select: {
               id: true,
-              reservations: {
-                orderBy: { createdAt: "desc" },
-                select: {
-                  id: true,
-                  status: true,
-                  createdAt: true,
-                  products: {
-                    select: {
-                      id: true,
-                    },
-                  },
-                  newProducts: {
-                    select: {
-                      id: true,
-                      productVariant: {
-                        select: {
-                          id: true,
-                        },
-                      },
-                    },
-                  },
-                  sentPackage: {
-                    select: {
-                      items: {
-                        select: {
-                          id: true,
-                        },
-                      },
-                    },
-                  },
-                },
-              },
             },
           },
         }),
       },
     })
-    bagItemLoader
+    bagItemLoader,
+    @Loader({
+      params: {
+        model: "Reservation",
+        select: Prisma.validator<Prisma.ReservationSelect>()({
+          customer: { select: { id: true } },
+          status: true,
+          newProducts: { select: { id: true } },
+        }),
+        formatWhere: (compositeKeys, ctx) => {
+          const customerIds = []
+          const physicalProductIds = []
+          for (const compositeKey of compositeKeys) {
+            const [custId, physProdId] = compositeKey.split(",")
+            customerIds.push(custId)
+            physicalProductIds.push(physProdId)
+          }
+          return Prisma.validator<Prisma.ReservationWhereInput>()({
+            customer: { id: { in: customerIds } },
+            newProducts: { some: { id: { in: physicalProductIds } } },
+          })
+        },
+        getKeys: reservation => {
+          const customerId = reservation.customer.id
+          const physicalProductIds = reservation.newProducts.map(a => a.id)
+          return physicalProductIds.map(a => `${customerId},${a}`)
+        },
+        orderBy: { createdAt: "desc" },
+        keyToDataRelationship: "ManyToMany",
+      },
+    })
+    reservationLoader
   ) {
     const currentBagItem = await bagItemLoader.load(parent.id)
-    const reservationStatus = currentBagItem?.customer?.reservations[0]?.status
-    const isQueueOrHold = ["Queued", "Hold"].includes(reservationStatus)
-    const isReserved = currentBagItem.status === "Reserved"
-    const newProductVariantIDs = await currentBagItem?.customer?.reservations[0]?.newProducts?.reduce(
-      (a, b) => {
-        a.push(b?.productVariant?.id)
-        return a
-      },
-      []
-    )
-    const isNewProduct = newProductVariantIDs?.includes(
-      currentBagItem?.productVariant?.id
-    )
-    const isSwappable = isQueueOrHold && isReserved && isNewProduct
+    if (currentBagItem.status !== "Reserved") {
+      return false
+    }
 
-    return isSwappable
+    const customerId = currentBagItem.customer.id
+    const physicalProductId = currentBagItem.physicalProduct?.id
+    if (!physicalProductId) {
+      throw new Error(
+        `Reserved bag item ${currentBagItem.id} has no physical product on it`
+      )
+    }
+
+    const possibleReservations = await reservationLoader.load(
+      `${customerId},${physicalProductId}`
+    )
+
+    const relevantReservation = head(possibleReservations)
+    const isQueueOrHold = ["Queued", "Hold"].includes(
+      relevantReservation.status
+    )
+
+    return isQueueOrHold
   }
 }

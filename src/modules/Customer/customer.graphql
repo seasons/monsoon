@@ -106,7 +106,6 @@ enum OnboardingStep {
 type Customer {
   id: ID!
   user: User!
-  isSwapped: Boolean
   shouldRequestFeedback: Boolean
   shouldPayForNextReservation: Boolean
   status: CustomerStatus
