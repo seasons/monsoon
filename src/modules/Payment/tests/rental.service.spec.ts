@@ -120,7 +120,6 @@ describe("Rental Service", () => {
       })
 
       it("reserved and returned on later reservation", async () => {
-        // Do two more reservation
         const reservationTwo = (await addToBagAndReserveForCustomer(1)) as any
         await setReservationStatus(reservationTwo.id, "Delivered")
         const reservationThree = (await addToBagAndReserveForCustomer(3)) as any
@@ -163,7 +162,6 @@ describe("Rental Service", () => {
       })
 
       it("reserved and held. no new reservations since initial", async () => {
-        // Calculate
         const {
           daysRented,
           comment,
@@ -187,11 +185,37 @@ describe("Rental Service", () => {
       })
 
       it("reserved and held. made 2 new reservations since initial", async () => {
-        expect(0).toBe(1)
+        const reservationTwo = (await addToBagAndReserveForCustomer(2)) as any
+        await setReservationStatus(reservationTwo.id, "Delivered")
+        const reservationThree = (await addToBagAndReserveForCustomer(1)) as any
+        await setReservationStatus(reservationThree.id, "Delivered")
+
+        const {
+          daysRented,
+          comment,
+          rentalEndedAt,
+          rentalStartedAt,
+        } = await rentalService.calcDaysRented(
+          custWithData.membership.rentalInvoices[0],
+          initialReservation.products[0]
+        )
+
+        expect(daysRented).toBe(23)
+        expectTimeToEqual(rentalStartedAt, twentyThreeDaysAgo)
+        expectTimeToEqual(rentalEndedAt, now)
+
+        expectInitialReservationComment(
+          comment,
+          initialReservation.reservationNumber,
+          "completed"
+        )
+        expectCommentToInclude(comment, "item status: with customer")
       })
 
-      // Queued, Hold, Picked, Packed, Unknown, Blocked
+      // Queued, Hold, Picked, Packed, Unknown, Blocked = 0
 
+      // Shipped, on the way there = 0
+      // Shipped, on the way back: rentalEndedAt f of whether or not package in system.
       // Lost on the way there, lost on the way back
 
       // Cancelled
@@ -438,7 +462,7 @@ const addToBagAndReserveForCustomer = async numProductsToAdd => {
   })
   const reservedSKUs = reservedBagItems.map(a => a.productVariant.sku)
   const reservableProdVars = await prisma.client.productVariant.findMany({
-    where: { reservable: { gt: 1 }, sku: { notIn: reservedSKUs } },
+    where: { reservable: { gte: 1 }, sku: { notIn: reservedSKUs } },
     take: numProductsToAdd,
   })
   for (const prodVar of reservableProdVars) {

@@ -73,6 +73,10 @@ export class RentalService {
     const rentalStartedAt = deliveredThisBillingCycle
       ? itemDeliveredAt
       : invoiceWithData.billingStartAt
+    const itemStatusComments = {
+      returned: "Item status: returned",
+      withCustomer: "Item status: with customer",
+    }
     switch (initialReservation.status) {
       case "Hold":
       case "Blocked":
@@ -104,7 +108,7 @@ export class RentalService {
         if (initialReservation.phase === "BusinessToCustomer") {
           rentalEndedAt = invoiceWithData.billingEndAt
 
-          addComment("Item status: with customer")
+          addComment(itemStatusComments["withCustomer"])
         } else {
           // TODO: FIgure out this logic
         }
@@ -125,6 +129,7 @@ export class RentalService {
             .map(b => b.seasonsUID)
             .includes(physicalProduct.seasonsUID)
         )
+
         if (!!returnReservation) {
           const returnPackage = returnReservation.returnPackages.find(b =>
             b.items.map(c => c.seasonsUID).includes(physicalProduct.seasonsUID)
@@ -133,10 +138,10 @@ export class RentalService {
             returnPackage.enteredDeliverySystemAt,
             returnReservation.completedAt
           )
-          addComment("Item status: returned")
+          addComment(itemStatusComments["returned"])
         } else {
-          // TODO: It should be in his bag, with status Reserved or Received. Confirm this is so.
-          //   endDate = today
+          rentalEndedAt = invoiceWithData.billingEndAt
+          addComment(itemStatusComments["withCustomer"])
         }
         break
       default:
