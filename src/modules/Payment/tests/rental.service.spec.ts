@@ -59,157 +59,318 @@ describe("Rental Service", () => {
     // lost on the way back
 
     describe("Items reserved in this billing cycle", () => {
-      let initialReservation: any
-      let custWithData: any
-      let twentyThreeDaysAgo
-      const now = new Date()
+      describe("Core flows", () => {
+        let initialReservation: any
+        let custWithData: any
+        let twentyThreeDaysAgo
+        const now = new Date()
 
-      beforeEach(async () => {
-        initialReservation = (await addToBagAndReserveForCustomer(1)) as any
-        await setReservationCreatedAt(initialReservation.id, 25)
-        await setPackageDeliveredAt(initialReservation.sentPackage.id, 23)
-        await setReservationStatus(initialReservation.id, "Delivered")
-        custWithData = await getCustWithData()
-        twentyThreeDaysAgo = utils.xDaysAgoISOString(23)
-      })
+        beforeEach(async () => {
+          initialReservation = (await addToBagAndReserveForCustomer(1)) as any
+          await setReservationCreatedAt(initialReservation.id, 25)
+          await setPackageDeliveredAt(initialReservation.sentPackage.id, 23)
+          await setReservationStatus(initialReservation.id, "Delivered")
+          custWithData = await getCustWithData()
+          twentyThreeDaysAgo = utils.xDaysAgoISOString(23)
+        })
 
-      it("reserved and returned on same reservation", async () => {
-        // process the return
-        const returnPackage = head(initialReservation.returnPackages)
-        await setPackageEnteredSystemAt(returnPackage.id, 2)
-        await reservationService.processReservation(
-          initialReservation.reservationNumber,
-          [
-            {
+        it("reserved and returned on same reservation", async () => {
+          // process the return
+          const returnPackage = head(initialReservation.returnPackages)
+          await setPackageEnteredSystemAt(returnPackage.id, 2)
+          await reservationService.processReservation(
+            initialReservation.reservationNumber,
+            [
+              {
+                productStatus: "Dirty",
+                productUID: initialReservation.products[0].seasonsUID,
+                returned: true,
+                notes: "",
+              },
+            ],
+            returnPackage.shippingLabel.trackingNumber
+          )
+
+          // Calculate
+          const {
+            daysRented,
+            comment,
+            rentalEndedAt,
+            rentalStartedAt,
+          } = await rentalService.calcDaysRented(
+            custWithData.membership.rentalInvoices[0],
+            initialReservation.products[0]
+          )
+
+          // run the expects
+          expect(daysRented).toBe(21)
+          expectTimeToEqual(rentalStartedAt, twentyThreeDaysAgo)
+          expectTimeToEqual(rentalEndedAt, utils.xDaysAgoISOString(2))
+
+          expectInitialReservationComment(
+            comment,
+            initialReservation.reservationNumber,
+            "completed"
+          )
+          expectCommentToInclude(comment, `item status: returned`)
+        })
+
+        it("reserved and returned on later reservation", async () => {
+          const reservationTwo = (await addToBagAndReserveForCustomer(1)) as any
+          await setReservationStatus(reservationTwo.id, "Delivered")
+          const reservationThree = (await addToBagAndReserveForCustomer(
+            3
+          )) as any
+          await setReservationStatus(reservationThree.id, "Delivered")
+
+          // Return it with the label from the last reservation
+          const returnPackage = head(reservationThree.returnPackages)
+          await setPackageEnteredSystemAt(returnPackage.id, 4)
+          await reservationService.processReservation(
+            reservationThree.reservationNumber,
+            reservationThree.products.map(a => ({
               productStatus: "Dirty",
-              productUID: initialReservation.products[0].seasonsUID,
+              productUID: a.seasonsUID,
               returned: true,
               notes: "",
-            },
-          ],
-          returnPackage.shippingLabel.trackingNumber
-        )
+            })),
+            returnPackage.shippingLabel.trackingNumber
+          )
 
-        // Calculate
-        const {
-          daysRented,
-          comment,
-          rentalEndedAt,
-          rentalStartedAt,
-        } = await rentalService.calcDaysRented(
-          custWithData.membership.rentalInvoices[0],
-          initialReservation.products[0]
-        )
+          const {
+            daysRented,
+            comment,
+            rentalEndedAt,
+            rentalStartedAt,
+          } = await rentalService.calcDaysRented(
+            custWithData.membership.rentalInvoices[0],
+            initialReservation.products[0]
+          )
 
-        // run the expects
-        const twoDaysAgo = utils.xDaysAgoISOString(2)
-        expect(daysRented).toBe(21)
-        expect(moment(rentalEndedAt).format("ll")).toEqual(
-          moment(twoDaysAgo).format("ll")
-        )
-        expect(moment(rentalStartedAt).format("ll")).toEqual(
-          moment(twentyThreeDaysAgo).format("ll")
-        )
+          expect(daysRented).toBe(19)
+          expectTimeToEqual(rentalStartedAt, twentyThreeDaysAgo)
+          expectTimeToEqual(rentalEndedAt, utils.xDaysAgoISOString(4))
 
-        expectInitialReservationComment(
-          comment,
-          initialReservation.reservationNumber,
-          "completed"
-        )
-        expectCommentToInclude(comment, `item status: returned`)
+          expectInitialReservationComment(
+            comment,
+            initialReservation.reservationNumber,
+            "completed"
+          )
+          expectCommentToInclude(comment, `item status: returned`)
+        })
+
+        it("reserved and held. no new reservations since initial", async () => {
+          const {
+            daysRented,
+            comment,
+            rentalEndedAt,
+            rentalStartedAt,
+          } = await rentalService.calcDaysRented(
+            custWithData.membership.rentalInvoices[0],
+            initialReservation.products[0]
+          )
+
+          expect(daysRented).toBe(23)
+          expectTimeToEqual(rentalStartedAt, twentyThreeDaysAgo)
+          expectTimeToEqual(rentalEndedAt, now)
+
+          expectInitialReservationComment(
+            comment,
+            initialReservation.reservationNumber,
+            "delivered"
+          )
+          expectCommentToInclude(comment, "item status: with customer")
+        })
+
+        it("reserved and held. made 2 new reservations since initial", async () => {
+          const reservationTwo = (await addToBagAndReserveForCustomer(2)) as any
+          await setReservationStatus(reservationTwo.id, "Delivered")
+          const reservationThree = (await addToBagAndReserveForCustomer(
+            1
+          )) as any
+          await setReservationStatus(reservationThree.id, "Delivered")
+
+          const {
+            daysRented,
+            comment,
+            rentalEndedAt,
+            rentalStartedAt,
+          } = await rentalService.calcDaysRented(
+            custWithData.membership.rentalInvoices[0],
+            initialReservation.products[0]
+          )
+
+          expect(daysRented).toBe(23)
+          expectTimeToEqual(rentalStartedAt, twentyThreeDaysAgo)
+          expectTimeToEqual(rentalEndedAt, now)
+
+          expectInitialReservationComment(
+            comment,
+            initialReservation.reservationNumber,
+            "completed"
+          )
+          expectCommentToInclude(comment, "item status: with customer")
+        })
       })
 
-      it("reserved and returned on later reservation", async () => {
-        const reservationTwo = (await addToBagAndReserveForCustomer(1)) as any
-        await setReservationStatus(reservationTwo.id, "Delivered")
-        const reservationThree = (await addToBagAndReserveForCustomer(3)) as any
-        await setReservationStatus(reservationThree.id, "Delivered")
+      describe("Reservation in processing", () => {
+        let initialReservation: any
+        let custWithData: any
 
-        // Return it with the label from the last reservation
-        const returnPackage = head(reservationThree.returnPackages)
-        await setPackageEnteredSystemAt(returnPackage.id, 4)
-        await reservationService.processReservation(
-          reservationThree.reservationNumber,
-          reservationThree.products.map(a => ({
-            productStatus: "Dirty",
-            productUID: a.seasonsUID,
-            returned: true,
-            notes: "",
-          })),
-          returnPackage.shippingLabel.trackingNumber
-        )
+        beforeEach(async () => {
+          initialReservation = (await addToBagAndReserveForCustomer(1)) as any
+          custWithData = await getCustWithData()
+        })
 
-        const {
-          daysRented,
-          comment,
-          rentalEndedAt,
-          rentalStartedAt,
-        } = await rentalService.calcDaysRented(
-          custWithData.membership.rentalInvoices[0],
-          initialReservation.products[0]
-        )
+        it("Sent on a Queued reservation", async () => {
+          setReservationStatus(initialReservation.id, "Queued")
 
-        expect(daysRented).toBe(19)
-        expectTimeToEqual(rentalStartedAt, twentyThreeDaysAgo)
-        expectTimeToEqual(rentalEndedAt, utils.xDaysAgoISOString(4))
+          const {
+            daysRented,
+            comment,
+            rentalEndedAt,
+            rentalStartedAt,
+          } = await rentalService.calcDaysRented(
+            custWithData.membership.rentalInvoices[0],
+            initialReservation.products[0]
+          )
 
-        expectInitialReservationComment(
-          comment,
-          initialReservation.reservationNumber,
-          "completed"
-        )
-        expectCommentToInclude(comment, `item status: returned`)
-      })
+          expect(daysRented).toBe(0)
+          expect(rentalStartedAt).toBe(undefined)
+          expect(rentalEndedAt).toBe(undefined)
 
-      it("reserved and held. no new reservations since initial", async () => {
-        const {
-          daysRented,
-          comment,
-          rentalEndedAt,
-          rentalStartedAt,
-        } = await rentalService.calcDaysRented(
-          custWithData.membership.rentalInvoices[0],
-          initialReservation.products[0]
-        )
+          expectInitialReservationComment(
+            comment,
+            initialReservation.reservationNumber,
+            "queued"
+          )
+          expectCommentToInclude(comment, "item status: preparing for shipment")
+        })
 
-        expect(daysRented).toBe(23)
-        expectTimeToEqual(rentalStartedAt, twentyThreeDaysAgo)
-        expectTimeToEqual(rentalEndedAt, now)
+        it("Sent on a Picked reservation", async () => {
+          setReservationStatus(initialReservation.id, "Picked")
 
-        expectInitialReservationComment(
-          comment,
-          initialReservation.reservationNumber,
-          "delivered"
-        )
-        expectCommentToInclude(comment, "item status: with customer")
-      })
+          const {
+            daysRented,
+            comment,
+            rentalEndedAt,
+            rentalStartedAt,
+          } = await rentalService.calcDaysRented(
+            custWithData.membership.rentalInvoices[0],
+            initialReservation.products[0]
+          )
 
-      it("reserved and held. made 2 new reservations since initial", async () => {
-        const reservationTwo = (await addToBagAndReserveForCustomer(2)) as any
-        await setReservationStatus(reservationTwo.id, "Delivered")
-        const reservationThree = (await addToBagAndReserveForCustomer(1)) as any
-        await setReservationStatus(reservationThree.id, "Delivered")
+          expect(daysRented).toBe(0)
+          expect(rentalStartedAt).toBe(undefined)
+          expect(rentalEndedAt).toBe(undefined)
 
-        const {
-          daysRented,
-          comment,
-          rentalEndedAt,
-          rentalStartedAt,
-        } = await rentalService.calcDaysRented(
-          custWithData.membership.rentalInvoices[0],
-          initialReservation.products[0]
-        )
+          expectInitialReservationComment(
+            comment,
+            initialReservation.reservationNumber,
+            "picked"
+          )
+          expectCommentToInclude(comment, "item status: preparing for shipment")
+        })
 
-        expect(daysRented).toBe(23)
-        expectTimeToEqual(rentalStartedAt, twentyThreeDaysAgo)
-        expectTimeToEqual(rentalEndedAt, now)
+        it("Sent on a Packed reservation", async () => {
+          setReservationStatus(initialReservation.id, "Packed")
 
-        expectInitialReservationComment(
-          comment,
-          initialReservation.reservationNumber,
-          "completed"
-        )
-        expectCommentToInclude(comment, "item status: with customer")
+          const {
+            daysRented,
+            comment,
+            rentalEndedAt,
+            rentalStartedAt,
+          } = await rentalService.calcDaysRented(
+            custWithData.membership.rentalInvoices[0],
+            initialReservation.products[0]
+          )
+
+          expect(daysRented).toBe(0)
+          expect(rentalStartedAt).toBe(undefined)
+          expect(rentalEndedAt).toBe(undefined)
+
+          expectInitialReservationComment(
+            comment,
+            initialReservation.reservationNumber,
+            "packed"
+          )
+          expectCommentToInclude(comment, "item status: preparing for shipment")
+        })
+
+        it("Sent on a reservation with status Unknown", async () => {
+          setReservationStatus(initialReservation.id, "Unknown")
+
+          const {
+            daysRented,
+            comment,
+            rentalEndedAt,
+            rentalStartedAt,
+          } = await rentalService.calcDaysRented(
+            custWithData.membership.rentalInvoices[0],
+            initialReservation.products[0]
+          )
+
+          expect(daysRented).toBe(0)
+          expect(rentalStartedAt).toBe(undefined)
+          expect(rentalEndedAt).toBe(undefined)
+
+          expectInitialReservationComment(
+            comment,
+            initialReservation.reservationNumber,
+            "unknown"
+          )
+          expectCommentToInclude(comment, "item status: unknown")
+        })
+
+        it("Sent on a reservation with status Blocked", async () => {
+          setReservationStatus(initialReservation.id, "Blocked")
+
+          const {
+            daysRented,
+            comment,
+            rentalEndedAt,
+            rentalStartedAt,
+          } = await rentalService.calcDaysRented(
+            custWithData.membership.rentalInvoices[0],
+            initialReservation.products[0]
+          )
+
+          expect(daysRented).toBe(0)
+          expect(rentalStartedAt).toBe(undefined)
+          expect(rentalEndedAt).toBe(undefined)
+
+          expectInitialReservationComment(
+            comment,
+            initialReservation.reservationNumber,
+            "blocked"
+          )
+          expectCommentToInclude(comment, "item status: unknown")
+        })
+
+        it("Sent on a reservation with status Hold", async () => {
+          setReservationStatus(initialReservation.id, "Hold")
+
+          const {
+            daysRented,
+            comment,
+            rentalEndedAt,
+            rentalStartedAt,
+          } = await rentalService.calcDaysRented(
+            custWithData.membership.rentalInvoices[0],
+            initialReservation.products[0]
+          )
+
+          expect(daysRented).toBe(0)
+          expect(rentalStartedAt).toBe(undefined)
+          expect(rentalEndedAt).toBe(undefined)
+
+          expectInitialReservationComment(
+            comment,
+            initialReservation.reservationNumber,
+            "hold"
+          )
+          expectCommentToInclude(comment, "item status: unknown")
+        })
       })
 
       // Queued, Hold, Picked, Packed, Unknown, Blocked = 0

@@ -70,23 +70,27 @@ export class RentalService {
       invoiceWithData.billingStartAt
     )
 
-    const rentalStartedAt = deliveredThisBillingCycle
+    let rentalStartedAt = deliveredThisBillingCycle
       ? itemDeliveredAt
       : invoiceWithData.billingStartAt
     const itemStatusComments = {
       returned: "Item status: returned",
       withCustomer: "Item status: with customer",
+      preparing: "Item status: preparing for shipment",
+      unknown: "Item status: unknown",
     }
     switch (initialReservation.status) {
       case "Hold":
       case "Blocked":
       case "Unknown":
-        addComment("Unknown rental status")
+        addComment(itemStatusComments["unknown"])
+        rentalStartedAt = undefined
         break
       case "Queued":
       case "Picked":
       case "Packed":
-        addComment("Not yet shipped to customer.")
+        addComment(itemStatusComments["preparing"])
+        rentalStartedAt = undefined
         break
 
       case "Shipped":
