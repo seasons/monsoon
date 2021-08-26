@@ -121,6 +121,10 @@ export class PushNotificationService {
     select,
     debug = false,
   }: PushNotifyUsersInput) {
+    if (process.env.TEST === "true") {
+      return
+    }
+
     try {
       // Determine the target user
       let targetEmails = [process.env.PUSH_NOTIFICATIONS_DEFAULT_EMAIL]

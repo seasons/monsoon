@@ -125,7 +125,8 @@ const cache = (() => {
     console.error(e)
   }
 })()
-@Module({
+
+export const APP_MODULE_DEF = {
   imports: [
     ...scheduleModule,
     GraphQLModule.forRootAsync({
@@ -213,5 +214,7 @@ const cache = (() => {
     },
     Logger,
   ],
-})
+}
+
+@Module(APP_MODULE_DEF)
 export class AppModule {}
