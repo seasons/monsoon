@@ -35,15 +35,13 @@ export class ProductMutationsResolver {
       select
     )
   }
-  /* swapBagitem mutation replaces addBagItemfromAdmin and deleteBagItemFromAdmin */
   @Mutation()
   async swapBagItem(
     @Args() { oldItemID, physicalProductWhere },
     @Application() application
   ) {
-    // throw an explicit error if application !== "spring"
     if (application !== "spring") {
-      throw new Error("TODO")
+      throw new Error("Can only swap bag items from Admin")
     }
     const physicalProductForSwap = await this.prisma.client.physicalProduct.findUnique(
       {
@@ -56,10 +54,6 @@ export class ProductMutationsResolver {
     if (physicalProductForSwap.inventoryStatus !== "Reservable") {
       throw new Error("This item is not reservable")
     }
-
-    const type = "Delete"
-    const status = "Reserved"
-    const saved = false
 
     return await this.bagService.swapBagItem(oldItemID, physicalProductForSwap)
   }
