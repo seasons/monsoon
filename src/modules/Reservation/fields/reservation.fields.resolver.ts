@@ -139,4 +139,11 @@ export class ReservationFieldsResolver {
     )
     return returnedPackageWithData
   }
+
+  @ResolveField()
+  async lineItems(@Parent() reservation) {
+    if (reservation.lineItems) {
+      return reservation.lineItems
+    }
+  }
 }
