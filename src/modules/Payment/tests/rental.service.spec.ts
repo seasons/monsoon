@@ -373,8 +373,34 @@ describe("Rental Service", () => {
         })
       })
 
-      // Queued, Hold, Picked, Packed, Unknown, Blocked = 0
+      it("Shipped, on the way there", async () => {
+        let initialReservation = (await addToBagAndReserveForCustomer(1)) as any
+        let custWithData = await getCustWithData()
+        setReservationStatus(initialReservation.id, "Shipped")
 
+        const {
+          daysRented,
+          comment,
+          rentalEndedAt,
+          rentalStartedAt,
+        } = await rentalService.calcDaysRented(
+          custWithData.membership.rentalInvoices[0],
+          initialReservation.products[0]
+        )
+
+        expect(daysRented).toBe(0)
+        expect(rentalStartedAt).toBe(undefined)
+        expect(rentalEndedAt).toBe(undefined)
+
+        expectInitialReservationComment(
+          comment,
+          initialReservation.reservationNumber,
+          "shipped"
+        )
+        expectCommentToInclude(comment, "item status: en route to customer")
+      })
+
+      it("Shipped, on the way back", async () => {})
       // Shipped, on the way there = 0
       // Shipped, on the way back: rentalEndedAt f of whether or not package in system.
       // Lost on the way there, lost on the way back

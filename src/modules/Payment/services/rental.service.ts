@@ -78,6 +78,7 @@ export class RentalService {
       withCustomer: "Item status: with customer",
       preparing: "Item status: preparing for shipment",
       unknown: "Item status: unknown",
+      enRoute: "Item status: en route to customer",
     }
     switch (initialReservation.status) {
       case "Hold":
@@ -95,7 +96,8 @@ export class RentalService {
 
       case "Shipped":
         if (initialReservation.phase === "BusinessToCustomer") {
-          addComment("En route to customer")
+          rentalStartedAt = undefined
+          addComment(itemStatusComments["enRoute"])
         } else {
           /* 
           Simplest case: Customer has one reservation. This item was sent on that reservation, and is now being returned with the label provided on that item.
