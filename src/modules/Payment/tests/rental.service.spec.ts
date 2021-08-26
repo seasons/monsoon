@@ -565,11 +565,11 @@ describe("Rental Service", () => {
         })) as any
         const rentalInvoice = custWithData.membership.rentalInvoices[0]
         const rentalPriceOverrides = [30, 50, 80, 100]
-        const invoicePhysicalProductSUIDs = rentalInvoice.products.map(
+        invoicePhysicalProductSUIDs = rentalInvoice.products.map(
           a => a.seasonsUID
         )
         for (const [i, overridePrice] of rentalPriceOverrides.entries()) {
-          await prisma.client.product.updateMany({
+          const prodToUpdate = await prisma.client.product.findFirst({
             where: {
               variants: {
                 some: {
@@ -579,12 +579,23 @@ describe("Rental Service", () => {
                 },
               },
             },
-            data: { rentalPriceOverride: overridePrice },
           })
+          const updatedProduct = await prisma.client.product.update({
+            where: { id: prodToUpdate.id },
+            data: { rentalPriceOverride: overridePrice },
+            select: { id: true, rentalPriceOverride: true },
+          })
+          console.log(updatedProduct)
         }
 
-        const lineItems = rentalService.createRentalInvoiceLineItems(
-          rentalInvoice
+        const rentalInvoiceWithUpdatedPrices = await prisma.client.rentalInvoice.findUnique(
+          {
+            where: { id: rentalInvoice.id },
+            select: CREATE_RENTAL_INVOICE_LINE_ITEMS_INVOICE_SELECT,
+          }
+        )
+        const lineItems = await rentalService.createRentalInvoiceLineItems(
+          rentalInvoiceWithUpdatedPrices
         )
 
         const lineItemsWithData = await prisma.client.rentalInvoiceLineItem.findMany(
@@ -645,8 +656,8 @@ describe("Rental Service", () => {
 
       it("Stores the proper value of days Rented", () => {
         for (const suid of invoicePhysicalProductSUIDs) {
-          expect(expectedResultsBySUID[suid].daysRented).toEqual(
-            lineItemsBySUID[suid].daysRented
+          expect(lineItemsBySUID[suid].daysRented).toEqual(
+            expectedResultsBySUID[suid].daysRented
           )
         }
       })
@@ -666,8 +677,8 @@ describe("Rental Service", () => {
 
       it("Stores the proper price", () => {
         for (const suid of invoicePhysicalProductSUIDs) {
-          expect(expectedResultsBySUID[suid].price).toEqual(
-            lineItemsBySUID[suid].price
+          expect(lineItemsBySUID[suid].price).toEqual(
+            expectedResultsBySUID[suid].price
           )
         }
       })

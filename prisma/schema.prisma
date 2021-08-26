@@ -941,7 +941,7 @@ model RentalInvoiceLineItem {
   physicalProductId String          @map("physicalProduct") @db.VarChar(30)
   physicalProduct   PhysicalProduct @relation(fields: [physicalProductId], references: [id])
   rentalInvoiceId   String          @map("rentalInvoice") @db.VarChar(30)
-  rentalInvoice     RentalInvoice   @relation(fields: [rentalInvoiceId], references: [id])
+  rentalInvoice     RentalInvoice   @relation(fields: [rentalInvoiceId], references: [id], onDelete: Cascade)
   daysRented        Int
   rentalStartedAt   DateTime?
   rentalEndedAt     DateTime?

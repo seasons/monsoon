@@ -21,6 +21,7 @@ export const CREATE_RENTAL_INVOICE_LINE_ITEMS_INVOICE_SELECT = Prisma.validator<
         select: {
           product: {
             select: {
+              id: true,
               rentalPriceOverride: true,
               wholesalePrice: true,
               recoupment: true,
@@ -279,6 +280,7 @@ export class RentalService {
           invoice,
           physicalProduct
         )
+        console.log(physicalProduct.productVariant.product)
         const dailyRentalPrice = this.productUtils.calcRentalPrice(
           physicalProduct.productVariant.product,
           "daily"
