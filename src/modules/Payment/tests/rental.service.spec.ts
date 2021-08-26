@@ -400,12 +400,20 @@ describe("Rental Service", () => {
         expectCommentToInclude(comment, "item status: en route to customer")
       })
 
-      it("Shipped, on the way back", async () => {})
-      // Shipped, on the way there = 0
-      // Shipped, on the way back: rentalEndedAt f of whether or not package in system.
-      // Lost on the way there, lost on the way back
+      it("Shipped, on the way back", async () => {
+        // Shipped, on the way back: rentalEndedAt f of whether or not package in system.
+        expect(0).toBe(1)
+      })
 
-      // Cancelled
+      it("lost on the way there", async () => {
+        expect(0).toBe(1)
+      })
+
+      it("lost on the way back", async () => {
+        expect(0).toBe(1)
+      })
+
+      it("sent on a Cancelled reservation", async () => {})
     })
 
     describe("Items reserved in a previous billing cycle", () => {})
