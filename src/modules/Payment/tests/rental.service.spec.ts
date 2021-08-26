@@ -8,7 +8,10 @@ import { head, merge } from "lodash"
 import moment from "moment"
 
 import { PaymentService } from "../services/payment.service"
-import { RentalService } from "../services/rental.service"
+import {
+  CREATE_RENTAL_INVOICE_LINE_ITEMS_INVOICE_SELECT,
+  RentalService,
+} from "../services/rental.service"
 
 class PaymentServiceMock {
   addEarlySwapCharge = async () => null
@@ -22,6 +25,12 @@ let utils: UtilsService
 let cleanupFuncs = []
 let testCustomer: any
 
+const testCustomerSelect = Prisma.validator<Prisma.CustomerSelect>()({
+  id: true,
+  status: true,
+  membership: { select: { plan: { select: { tier: true } } } },
+  user: true,
+})
 describe("Rental Service", () => {
   const now = new Date()
 
@@ -44,12 +53,7 @@ describe("Rental Service", () => {
   describe("Calculate Days Rented", () => {
     beforeEach(async () => {
       const { cleanupFunc, customer } = await createTestCustomer({
-        select: {
-          id: true,
-          status: true,
-          membership: { select: { plan: { select: { tier: true } } } },
-          user: true,
-        },
+        select: testCustomerSelect,
       })
       cleanupFuncs.push(cleanupFunc)
       testCustomer = customer
@@ -519,6 +523,160 @@ describe("Rental Service", () => {
     // TODO: Test using a previous reservation's return label
     // TODO: Item's initial reservation is cancelled. Then is held and sent on a following reservation
   })
+
+  describe("Create Rental Invoice Line Items", () => {
+    describe("Properly creates line items for an invoice with 3 reservations and 4 products", () => {
+      let lineItemsBySUID
+      let expectedResultsBySUID
+      let lineItemsPhysicalProductSUIDs
+      let invoicePhysicalProductSUIDs
+
+      beforeAll(async () => {
+        const { cleanupFunc, customer } = await createTestCustomer({
+          select: testCustomerSelect,
+        })
+        cleanupFuncs.push(cleanupFunc)
+        testCustomer = customer
+
+        // Two delivered reservations
+        const initialReservation = await addToBagAndReserveForCustomer(2)
+        await setReservationCreatedAt(initialReservation.id, 25)
+        await setPackageDeliveredAt(initialReservation.sentPackage.id, 23)
+        await setReservationStatus(initialReservation.id, "Delivered")
+
+        const reservationTwo = await addToBagAndReserveForCustomer(1)
+        await setReservationCreatedAt(reservationTwo.id, 10)
+        await setPackageDeliveredAt(reservationTwo.sentPackage.id, 9)
+        await setReservationStatus(reservationTwo.id, "Delivered")
+
+        // One queued reservation
+        const reservationThree = await addToBagAndReserveForCustomer(1)
+        await setReservationCreatedAt(reservationTwo.id, 2)
+
+        // Override product prices so we can predict the proper price
+        const custWithData = (await getCustWithData({
+          membership: {
+            select: {
+              rentalInvoices: {
+                select: CREATE_RENTAL_INVOICE_LINE_ITEMS_INVOICE_SELECT,
+              },
+            },
+          },
+        })) as any
+        const rentalInvoice = custWithData.membership.rentalInvoices[0]
+        const rentalPriceOverrides = [30, 50, 80, 100]
+        const invoicePhysicalProductSUIDs = rentalInvoice.products.map(
+          a => a.seasonsUID
+        )
+        for (const [i, overridePrice] of rentalPriceOverrides.entries()) {
+          await prisma.client.product.updateMany({
+            where: {
+              variants: {
+                some: {
+                  physicalProducts: {
+                    some: { seasonsUID: invoicePhysicalProductSUIDs[i] },
+                  },
+                },
+              },
+            },
+            data: { rentalPriceOverride: overridePrice },
+          })
+        }
+
+        const lineItems = rentalService.createRentalInvoiceLineItems(
+          rentalInvoice
+        )
+
+        const lineItemsWithData = await prisma.client.rentalInvoiceLineItem.findMany(
+          {
+            where: { id: { in: (await lineItems).map(a => a.id) } },
+            select: { physicalProduct: { select: { seasonsUID: true } } },
+          }
+        )
+        lineItemsPhysicalProductSUIDs = lineItemsWithData.map(
+          a => a.physicalProduct.seasonsUID
+        )
+
+        const initialReservationProductSUIDs = initialReservation.products.map(
+          a => a.seasonsUID
+        )
+        const reservationTwoSUIDs = reservationTwo.products.map(
+          b => b.seasonsUID
+        )
+        const reservationThreeSUIDs = reservationThree.products.map(
+          c => c.seasonsUID
+        )
+        lineItemsBySUID = lineItemsWithData.reduce((acc, curVal) => {
+          return { ...acc, [curVal.physicalProduct.seasonsUID]: curVal }
+        }, {})
+        expectedResultsBySUID = {
+          [initialReservationProductSUIDs[0]]: {
+            daysRented: 23,
+            rentalStartedAt: utils.xDaysAgoISOString(23),
+            rentalEndedAt: now,
+            price: 23,
+          },
+          [initialReservationProductSUIDs[1]]: {
+            daysRented: 23,
+            rentalStartedAt: utils.xDaysAgoISOString(23),
+            rentalEndedAt: now,
+            price: 38.41,
+          },
+          [reservationTwoSUIDs[0]]: {
+            daysRented: 9,
+            rentalStartedAt: utils.xDaysAgoISOString(9),
+            rentalEndedAt: now,
+            price: 24.03,
+          },
+          [reservationThreeSUIDs[0]]: {
+            daysRented: 0,
+            rentalStartedAt: null,
+            rentalEndedAt: null,
+            price: 0,
+          },
+        }
+      })
+
+      it("Creates a line item for each physical product on the invoice", () => {
+        expect(lineItemsPhysicalProductSUIDs.sort()).toEqual(
+          invoicePhysicalProductSUIDs.sort()
+        )
+      })
+
+      it("Stores the proper value of days Rented", () => {
+        for (const suid of invoicePhysicalProductSUIDs) {
+          expect(expectedResultsBySUID[suid].daysRented).toEqual(
+            lineItemsBySUID[suid].daysRented
+          )
+        }
+      })
+
+      it("Stores the proper values for rentalStartedAt and rentalEndedAt", () => {
+        for (const suid of invoicePhysicalProductSUIDs) {
+          expectTimeToEqual(
+            lineItemsBySUID["rentalStartedAt"],
+            expectedResultsBySUID[suid].rentalStartedAt
+          )
+          expectTimeToEqual(
+            lineItemsBySUID["rentalEndedAt"],
+            expectedResultsBySUID[suid].rentalEndedAt
+          )
+        }
+      })
+
+      it("Stores the proper price", () => {
+        for (const suid of invoicePhysicalProductSUIDs) {
+          expect(expectedResultsBySUID[suid].price).toEqual(
+            lineItemsBySUID[suid].price
+          )
+        }
+      })
+
+      it("Stores the proper taxes", () => {
+        expect(0).toBe(1)
+      })
+    })
+  })
 })
 
 const createTestCustomer = async ({
@@ -589,13 +747,22 @@ const addToBagAndReserveForCustomer = async numProductsToAdd => {
       status: "Reserved",
       saved: false,
     },
-    select: { productVariant: { select: { sku: true } } },
+    select: {
+      productVariant: {
+        select: { sku: true, product: { select: { id: true } } },
+      },
+    },
   })
   const reservedSKUs = reservedBagItems.map(a => a.productVariant.sku)
+  const reservedProductIds = reservedBagItems.map(
+    b => b.productVariant.product.id
+  )
   const reservableProdVars = await prisma.client.productVariant.findMany({
     where: {
       reservable: { gte: 1 },
       sku: { notIn: reservedSKUs },
+      // Ensure we reserve diff products each time. Needed for some tests
+      product: { id: { notIn: reservedProductIds } },
       // We shouldn't need to check this since we're checking counts,
       // but there's some corrupt data so we do this to circumvent that.
       physicalProducts: { some: { inventoryStatus: "Reservable" } },
@@ -622,7 +789,7 @@ const addToBagAndReserveForCustomer = async numProductsToAdd => {
     select: { productVariant: { select: { id: true } } },
   })
   const prodVarsToReserve = bagItemsToReserve.map(a => a.productVariant.id)
-  const reservation = await reservationService.reserveItems(
+  return await reservationService.reserveItems(
     prodVarsToReserve,
     null,
     testCustomer.user,
@@ -639,8 +806,6 @@ const addToBagAndReserveForCustomer = async numProductsToAdd => {
       },
     }
   )
-
-  return reservation
 }
 
 const setPackageDeliveredAt = async (packageId, numDaysAgo) => {
@@ -676,25 +841,28 @@ const setPackageEnteredSystemAt = async (packageId, numDaysAgo) => {
   })
 }
 
-const getCustWithData = async () => {
-  return await prisma.client.customer.findFirst({
-    where: { id: testCustomer.id },
-    select: {
-      membership: {
-        select: {
-          rentalInvoices: {
-            select: {
-              id: true,
-              reservations: true,
-              products: true,
-              status: true,
-              billingStartAt: true,
-              billingEndAt: true,
-            },
+const getCustWithData = async (
+  select: Prisma.CustomerSelect = {}
+): Promise<any> => {
+  const defaultSelect = {
+    membership: {
+      select: {
+        rentalInvoices: {
+          select: {
+            id: true,
+            reservations: true,
+            products: true,
+            status: true,
+            billingStartAt: true,
+            billingEndAt: true,
           },
         },
       },
     },
+  }
+  return await prisma.client.customer.findFirst({
+    where: { id: testCustomer.id },
+    select: merge(defaultSelect, select),
   })
 }
 
@@ -715,5 +883,8 @@ const expectCommentToInclude = (comment, expectedLine) => {
 }
 
 const expectTimeToEqual = (time, expectedValue) => {
+  if (!expectedValue) {
+    expect(time).toBe(expectedValue)
+  }
   expect(moment(time).format("ll")).toEqual(moment(expectedValue).format("ll"))
 }

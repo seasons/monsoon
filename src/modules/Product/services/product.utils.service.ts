@@ -56,7 +56,10 @@ export class ProductUtilsService {
     }
 
     if (type === "daily") {
-      return monthlyPrice / 30 // TODO: ROund this to second decimal place
+      // the + turns e.g '1.50' into 1.5
+      const roundedPriceAsString = (monthlyPrice / 30).toFixed(2)
+      const roundedPriceAsNum = +roundedPriceAsString
+      return roundedPriceAsNum
     }
 
     return monthlyPrice

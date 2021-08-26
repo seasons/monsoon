@@ -9,6 +9,58 @@ import chargebee from "chargebee"
 export const RETURN_PACKAGE_CUSHION = 3 // TODO: Set as an env var
 export const SENT_PACKAGE_CUSHION = 3 // TODO: Set as an env var
 
+export const CREATE_RENTAL_INVOICE_LINE_ITEMS_INVOICE_SELECT = Prisma.validator<
+  Prisma.RentalInvoiceSelect
+>()({
+  id: true,
+  products: {
+    select: {
+      id: true,
+      seasonsUID: true,
+      productVariant: {
+        select: {
+          product: {
+            select: {
+              rentalPriceOverride: true,
+              wholesalePrice: true,
+              recoupment: true,
+            },
+          },
+        },
+      },
+    },
+  },
+  reservations: { select: { id: true } },
+  membership: {
+    select: {
+      plan: { select: { planID: true } },
+      subscriptionId: true,
+      customer: {
+        select: {
+          id: true,
+          status: true,
+          user: { select: { id: true } },
+          reservations: {
+            where: {
+              status: {
+                notIn: ["Cancelled", "Completed", "Lost", "Unknown"],
+              },
+            },
+            select: { id: true },
+          },
+          bagItems: {
+            where: { status: { in: ["Received", "Reserved"] } },
+            select: {
+              id: true,
+              physicalProduct: { select: { id: true } },
+            },
+          },
+        },
+      },
+      id: true,
+    },
+  },
+})
 @Injectable()
 export class RentalService {
   constructor(
@@ -241,23 +293,24 @@ export class RentalService {
         } as Prisma.RentalInvoiceLineItemCreateInput
       })
     )) as any
-    const {
-      estimate: { invoice_estimate },
-    } = await chargebee.estimate
-      .create_invoice({
-        // TODO: Add customer id
-        invoice: { customer_id: chargebeeCustomerId },
-        charges: lineItemCreateDatas.map(a => ({
-          amount: a.price * 100,
-          taxable: true,
-          avalara_tax_code: "", // TODO: Fill in
-        })),
-      })
-      .request()
+    // TODO: Calculate taxes
+    // const {
+    //   estimate: { invoice_estimate },
+    // } = await chargebee.estimate
+    //   .create_invoice({
+    //     // TODO: Add customer id
+    //     invoice: { customer_id: chargebeeCustomerId },
+    //     charges: lineItemCreateDatas.map(a => ({
+    //       amount: a.price * 100,
+    //       taxable: true,
+    //       avalara_tax_code: "", // TODO: Fill in
+    //     })),
+    //   })
+    //   .request()
     const lineItemCreateDatasWithTaxes = lineItemCreateDatas.map((a, idx) => ({
       ...a,
-      taxRate: invoice_estimate.line_items?.[idx]?.tax_rate || 0,
-      taxPrice: invoice_estimate.line_items?.[idx]?.tax_amount || 0,
+      // taxRate: invoice_estimate.line_items?.[idx]?.tax_rate || 0,
+      // taxPrice: invoice_estimate.line_items?.[idx]?.tax_amount || 0,
     }))
     const lineItemPromises = lineItemCreateDatasWithTaxes.map(data =>
       this.prisma.client.rentalInvoiceLineItem.create({

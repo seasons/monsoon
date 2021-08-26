@@ -1,5 +1,8 @@
 import { ErrorService } from "@app/modules/Error/services/error.service"
-import { RentalService } from "@app/modules/Payment/services/rental.service"
+import {
+  CREATE_RENTAL_INVOICE_LINE_ITEMS_INVOICE_SELECT,
+  RentalService,
+} from "@app/modules/Payment/services/rental.service"
 import { SubscriptionService } from "@app/modules/Payment/services/subscription.service"
 import { ProductUtilsService } from "@app/modules/Product"
 import { PaymentUtilsService } from "@app/modules/Utils/services/paymentUtils.service"
@@ -14,57 +17,6 @@ import {
   Reservation,
 } from "@prisma/client"
 import chargebee from "chargebee"
-
-const invoiceSelect = Prisma.validator<Prisma.RentalInvoiceSelect>()({
-  id: true,
-  products: {
-    select: {
-      id: true,
-      seasonsUID: true,
-      productVariant: {
-        select: {
-          product: {
-            select: {
-              rentalPriceOverride: true,
-              wholesalePrice: true,
-              recoupment: true,
-            },
-          },
-        },
-      },
-    },
-  },
-  reservations: { select: { id: true } },
-  membership: {
-    select: {
-      plan: { select: { planID: true } },
-      subscriptionId: true,
-      customer: {
-        select: {
-          id: true,
-          status: true,
-          user: { select: { id: true } },
-          reservations: {
-            where: {
-              status: {
-                notIn: ["Cancelled", "Completed", "Lost", "Unknown"],
-              },
-            },
-            select: { id: true },
-          },
-          bagItems: {
-            where: { status: { in: ["Received", "Reserved"] } },
-            select: {
-              id: true,
-              physicalProduct: { select: { id: true } },
-            },
-          },
-        },
-      },
-      id: true,
-    },
-  },
-})
 
 @Injectable()
 export class SubscriptionsScheduledJobs {
@@ -150,7 +102,8 @@ export class SubscriptionsScheduledJobs {
     this.logger.log(`Finished update subscriptions field job`)
   }
 
-  @Cron(CronExpression.EVERY_DAY_AT_4AM)
+  // TODO: Turn on when we launch new plans
+  // @Cron(CronExpression.EVERY_DAY_AT_4AM)
   async handleRentalInvoices() {
     /*
     Query all rental invoices whose billing ends today
@@ -167,7 +120,7 @@ export class SubscriptionsScheduledJobs {
         },
         status: "Draft",
       },
-      select: invoiceSelect,
+      select: CREATE_RENTAL_INVOICE_LINE_ITEMS_INVOICE_SELECT,
     })
 
     // TODO: Add analytics that helps us gauge how accurately we are billing
