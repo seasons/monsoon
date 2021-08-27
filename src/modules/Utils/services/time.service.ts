@@ -35,6 +35,7 @@ export class TimeUtilsService {
       afterDate = date2
     }
 
+    // Don't use the times to keep the day diff clean
     const before = moment(
       new Date(
         beforeDate.getFullYear(),
