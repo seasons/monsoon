@@ -5,8 +5,8 @@ import { Args, Parent, ResolveField, Resolver } from "@nestjs/graphql"
 import { PaymentPlan } from "@prisma/client"
 
 interface FeaturesData {
-  title: string
-  caption: string
+  accessMonthly: string
+  accessYearly: string
 }
 
 @Resolver("PaymentPlan")
@@ -51,8 +51,8 @@ export class PaymentPlanFieldsResolver {
   }
 
   @ResolveField()
-  async features() {
-    return this.featuresData
+  async features(@Parent() parent) {
+    return this.featuresData[parent.planID]
   }
 
   @ResolveField()
