@@ -4,9 +4,13 @@ import { UtilsService } from "@app/modules/Utils/services/utils.service"
 import { Args, Parent, ResolveField, Resolver } from "@nestjs/graphql"
 import { PaymentPlan } from "@prisma/client"
 
+interface Features {
+  "access-monthly": string
+  "access-yearly": string
+}
 interface FeaturesData {
-  accessMonthly: string
-  accessYearly: string
+  features: string[]
+  strikeThroughFeatures: string[]
 }
 
 @Resolver("PaymentPlan")

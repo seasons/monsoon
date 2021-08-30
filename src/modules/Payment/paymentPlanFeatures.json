@@ -1,34 +1,22 @@
 {
   "access-monthly": {
     "features": [
-      {
-        "caption": "Full rental access to over 1,000+ styles"
-      },
-      {
-        "caption": "Free shipping, dry cleaning, & stylist access"
-      },
-      { "caption": "Access to Discord, our newsletter * events" }
+      "Full rental access to over 1,000+ styles",
+      "Free shipping, dry cleaning, & stylist access",
+      "Access to Discord, our newsletter * events"
     ],
     "strikeThroughFeatures": [
-      { "caption": "Preview & vote on upcoming styles" },
-      {
-        "caption": "Early bag resets, 24/7 customer service"
-      }
+      "Preview & vote on upcoming styles",
+      "Early bag resets, 24/7 customer service"
     ]
   },
   "access-yearly": {
     "features": [
-      {
-        "caption": "Full rental access to over 1,000+ styles"
-      },
-      {
-        "caption": "Free shipping, dry cleaning, & stylist access"
-      },
-      { "caption": "Access to Discord, our newsletter * events" },
-      { "caption": "Preview & vote on upcoming styles" },
-      {
-        "caption": "Early bag resets, 24/7 customer service"
-      }
+      "Full rental access to over 1,000+ styles",
+      "Free shipping, dry cleaning, & stylist access",
+      "Access to Discord, our newsletter * events",
+      "Preview & vote on upcoming styles",
+      "Early bag resets, 24/7 customer service"
     ],
     "strikeThroughFeatures": []
   }
