@@ -1,12 +1,6 @@
-import { Customer } from "@app/decorators"
 import { Loader } from "@app/modules/DataLoader/decorators/dataloader.decorator"
-import { UtilsService } from "@app/modules/Utils/services/utils.service"
-import { PrismaDataLoader } from "@app/prisma/prisma.loader"
-import { ImageSize } from "@modules/Image/image.types.d"
-import { ImageService } from "@modules/Image/services/image.service"
-import { Args, Parent, ResolveField, Resolver } from "@nestjs/graphql"
-import { PhysicalProductDamageType, Prisma } from "@prisma/client"
-import { PrismaService } from "@prisma1/prisma.service"
+import { Parent, ResolveField, Resolver } from "@nestjs/graphql"
+import { Prisma } from "@prisma/client"
 import { head } from "lodash"
 
 @Resolver("BagItem")
@@ -20,17 +14,7 @@ export class BagItemFieldsResolver {
         select: Prisma.validator<Prisma.BagItemSelect>()({
           id: true,
           status: true,
-          physicalProduct: {
-            select: {
-              id: true,
-            },
-          },
           physicalProductId: true,
-          productVariant: {
-            select: {
-              id: true,
-            },
-          },
           customer: {
             select: {
               id: true,
@@ -48,7 +32,7 @@ export class BagItemFieldsResolver {
           status: true,
           newProducts: { select: { id: true } },
         }),
-        formatWhere: (compositeKeys, ctx) => {
+        formatWhere: compositeKeys => {
           const customerIds = []
           const physicalProductIds = []
           for (const compositeKey of compositeKeys) {
@@ -78,7 +62,7 @@ export class BagItemFieldsResolver {
     }
 
     const customerId = currentBagItem.customer.id
-    const physicalProductId = currentBagItem.physicalProduct?.id
+    const physicalProductId = currentBagItem.physicalProductId
     if (!physicalProductId) {
       throw new Error(
         `Reserved bag item ${currentBagItem.id} has no physical product on it`
