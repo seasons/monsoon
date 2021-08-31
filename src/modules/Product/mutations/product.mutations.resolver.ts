@@ -38,7 +38,8 @@ export class ProductMutationsResolver {
   @Mutation()
   async swapBagItem(
     @Args() { oldItemID, physicalProductWhere },
-    @Application() application
+    @Application() application,
+    @Select() select
   ) {
     if (application !== "spring") {
       throw new Error("Can only swap bag items from Admin")
@@ -55,7 +56,11 @@ export class ProductMutationsResolver {
       throw new Error("This item is not reservable")
     }
 
-    return await this.bagService.swapBagItem(oldItemID, physicalProductForSwap)
+    return await this.bagService.swapBagItem(
+      oldItemID,
+      { seasonsUID: physicalProductWhere },
+      select
+    )
   }
 
   @Mutation()

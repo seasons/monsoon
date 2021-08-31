@@ -80,7 +80,8 @@ export class BagService {
   // Mutation for admins to swap a bagItem
   async swapBagItem(
     oldBagItemID,
-    physicalProductWhere: Prisma.PhysicalProductWhereUniqueInput
+    physicalProductWhere: Prisma.PhysicalProductWhereUniqueInput,
+    select: Prisma.BagItemSelect
   ) {
     const oldBagItem = await this.prisma.client.bagItem.findUnique({
       where: {
@@ -162,7 +163,7 @@ export class BagService {
       })
     )
 
-    const oldPhysicalProductInventoryStatus = !!oldPhysicalProduct.warehouseLocation
+    const oldPhysicalProductNewInventoryStatus = !!oldPhysicalProduct.warehouseLocation
       ? "Reservable"
       : "NonReservable"
 
@@ -170,7 +171,7 @@ export class BagService {
       {
         productVariant,
         oldInventoryStatus: oldPhysicalProduct.inventoryStatus as InventoryStatus,
-        newInventoryStatus: oldPhysicalProductInventoryStatus,
+        newInventoryStatus: oldPhysicalProductNewInventoryStatus,
       }
     )
 
@@ -178,7 +179,7 @@ export class BagService {
       this.prisma.client.physicalProduct.update({
         where: { id: oldPhysicalProduct.id },
         data: {
-          inventoryStatus: oldPhysicalProductInventoryStatus,
+          inventoryStatus: oldPhysicalProductNewInventoryStatus,
           productVariant: {
             update: {
               ...oldProductVariantData,
@@ -193,9 +194,7 @@ export class BagService {
     )
     const newPhysicalProduct = await this.prisma.client.physicalProduct.findUnique(
       {
-        where: {
-          seasonsUID: physicalProductWhere.seasonsUID,
-        },
+        where: physicalProductWhere,
       }
     )
     const newProductVariantID = newPhysicalProduct.productVariantId
@@ -260,6 +259,7 @@ export class BagService {
           status: "Reserved",
           saved: false,
         },
+        select,
       })
     )
 
