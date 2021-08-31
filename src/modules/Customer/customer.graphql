@@ -103,6 +103,7 @@ enum OnboardingStep {
   SetShippingAddress
 }
 
+# isSwapped nowhere in sight
 type Customer {
   id: ID!
   user: User!
