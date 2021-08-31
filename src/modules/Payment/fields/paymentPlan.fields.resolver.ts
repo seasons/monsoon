@@ -4,23 +4,23 @@ import { UtilsService } from "@app/modules/Utils/services/utils.service"
 import { Args, Parent, ResolveField, Resolver } from "@nestjs/graphql"
 import { PaymentPlan } from "@prisma/client"
 
-interface Features {
-  "access-monthly": FeaturesData
-  "access-yearly": FeaturesData
+interface PaymentPlans {
+  "access-monthly": PaymentPlanData
+  "access-yearly": PaymentPlanData
 }
-interface FeaturesData {
+interface PaymentPlanData {
   features: string[]
   strikeThroughFeatures: string[]
 }
 
 @Resolver("PaymentPlan")
 export class PaymentPlanFieldsResolver {
-  featuresData: Features
+  paymentPlans: PaymentPlans
   constructor(
     private readonly subscription: SubscriptionService,
     private readonly utils: UtilsService
   ) {
-    this.featuresData = this.utils.parseJSONFile(
+    this.paymentPlans = this.utils.parseJSONFile(
       "src/modules/Payment/paymentPlanFeatures"
     )
   }
@@ -56,7 +56,7 @@ export class PaymentPlanFieldsResolver {
 
   @ResolveField()
   async features(@Parent() parent) {
-    return this.featuresData[parent.planID]
+    return this.paymentPlans[parent.planID] || this.paymentPlans
   }
 
   @ResolveField()
