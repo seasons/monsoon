@@ -417,6 +417,7 @@ enum OrderLineItemRecordType {
   EarlySwap
   Reservation
   Fee
+  Total
 }
 
 enum OrderStatus {
