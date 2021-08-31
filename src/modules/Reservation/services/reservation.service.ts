@@ -300,6 +300,7 @@ export class ReservationService {
       nextFreeSwapDate && DateTime.fromISO(nextFreeSwapDate) > DateTime.local()
 
     if (doesNotHaveFreeSwap && reservationID) {
+      // TODO: move to invoice generation logic
       const swapCharge = await this.payment.addEarlySwapCharge(customerID)
       if (swapCharge?.invoice) {
         return [
@@ -307,8 +308,8 @@ export class ReservationService {
             recordID: reservationID,
             price: swapCharge.invoice.sub_total,
             currencyCode: "USD",
-            recordType: "EarlySwap",
-            name: "Early swap",
+            recordType: "Fee",
+            name: "Processing",
             taxPrice: swapCharge?.invoice?.tax || 0,
           },
         ]
@@ -659,50 +660,169 @@ export class ReservationService {
     return this.utils.filterAdminLogs(logs, keysWeDontCareAbout)
   }
 
-  async draftReservationLineItems(user: User, hasFreeSwap: boolean) {
-    if (hasFreeSwap) {
-      return []
-    }
+  async draftReservationLineItems(customer: Customer) {
+    const customerWithUser = await this.prisma.client.customer.findUnique({
+      where: {
+        id: customer.id,
+      },
+      select: {
+        id: true,
+        user: true,
+        billingInfo: {
+          select: {
+            state: true,
+          },
+        },
+      },
+    })
+
     try {
+      const bagItems = await this.prisma.client.bagItem.findMany({
+        where: {
+          customer: {
+            id: customer.id,
+          },
+          saved: false,
+        },
+        select: {
+          id: true,
+          customer: {
+            select: {
+              id: true,
+            },
+          },
+          productVariant: {
+            select: {
+              id: true,
+              product: {
+                select: {
+                  id: true,
+                  name: true,
+                  recoupment: true,
+                  wholesalePrice: true,
+                },
+              },
+            },
+          },
+        },
+      })
+
+      const nextFreeSwapDate = await this.customerUtils.nextFreeSwapDate(
+        customer.id
+      )
+      const doesNotHaveFreeSwap =
+        DateTime.fromISO(nextFreeSwapDate) > DateTime.local()
+
+      const processingFeeLines = [
+        ...(doesNotHaveFreeSwap
+          ? [
+              {
+                recordID: customer.id,
+                price: 3000,
+                currencyCode: "USD",
+                recordType: "Fee",
+                name: "Early swap",
+              },
+            ]
+          : []),
+      ]
+
+      const isBillingAddressInNY = customerWithUser.billingInfo.state === "NY"
+
+      const lines = bagItems.map(bagItem => {
+        const product = bagItem?.productVariant?.product
+        const rate = product.wholesalePrice / product.recoupment
+        const price = Math.ceil(rate / 5) * 500
+
+        return {
+          id: cuid(),
+          name: product.name,
+          createdAt: Date.now(),
+          updatedAt: Date.now(),
+          recordType: "ProductVariant",
+          recordID: bagItem.productVariant.id,
+          currencyCode: "USD",
+          price,
+        }
+      })
+
+      const chargebeeCharges = [...lines, ...processingFeeLines].map(line => {
+        return {
+          amount: line.price,
+          description: line.name,
+          ...(isBillingAddressInNY && {
+            taxable: true,
+            is_taxed: true,
+            avalara_tax_code:
+              line.recordType === "Fee" ? "FR020000" : "PC040000",
+          }),
+        }
+      })
+
       const {
         estimate: { invoice_estimate },
       } = await chargebee.estimate
         .create_invoice({
           invoice: {
-            customer_id: user.id,
+            customer_id: customerWithUser.user.id,
           },
-          charges: [
-            {
-              amount: 3000,
-              taxable: true,
-              description: "Early Swap",
-              avalara_tax_code: "FR020000",
-            },
-          ],
+          charges: chargebeeCharges,
         })
         .request()
+      console.log(invoice_estimate)
 
-      // Below we are creating a draft OrderLineItem with dummy data to show to the client
-      // it's using a random ID and a recordID because it's not being saved to the database
-      return [
+      const processingTotal = processingFeeLines.reduce(
+        (acc, curr) => acc + curr.price,
+        0
+      )
+      const taxTotal = invoice_estimate.taxes.reduce(
+        (acc, curr) => acc + curr.amount,
+        0
+      )
+
+      const linesWithTotal = [
+        ...lines,
         {
           id: cuid(),
+          name: "Processing + Tax",
           createdAt: Date.now(),
           updatedAt: Date.now(),
-          recordType: "EarlySwap",
-          name: "Early swap",
-          recordID: cuid(),
+          recordType: "Fee",
+          recordID: customer.id,
           currencyCode: "USD",
-          price: invoice_estimate.sub_total,
-          taxPrice: invoice_estimate?.taxes?.reduce(
-            (acc, tax) => acc + tax.amount,
-            0
-          ),
+          price: processingTotal + taxTotal,
+        },
+        ...(invoice_estimate.credits_applied
+          ? [
+              {
+                id: cuid(),
+                name: "Credits applied",
+                createdAt: Date.now(),
+                updatedAt: Date.now(),
+                recordType: "Credit",
+                recordID: customer.id,
+                currencyCode: "USD",
+                price: invoice_estimate.credits_applied,
+              },
+            ]
+          : []),
+        {
+          id: cuid(),
+          name: "Total",
+          createdAt: Date.now(),
+          updatedAt: Date.now(),
+          recordType: "Total",
+          recordID: customer.id,
+          currencyCode: "USD",
+          price: invoice_estimate.total,
         },
       ]
+
+      return linesWithTotal
     } catch (e) {
-      this.error.setExtraContext(user, "user")
+      this.error.setExtraContext(customerWithUser.user, "user")
       this.error.captureError(e)
+      console.error(e)
       return []
     }
   }

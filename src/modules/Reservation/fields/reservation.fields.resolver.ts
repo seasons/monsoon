@@ -1,6 +1,8 @@
+import { Customer, User } from "@app/decorators"
 import { Loader } from "@app/modules/DataLoader/decorators/dataloader.decorator"
 import { UtilsService } from "@app/modules/Utils/services/utils.service"
 import { PrismaDataLoader } from "@app/prisma/prisma.loader"
+import { PrismaService } from "@app/prisma/prisma.service"
 import { ImageSize } from "@modules/Image/image.types.d"
 import { ImageService } from "@modules/Image/services/image.service"
 import { Args, Parent, ResolveField, Resolver } from "@nestjs/graphql"
@@ -14,7 +16,8 @@ export class ReservationFieldsResolver {
   constructor(
     private readonly reservationService: ReservationService,
     private readonly utils: UtilsService,
-    private readonly imageService: ImageService
+    private readonly imageService: ImageService,
+    private readonly prisma: PrismaService
   ) {}
 
   @ResolveField()
@@ -141,9 +144,11 @@ export class ReservationFieldsResolver {
   }
 
   @ResolveField()
-  async lineItems(@Parent() reservation) {
+  async lineItems(@Parent() reservation, @Customer() customer) {
     if (reservation.lineItems) {
       return reservation.lineItems
     }
+
+    return this.reservationService.draftReservationLineItems(customer)
   }
 }

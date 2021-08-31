@@ -8,6 +8,7 @@ import { EmailModule } from "../Email/email.module"
 import { ErrorModule } from "../Error/error.module"
 import { PaymentModule } from "../Payment/payment.module"
 import { PushNotificationModule } from "../PushNotification/pushNotification.module"
+import { ReservationModule } from "../Reservation/reservation.module"
 import { ShippingModule } from "../Shipping/shipping.module"
 import { SMSModule } from "../SMS/sms.module"
 import { UtilsModule } from "../Utils/utils.module"
@@ -33,8 +34,9 @@ import { CustomerService } from "./services/customer.service"
     AnalyticsModule,
     SMSModule,
     ErrorModule,
-    forwardRef(() => PaymentModule),
     DripModule,
+    forwardRef(() => PaymentModule),
+    forwardRef(() => ReservationModule),
   ],
   providers: [
     AuthService,
