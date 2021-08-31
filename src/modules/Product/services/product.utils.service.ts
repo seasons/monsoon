@@ -40,6 +40,31 @@ export class ProductUtilsService {
     )
   }
 
+  calcRentalPrice(
+    product: Pick<
+      Product,
+      "rentalPriceOverride" | "wholesalePrice" | "recoupment"
+    >,
+    type: "monthly" | "daily" = "monthly"
+  ) {
+    let monthlyPrice
+    if (product.rentalPriceOverride) {
+      monthlyPrice = product.rentalPriceOverride
+    } else {
+      const rate = product.wholesalePrice / product.recoupment
+      monthlyPrice = Math.ceil(rate / 5) * 5
+    }
+
+    if (type === "daily") {
+      // the + turns e.g '1.50' into 1.5
+      const roundedPriceAsString = (monthlyPrice / 30).toFixed(2)
+      const roundedPriceAsNum = +roundedPriceAsString
+      return roundedPriceAsNum
+    }
+
+    return monthlyPrice
+  }
+
   async getProductStyleCode(productID) {
     const prod = await this.prisma.client.product.findUnique({
       where: { id: productID },

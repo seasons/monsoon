@@ -43,8 +43,6 @@ enum ProductSize {
   Universal = "Universal",
 }
 
-// TODO: As needed, support other types. We just need to update the code
-// that filters out computed fields
 type InfoStringPath = "user" | "customer"
 
 @Injectable()

@@ -1,6 +1,6 @@
 generator client {
-  provider      = "prisma-client-js"
-  binaryTargets = ["native", "linux-musl", "debian-openssl-1.1.x"]
+  provider        = "prisma-client-js"
+  binaryTargets   = ["native", "linux-musl", "debian-openssl-1.1.x"]
 }
 
 datasource db {
@@ -500,13 +500,13 @@ model BagItem {
   saved             Boolean?
   status            BagItemStatus
   customerId        String?          @map("customer") @db.VarChar(30)
+  productVariantId  String?          @map("productVariant") @db.VarChar(30)
   physicalProductId String?          @map("physicalProduct") @db.VarChar(30)
   createdAt         DateTime         @default(now())
   updatedAt         DateTime         @updatedAt
   customer          Customer?        @relation(fields: [customerId], references: [id])
-  physicalProduct   PhysicalProduct? @relation(fields: [physicalProductId], references: [id])
-  productVariantId  String?          @map("productVariant") @db.VarChar(30)
   productVariant    ProductVariant?  @relation(fields: [productVariantId], references: [id])
+  physicalProduct   PhysicalProduct? @relation(fields: [physicalProductId], references: [id])
 
   @@unique([productVariantId, customerId])
 }
@@ -733,6 +733,7 @@ model CustomerMembership {
   plan                     PaymentPlan                         @relation(fields: [planId], references: [id])
   subscription             CustomerMembershipSubscriptionData? @relation(fields: [membershipSubscriptionId], references: [id])
   pauseRequests            PauseRequest[]
+  rentalInvoices           RentalInvoice[]
 }
 
 model CustomerMembershipSubscriptionData {
@@ -915,29 +916,69 @@ model OrderLineItem {
   Order         Order[]
 }
 
+enum RentalInvoiceStatus {
+  Draft
+  Billed
+}
+
+model RentalInvoice {
+  id             String                  @id @default(cuid()) @db.VarChar(30)
+  createdAt      DateTime                @default(now())
+  updatedAt      DateTime                @updatedAt
+  membershipId   String                  @map("membership") @db.VarChar(30)
+  membership     CustomerMembership      @relation(fields: [membershipId], references: [id])
+  billingStartAt DateTime
+  billingEndAt   DateTime
+  status         RentalInvoiceStatus     @default(Draft)
+  reservations   Reservation[]           @relation("RentalInvoiceToReservations")
+  products       PhysicalProduct[]       @relation("RentalInvoiceToProducts")
+  lineItems      RentalInvoiceLineItem[]
+}
+
+model RentalInvoiceLineItem {
+  id                String          @id @default(cuid()) @db.VarChar(30)
+  physicalProductId String          @map("physicalProduct") @db.VarChar(30)
+  physicalProduct   PhysicalProduct @relation(fields: [physicalProductId], references: [id])
+  rentalInvoiceId   String          @map("rentalInvoice") @db.VarChar(30)
+  rentalInvoice     RentalInvoice   @relation(fields: [rentalInvoiceId], references: [id])
+  daysRented        Int
+  rentalStartedAt   DateTime?
+  rentalEndedAt     DateTime?
+  comment           String?
+  taxRate           Float?
+  taxName           String?
+  taxPercentage     Float?
+  taxPrice          Int?
+  price             Float
+  currencyCode      String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
 model Package {
-  id                                               String                @id @default(cuid()) @db.VarChar(30)
-  weight                                           Float?
-  createdAt                                        DateTime              @default(now())
-  updatedAt                                        DateTime              @updatedAt
-  enteredDeliverySystemAt                          DateTime?
-  deliveredAt                                      DateTime? 
-  lostAt                                           DateTime?
-  fromAddressId                                    String?               @map("fromAddress") @db.VarChar(30)
-  toAddressId                                      String?               @map("toAddress") @db.VarChar(30)
-  shippingLabelId                                  String?               @map("shippingLabel") @db.VarChar(30)
-  transactionID                                    String
-  cost                                             Int?
-  status                                           PackageStatus?
-  fromAddress                                      Location?             @relation("LocationToPackage_fromAddress", fields: [fromAddressId], references: [id])
-  shippingLabel                                    Label?                @relation(fields: [shippingLabelId], references: [id])
-  toAddress                                        Location?             @relation("LocationToPackage_toAddress", fields: [toAddressId], references: [id])
-  order                                            Order?
-  events                                           PackageTransitEvent[]
-  Reservation_PackageToReservation_returnedPackage Reservation[]         @relation("PackageToReservation_returnedPackage")
-  Reservation_PackageToReservation_sentPackage     Reservation[]         @relation("PackageToReservation_sentPackage")
-  reservationOnReturnPackages                      Reservation[]         @relation("PackageToReservationReturnPackages")
-  items                                            PhysicalProduct[]
+  id                           String                @id @default(cuid()) @db.VarChar(30)
+  weight                       Float?
+  createdAt                    DateTime              @default(now())
+  updatedAt                    DateTime              @updatedAt
+  enteredDeliverySystemAt      DateTime?
+  deliveredAt                  DateTime?
+  lostAt                       DateTime?
+  fromAddressId                String?               @map("fromAddress") @db.VarChar(30)
+  toAddressId                  String?               @map("toAddress") @db.VarChar(30)
+  shippingLabelId              String?               @map("shippingLabel") @db.VarChar(30)
+  transactionID                String
+  cost                         Int?
+  status                       PackageStatus?
+  fromAddress                  Location?             @relation("LocationToPackage_fromAddress", fields: [fromAddressId], references: [id])
+  shippingLabel                Label?                @relation(fields: [shippingLabelId], references: [id])
+  toAddress                    Location?             @relation("LocationToPackage_toAddress", fields: [toAddressId], references: [id])
+  order                        Order?
+  events                       PackageTransitEvent[]
+  reservationOnReturnedPackage Reservation?          @relation("PackageToReservation_returnedPackage")
+  reservationOnSentPackage     Reservation?          @relation("PackageToReservation_sentPackage")
+  reservationOnReturnPackages  Reservation[]         @relation("PackageToReservationReturnPackages")
+  items                        PhysicalProduct[]
 }
 
 model PackageTransitEvent {
@@ -1022,6 +1063,8 @@ model PhysicalProduct {
   reservationsAllProducts      Reservation[]                  @relation("ReservationToAllProducts")
   reservationsNewProducts      Reservation[]                  @relation("ReservationToNewProducts")
   reservationsReturnedProducts Reservation[]                  @relation("ReservationToReturnedProducts")
+  rentalInvoices               RentalInvoice[]                @relation("RentalInvoiceToProducts")
+  rentalInvoiceLineItems       RentalInvoiceLineItem[]
   purchasedOnReservationId     String?                        @map("purchasedOnReservation") @db.VarChar(30)
   purchasedOnReservation       Reservation?                   @relation("ReservationToPurchasedProducts", fields: [purchasedOnReservationId], references: [id])
   bagItems                     BagItem[]
@@ -1309,6 +1352,7 @@ model Reservation {
   products          PhysicalProduct[]     @relation("ReservationToAllProducts")
   newProducts       PhysicalProduct[]     @relation("ReservationToNewProducts")
   returnedProducts  PhysicalProduct[]     @relation("ReservationToReturnedProducts")
+  rentalInvoice     RentalInvoice[]       @relation("RentalInvoiceToReservations")
   purchasedProducts PhysicalProduct[]     @relation("ReservationToPurchasedProducts")
 }
 

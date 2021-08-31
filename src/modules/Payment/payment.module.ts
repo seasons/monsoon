@@ -7,6 +7,7 @@ import { Module, forwardRef } from "@nestjs/common"
 import { PrismaModule } from "@prisma1/prisma.module"
 
 import { ErrorModule } from "../Error/error.module"
+import { ProductModule } from "../Product/product.module"
 import { ChargebeeController } from "./controllers/chargebee.controller"
 import { InvoicesForCustomersLoader } from "./loaders/invoicesForCustomers.loaders"
 import { TransactionsLoader } from "./loaders/transactions.loaders"
@@ -17,6 +18,7 @@ import { ChargebeeQueriesResolver } from "./queries/chargebee.queries.resolver"
 import { PaymentQueriesResolver } from "./queries/payment.queries.resolver"
 import { LoaderUtilsService } from "./services/loader.utils.service"
 import { PaymentService } from "./services/payment.service"
+import { RentalService } from "./services/rental.service"
 import { SubscriptionService } from "./services/subscription.service"
 import { UpdatePaymentService } from "./services/updatePayment.service"
 
@@ -30,6 +32,7 @@ export const PaymentModuleDef = {
     UtilsModule,
     AnalyticsModule,
     ErrorModule,
+    forwardRef(() => ProductModule),
   ],
   providers: [
     ChargebeeQueriesResolver,
@@ -43,8 +46,14 @@ export const PaymentModuleDef = {
     UpdatePaymentService,
     TransactionsLoader,
     TransactionsForCustomersLoader,
+    RentalService,
   ],
-  exports: [SubscriptionService, PaymentService, UpdatePaymentService],
+  exports: [
+    SubscriptionService,
+    PaymentService,
+    UpdatePaymentService,
+    RentalService,
+  ],
 }
 @Module(PaymentModuleDef)
 export class PaymentModule {}

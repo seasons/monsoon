@@ -249,6 +249,9 @@ export class BagService {
                 id: physicalProduct.id,
               },
             },
+            sentPackage: {
+              update: { items: { disconnect: { id: physicalProduct.id } } },
+            },
           },
         })
       )
