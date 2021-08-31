@@ -1,8 +1,9 @@
+import { Customer } from "@app/decorators"
 import { ErrorService } from "@app/modules/Error/services/error.service"
 import { StatementsService } from "@app/modules/Utils/services/statements.service"
 import { UtilsService } from "@app/modules/Utils/services/utils.service"
 import { Injectable } from "@nestjs/common"
-import { BagItem, InventoryStatus, Prisma } from "@prisma/client"
+import { BagItem, BagItemStatus, InventoryStatus, Prisma } from "@prisma/client"
 import { PrismaService } from "@prisma1/prisma.service"
 import { ApolloError } from "apollo-server"
 
@@ -78,15 +79,22 @@ export class BagService {
   }
   // Mutation for admins to swap a bagItem
   async swapBagItem(
-    bagItemID,
+    oldBagItemID,
     physicalProductWhere: Prisma.PhysicalProductWhereUniqueInput
   ) {
     const oldBagItem = await this.prisma.client.bagItem.findUnique({
       where: {
-        id: bagItemID,
+        id: oldBagItemID,
       },
       select: {
         status: true,
+        physicalProduct: {
+          select: {
+            id: true,
+            warehouseLocation: true,
+            inventoryStatus: true,
+          },
+        },
         productVariant: {
           select: {
             id: true,
@@ -105,109 +113,102 @@ export class BagService {
         },
       },
     })
-    const type = "Delete"
     const promises = []
-    const customerID = oldBagItem.customer.id
-    const productVariant = oldBagItem.productVariant
+    const customerID = oldBagItem?.customer?.id
+    const productVariant = oldBagItem?.productVariant
     const lastReservation = (await this.utils.getLatestReservation(
       customerID,
       undefined
     )) as any
 
-    if (
-      !["Queued", "Hold"].includes(lastReservation.status) &&
-      type === "Delete"
-    ) {
+    if (!["Queued", "Hold"].includes(lastReservation.status)) {
       throw Error(
-        "Only reservations with status Hold or Queued can have bag items deleted"
+        "Only reservations with status Hold or Queued can have a bag item swapped"
       )
     }
 
-    if (oldBagItem.status === "Reserved" && type === "Delete") {
-      // Update the current reservation and it's physical product and counts
+    if (oldBagItem.status !== "Reserved") {
+      throw Error("Only Reserved bag items can be swapped")
+    }
 
-      const physicalProduct = this.getPhysicalProductFromLastReservationAndBagItem(
-        lastReservation,
-        oldBagItem
-      )
+    const oldPhysicalProduct = oldBagItem.physicalProduct
 
-      promises.push(
-        this.prisma.client.reservation.update({
-          where: {
-            id: lastReservation.id,
+    promises.push(
+      this.prisma.client.reservation.update({
+        where: {
+          id: lastReservation.id,
+        },
+        data: {
+          products: {
+            disconnect: {
+              id: oldPhysicalProduct.id,
+            },
           },
-          data: {
-            products: {
-              disconnect: {
-                id: physicalProduct.id,
-              },
+          newProducts: {
+            disconnect: {
+              id: oldPhysicalProduct.id,
             },
-            newProducts: {
-              disconnect: {
-                id: physicalProduct.id,
-              },
-            },
-            sentPackage: {
-              update: {
-                items: {
-                  disconnect: {
-                    id: physicalProduct.id,
-                  },
+          },
+          sentPackage: {
+            update: {
+              items: {
+                disconnect: {
+                  id: oldPhysicalProduct.id,
                 },
               },
             },
           },
-        })
-      )
+        },
+      })
+    )
 
-      const newInventoryStatus = !!physicalProduct.warehouseLocation
-        ? "Reservable"
-        : "NonReservable"
+    const oldPhysicalProductInventoryStatus = !!oldPhysicalProduct.warehouseLocation
+      ? "Reservable"
+      : "NonReservable"
 
-      const productVariantData = this.productVariantService.getCountsForStatusChange(
-        {
-          productVariant,
-          oldInventoryStatus: physicalProduct.inventoryStatus as InventoryStatus,
-          newInventoryStatus,
-        }
-      )
-
-      promises.push(
-        this.prisma.client.physicalProduct.update({
-          where: { id: physicalProduct.id },
-          data: {
-            inventoryStatus: newInventoryStatus,
-            productVariant: {
-              update: {
-                ...productVariantData,
-              },
-            },
-          },
-        })
-      )
-    }
+    const oldProductVariantData = this.productVariantService.getCountsForStatusChange(
+      {
+        productVariant,
+        oldInventoryStatus: oldPhysicalProduct.inventoryStatus as InventoryStatus,
+        newInventoryStatus: oldPhysicalProductInventoryStatus,
+      }
+    )
 
     promises.push(
-      this.prisma.client.bagItem.delete({ where: { id: bagItemID } })
+      this.prisma.client.physicalProduct.update({
+        where: { id: oldPhysicalProduct.id },
+        data: {
+          inventoryStatus: oldPhysicalProductInventoryStatus,
+          productVariant: {
+            update: {
+              ...oldProductVariantData,
+            },
+          },
+        },
+      })
     )
-    const physicalProductForSwap = await this.prisma.client.physicalProduct.findUnique(
+
+    promises.push(
+      this.prisma.client.bagItem.delete({ where: { id: oldBagItemID } })
+    )
+    const newPhysicalProduct = await this.prisma.client.physicalProduct.findUnique(
       {
         where: {
           seasonsUID: physicalProductWhere.seasonsUID,
         },
       }
     )
-    const productVariantID = physicalProductForSwap.productVariantId
+    const newProductVariantID = newPhysicalProduct.productVariantId
     const [
       productVariantsCountsUpdatePromises,
       productsBeingReserved,
     ] = await this.productVariantService.updateProductVariantCounts(
-      [productVariantID],
+      [newProductVariantID],
       customerID
     )
     promises.push(productVariantsCountsUpdatePromises)
 
-    const physicalProductID = physicalProductForSwap.id
+    const newPhysicalProductID = newPhysicalProduct.id
 
     promises.push(
       this.prisma.client.reservation.update({
@@ -217,19 +218,19 @@ export class BagService {
         data: {
           newProducts: {
             connect: {
-              id: physicalProductID,
+              id: newPhysicalProductID,
             },
           },
           products: {
             connect: {
-              id: physicalProductID,
+              id: newPhysicalProductID,
             },
           },
           sentPackage: {
             update: {
               items: {
                 connect: {
-                  id: physicalProductID,
+                  id: newPhysicalProductID,
                 },
               },
             },
@@ -240,12 +241,10 @@ export class BagService {
 
     promises.push(
       this.prisma.client.physicalProduct.update({
-        where: { id: physicalProductID },
+        where: { id: newPhysicalProductID },
         data: { inventoryStatus: "Reserved" },
       })
     )
-    const status = "Reserved"
-    const saved = false
     promises.push(
       this.prisma.client.bagItem.create({
         data: {
@@ -253,10 +252,13 @@ export class BagService {
             connect: { id: customerID },
           },
           productVariant: {
-            connect: { id: productVariantID },
+            connect: { id: newProductVariantID },
           },
-          status,
-          saved,
+          physicalProduct: {
+            connect: { id: newPhysicalProduct.id },
+          },
+          status: "Reserved",
+          saved: false,
         },
       })
     )
@@ -265,7 +267,7 @@ export class BagService {
     const addedBagItem = results.pop()
 
     await this.reservationService.removeRestockNotifications(
-      [productVariantID],
+      [newProductVariantID],
       customerID
     )
 
