@@ -280,7 +280,6 @@ export class RentalService {
           invoice,
           physicalProduct
         )
-        console.log(physicalProduct.productVariant.product)
         const dailyRentalPrice = this.productUtils.calcRentalPrice(
           physicalProduct.productVariant.product,
           "daily"

@@ -554,6 +554,16 @@ describe("Rental Service", () => {
         const reservationThree = await addToBagAndReserveForCustomer(1)
         await setReservationCreatedAt(reservationTwo.id, 2)
 
+        const initialReservationProductSUIDs = initialReservation.newProducts.map(
+          a => a.seasonsUID
+        )
+        const reservationTwoSUIDs = reservationTwo.newProducts.map(
+          b => b.seasonsUID
+        )
+        const reservationThreeSUIDs = reservationThree.newProducts.map(
+          c => c.seasonsUID
+        )
+
         // Override product prices so we can predict the proper price
         const custWithData = (await getCustWithData({
           membership: {
@@ -569,13 +579,19 @@ describe("Rental Service", () => {
         invoicePhysicalProductSUIDs = rentalInvoice.products.map(
           a => a.seasonsUID
         )
+
+        const reservationSUIDsInOrder = [
+          ...initialReservationProductSUIDs,
+          ...reservationTwoSUIDs,
+          ...reservationThreeSUIDs,
+        ]
         for (const [i, overridePrice] of rentalPriceOverrides.entries()) {
           const prodToUpdate = await prisma.client.product.findFirst({
             where: {
               variants: {
                 some: {
                   physicalProducts: {
-                    some: { seasonsUID: invoicePhysicalProductSUIDs[i] },
+                    some: { seasonsUID: reservationSUIDsInOrder[i] },
                   },
                 },
               },
@@ -586,7 +602,6 @@ describe("Rental Service", () => {
             data: { rentalPriceOverride: overridePrice },
             select: { id: true, rentalPriceOverride: true },
           })
-          console.log(updatedProduct)
         }
 
         const rentalInvoiceWithUpdatedPrices = await prisma.client.rentalInvoice.findUnique(
@@ -602,22 +617,19 @@ describe("Rental Service", () => {
         const lineItemsWithData = await prisma.client.rentalInvoiceLineItem.findMany(
           {
             where: { id: { in: (await lineItems).map(a => a.id) } },
-            select: { physicalProduct: { select: { seasonsUID: true } } },
+            select: {
+              physicalProduct: { select: { seasonsUID: true } },
+              daysRented: true,
+              rentalStartedAt: true,
+              rentalEndedAt: true,
+              price: true,
+            },
           }
         )
         lineItemsPhysicalProductSUIDs = lineItemsWithData.map(
           a => a.physicalProduct.seasonsUID
         )
 
-        const initialReservationProductSUIDs = initialReservation.products.map(
-          a => a.seasonsUID
-        )
-        const reservationTwoSUIDs = reservationTwo.products.map(
-          b => b.seasonsUID
-        )
-        const reservationThreeSUIDs = reservationThree.products.map(
-          c => c.seasonsUID
-        )
         lineItemsBySUID = lineItemsWithData.reduce((acc, curVal) => {
           return { ...acc, [curVal.physicalProduct.seasonsUID]: curVal }
         }, {})
@@ -665,22 +677,20 @@ describe("Rental Service", () => {
 
       it("Stores the proper values for rentalStartedAt and rentalEndedAt", () => {
         for (const suid of invoicePhysicalProductSUIDs) {
-          expectTimeToEqual(
-            lineItemsBySUID["rentalStartedAt"],
-            expectedResultsBySUID[suid].rentalStartedAt
-          )
-          expectTimeToEqual(
-            lineItemsBySUID["rentalEndedAt"],
-            expectedResultsBySUID[suid].rentalEndedAt
-          )
+          const testStart = lineItemsBySUID[suid]["rentalStartedAt"]
+          const expectedStart = expectedResultsBySUID[suid].rentalStartedAt
+          const testEnd = lineItemsBySUID[suid]["rentalEndedAt"]
+          const expectedEnd = expectedResultsBySUID[suid].rentalEndedAt
+          expectTimeToEqual(testStart, expectedStart)
+          expectTimeToEqual(testEnd, expectedEnd)
         }
       })
 
       it("Stores the proper price", () => {
         for (const suid of invoicePhysicalProductSUIDs) {
-          expect(lineItemsBySUID[suid].price).toEqual(
-            expectedResultsBySUID[suid].price
-          )
+          const testPrice = lineItemsBySUID[suid].price
+          const expectedPrice = expectedResultsBySUID[suid].price
+          expect(testPrice).toEqual(expectedPrice)
         }
       })
 
@@ -769,18 +779,30 @@ const addToBagAndReserveForCustomer = async numProductsToAdd => {
   const reservedProductIds = reservedBagItems.map(
     b => b.productVariant.product.id
   )
-  const reservableProdVars = await prisma.client.productVariant.findMany({
-    where: {
-      reservable: { gte: 1 },
-      sku: { notIn: reservedSKUs },
-      // Ensure we reserve diff products each time. Needed for some tests
-      product: { id: { notIn: reservedProductIds } },
-      // We shouldn't need to check this since we're checking counts,
-      // but there's some corrupt data so we do this to circumvent that.
-      physicalProducts: { some: { inventoryStatus: "Reservable" } },
-    },
-    take: numProductsToAdd,
-  })
+  let reservableProdVars = []
+  let reservableProductIds = []
+  for (let i = 0; i < numProductsToAdd; i++) {
+    const nextProdVar = await prisma.client.productVariant.findFirst({
+      where: {
+        reservable: { gte: 1 },
+        sku: { notIn: reservedSKUs },
+        // Ensure we reserve diff products each time. Needed for some tests
+        product: {
+          id: { notIn: [...reservedProductIds, ...reservableProductIds] },
+        },
+        // We shouldn't need to check this since we're checking counts,
+        // but there's some corrupt data so we do this to circumvent that.
+        physicalProducts: { some: { inventoryStatus: "Reservable" } },
+      },
+      take: numProductsToAdd,
+      select: {
+        id: true,
+        productId: true,
+      },
+    })
+    reservableProdVars.push(nextProdVar)
+    reservableProductIds.push(nextProdVar.productId)
+  }
   for (const prodVar of reservableProdVars) {
     await prisma.client.bagItem.create({
       data: {
@@ -809,6 +831,7 @@ const addToBagAndReserveForCustomer = async numProductsToAdd => {
     {
       reservationNumber: true,
       products: { select: { seasonsUID: true } },
+      newProducts: { select: { seasonsUID: true } },
       sentPackage: { select: { id: true } },
       returnPackages: {
         select: {
