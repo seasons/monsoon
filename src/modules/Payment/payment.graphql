@@ -83,6 +83,11 @@ enum PaymentPlanTier {
   Guest
 }
 
+type PaymentPlanFeatureList {
+  included: [String!]
+  excluded: [String!]
+}
+
 type PaymentPlan {
   id: ID!
   description: String
@@ -99,7 +104,7 @@ type PaymentPlan {
   updatedAt: DateTime!
 
   # Computed fields
-  features: JSON!
+  features: PaymentPlanFeatureList
   estimate(couponID: String): JSON
   pauseWithItemsPrice: Int
 }

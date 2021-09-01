@@ -6,6 +6,7 @@ import { PaymentUtilsService } from "./services/paymentUtils.service"
 import { QueryUtilsService } from "./services/queryUtils.service"
 import { StatementsService } from "./services/statements.service"
 import { TestUtilsService } from "./services/test.service"
+import { TimeUtilsService } from "./services/time.service"
 import { UtilsService } from "./services/utils.service"
 
 @Module({
@@ -16,6 +17,7 @@ import { UtilsService } from "./services/utils.service"
     PaymentUtilsService,
     StatementsService,
     QueryUtilsService,
+    TimeUtilsService,
   ],
   exports: [
     UtilsService,
@@ -23,6 +25,7 @@ import { UtilsService } from "./services/utils.service"
     PaymentUtilsService,
     StatementsService,
     QueryUtilsService,
+    TimeUtilsService,
   ],
 })
 export class UtilsModule {}

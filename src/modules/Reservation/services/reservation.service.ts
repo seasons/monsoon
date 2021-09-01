@@ -29,6 +29,7 @@ import { ApolloError } from "apollo-server"
 import chargebee from "chargebee"
 import cuid from "cuid"
 import { intersection } from "lodash"
+import { merge } from "lodash"
 import { DateTime } from "luxon"
 
 import { ReservationUtilsService } from "./reservation.utils.service"
@@ -73,7 +74,7 @@ export class ReservationService {
     shippingCode: ShippingCode,
     user: User,
     customer: Customer,
-    select
+    select: Prisma.ReservationSelect = { id: true }
   ) {
     if (customer.status !== "Active") {
       throw new Error(`Only Active customers can place a reservation`)
@@ -84,19 +85,35 @@ export class ReservationService {
     const customerWithData = await this.prisma.client.customer.findUnique({
       where: { id: customer.id },
       select: {
-        membership: { select: { plan: { select: { itemCount: true } } } },
-        detail: { select: { shippingAddress: true } },
+        membership: {
+          select: {
+            plan: { select: { itemCount: true, tier: true } },
+            rentalInvoices: {
+              select: { id: true },
+              where: { status: "Draft" },
+            },
+          },
+        },
       },
     })
 
-    // Validate customer address
-    await this.shippingService.shippoValidateAddress(
-      this.shippingService.locationDataToShippoAddress(
-        customerWithData.detail.shippingAddress
+    // Do a quick validation on the data
+    const customerPlanType = customerWithData.membership.plan.tier
+    const numDraftRentalInvoices =
+      customerWithData.membership.rentalInvoices.length
+    const activeRentalInvoice =
+      customerPlanType === "Access" &&
+      customerWithData.membership.rentalInvoices[0]
+    if (customerPlanType === "Access" && numDraftRentalInvoices !== 1) {
+      const errorMessageSuffix =
+        numDraftRentalInvoices === 0
+          ? "no draft rental invoices"
+          : "more than 1 draft rental invoice"
+      throw new ApolloError(
+        `Invalid State. Customer has ${errorMessageSuffix}`,
+        "400"
       )
-    )
-
-    // Validate number of items being reserved
+    }
     const customerPlanItemCount = customerWithData?.membership?.plan?.itemCount
     if (!!customerPlanItemCount && items.length !== customerPlanItemCount) {
       throw new ApolloError(
@@ -222,20 +239,36 @@ export class ReservationService {
       heldPhysicalProducts,
       shippingOptionID
     )
+
     const reservationPromise = this.prisma.client.reservation.create({
       data: reservationData,
-      select: {
-        ...select,
-        reservationNumber: true,
-      },
     })
 
     promises.push(reservationPromise)
 
-    // Resolve all prisma operation in one transaction
-    const result = await this.prisma.client.$transaction(promises.flat())
+    if (customerPlanType === "Access") {
+      const rentalInvoicePromise = this.prisma.client.rentalInvoice.update({
+        where: { id: activeRentalInvoice.id },
+        data: {
+          reservations: { connect: { id: reservationData.id } },
+          products: {
+            connect: reservationData.products.connect,
+          },
+        },
+      })
+      promises.push(rentalInvoicePromise)
+    }
 
-    const reservation = result.pop()
+    await this.prisma.client.$transaction(promises.flat())
+
+    const reservation = (await this.prisma.client.reservation.findUnique({
+      where: { id: reservationData.id },
+      select: merge(select, {
+        id: true,
+        reservationNumber: true,
+        products: { select: { seasonsUID: true } },
+      }),
+    })) as any
 
     let earlySwapLineItems = []
 
@@ -894,7 +927,11 @@ export class ReservationService {
     }
 
     promises.push(
-      this.prisma.client.reservation.update({ data, where, select })
+      this.prisma.client.reservation.update({
+        data,
+        where,
+        select: merge(select, { id: true }),
+      })
     )
 
     const results = await this.prisma.client.$transaction(promises)
@@ -1172,6 +1209,7 @@ export class ReservationService {
     const returnPackagesToCarryOver =
       lastReservation?.returnPackages?.filter(a => a.events.length === 0) || []
     let createData = Prisma.validator<Prisma.ReservationCreateInput>()({
+      id: cuid(),
       products: {
         connect: physicalProductSUIDs,
       },
