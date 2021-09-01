@@ -159,6 +159,14 @@ type Query {
   ): [Tag]! @cacheControl(maxAge: 0)
 }
 
+enum ProductStatus {
+  Available
+  NotAvailable
+  Stored
+  Offloaded
+  Upcoming
+}
+
 type Mutation {
   saveProduct(item: ID!, save: Boolean!): BagItem @hasRole(roles: [Customer])
   updateProduct(

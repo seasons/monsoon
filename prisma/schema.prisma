@@ -98,6 +98,7 @@ enum ProductStatus {
   Available
   NotAvailable
   Stored
+  Upcoming
   Offloaded
 }
 
