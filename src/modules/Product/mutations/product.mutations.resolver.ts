@@ -35,6 +35,13 @@ export class ProductMutationsResolver {
       select
     )
   }
+
+  @Mutation()
+  async deleteBagItem(@Args() { itemID, type }) {
+    await this.prisma.client.bagItem.delete({ where: { id: itemID } })
+    return true
+  }
+
   @Mutation()
   async swapBagItem(
     @Args() { oldItemID, physicalProductWhere },
