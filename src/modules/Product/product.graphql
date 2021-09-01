@@ -197,6 +197,18 @@ type AccessorySize {
   width: Float
 }
 
+type BagItem {
+  id: ID!
+  customer: Customer!
+  isSwappable: Boolean!
+  productVariant: ProductVariant!
+  position: Int
+  saved: Boolean
+  status: BagItemStatus!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
 type PublishProductsResponse {
   message: String!
   unvalidatedIDs: [String]!
