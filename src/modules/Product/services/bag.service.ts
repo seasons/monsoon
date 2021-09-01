@@ -110,12 +110,22 @@ export class BagService {
         customer: {
           select: {
             id: true,
+            membership: {
+              select: {
+                plan: {
+                  select: {
+                    tier: true,
+                  },
+                },
+              },
+            },
           },
         },
       },
     })
     const promises = []
     const customerID = oldBagItem?.customer?.id
+    const planTier = oldBagItem?.customer?.membership?.plan?.tier
     const productVariant = oldBagItem?.productVariant
     const lastReservation = (await this.utils.getLatestReservation(
       customerID,
@@ -157,9 +167,6 @@ export class BagService {
                   id: oldPhysicalProduct.id,
                 },
               },
-            },
-            sentPackage: {
-              update: { items: { disconnect: { id: physicalProduct.id } } },
             },
           },
         },
@@ -265,6 +272,43 @@ export class BagService {
         select,
       })
     )
+    if (planTier === "Access") {
+      const activeRentalInvoice = await this.prisma.client.rentalInvoice.findFirst(
+        {
+          where: {
+            reservations: {
+              some: {
+                id: lastReservation.id,
+              },
+            },
+            status: "Draft",
+          },
+          select: {
+            id: true,
+          },
+          orderBy: {
+            createdAt: "desc",
+          },
+        }
+      )
+      promises.push(
+        this.prisma.client.rentalInvoice.update({
+          where: {
+            id: activeRentalInvoice.id,
+          },
+          data: {
+            products: {
+              disconnect: {
+                id: oldPhysicalProduct.id,
+              },
+              connect: {
+                id: newPhysicalProduct.id,
+              },
+            },
+          },
+        })
+      )
+    }
 
     const results = await this.prisma.client.$transaction(promises.flat())
     const addedBagItem = results.pop()
