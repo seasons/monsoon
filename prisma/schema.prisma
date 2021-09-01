@@ -919,6 +919,7 @@ model OrderLineItem {
 enum RentalInvoiceStatus {
   Draft
   Billed
+  ChargeFailed
 }
 
 model RentalInvoice {

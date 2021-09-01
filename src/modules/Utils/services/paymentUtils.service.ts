@@ -175,48 +175,4 @@ export class PaymentUtilsService {
     })
     return cardInfo
   }
-
-  async initDraftRentalInvoice(
-    membershipId,
-    reservationIds = [],
-    physicalProductIds = []
-  ) {
-    const now = new Date()
-    const data = {
-      membership: {
-        connect: { id: membershipId },
-      },
-      billingStartAt: now,
-      billingEndAt: this.getRentalInvoiceBillingEndAt(now),
-      status: "Draft" as RentalInvoiceStatus,
-      reservations: { connect: reservationIds },
-      products: { connect: physicalProductIds },
-    } as Prisma.RentalInvoiceCreateInput
-    await this.prisma.client.rentalInvoice.create({
-      data,
-    })
-  }
-
-  // TODO: Write unit test for this. Test various edge cases
-  getRentalInvoiceBillingEndAt(billingStartAt: Date) {
-    const startYear = billingStartAt.getFullYear()
-    const startMonth = billingStartAt.getMonth()
-    const startDate = billingStartAt.getDate()
-
-    const billingEndYear = startMonth === 11 ? startYear + 1 : startYear
-    const billingEndMonth = startMonth === 11 ? 0 : startMonth + 1
-
-    let billingEndDate = startDate - 1
-    if (billingEndMonth === 1 && billingEndDate > 28) {
-      // e.g if billingStartAt is Jan 30, billingEndDate will be Feb 28
-      billingEndDate = 28
-    }
-
-    const billingEndAt = new Date(
-      billingEndYear,
-      billingEndMonth,
-      billingEndDate
-    )
-    return billingEndAt
-  }
 }

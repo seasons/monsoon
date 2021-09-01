@@ -10,6 +10,7 @@ import { CustomerStatus } from "@prisma/client"
 import { pick } from "lodash"
 
 import { PaymentService } from "../services/payment.service"
+import { RentalService } from "../services/rental.service"
 
 export type ChargebeeEvent = {
   content: any
@@ -32,7 +33,8 @@ export class ChargebeeController {
     private readonly email: EmailService,
     private readonly utils: UtilsService,
     private readonly statements: StatementsService,
-    private readonly paymentUtils: PaymentUtilsService
+    private readonly paymentUtils: PaymentUtilsService,
+    private readonly rental: RentalService
   ) {}
 
   @Post()
@@ -165,9 +167,7 @@ export class ChargebeeController {
       customerWithData.membership.rentalInvoices.length > 0
     const onAccessPlan = customerWithData.membership.plan.tier === "Access"
     if (!hasRentalInvoice && onAccessPlan) {
-      await this.paymentUtils.initDraftRentalInvoice(
-        customerWithData.membership.id
-      )
+      await this.rental.initDraftRentalInvoice(customerWithData.membership.id)
     }
   }
 

@@ -3,19 +3,12 @@ import {
   CREATE_RENTAL_INVOICE_LINE_ITEMS_INVOICE_SELECT,
   RentalService,
 } from "@app/modules/Payment/services/rental.service"
-import { SubscriptionService } from "@app/modules/Payment/services/subscription.service"
 import { ProductUtilsService } from "@app/modules/Product"
 import { PaymentUtilsService } from "@app/modules/Utils/services/paymentUtils.service"
 import { PrismaService } from "@modules/../prisma/prisma.service"
 import { Injectable, Logger } from "@nestjs/common"
 import { Cron, CronExpression } from "@nestjs/schedule"
-import {
-  Package,
-  Prisma,
-  Product,
-  RentalInvoiceLineItem,
-  Reservation,
-} from "@prisma/client"
+import { Product, RentalInvoiceLineItem } from "@prisma/client"
 import chargebee from "chargebee"
 
 @Injectable()
@@ -197,22 +190,8 @@ export class SubscriptionsScheduledJobs {
         // TODO:
       }
 
-      await this.prisma.client.rentalInvoice.update({
-        where: { id: invoice.id },
-        data: { status: "Billed" },
-      })
-
       // Create the next rental invoice if customer is still active
       // TODO: Update this to be a transaction once you also update the status
-      if (
-        ["Active", "PaymentFailed"].includes(invoice.membership.customer.status)
-      ) {
-        await this.paymentUtils.initDraftRentalInvoice(
-          invoice.membership.id,
-          invoice.membership.customer.reservations.map(a => a.id),
-          invoice.membership.customer.bagItems.map(a => a.physicalProduct.id)
-        )
-      }
     }
   }
 

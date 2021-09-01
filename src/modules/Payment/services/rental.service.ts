@@ -1,7 +1,11 @@
 import { ProductUtilsService } from "@app/modules/Product"
 import { TimeUtilsService } from "@app/modules/Utils/services/time.service"
 import { Injectable } from "@nestjs/common"
-import { PhysicalProduct, RentalInvoice } from "@prisma/client"
+import {
+  PhysicalProduct,
+  RentalInvoice,
+  RentalInvoiceStatus,
+} from "@prisma/client"
 import { Prisma } from "@prisma/client"
 import { PrismaService } from "@prisma1/prisma.service"
 import chargebee from "chargebee"
@@ -86,6 +90,124 @@ export class RentalService {
     lostAt: true,
     lostInPhase: true,
   })
+
+  async chargeTab(
+    planID: "access-monthly" | "access-yearly",
+    invoice,
+    lineItems
+  ) {
+    try {
+      const promises = []
+      promises.push(
+        this.prisma.client.rentalInvoice.update({
+          where: { id: invoice.id },
+          data: { status: "Billed" },
+        })
+      )
+
+      const newRentalInvoicePromise = ((await this.initDraftRentalInvoice(
+        invoice.membership.id,
+        "promise"
+      )) as any).promise
+      promises.push(newRentalInvoicePromise)
+
+      await this.prisma.client.$transaction(promises)
+    } catch (err) {
+      // TODO: Capture exception
+      await this.prisma.client.rentalInvoice.update({
+        where: { id: invoice.id },
+        data: { status: "ChargeFailed" },
+      })
+    }
+  }
+
+  async initDraftRentalInvoice(
+    membershipId,
+    mode: "promise" | "execute" = "execute"
+  ) {
+    let lastInvoiceReservationIds = []
+    const lastInvoice = await this.prisma.client.rentalInvoice.findFirst({
+      where: { membershipId },
+      orderBy: { createdAt: "desc" },
+      select: { reservations: { select: { id: true } } },
+    })
+    if (!!lastInvoice) {
+      lastInvoiceReservationIds.push(...lastInvoice.reservations.map(a => a.id))
+    }
+
+    const customer = await this.prisma.client.customer.findFirst({
+      where: { membership: { id: membershipId } },
+      select: {
+        reservations: {
+          // TODO: Also check that it's on the last invoice
+          where: {
+            status: { notIn: ["Completed", "Cancelled", "Lost"] },
+            id: { in: lastInvoiceReservationIds },
+          },
+          select: { id: true },
+        },
+        bagItems: {
+          where: { status: "Reserved" },
+          select: { physicalProductId: true },
+        },
+      },
+    })
+
+    const reservationIds = customer.reservations.map(a => a.id)
+    const physicalProductIds = customer.bagItems.map(b => b.physicalProductId)
+    const now = new Date()
+    const data = {
+      membership: {
+        connect: { id: membershipId },
+      },
+      billingStartAt: now,
+      billingEndAt: this.getRentalInvoiceBillingEndAt(now),
+      status: "Draft" as RentalInvoiceStatus,
+      reservations: {
+        connect: reservationIds.map(a => ({
+          id: a,
+        })),
+      },
+      products: {
+        connect: physicalProductIds.map(b => ({
+          id: b,
+        })),
+      },
+    } as Prisma.RentalInvoiceCreateInput
+
+    const promise = this.prisma.client.rentalInvoice.create({
+      data,
+    })
+    if (mode === "promise") {
+      return {
+        promise,
+      }
+    }
+
+    return await promise
+  }
+
+  getRentalInvoiceBillingEndAt(billingStartAt: Date) {
+    const startYear = billingStartAt.getFullYear()
+    const startMonth = billingStartAt.getMonth()
+    const startDate = billingStartAt.getDate()
+
+    const billingEndYear = startMonth === 11 ? startYear + 1 : startYear
+    const billingEndMonth = startMonth === 11 ? 0 : startMonth + 1
+
+    let billingEndDate = startDate - 1
+    if (billingEndMonth === 1 && billingEndDate > 28) {
+      // e.g if billingStartAt is Jan 30, billingEndDate will be Feb 28
+      billingEndDate = 28
+    }
+
+    const billingEndAt = new Date(
+      billingEndYear,
+      billingEndMonth,
+      billingEndDate
+    )
+    return billingEndAt
+  }
 
   async calcDaysRented(
     invoice: Pick<RentalInvoice, "id">,
