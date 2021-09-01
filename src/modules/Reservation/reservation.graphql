@@ -96,6 +96,9 @@ input ReservationWhereInput {
   customer: CustomerWhereInput
   sentPackage: PackageWhereInput
   returnedPackage: PackageWhereInput
+  returnPackages_some: PackageWhereInput
+  returnPackages_every: PackageWhereInput
+  returnPackages_none: PackageWhereInput
   products_every: PhysicalProductWhereInput
   products_some: PhysicalProductWhereInput
   products_none: PhysicalProductWhereInput

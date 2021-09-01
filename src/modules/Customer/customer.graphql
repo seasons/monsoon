@@ -41,6 +41,10 @@ enum DeleteBagItemType {
 }
 
 type Mutation {
+  swapBagItem(
+    oldItemID: ID!
+    physicalProductWhere: PhysicalProductWhereUniqueInput!
+  ): BagItem! @hasRole(roles: [Admin])
   addToBag(
     item: ID!
     customerID: ID
@@ -49,8 +53,6 @@ type Mutation {
   ): BagItem! @hasRole(roles: [Customer, Admin])
   # removeFromBag has been deprecated use deleteBagItem
   removeFromBag(item: ID!, saved: Boolean, customer: ID): BagItem!
-    @hasRole(roles: [Customer])
-  deleteBagItem(itemID: ID!, type: DeleteBagItemType): Boolean!
     @hasRole(roles: [Customer])
   updateCustomer(
     data: CustomerUpdateInput!
@@ -101,6 +103,7 @@ enum OnboardingStep {
   SetShippingAddress
 }
 
+# isSwapped nowhere in sight
 type Customer {
   id: ID!
   user: User!
