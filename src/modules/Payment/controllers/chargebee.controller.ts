@@ -1,7 +1,6 @@
 import { SegmentService } from "@app/modules/Analytics/services/segment.service"
 import { EmailService } from "@app/modules/Email/services/email.service"
 import { ErrorService } from "@app/modules/Error/services/error.service"
-import { PaymentUtilsService } from "@app/modules/Utils/services/paymentUtils.service"
 import { StatementsService } from "@app/modules/Utils/services/statements.service"
 import { UtilsService } from "@app/modules/Utils/services/utils.service"
 import { PrismaService } from "@app/prisma/prisma.service"
@@ -33,7 +32,6 @@ export class ChargebeeController {
     private readonly email: EmailService,
     private readonly utils: UtilsService,
     private readonly statements: StatementsService,
-    private readonly paymentUtils: PaymentUtilsService,
     private readonly rental: RentalService
   ) {}
 
@@ -148,8 +146,9 @@ export class ChargebeeController {
   private async chargebeeSubscriptionCreated(content: any) {
     const { customer } = content
 
-    const customerWithData = await this.prisma.client.customer.findUnique({
-      where: { id: customer.id },
+    const customerWithData = await this.prisma.client.customer.findFirst({
+      where: { user: { id: customer.id } },
+      orderBy: { createdAt: "desc" },
       select: {
         id: true,
         membership: {
