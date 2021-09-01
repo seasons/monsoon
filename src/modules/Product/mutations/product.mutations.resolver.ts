@@ -58,7 +58,7 @@ export class ProductMutationsResolver {
 
     return await this.bagService.swapBagItem(
       oldItemID,
-      { seasonsUID: physicalProductWhere },
+      physicalProductWhere,
       select
     )
   }
