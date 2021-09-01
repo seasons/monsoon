@@ -46,9 +46,7 @@ export class ProductMutationsResolver {
     }
     const physicalProductForSwap = await this.prisma.client.physicalProduct.findUnique(
       {
-        where: {
-          seasonsUID: physicalProductWhere.seasonsUID,
-        },
+        where: physicalProductWhere,
         select: { id: true, inventoryStatus: true, seasonsUID: true },
       }
     )
