@@ -4,6 +4,7 @@ import { UtilsService } from "@app/modules/Utils/services/utils.service"
 import { PrismaService, SmartPrismaClient } from "@app/prisma/prisma.service"
 import { Test } from "@nestjs/testing"
 import { Prisma, ReservationStatus } from "@prisma/client"
+import chargebee from "chargebee"
 import { head, merge } from "lodash"
 import moment from "moment"
 
@@ -16,6 +17,21 @@ import {
 class PaymentServiceMock {
   addEarlySwapCharge = async () => null
   addShippingCharge = async () => {}
+}
+
+enum ChargebeeMockFunction {
+  SubscriptionAddChargeAtTermEnd,
+}
+
+class ChargeBeeMock {
+  constructor(private readonly mockFunction: ChargebeeMockFunction) {}
+
+  async request() {
+    switch (this.mockFunction) {
+      case ChargebeeMockFunction.SubscriptionAddChargeAtTermEnd:
+        return { estimate: {} }
+    }
+  }
 }
 
 let prisma: PrismaService
@@ -44,6 +60,12 @@ describe("Rental Service", () => {
     rentalService = moduleRef.get<RentalService>(RentalService)
     utils = moduleRef.get<UtilsService>(UtilsService)
     reservationService = moduleRef.get<ReservationService>(ReservationService)
+
+    jest
+      .spyOn<any, any>(chargebee.subscription, "add_charge_at_term_end")
+      .mockReturnValue(
+        new ChargeBeeMock(ChargebeeMockFunction.SubscriptionAddChargeAtTermEnd)
+      )
   })
 
   // Bring this back if we get cascading deletes figured out
@@ -701,6 +723,10 @@ describe("Rental Service", () => {
   })
 
   // TODO: Add case for a rental invoice with no line items
+  /* For all tests in this suite, rather than rely on a third party service 
+     for the test suite to pass, we just don't test that the charges actually 
+     get created on chargebee
+  */
   describe("Charge customer", () => {
     let rentalInvoiceToBeBilled
     let billedRentalInvoice
@@ -736,15 +762,14 @@ describe("Rental Service", () => {
     })
 
     describe("Properly charges an access-monthly customer", () => {
+      let addedCharges = []
       beforeAll(async () => {
         await setCustomerPlanType("access-monthly")
-
-        await rentalService.chargeTab(
+        addedCharges = await rentalService.chargeTab(
           "access-monthly",
           rentalInvoiceToBeBilled,
           lineItems
         )
-
         billedRentalInvoice = await prisma.client.rentalInvoice.findUnique({
           where: { id: rentalInvoiceToBeBilled.id },
           select: { id: true, status: true },
@@ -764,8 +789,8 @@ describe("Rental Service", () => {
           custWithUpdatedData.membership.rentalInvoices
       })
 
-      it("Adds the charges to their next invoice", () => {
-        expect(0).toBe(1)
+      it("Creates a charge for each line item", () => {
+        expect(addedCharges.length).toBe(2)
       })
 
       it("Marks their current rental invoice as billed", () => {
@@ -782,7 +807,6 @@ describe("Rental Service", () => {
     describe("Properly charges an access-annual customer", () => {
       beforeAll(async () => {
         await setCustomerPlanType("access-yearly")
-
         await rentalService.chargeTab(
           "access-yearly",
           rentalInvoiceToBeBilled,
@@ -806,9 +830,6 @@ describe("Rental Service", () => {
         })) as any
         customerRentalInvoicesAfterBilling =
           custWithUpdatedData.membership.rentalInvoices
-      })
-      it("Creates an invoice for all line items", () => {
-        expect(0).toBe(1)
       })
 
       it("Marks their current rental invoice as billed", () => {

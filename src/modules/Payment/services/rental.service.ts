@@ -111,9 +111,10 @@ export class RentalService {
   })
 
   async chargeTab(planID: AccessPlanID, invoice, lineItems: { id: string }[]) {
+    let invoices
     try {
       // Chargebee stuff
-      await this.chargebeeChargeTab(planID, lineItems)
+      invoices = await this.chargebeeChargeTab(planID, lineItems)
 
       // DB Stuff
       const promises = []
@@ -136,12 +137,15 @@ export class RentalService {
         data: { status: "ChargeFailed" },
       })
     }
+
+    return invoices
   }
 
   private async chargebeeChargeTab(
     planID: AccessPlanID,
     lineItems: { id: string }[]
   ) {
+    const invoicesCreated = []
     if (lineItems.length === 0) {
       return
     }
@@ -193,7 +197,7 @@ export class RentalService {
           date_from: this.timeUtils.secondsSinceEpoch(lineItem.rentalStartedAt),
           date_to: this.timeUtils.secondsSinceEpoch(lineItem.rentalEndedAt),
         }
-        await chargebee.subscription
+        const result = await chargebee.subscription
           .add_charge_at_term_end(subscriptionId, payload)
           .request((error, result) => {
             if (error) {
@@ -203,11 +207,12 @@ export class RentalService {
             console.log(result)
             return result
           })
+        invoicesCreated.push(result)
       }
     } else {
       const prismaUserId =
         lineItemsWithData[0].rentalInvoice.membership.customer.user.id
-      const { invoice } = chargebee.invoice
+      const result = chargebee.invoice
         .create({
           customer_id: prismaUserId,
           currency_code: "USD",
@@ -227,7 +232,10 @@ export class RentalService {
           console.log(result)
           return result
         })
+      invoicesCreated.push(result)
     }
+
+    return invoicesCreated
   }
 
   private lineItemToDescription(lineItem: LineItemToDescriptionLineItem) {
