@@ -11,7 +11,11 @@ const run = async () => {
       reservations: {
         select: {
           returnedPackage: {
-            select: { id: true, events: { select: { id: true } } },
+            select: {
+              id: true,
+              events: { select: { id: true } },
+              items: { select: { id: true } },
+            },
           },
           id: true,
         },
@@ -31,7 +35,9 @@ const run = async () => {
         cust.reservations.length
       )
       const previousReservationsWithUnusedReturnPackages = previousReservations.filter(
-        a => a.returnedPackage?.events.length === 0
+        a =>
+          a.returnedPackage?.events.length === 0 &&
+          a.returnedPackage?.items?.length === 0
       )
       const returnPackagesConnectArray = previousReservationsWithUnusedReturnPackages.map(
         a => ({

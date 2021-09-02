@@ -146,8 +146,9 @@ export class ChargebeeController {
   private async chargebeeSubscriptionCreated(content: any) {
     const { customer } = content
 
-    const customerWithData = await this.prisma.client.customer.findUnique({
-      where: { id: customer.id },
+    const customerWithData = await this.prisma.client.customer.findFirst({
+      where: { user: { id: customer.id } },
+      orderBy: { createdAt: "desc" },
       select: {
         id: true,
         membership: {

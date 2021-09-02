@@ -35,6 +35,13 @@ export class ProductMutationsResolver {
       select
     )
   }
+
+  @Mutation()
+  async deleteBagItem(@Args() { itemID, type }) {
+    await this.prisma.client.bagItem.delete({ where: { id: itemID } })
+    return true
+  }
+
   @Mutation()
   async swapBagItem(
     @Args() { oldItemID, physicalProductWhere },
@@ -46,9 +53,7 @@ export class ProductMutationsResolver {
     }
     const physicalProductForSwap = await this.prisma.client.physicalProduct.findUnique(
       {
-        where: {
-          seasonsUID: physicalProductWhere.seasonsUID,
-        },
+        where: physicalProductWhere,
         select: { id: true, inventoryStatus: true, seasonsUID: true },
       }
     )
@@ -58,7 +63,7 @@ export class ProductMutationsResolver {
 
     return await this.bagService.swapBagItem(
       oldItemID,
-      { seasonsUID: physicalProductWhere },
+      physicalProductWhere,
       select
     )
   }

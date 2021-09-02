@@ -1,6 +1,6 @@
 generator client {
-  provider        = "prisma-client-js"
-  binaryTargets   = ["native", "linux-musl", "debian-openssl-1.1.x"]
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "linux-musl", "debian-openssl-1.1.x"]
 }
 
 datasource db {
@@ -98,6 +98,7 @@ enum ProductStatus {
   Available
   NotAvailable
   Stored
+  Upcoming
   Offloaded
 }
 
@@ -416,6 +417,8 @@ enum OrderLineItemRecordType {
   Package
   EarlySwap
   Reservation
+  Fee
+  Total
 }
 
 enum OrderStatus {
