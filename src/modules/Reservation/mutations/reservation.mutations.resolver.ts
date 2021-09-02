@@ -22,11 +22,8 @@ export class ReservationMutationsResolver {
   }
 
   @Mutation()
-  async draftReservationLineItems(@Args() { hasFreeSwap }, @User() user) {
-    const result = await this.reservation.draftReservationLineItems(
-      user,
-      hasFreeSwap
-    )
+  async draftReservationLineItems(@Customer() customer) {
+    const result = await this.reservation.draftReservationLineItems(customer)
 
     return result
   }

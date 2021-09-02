@@ -1,11 +1,11 @@
 import { Customer, User } from "@app/decorators"
 import { Select } from "@app/decorators/select.decorator"
+import { ReservationService } from "@app/modules/Reservation/services/reservation.service"
 import { CustomerService } from "@app/modules/User/services/customer.service"
 import { CustomerUtilsService } from "@app/modules/User/services/customer.utils.service"
 import { StatementsService } from "@app/modules/Utils/services/statements.service"
-import { Info, ResolveField, Resolver } from "@nestjs/graphql"
+import { ResolveField, Resolver } from "@nestjs/graphql"
 import { PrismaService } from "@prisma1/prisma.service"
-import { head } from "lodash"
 
 // estimate on customer --> membership --> plan requires planID to be on the plan
 const EnsureFieldsForDownstreamFieldResolvers = `fragment EnsureFieldsForDownstreamFieldResolvers on Customer {
@@ -22,7 +22,8 @@ export class MeFieldsResolver {
     private readonly prisma: PrismaService,
     private readonly customerService: CustomerService,
     private readonly statements: StatementsService,
-    private readonly customerUtils: CustomerUtilsService
+    private readonly customerUtils: CustomerUtilsService,
+    private readonly reservation: ReservationService
   ) {}
 
   @ResolveField()
@@ -141,6 +142,13 @@ export class MeFieldsResolver {
       select,
     })
     return savedItems
+  }
+
+  @ResolveField()
+  async reservationLineItems(@Customer() customer) {
+    const result = await this.reservation.draftReservationLineItems(customer)
+
+    return result
   }
 
   @ResolveField()
