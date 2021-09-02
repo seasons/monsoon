@@ -769,7 +769,6 @@ export class ReservationService {
           charges: chargebeeCharges,
         })
         .request()
-      console.log(invoice_estimate)
 
       const processingTotal = processingFeeLines.reduce(
         (acc, curr) => acc + curr.price,
