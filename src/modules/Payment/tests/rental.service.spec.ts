@@ -700,6 +700,7 @@ describe("Rental Service", () => {
     })
   })
 
+  // TODO: Add case for a rental invoice with no line items
   describe("Charge customer", () => {
     let rentalInvoiceToBeBilled
     let billedRentalInvoice
