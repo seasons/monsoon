@@ -805,9 +805,10 @@ describe("Rental Service", () => {
     })
 
     describe("Properly charges an access-annual customer", () => {
+      let addedCharges
       beforeAll(async () => {
         await setCustomerPlanType("access-yearly")
-        await rentalService.chargeTab(
+        addedCharges = await rentalService.chargeTab(
           "access-yearly",
           rentalInvoiceToBeBilled,
           lineItems
@@ -830,6 +831,10 @@ describe("Rental Service", () => {
         })) as any
         customerRentalInvoicesAfterBilling =
           custWithUpdatedData.membership.rentalInvoices
+      })
+
+      it("Creates a single chargebee invoice for the whole RentalInvoice", () => {
+        expect(addedCharges.length).toBe(1)
       })
 
       it("Marks their current rental invoice as billed", () => {

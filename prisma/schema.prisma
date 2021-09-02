@@ -953,6 +953,8 @@ model RentalInvoiceLineItem {
   price             Float
   currencyCode      String
 
+  // @@unique([physicalProductId, rentalInvoiceId])
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
