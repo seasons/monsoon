@@ -249,6 +249,36 @@ export class RentalService {
     return `${productName} (${displaySize}) for ${lineItem.daysRented} days at \$${monthlyRentalPrice} per mo.`
   }
 
+  async initFirstRentalInvoice(
+    customerId,
+    mode: "promise" | "execute" = "execute"
+  ) {
+    const customerWithData = await this.prisma.client.customer.findUnique({
+      where: { id: customerId },
+      select: {
+        id: true,
+        membership: {
+          select: {
+            rentalInvoices: { select: { id: true } },
+            id: true,
+            plan: { select: { tier: true } },
+          },
+        },
+      },
+    })
+
+    // Create their first rental invoice
+    const hasRentalInvoice =
+      customerWithData.membership.rentalInvoices.length > 0
+    const onAccessPlan = customerWithData.membership.plan.tier === "Access"
+    if (!hasRentalInvoice && onAccessPlan) {
+      return await this.initDraftRentalInvoice(
+        customerWithData.membership.id,
+        mode
+      )
+    }
+  }
+
   async initDraftRentalInvoice(
     membershipId,
     mode: "promise" | "execute" = "execute"

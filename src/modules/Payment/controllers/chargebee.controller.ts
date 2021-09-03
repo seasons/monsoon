@@ -146,28 +146,13 @@ export class ChargebeeController {
   private async chargebeeSubscriptionCreated(content: any) {
     const { customer } = content
 
-    const customerWithData = await this.prisma.client.customer.findFirst({
+    const prismaCustomer = await this.prisma.client.customer.findFirst({
       where: { user: { id: customer.id } },
       orderBy: { createdAt: "desc" },
-      select: {
-        id: true,
-        membership: {
-          select: {
-            rentalInvoices: { select: { id: true } },
-            id: true,
-            plan: { select: { tier: true } },
-          },
-        },
-      },
+      select: { id: true },
     })
 
-    // Create their first rental invoice
-    const hasRentalInvoice =
-      customerWithData.membership.rentalInvoices.length > 0
-    const onAccessPlan = customerWithData.membership.plan.tier === "Access"
-    if (!hasRentalInvoice && onAccessPlan) {
-      await this.rental.initDraftRentalInvoice(customerWithData.membership.id)
-    }
+    await this.rental.initFirstRentalInvoice(prismaCustomer.id)
   }
 
   private async chargebeeCustomerChanged(content: any) {
