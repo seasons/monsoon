@@ -512,6 +512,19 @@ export class ProductUtilsService {
       where: { id: brandID },
       select: { brandCode: true },
     })
+    let product
+    if (productID) {
+      product = await this.prisma.client.product.findUnique({
+        where: { id: productID },
+        select: {
+          variants: {
+            select: {
+              id: true,
+            },
+          },
+        },
+      })
+    }
     const colorExists =
       (await this.prisma.client.color.count({
         where: { colorCode },
@@ -522,7 +535,7 @@ export class ProductUtilsService {
     }
 
     let styleNumber
-    if (!!productID) {
+    if (product?.variants?.length > 0) {
       // valid style code if variants exist on the product, null otherwise
       styleNumber = await this.getProductStyleCode(productID)
       if (!styleNumber) {

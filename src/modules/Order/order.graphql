@@ -28,6 +28,17 @@ type Query {
   ): OrderConnection! @cacheControl(maxAge: 0)
 }
 
+enum OrderLineItemRecordType {
+  PhysicalProduct
+  ProductVariant
+  ExternalProduct
+  Package
+  EarlySwap
+  Reservation
+  Fee
+  Total
+}
+
 type Order {
   id: ID!
   customer: Customer!

@@ -87,6 +87,7 @@ type Me @cacheControl(maxAge: 0, scope: PRIVATE) {
   activeReservation: Reservation
   bag: [BagItem!]
   savedItems: [BagItem!]
+  reservationLineItems: [OrderLineItem!]
   notificationBar: NotificationBar
   nextFreeSwapDate: DateTime
 }

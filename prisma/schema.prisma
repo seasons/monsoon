@@ -98,6 +98,7 @@ enum ProductStatus {
   Available
   NotAvailable
   Stored
+  Upcoming
   Offloaded
 }
 
@@ -416,6 +417,8 @@ enum OrderLineItemRecordType {
   Package
   EarlySwap
   Reservation
+  Fee
+  Total
 }
 
 enum OrderStatus {

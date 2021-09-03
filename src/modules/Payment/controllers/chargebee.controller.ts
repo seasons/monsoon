@@ -146,10 +146,26 @@ export class ChargebeeController {
   private async chargebeeSubscriptionCreated(content: any) {
     const { customer } = content
 
+<<<<<<< HEAD
     const prismaCustomer = await this.prisma.client.customer.findFirst({
       where: { user: { id: customer.id } },
       orderBy: { createdAt: "desc" },
       select: { id: true },
+=======
+    const customerWithData = await this.prisma.client.customer.findFirst({
+      where: { user: { id: customer.id } },
+      orderBy: { createdAt: "desc" },
+      select: {
+        id: true,
+        membership: {
+          select: {
+            rentalInvoices: { select: { id: true } },
+            id: true,
+            plan: { select: { tier: true } },
+          },
+        },
+      },
+>>>>>>> 153fb8c993589c0a16f312d631bb033b677f886c
     })
 
     await this.rental.initFirstRentalInvoice(prismaCustomer.id)
