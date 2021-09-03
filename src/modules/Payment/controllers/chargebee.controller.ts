@@ -127,12 +127,10 @@ export class ChargebeeController {
 
     if (prismaCustomer?.membership?.grandfathered) {
       let totalPromotionalCredits
-      const planPrice = prismaCustomer.membership.plan.price
-      const invoice = content.invoice
-      const isPlanPayment =
-        invoice.status === "paid" &&
-        invoice.recurring === true &&
-        invoice.total === planPrice
+      const plan = prismaCustomer.membership.plan
+      const isPlanPayment = content.invoice.line_items.some(
+        li => li.entity_id === plan.planID
+      )
 
       if (isPlanPayment) {
         // Add promotional credits if this is a plan payment
