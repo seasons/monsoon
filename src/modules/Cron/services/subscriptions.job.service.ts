@@ -104,7 +104,7 @@ export class SubscriptionsScheduledJobs {
       where: {
         membership: { plan: { tier: "Access" } },
         billingEndAt: {
-          equals: new Date(now.getFullYear(), now.getMonth(), now.getDate()),
+          lte: new Date(),
         },
         status: "Draft",
       },
