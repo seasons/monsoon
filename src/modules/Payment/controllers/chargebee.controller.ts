@@ -58,7 +58,10 @@ export class ChargebeeController {
         break
       case CHARGEBEE_PROMOTIONAL_CREDITS_DEDUCTED:
       case CHARGEBEE_PROMOTIONAL_CREDITS_ADDED:
-        await this.updatePromotionalCreditBalance(body.content.customer.id)
+        await this.updatePromotionalCreditBalance(
+          body.content.customer.id,
+          true
+        )
         break
       case CHARGEBEE_INVOICE_GENERATED:
         await this.updatePromotionalCreditBalance(
@@ -68,7 +71,10 @@ export class ChargebeeController {
     }
   }
 
-  private async updatePromotionalCreditBalance(chargebeeCustomerID: string) {
+  private async updatePromotionalCreditBalance(
+    chargebeeCustomerID: string,
+    forceUpdate = false
+  ) {
     const prismaCustomer = await this.prisma.client.customer.findFirst({
       where: { user: { id: chargebeeCustomerID } },
       select: {
@@ -82,7 +88,7 @@ export class ChargebeeController {
       },
     })
 
-    if (prismaCustomer?.membership?.grandfathered) {
+    if (prismaCustomer?.membership?.grandfathered || forceUpdate) {
       const chargebeeCustomer = await chargebee.customer
         .retrieve(chargebeeCustomerID)
         .request()
