@@ -2,7 +2,7 @@
 import { ProductUtilsService } from "@app/modules/Utils/services/product.utils.service"
 import { TimeUtilsService } from "@app/modules/Utils/services/time.service"
 import { UtilsService } from "@app/modules/Utils/services/utils.service"
-import { Injectable } from "@nestjs/common"
+import { Injectable, Logger } from "@nestjs/common"
 import {
   PhysicalProduct,
   Product,
@@ -92,8 +92,7 @@ export class RentalService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly timeUtils: TimeUtilsService,
-    private readonly productUtils: ProductUtilsService,
-    private readonly utils: UtilsService
+    private readonly productUtils: ProductUtilsService
   ) {}
 
   private rentalReservationSelect = Prisma.validator<
@@ -451,6 +450,25 @@ export class RentalService {
     return lineItems
   }
 
+  private prismaLineItemToChargebeeChargeInput = prismaLineItem => {
+    return {
+      amount: prismaLineItem.price,
+      description: this.lineItemToDescription(prismaLineItem),
+      date_from: this.timeUtils.secondsSinceEpoch(
+        prismaLineItem.rentalStartedAt
+      ),
+      date_to: this.timeUtils.secondsSinceEpoch(prismaLineItem.rentalEndedAt),
+    }
+  }
+
+  private handleChargebeeRequestResult(error, result) {
+    if (error) {
+      // TODO: Handle error
+      return error
+    }
+    return result
+  }
+
   private async chargebeeChargeTab(
     planID: AccessPlanID,
     lineItems: { id: string }[]
@@ -505,22 +523,10 @@ export class RentalService {
     if (planID === "access-monthly") {
       for (const lineItem of lineItemsWithData) {
         const subscriptionId = lineItem.rentalInvoice.membership.subscriptionId
-        const payload = {
-          amount: lineItem.price,
-          description: this.lineItemToDescription(lineItem),
-          date_from: this.timeUtils.secondsSinceEpoch(lineItem.rentalStartedAt),
-          date_to: this.timeUtils.secondsSinceEpoch(lineItem.rentalEndedAt),
-        }
+        const payload = this.prismaLineItemToChargebeeChargeInput(lineItem)
         const result = await chargebee.subscription
           .add_charge_at_term_end(subscriptionId, payload)
-          .request((error, result) => {
-            if (error) {
-              console.log(error)
-              return error
-            }
-            console.log(result)
-            return result
-          })
+          .request(this.handleChargebeeRequestResult)
         const chargebeeLineItems =
           result?.estimate?.invoice_estimate?.line_items
         const taxPromise = this.getLineItemTaxUpdatePromise(
@@ -537,22 +543,11 @@ export class RentalService {
         .create({
           customer_id: prismaUserId,
           currency_code: "USD",
-          charges: lineItemsWithData.map(a => ({
-            amount: a.price,
-            description: this.lineItemToDescription(a),
-            date_from: this.timeUtils.secondsSinceEpoch(a.rentalStartedAt),
-            date_to: this.timeUtils.secondsSinceEpoch(a.rentalEndedAt),
-            avalara_tax_code: "OD020000", // Same tax code we put on plans
-          })),
+          charges: lineItemsWithData.map(
+            this.prismaLineItemToChargebeeChargeInput
+          ),
         })
-        .request((err, result) => {
-          if (err) {
-            console.log(err)
-            return err
-          }
-          console.log(result)
-          return result
-        })
+        .request(this.handleChargebeeRequestResult)
       const chargebeeLineItems = result?.invoice?.line_items
       for (const prismaLineItem of lineItemsWithData) {
         const taxPromise = this.getLineItemTaxUpdatePromise(
