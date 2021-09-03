@@ -1,0 +1,45 @@
+import "module-alias/register"
+
+import { TimeUtilsService } from "../../modules/Utils/services/time.service"
+import { PrismaService } from "../../prisma/prisma.service"
+
+// Assumes the customer has one reservation and one rental invoice.
+// Backdates the rental invoice and reservation timestamps,
+// and marks the reservation as delivered so we can test billing
+const run = async () => {
+  const ps = new PrismaService()
+  const timeUtils = new TimeUtilsService()
+
+  const userEmail = "milan-aufderhar@seasons.nyc"
+  const custWithData = (await ps.client.customer.findFirst({
+    where: { user: { email: userEmail } },
+    select: {
+      reservations: { take: 1, select: { id: true } },
+      membership: {
+        select: { rentalInvoices: { take: 1, select: { id: true } } },
+      },
+    },
+  })) as any
+
+  // Backdate the reservation. Mark it as Delivered
+  await ps.client.reservation.update({
+    where: { id: custWithData.reservations[0].id },
+    data: {
+      status: "Delivered",
+      createdAt: timeUtils.xDaysBeforeDate(new Date(), 25),
+    },
+  })
+
+  // Update the rental invoice billing start and end dates
+  await ps.client.rentalInvoice.update({
+    where: { id: custWithData.membership.rentalInvoices[0].id },
+    data: {
+      billingStartAt: timeUtils.xDaysBeforeDate(new Date(), 30),
+      billingEndAt: new Date(),
+    },
+  })
+
+  console.log("done")
+}
+
+run()
