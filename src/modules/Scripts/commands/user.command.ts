@@ -4,7 +4,7 @@ import { SubscriptionService } from "@app/modules/Payment/services/subscription.
 import { PaymentUtilsService } from "@app/modules/Utils/services/paymentUtils.service"
 import { UtilsService } from "@app/modules/Utils/services/utils.service"
 import { AuthService } from "@modules/User/services/auth.service"
-import { Injectable, Logger } from "@nestjs/common"
+import { Inject, Injectable, Logger, forwardRef } from "@nestjs/common"
 import { ModuleRef } from "@nestjs/core"
 import { PrismaService } from "@prisma1/prisma.service"
 import sgMail from "@sendgrid/mail"
@@ -33,6 +33,7 @@ export class UserCommands {
     private readonly prisma: PrismaService,
     private readonly utils: UtilsService,
     private readonly paymentUtils: PaymentUtilsService,
+    @Inject(forwardRef(() => RentalService))
     private readonly rental: RentalService,
     private moduleRef: ModuleRef,
     private readonly subscription: SubscriptionService

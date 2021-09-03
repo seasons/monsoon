@@ -4,12 +4,10 @@ import {
   CREATE_RENTAL_INVOICE_LINE_ITEMS_INVOICE_SELECT,
   RentalService,
 } from "@app/modules/Payment/services/rental.service"
-import { ProductUtilsService } from "@app/modules/Product"
 import { PaymentUtilsService } from "@app/modules/Utils/services/paymentUtils.service"
 import { PrismaService } from "@modules/../prisma/prisma.service"
 import { Injectable, Logger } from "@nestjs/common"
 import { Cron, CronExpression } from "@nestjs/schedule"
-import { Product, RentalInvoiceLineItem } from "@prisma/client"
 import chargebee from "chargebee"
 
 @Injectable()
@@ -22,7 +20,6 @@ export class SubscriptionsScheduledJobs {
     private readonly prisma: PrismaService,
     private readonly error: ErrorService,
     private readonly paymentUtils: PaymentUtilsService,
-    private readonly productUtils: ProductUtilsService,
     private readonly rental: RentalService
   ) {}
 

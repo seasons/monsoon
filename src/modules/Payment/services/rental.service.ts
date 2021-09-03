@@ -1,4 +1,5 @@
-import { ProductUtilsService } from "@app/modules/Product"
+// import { ProductUtilsService } from "@app/modules/Product"
+import { ProductUtilsService } from "@app/modules/Utils/services/product.utils.service"
 import { TimeUtilsService } from "@app/modules/Utils/services/time.service"
 import { Injectable } from "@nestjs/common"
 import {
