@@ -462,6 +462,12 @@ export class UtilsService {
     )
   }
 
+  centsToDollars = cents => {
+    // the + turns e.g '1.50' into 1.5
+    const dollars = (cents / 100).toFixed(2)
+    return +dollars
+  }
+
   private caseify = (obj: any, caseFunc: (str: string) => string): any => {
     // Need this to prevent strings from getting turned into objects
     if (typeof obj === "string") {

@@ -950,7 +950,7 @@ model RentalInvoiceLineItem {
   taxName           String?
   taxPercentage     Float?
   taxPrice          Int?
-  price             Float
+  price             Int
   currencyCode      String
 
   // @@unique([physicalProductId, rentalInvoiceId])

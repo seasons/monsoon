@@ -200,10 +200,12 @@ export class PaymentService {
       country: "US", // assume its US for now, because we need it for taxes.
     }
 
+    const start_date = this.paymentUtils.getSubscriptionStartDate()
     const subscriptionOptions = {
       plan_id: planID,
       billing_address: billingAddress,
       coupon_ids: !!couponID ? [couponID] : [],
+      start_date,
       customer: {
         id: customerWithUserData.user.id,
         first_name: user.firstName || "",

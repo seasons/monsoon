@@ -32,7 +32,6 @@ export class SubscriptionService {
     private readonly paymentUtils: PaymentUtilsService,
     private readonly error: ErrorService,
     private readonly segment: SegmentService,
-    private readonly timeUtils: TimeUtilsService,
     private readonly rental: RentalService
   ) {}
 
@@ -529,12 +528,7 @@ export class SubscriptionService {
     user: User,
     card: Card
   ) {
-    // If we're in a dev/staging environment, backdate their subscription by 29 days
-    // so we can test billing code easily.
-    const start_date =
-      process.env.NODE_ENV !== "production"
-        ? this.timeUtils.xDaysBeforeDate(new Date(), 29, "timestamp")
-        : undefined
+    const start_date = this.paymentUtils.getSubscriptionStartDate()
     return await chargebee.subscription
       .create({
         plan_id: planID,

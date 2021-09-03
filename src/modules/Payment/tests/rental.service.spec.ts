@@ -38,6 +38,7 @@ class ChargeBeeMock {
                   date_from: 1628741509,
                   date_to: 1630642309,
                   tax_amount: 184,
+                  tax_rate: 0.08,
                   description: "Some production description 1",
                   tax_exempt_reason: "export",
                   is_taxed: true,
@@ -47,6 +48,7 @@ class ChargeBeeMock {
                   date_from: 1628741509,
                   date_to: 1630642309,
                   tax_amount: 307,
+                  tax_rate: 0.08,
                   description: "Some product description 2",
                   tax_exempt_reason: "export",
                   is_taxed: true,
@@ -55,6 +57,7 @@ class ChargeBeeMock {
                   amount: 2500,
                   date_from: 1628741509,
                   date_to: 1630642309,
+                  tax_rate: 0.08,
                   tax_amount: 0,
                   description: "access-monthly",
                   tax_exempt_reason: "export",
@@ -693,19 +696,19 @@ describe("Rental Service", () => {
             daysRented: 23,
             rentalStartedAt: utils.xDaysAgoISOString(23),
             rentalEndedAt: now,
-            price: 23,
+            price: 2300,
           },
           [initialReservationProductSUIDs[1]]: {
             daysRented: 23,
             rentalStartedAt: utils.xDaysAgoISOString(23),
             rentalEndedAt: now,
-            price: 38.41,
+            price: 3841,
           },
           [reservationTwoSUIDs[0]]: {
             daysRented: 9,
             rentalStartedAt: utils.xDaysAgoISOString(9),
             rentalEndedAt: now,
-            price: 24.03,
+            price: 2403,
           },
           [reservationThreeSUIDs[0]]: {
             daysRented: 0,
@@ -761,10 +764,6 @@ describe("Rental Service", () => {
   })
 
   // TODO: Add case for a rental invoice with no line items
-  /* For all tests in this suite, rather than rely on a third party service 
-     for the test suite to pass, we just don't test that the charges actually 
-     get created on chargebee
-  */
   describe("Charge customer", () => {
     let rentalInvoiceToBeBilled
     let billedRentalInvoice
@@ -804,7 +803,7 @@ describe("Rental Service", () => {
         select: CREATE_RENTAL_INVOICE_LINE_ITEMS_INVOICE_SELECT,
       })
 
-      console.dir(rentalInvoiceToBeBilled, { depth: null })
+      // console.dir(rentalInvoiceToBeBilled, { depth: null })
       lineItems = await rentalService.createRentalInvoiceLineItems(
         rentalInvoiceToBeBilled
       )
@@ -854,6 +853,7 @@ describe("Rental Service", () => {
             where: { id: { in: lineItems.map(a => a.id) } },
             select: {
               taxPrice: true,
+              taxRate: true,
               physicalProduct: { select: { seasonsUID: true } },
             },
           }
@@ -866,8 +866,14 @@ describe("Rental Service", () => {
           {}
         )
         expectedResultsBySUID = {
-          [initialReservationProductSUIDs[0]]: { taxPrice: 184 },
-          [initialReservationProductSUIDs[1]]: { taxPrice: 307 },
+          [initialReservationProductSUIDs[0]]: {
+            taxPrice: 184,
+            taxRate: 0.08,
+          },
+          [initialReservationProductSUIDs[1]]: {
+            taxPrice: 307,
+            taxRate: 0.08,
+          },
         }
       })
 
@@ -889,6 +895,9 @@ describe("Rental Service", () => {
         for (const suid of initialReservationProductSUIDs) {
           expect(lineItemsBySUID[suid].taxPrice).toEqual(
             expectedResultsBySUID[suid].taxPrice
+          )
+          expect(lineItemsBySUID[suid].taxRate).toEqual(
+            expectedResultsBySUID[suid].taxRate
           )
         }
       })

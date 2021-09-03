@@ -1,6 +1,7 @@
 // import { ProductUtilsService } from "@app/modules/Product"
 import { ProductUtilsService } from "@app/modules/Utils/services/product.utils.service"
 import { TimeUtilsService } from "@app/modules/Utils/services/time.service"
+import { UtilsService } from "@app/modules/Utils/services/utils.service"
 import { Injectable } from "@nestjs/common"
 import {
   PhysicalProduct,
@@ -91,7 +92,8 @@ export class RentalService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly timeUtils: TimeUtilsService,
-    private readonly productUtils: ProductUtilsService
+    private readonly productUtils: ProductUtilsService,
+    private readonly utils: UtilsService
   ) {}
 
   private rentalReservationSelect = Prisma.validator<
@@ -134,6 +136,7 @@ export class RentalService {
       await this.prisma.client.$transaction(promises)
     } catch (err) {
       // TODO: Capture exception
+      console.log(err)
       await this.prisma.client.rentalInvoice.update({
         where: { id: invoice.id },
         data: { status: "ChargeFailed" },
@@ -198,7 +201,7 @@ export class RentalService {
       for (const lineItem of lineItemsWithData) {
         const subscriptionId = lineItem.rentalInvoice.membership.subscriptionId
         const payload = {
-          amount: Math.round(lineItem.price * 100),
+          amount: lineItem.price,
           description: this.lineItemToDescription(lineItem),
           date_from: this.timeUtils.secondsSinceEpoch(lineItem.rentalStartedAt),
           date_to: this.timeUtils.secondsSinceEpoch(lineItem.rentalEndedAt),
@@ -214,13 +217,17 @@ export class RentalService {
             return result
           })
         const lineItems = result?.estimate?.invoice_estimate?.line_items
-        const taxPriceForLineItem = lineItems.find(
+        const matchingChargebeeLineItem = lineItems.find(
           a => a.amount === payload.amount
-        )?.tax_amount
+        )
+        const data = {
+          taxPrice: matchingChargebeeLineItem?.tax_amount,
+          taxRate: matchingChargebeeLineItem?.tax_rate,
+        }
         promises.push(
           this.prisma.client.rentalInvoiceLineItem.update({
             where: { id: lineItem.id },
-            data: { taxPrice: taxPriceForLineItem },
+            data,
           })
         )
 
@@ -541,8 +548,6 @@ export class RentalService {
   }
 
   async createRentalInvoiceLineItems(invoice) {
-    const chargebeeCustomerId = invoice.membership.customer.user.id
-
     const lineItemCreateDatas = (await Promise.all(
       invoice.products.map(async physicalProduct => {
         const { daysRented, ...daysRentedMetadata } = await this.calcDaysRented(
@@ -558,31 +563,12 @@ export class RentalService {
           daysRented,
           physicalProduct: { connect: { id: physicalProduct.id } },
           rentalInvoice: { connect: { id: invoice.id } },
-          price: daysRented * dailyRentalPrice,
+          price: Math.round(daysRented * dailyRentalPrice * 100),
           currencyCode: "USD",
         } as Prisma.RentalInvoiceLineItemCreateInput
       })
     )) as any
-    // TODO: Calculate taxes
-    // const {
-    //   estimate: { invoice_estimate },
-    // } = await chargebee.estimate
-    //   .create_invoice({
-    //     // TODO: Add customer id
-    //     invoice: { customer_id: chargebeeCustomerId },
-    //     charges: lineItemCreateDatas.map(a => ({
-    //       amount: a.price * 100,
-    //       taxable: true,
-    //       avalara_tax_code: "", // TODO: Fill in
-    //     })),
-    //   })
-    //   .request()
-    const lineItemCreateDatasWithTaxes = lineItemCreateDatas.map((a, idx) => ({
-      ...a,
-      // taxRate: invoice_estimate.line_items?.[idx]?.tax_rate || 0,
-      // taxPrice: invoice_estimate.line_items?.[idx]?.tax_amount || 0,
-    }))
-    const lineItemPromises = lineItemCreateDatasWithTaxes.map(data =>
+    const lineItemPromises = lineItemCreateDatas.map(data =>
       this.prisma.client.rentalInvoiceLineItem.create({
         data,
       })
