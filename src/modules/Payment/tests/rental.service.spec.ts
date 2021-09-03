@@ -645,6 +645,10 @@ describe("Rental Service", () => {
               rentalStartedAt: true,
               rentalEndedAt: true,
               price: true,
+              taxName: true,
+              taxPercentage: true,
+              taxPrice: true,
+              taxRate: true,
             },
           }
         )
@@ -716,8 +720,13 @@ describe("Rental Service", () => {
         }
       })
 
-      it("Stores the proper taxes", () => {
-        expect(0).toBe(1)
+      it("Doesn't set the taxes on them", () => {
+        for (const suid of invoicePhysicalProductSUIDs) {
+          expect(lineItemsBySUID[suid].taxPrice).toBe(null)
+          expect(lineItemsBySUID[suid].taxRate).toBe(null)
+          expect(lineItemsBySUID[suid].taxPercentage).toBe(null)
+          expect(lineItemsBySUID[suid].taxName).toBe(null)
+        }
       })
     })
   })
@@ -763,6 +772,8 @@ describe("Rental Service", () => {
 
     describe("Properly charges an access-monthly customer", () => {
       let addedCharges = []
+      let lineItemsWithDataAfterCharging
+
       beforeAll(async () => {
         await setCustomerPlanType("access-monthly")
         addedCharges = await rentalService.chargeTab(
@@ -787,6 +798,13 @@ describe("Rental Service", () => {
         })) as any
         customerRentalInvoicesAfterBilling =
           custWithUpdatedData.membership.rentalInvoices
+
+        lineItemsWithDataAfterCharging = await prisma.client.rentalInvoiceLineItem.findMany(
+          {
+            where: { id: { in: lineItems.map(a => a.id) } },
+            select: { taxPrice: true },
+          }
+        )
       })
 
       it("Creates a charge for each line item", () => {
@@ -801,6 +819,13 @@ describe("Rental Service", () => {
         expect(customerRentalInvoicesAfterBilling.length).toBe(2)
         expect(customerRentalInvoicesAfterBilling[0].status).toBe("Draft")
         expect(customerRentalInvoicesAfterBilling[1].status).toBe("Billed")
+      })
+
+      it("Adds taxes to the line items", () => {
+        expect(lineItemsWithDataAfterCharging[0].taxPrice).toEqual(10000)
+        expect(lineItemsWithDataAfterCharging[0].taxRate).toEqual(10000)
+        expect(lineItemsWithDataAfterCharging[1].taxPrice).toEqual(10000)
+        expect(lineItemsWithDataAfterCharging[1].taxRate).toEqual(10000)
       })
     })
 
