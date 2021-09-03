@@ -115,9 +115,9 @@ export class ReservationService {
       )
     }
     const customerPlanItemCount = customerWithData?.membership?.plan?.itemCount
-    if (!!customerPlanItemCount && items.length !== customerPlanItemCount) {
+    if (!!customerPlanItemCount && items.length > customerPlanItemCount) {
       throw new ApolloError(
-        `Your reservation must contain ${customerPlanItemCount} items`,
+        `Your reservation cannot contain more than ${customerPlanItemCount} items`,
         "515"
       )
     }
