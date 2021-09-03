@@ -146,133 +146,6 @@ export class RentalService {
     return invoices
   }
 
-  private async chargebeeChargeTab(
-    planID: AccessPlanID,
-    lineItems: { id: string }[]
-  ) {
-    const promises = []
-    const invoicesCreated = []
-    if (lineItems.length === 0) {
-      return
-    }
-
-    const lineItemsWithData = await this.prisma.client.rentalInvoiceLineItem.findMany(
-      {
-        where: { id: { in: lineItems.map(a => a.id) } },
-        select: {
-          id: true,
-          price: true,
-          rentalStartedAt: true,
-          rentalEndedAt: true,
-          daysRented: true,
-          rentalInvoice: {
-            select: {
-              membership: {
-                select: {
-                  subscriptionId: true,
-                  customer: {
-                    select: { user: { select: { id: true, createdAt: true } } },
-                  },
-                },
-              },
-            },
-          },
-          physicalProduct: {
-            select: {
-              productVariant: {
-                select: {
-                  displayShort: true,
-                  product: {
-                    select: {
-                      name: true,
-                      recoupment: true,
-                      wholesalePrice: true,
-                      rentalPriceOverride: true,
-                    },
-                  },
-                },
-              },
-            },
-          },
-        },
-      }
-    )
-    if (planID === "access-monthly") {
-      for (const lineItem of lineItemsWithData) {
-        const subscriptionId = lineItem.rentalInvoice.membership.subscriptionId
-        const payload = {
-          amount: lineItem.price,
-          description: this.lineItemToDescription(lineItem),
-          date_from: this.timeUtils.secondsSinceEpoch(lineItem.rentalStartedAt),
-          date_to: this.timeUtils.secondsSinceEpoch(lineItem.rentalEndedAt),
-        }
-        const result = await chargebee.subscription
-          .add_charge_at_term_end(subscriptionId, payload)
-          .request((error, result) => {
-            if (error) {
-              console.log(error)
-              return error
-            }
-            console.log(result)
-            return result
-          })
-        const lineItems = result?.estimate?.invoice_estimate?.line_items
-        const matchingChargebeeLineItem = lineItems.find(
-          a => a.amount === payload.amount
-        )
-        const data = {
-          taxPrice: matchingChargebeeLineItem?.tax_amount,
-          taxRate: matchingChargebeeLineItem?.tax_rate,
-        }
-        promises.push(
-          this.prisma.client.rentalInvoiceLineItem.update({
-            where: { id: lineItem.id },
-            data,
-          })
-        )
-
-        invoicesCreated.push(result)
-      }
-    } else {
-      const prismaUserId =
-        lineItemsWithData[0].rentalInvoice.membership.customer.user.id
-      const result = chargebee.invoice
-        .create({
-          customer_id: prismaUserId,
-          currency_code: "USD",
-          charges: lineItemsWithData.map(a => ({
-            amount: a.price * 100,
-            description: this.lineItemToDescription(a),
-            date_from: this.timeUtils.secondsSinceEpoch(a.rentalStartedAt),
-            date_to: this.timeUtils.secondsSinceEpoch(a.rentalEndedAt),
-            avalara_tax_code: "", // TODO: Get tax code
-          })),
-        })
-        .request((err, result) => {
-          if (err) {
-            console.log(err)
-            return err
-          }
-          console.log(result)
-          return result
-        })
-      invoicesCreated.push(result)
-    }
-
-    return [promises, invoicesCreated]
-  }
-
-  private lineItemToDescription(lineItem: LineItemToDescriptionLineItem) {
-    const productName = lineItem.physicalProduct.productVariant.product.name
-    const displaySize = lineItem.physicalProduct.productVariant.displayShort
-    const monthlyRentalPrice = this.productUtils.calcRentalPrice(
-      lineItem.physicalProduct.productVariant.product,
-      "monthly"
-    )
-
-    return `${productName} (${displaySize}) for ${lineItem.daysRented} days at \$${monthlyRentalPrice} per mo.`
-  }
-
   async initFirstRentalInvoice(
     customerId,
     mode: "promise" | "execute" = "execute"
@@ -576,6 +449,150 @@ export class RentalService {
     const lineItems = await this.prisma.client.$transaction(lineItemPromises)
 
     return lineItems
+  }
+
+  private async chargebeeChargeTab(
+    planID: AccessPlanID,
+    lineItems: { id: string }[]
+  ) {
+    const promises = []
+    const invoicesCreated = []
+    if (lineItems.length === 0) {
+      return
+    }
+
+    const lineItemsWithData = await this.prisma.client.rentalInvoiceLineItem.findMany(
+      {
+        where: { id: { in: lineItems.map(a => a.id) } },
+        select: {
+          id: true,
+          price: true,
+          rentalStartedAt: true,
+          rentalEndedAt: true,
+          daysRented: true,
+          rentalInvoice: {
+            select: {
+              membership: {
+                select: {
+                  subscriptionId: true,
+                  customer: {
+                    select: { user: { select: { id: true, createdAt: true } } },
+                  },
+                },
+              },
+            },
+          },
+          physicalProduct: {
+            select: {
+              productVariant: {
+                select: {
+                  displayShort: true,
+                  product: {
+                    select: {
+                      name: true,
+                      recoupment: true,
+                      wholesalePrice: true,
+                      rentalPriceOverride: true,
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      }
+    )
+    if (planID === "access-monthly") {
+      for (const lineItem of lineItemsWithData) {
+        const subscriptionId = lineItem.rentalInvoice.membership.subscriptionId
+        const payload = {
+          amount: lineItem.price,
+          description: this.lineItemToDescription(lineItem),
+          date_from: this.timeUtils.secondsSinceEpoch(lineItem.rentalStartedAt),
+          date_to: this.timeUtils.secondsSinceEpoch(lineItem.rentalEndedAt),
+        }
+        const result = await chargebee.subscription
+          .add_charge_at_term_end(subscriptionId, payload)
+          .request((error, result) => {
+            if (error) {
+              console.log(error)
+              return error
+            }
+            console.log(result)
+            return result
+          })
+        const chargebeeLineItems =
+          result?.estimate?.invoice_estimate?.line_items
+        const taxPromise = this.getLineItemTaxUpdatePromise(
+          lineItem,
+          chargebeeLineItems
+        )
+        promises.push(taxPromise)
+        invoicesCreated.push(result)
+      }
+    } else {
+      const prismaUserId =
+        lineItemsWithData[0].rentalInvoice.membership.customer.user.id
+      const result = await chargebee.invoice
+        .create({
+          customer_id: prismaUserId,
+          currency_code: "USD",
+          charges: lineItemsWithData.map(a => ({
+            amount: a.price,
+            description: this.lineItemToDescription(a),
+            date_from: this.timeUtils.secondsSinceEpoch(a.rentalStartedAt),
+            date_to: this.timeUtils.secondsSinceEpoch(a.rentalEndedAt),
+            avalara_tax_code: "OD020000", // Same tax code we put on plans
+          })),
+        })
+        .request((err, result) => {
+          if (err) {
+            console.log(err)
+            return err
+          }
+          console.log(result)
+          return result
+        })
+      const chargebeeLineItems = result?.invoice?.line_items
+      for (const prismaLineItem of lineItemsWithData) {
+        const taxPromise = this.getLineItemTaxUpdatePromise(
+          prismaLineItem,
+          chargebeeLineItems
+        )
+        promises.push(taxPromise)
+      }
+      invoicesCreated.push(result)
+    }
+
+    return [promises, invoicesCreated]
+  }
+
+  private getLineItemTaxUpdatePromise(
+    prismaLineItem: Pick<RentalInvoiceLineItem, "price" | "id">,
+    chargebeeLineItems
+  ) {
+    const matchingChargebeeLineItem = chargebeeLineItems.find(
+      a => a.amount === prismaLineItem.price
+    )
+    const data = {
+      taxPrice: matchingChargebeeLineItem?.tax_amount,
+      taxRate: matchingChargebeeLineItem?.tax_rate,
+    }
+    return this.prisma.client.rentalInvoiceLineItem.update({
+      where: { id: prismaLineItem.id },
+      data,
+    })
+  }
+
+  private lineItemToDescription(lineItem: LineItemToDescriptionLineItem) {
+    const productName = lineItem.physicalProduct.productVariant.product.name
+    const displaySize = lineItem.physicalProduct.productVariant.displayShort
+    const monthlyRentalPrice = this.productUtils.calcRentalPrice(
+      lineItem.physicalProduct.productVariant.product,
+      "monthly"
+    )
+
+    return `${productName} (${displaySize}) for ${lineItem.daysRented} days at \$${monthlyRentalPrice} per mo.`
   }
 
   private getSafeSentPackageDeliveryDate = (

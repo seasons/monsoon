@@ -21,38 +21,54 @@ class PaymentServiceMock {
 
 enum ChargebeeMockFunction {
   SubscriptionAddChargeAtTermEnd,
+  InvoiceCreate,
 }
 
 class ChargeBeeMock {
   constructor(private readonly mockFunction: ChargebeeMockFunction) {}
 
+  private usageLineItems = [
+    {
+      amount: 2300,
+      date_from: 1628741509,
+      date_to: 1630642309,
+      tax_amount: 184,
+      tax_rate: 0.08,
+      description: "Some production description 1",
+      is_taxed: true,
+    },
+    {
+      amount: 3841,
+      date_from: 1628741509,
+      date_to: 1630642309,
+      tax_amount: 307,
+      tax_rate: 0.08,
+      description: "Some product description 2",
+      is_taxed: true,
+    },
+  ]
+
   async request() {
     switch (this.mockFunction) {
+      case ChargebeeMockFunction.InvoiceCreate:
+        return {
+          invoice: {
+            id: "17025",
+            customer_id: "ckt3y8o150000zzuv7d7iuesr",
+            recurring: false,
+            status: "paid",
+            total: 6632,
+            amount_paid: 6632,
+            tax: 491,
+            line_items: this.usageLineItems,
+          },
+        }
       case ChargebeeMockFunction.SubscriptionAddChargeAtTermEnd:
         return {
           estimate: {
             invoice_estimate: {
               line_items: [
-                {
-                  amount: 2300,
-                  date_from: 1628741509,
-                  date_to: 1630642309,
-                  tax_amount: 184,
-                  tax_rate: 0.08,
-                  description: "Some production description 1",
-                  tax_exempt_reason: "export",
-                  is_taxed: true,
-                },
-                {
-                  amount: 3841,
-                  date_from: 1628741509,
-                  date_to: 1630642309,
-                  tax_amount: 307,
-                  tax_rate: 0.08,
-                  description: "Some product description 2",
-                  tax_exempt_reason: "export",
-                  is_taxed: true,
-                },
+                ...this.usageLineItems,
                 {
                   amount: 2500,
                   date_from: 1628741509,
@@ -772,41 +788,17 @@ describe("Rental Service", () => {
     let initialReservationProductSUIDs
 
     beforeAll(async () => {
-      const { cleanupFunc, customer } = await createTestCustomer({
-        select: testCustomerSelect,
-      })
-      cleanupFuncs.push(cleanupFunc)
-      testCustomer = customer
+      jest
+        .spyOn<any, any>(chargebee.subscription, "add_charge_at_term_end")
+        .mockReturnValue(
+          new ChargeBeeMock(
+            ChargebeeMockFunction.SubscriptionAddChargeAtTermEnd
+          )
+        )
 
-      const initialReservation = await addToBagAndReserveForCustomer(2)
-      await setReservationCreatedAt(initialReservation.id, 25)
-      await setPackageDeliveredAt(initialReservation.sentPackage.id, 23)
-      await setReservationStatus(initialReservation.id, "Delivered")
-
-      // Override product prices so we can predict the proper price
-      const custWithData = (await getCustWithData({
-        membership: {
-          select: {
-            rentalInvoices: {
-              select: CREATE_RENTAL_INVOICE_LINE_ITEMS_INVOICE_SELECT,
-            },
-          },
-        },
-      })) as any
-
-      initialReservationProductSUIDs = initialReservation.products.map(
-        a => a.seasonsUID
-      )
-      await overridePrices(initialReservationProductSUIDs, [30, 50])
-      rentalInvoiceToBeBilled = await prisma.client.rentalInvoice.findUnique({
-        where: { id: custWithData.membership.rentalInvoices[0].id },
-        select: CREATE_RENTAL_INVOICE_LINE_ITEMS_INVOICE_SELECT,
-      })
-
-      // console.dir(rentalInvoiceToBeBilled, { depth: null })
-      lineItems = await rentalService.createRentalInvoiceLineItems(
-        rentalInvoiceToBeBilled
-      )
+      jest
+        .spyOn<any, any>(chargebee.invoice, "create")
+        .mockReturnValue(new ChargeBeeMock(ChargebeeMockFunction.InvoiceCreate))
     })
 
     describe("Properly charges an access-monthly customer", () => {
@@ -816,13 +808,39 @@ describe("Rental Service", () => {
       let expectedResultsBySUID
 
       beforeAll(async () => {
-        jest
-          .spyOn<any, any>(chargebee.subscription, "add_charge_at_term_end")
-          .mockReturnValue(
-            new ChargeBeeMock(
-              ChargebeeMockFunction.SubscriptionAddChargeAtTermEnd
-            )
-          )
+        const { cleanupFunc, customer } = await createTestCustomer({
+          select: testCustomerSelect,
+        })
+        cleanupFuncs.push(cleanupFunc)
+        testCustomer = customer
+
+        const initialReservation = await addToBagAndReserveForCustomer(2)
+        await setReservationCreatedAt(initialReservation.id, 25)
+        await setPackageDeliveredAt(initialReservation.sentPackage.id, 23)
+        await setReservationStatus(initialReservation.id, "Delivered")
+
+        const custWithData = (await getCustWithData({
+          membership: {
+            select: {
+              rentalInvoices: {
+                select: CREATE_RENTAL_INVOICE_LINE_ITEMS_INVOICE_SELECT,
+              },
+            },
+          },
+        })) as any
+
+        initialReservationProductSUIDs = initialReservation.products.map(
+          a => a.seasonsUID
+        )
+        await overridePrices(initialReservationProductSUIDs, [30, 50])
+        rentalInvoiceToBeBilled = await prisma.client.rentalInvoice.findUnique({
+          where: { id: custWithData.membership.rentalInvoices[0].id },
+          select: CREATE_RENTAL_INVOICE_LINE_ITEMS_INVOICE_SELECT,
+        })
+
+        lineItems = await rentalService.createRentalInvoiceLineItems(
+          rentalInvoiceToBeBilled
+        )
 
         await setCustomerPlanType("access-monthly")
         addedCharges = await rentalService.chargeTab(
@@ -905,7 +923,46 @@ describe("Rental Service", () => {
 
     describe("Properly charges an access-annual customer", () => {
       let addedCharges
+      let lineItemsWithDataAfterCharging
+      let lineItemsBySUID
+      let expectedResultsBySUID
+
       beforeAll(async () => {
+        const { cleanupFunc, customer } = await createTestCustomer({
+          select: testCustomerSelect,
+        })
+        cleanupFuncs.push(cleanupFunc)
+        testCustomer = customer
+
+        const initialReservation = await addToBagAndReserveForCustomer(2)
+        await setReservationCreatedAt(initialReservation.id, 25)
+        await setPackageDeliveredAt(initialReservation.sentPackage.id, 23)
+        await setReservationStatus(initialReservation.id, "Delivered")
+
+        // Override product prices so we can predict the proper price
+        const custWithData = (await getCustWithData({
+          membership: {
+            select: {
+              rentalInvoices: {
+                select: CREATE_RENTAL_INVOICE_LINE_ITEMS_INVOICE_SELECT,
+              },
+            },
+          },
+        })) as any
+
+        initialReservationProductSUIDs = initialReservation.products.map(
+          a => a.seasonsUID
+        )
+        await overridePrices(initialReservationProductSUIDs, [30, 50])
+        rentalInvoiceToBeBilled = await prisma.client.rentalInvoice.findUnique({
+          where: { id: custWithData.membership.rentalInvoices[0].id },
+          select: CREATE_RENTAL_INVOICE_LINE_ITEMS_INVOICE_SELECT,
+        })
+
+        lineItems = await rentalService.createRentalInvoiceLineItems(
+          rentalInvoiceToBeBilled
+        )
+
         await setCustomerPlanType("access-yearly")
         addedCharges = await rentalService.chargeTab(
           "access-yearly",
@@ -930,6 +987,34 @@ describe("Rental Service", () => {
         })) as any
         customerRentalInvoicesAfterBilling =
           custWithUpdatedData.membership.rentalInvoices
+
+        lineItemsWithDataAfterCharging = await prisma.client.rentalInvoiceLineItem.findMany(
+          {
+            where: { id: { in: lineItems.map(a => a.id) } },
+            select: {
+              taxPrice: true,
+              taxRate: true,
+              physicalProduct: { select: { seasonsUID: true } },
+            },
+          }
+        )
+
+        lineItemsBySUID = lineItemsWithDataAfterCharging.reduce(
+          (acc, curVal) => {
+            return { ...acc, [curVal.physicalProduct.seasonsUID]: curVal }
+          },
+          {}
+        )
+        expectedResultsBySUID = {
+          [initialReservationProductSUIDs[0]]: {
+            taxPrice: 184,
+            taxRate: 0.08,
+          },
+          [initialReservationProductSUIDs[1]]: {
+            taxPrice: 307,
+            taxRate: 0.08,
+          },
+        }
       })
 
       it("Creates a single chargebee invoice for the whole RentalInvoice", () => {
@@ -944,6 +1029,17 @@ describe("Rental Service", () => {
         expect(customerRentalInvoicesAfterBilling.length).toBe(2)
         expect(customerRentalInvoicesAfterBilling[0].status).toBe("Draft")
         expect(customerRentalInvoicesAfterBilling[1].status).toBe("Billed")
+      })
+
+      it("Adds taxes to the line items", () => {
+        for (const suid of initialReservationProductSUIDs) {
+          expect(lineItemsBySUID[suid].taxPrice).toEqual(
+            expectedResultsBySUID[suid].taxPrice
+          )
+          expect(lineItemsBySUID[suid].taxRate).toEqual(
+            expectedResultsBySUID[suid].taxRate
+          )
+        }
       })
     })
 
