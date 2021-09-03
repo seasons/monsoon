@@ -380,15 +380,10 @@ export class PhysicalProductService {
             "Rail Warehouse Locations barcodes must begin with 'SR'"
           )
         }
-        if (
-          !(await this.prisma.client.brand.findUnique({
-            where: {
-              brandCode: itemCode,
-            },
-          }))
-        ) {
+        const value = parseInt(itemCode.substring(1))
+        if (value < 100 || value > 990) {
           throw new Error(
-            `Invalid itemcode. No brand exists with code ${itemCode}`
+            `Invalid itemcode. Should be a value between A100 and A990`
           )
         }
         break
