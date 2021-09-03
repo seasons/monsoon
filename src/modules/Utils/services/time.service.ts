@@ -17,8 +17,17 @@ export class TimeUtilsService {
     return date1.getTime() - date2.getTime() >= 0
   }
 
-  xDaysBeforeDate(date: Date, x: number) {
-    return moment(date.toISOString()).subtract(x, "days").format()
+  xDaysBeforeDate(
+    date: Date,
+    x: number,
+    type: "isoString" | "timestamp" = "isoString"
+  ) {
+    const returnDate = moment(date.toISOString()).subtract(x, "days")
+    if (type === "isoString") {
+      return returnDate.format()
+    } else {
+      return returnDate.utc().format("X")
+    }
   }
 
   xDaysAfterDate(date: Date, x: number) {

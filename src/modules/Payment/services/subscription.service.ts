@@ -1,6 +1,7 @@
 import { SegmentService } from "@app/modules/Analytics/services/segment.service"
 import { ErrorService } from "@app/modules/Error/services/error.service"
 import { PaymentUtilsService } from "@app/modules/Utils/services/paymentUtils.service"
+import { TimeUtilsService } from "@app/modules/Utils/services/time.service"
 import { EmailService } from "@modules/Email/services/email.service"
 import { Injectable } from "@nestjs/common"
 import { Customer, PauseType, PaymentPlan, User } from "@prisma/client"
@@ -29,7 +30,8 @@ export class SubscriptionService {
     private readonly emailService: EmailService,
     private readonly paymentUtils: PaymentUtilsService,
     private readonly error: ErrorService,
-    private readonly segment: SegmentService
+    private readonly segment: SegmentService,
+    private readonly timeUtils: TimeUtilsService
   ) {}
 
   async subscriptionEstimate(
@@ -523,10 +525,17 @@ export class SubscriptionService {
     user: User,
     card: Card
   ) {
+    // If we're in a dev/staging environment, backdate their subscription by 29 days
+    // so we can test billing code easily.
+    const start_date =
+      process.env.NODE_ENV !== "production"
+        ? this.timeUtils.xDaysBeforeDate(new Date(), 29, "timestamp")
+        : undefined
     return await chargebee.subscription
       .create({
         plan_id: planID,
         billingAddress,
+        start_date,
         customer: {
           id: user.id,
           first_name: user.firstName,
