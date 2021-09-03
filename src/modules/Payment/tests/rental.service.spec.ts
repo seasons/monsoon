@@ -29,7 +29,41 @@ class ChargeBeeMock {
   async request() {
     switch (this.mockFunction) {
       case ChargebeeMockFunction.SubscriptionAddChargeAtTermEnd:
-        return { estimate: {} }
+        return {
+          estimate: {
+            invoice_estimate: {
+              line_items: [
+                {
+                  amount: 2300,
+                  date_from: 1628741509,
+                  date_to: 1630642309,
+                  tax_amount: 184,
+                  description: "Some production description 1",
+                  tax_exempt_reason: "export",
+                  is_taxed: true,
+                },
+                {
+                  amount: 3841,
+                  date_from: 1628741509,
+                  date_to: 1630642309,
+                  tax_amount: 307,
+                  description: "Some product description 2",
+                  tax_exempt_reason: "export",
+                  is_taxed: true,
+                },
+                {
+                  amount: 2500,
+                  date_from: 1628741509,
+                  date_to: 1630642309,
+                  tax_amount: 0,
+                  description: "access-monthly",
+                  tax_exempt_reason: "export",
+                  is_taxed: true,
+                },
+              ],
+            },
+          },
+        }
     }
   }
 }
@@ -60,12 +94,6 @@ describe("Rental Service", () => {
     rentalService = moduleRef.get<RentalService>(RentalService)
     utils = moduleRef.get<UtilsService>(UtilsService)
     reservationService = moduleRef.get<ReservationService>(ReservationService)
-
-    jest
-      .spyOn<any, any>(chargebee.subscription, "add_charge_at_term_end")
-      .mockReturnValue(
-        new ChargeBeeMock(ChargebeeMockFunction.SubscriptionAddChargeAtTermEnd)
-      )
   })
 
   // Bring this back if we get cascading deletes figured out
@@ -607,6 +635,7 @@ describe("Rental Service", () => {
           ...reservationTwoSUIDs,
           ...reservationThreeSUIDs,
         ]
+        // TODO: Use the new overridePrices func
         for (const [i, overridePrice] of rentalPriceOverrides.entries()) {
           const prodToUpdate = await prisma.client.product.findFirst({
             where: {
@@ -619,7 +648,7 @@ describe("Rental Service", () => {
               },
             },
           })
-          const updatedProduct = await prisma.client.product.update({
+          await prisma.client.product.update({
             where: { id: prodToUpdate.id },
             data: { rentalPriceOverride: overridePrice },
             select: { id: true, rentalPriceOverride: true },
@@ -741,6 +770,7 @@ describe("Rental Service", () => {
     let billedRentalInvoice
     let customerRentalInvoicesAfterBilling
     let lineItems
+    let initialReservationProductSUIDs
 
     beforeAll(async () => {
       const { cleanupFunc, customer } = await createTestCustomer({
@@ -754,6 +784,7 @@ describe("Rental Service", () => {
       await setPackageDeliveredAt(initialReservation.sentPackage.id, 23)
       await setReservationStatus(initialReservation.id, "Delivered")
 
+      // Override product prices so we can predict the proper price
       const custWithData = (await getCustWithData({
         membership: {
           select: {
@@ -763,8 +794,17 @@ describe("Rental Service", () => {
           },
         },
       })) as any
-      rentalInvoiceToBeBilled = custWithData.membership.rentalInvoices[0]
 
+      initialReservationProductSUIDs = initialReservation.products.map(
+        a => a.seasonsUID
+      )
+      await overridePrices(initialReservationProductSUIDs, [30, 50])
+      rentalInvoiceToBeBilled = await prisma.client.rentalInvoice.findUnique({
+        where: { id: custWithData.membership.rentalInvoices[0].id },
+        select: CREATE_RENTAL_INVOICE_LINE_ITEMS_INVOICE_SELECT,
+      })
+
+      console.dir(rentalInvoiceToBeBilled, { depth: null })
       lineItems = await rentalService.createRentalInvoiceLineItems(
         rentalInvoiceToBeBilled
       )
@@ -773,8 +813,18 @@ describe("Rental Service", () => {
     describe("Properly charges an access-monthly customer", () => {
       let addedCharges = []
       let lineItemsWithDataAfterCharging
+      let lineItemsBySUID
+      let expectedResultsBySUID
 
       beforeAll(async () => {
+        jest
+          .spyOn<any, any>(chargebee.subscription, "add_charge_at_term_end")
+          .mockReturnValue(
+            new ChargeBeeMock(
+              ChargebeeMockFunction.SubscriptionAddChargeAtTermEnd
+            )
+          )
+
         await setCustomerPlanType("access-monthly")
         addedCharges = await rentalService.chargeTab(
           "access-monthly",
@@ -802,9 +852,23 @@ describe("Rental Service", () => {
         lineItemsWithDataAfterCharging = await prisma.client.rentalInvoiceLineItem.findMany(
           {
             where: { id: { in: lineItems.map(a => a.id) } },
-            select: { taxPrice: true },
+            select: {
+              taxPrice: true,
+              physicalProduct: { select: { seasonsUID: true } },
+            },
           }
         )
+
+        lineItemsBySUID = lineItemsWithDataAfterCharging.reduce(
+          (acc, curVal) => {
+            return { ...acc, [curVal.physicalProduct.seasonsUID]: curVal }
+          },
+          {}
+        )
+        expectedResultsBySUID = {
+          [initialReservationProductSUIDs[0]]: { taxPrice: 184 },
+          [initialReservationProductSUIDs[1]]: { taxPrice: 307 },
+        }
       })
 
       it("Creates a charge for each line item", () => {
@@ -822,10 +886,11 @@ describe("Rental Service", () => {
       })
 
       it("Adds taxes to the line items", () => {
-        expect(lineItemsWithDataAfterCharging[0].taxPrice).toEqual(10000)
-        expect(lineItemsWithDataAfterCharging[0].taxRate).toEqual(10000)
-        expect(lineItemsWithDataAfterCharging[1].taxPrice).toEqual(10000)
-        expect(lineItemsWithDataAfterCharging[1].taxRate).toEqual(10000)
+        for (const suid of initialReservationProductSUIDs) {
+          expect(lineItemsBySUID[suid].taxPrice).toEqual(
+            expectedResultsBySUID[suid].taxPrice
+          )
+        }
       })
     })
 
@@ -1171,4 +1236,28 @@ const expectTimeToEqual = (time, expectedValue) => {
     expect(time).toBe(expectedValue)
   }
   expect(moment(time).format("ll")).toEqual(moment(expectedValue).format("ll"))
+}
+
+const overridePrices = async (seasonsUIDs, prices) => {
+  if (seasonsUIDs.length !== prices.length) {
+    throw "must pass in same length arrays"
+  }
+  for (const [i, overridePrice] of prices.entries()) {
+    const prodToUpdate = await prisma.client.product.findFirst({
+      where: {
+        variants: {
+          some: {
+            physicalProducts: {
+              some: { seasonsUID: seasonsUIDs[i] },
+            },
+          },
+        },
+      },
+    })
+    await prisma.client.product.update({
+      where: { id: prodToUpdate.id },
+      data: { rentalPriceOverride: overridePrice },
+      select: { id: true, rentalPriceOverride: true },
+    })
+  }
 }

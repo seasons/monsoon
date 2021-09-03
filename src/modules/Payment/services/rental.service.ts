@@ -64,7 +64,7 @@ export const CREATE_RENTAL_INVOICE_LINE_ITEMS_INVOICE_SELECT = Prisma.validator<
         select: {
           id: true,
           status: true,
-          user: { select: { id: true } },
+          user: { select: { id: true, email: true } },
           reservations: {
             where: {
               status: {
@@ -112,13 +112,14 @@ export class RentalService {
   })
 
   async chargeTab(planID: AccessPlanID, invoice, lineItems: { id: string }[]) {
-    let invoices
+    let invoices, chargePromises
     try {
       // Chargebee stuff
-      invoices = await this.chargebeeChargeTab(planID, lineItems)
+      const chargeResult = await this.chargebeeChargeTab(planID, lineItems)
+      ;[chargePromises, invoices] = chargeResult
 
       // DB Stuff
-      const promises = []
+      const promises = [...chargePromises]
       promises.push(
         this.prisma.client.rentalInvoice.update({
           where: { id: invoice.id },
@@ -146,6 +147,7 @@ export class RentalService {
     planID: AccessPlanID,
     lineItems: { id: string }[]
   ) {
+    const promises = []
     const invoicesCreated = []
     if (lineItems.length === 0) {
       return
@@ -155,6 +157,7 @@ export class RentalService {
       {
         where: { id: { in: lineItems.map(a => a.id) } },
         select: {
+          id: true,
           price: true,
           rentalStartedAt: true,
           rentalEndedAt: true,
@@ -164,7 +167,9 @@ export class RentalService {
               membership: {
                 select: {
                   subscriptionId: true,
-                  customer: { select: { user: { select: { id: true } } } },
+                  customer: {
+                    select: { user: { select: { id: true, createdAt: true } } },
+                  },
                 },
               },
             },
@@ -193,7 +198,7 @@ export class RentalService {
       for (const lineItem of lineItemsWithData) {
         const subscriptionId = lineItem.rentalInvoice.membership.subscriptionId
         const payload = {
-          amount: lineItem.price * 100,
+          amount: Math.round(lineItem.price * 100),
           description: this.lineItemToDescription(lineItem),
           date_from: this.timeUtils.secondsSinceEpoch(lineItem.rentalStartedAt),
           date_to: this.timeUtils.secondsSinceEpoch(lineItem.rentalEndedAt),
@@ -208,6 +213,17 @@ export class RentalService {
             console.log(result)
             return result
           })
+        const lineItems = result?.estimate?.invoice_estimate?.line_items
+        const taxPriceForLineItem = lineItems.find(
+          a => a.amount === payload.amount
+        )?.tax_amount
+        promises.push(
+          this.prisma.client.rentalInvoiceLineItem.update({
+            where: { id: lineItem.id },
+            data: { taxPrice: taxPriceForLineItem },
+          })
+        )
+
         invoicesCreated.push(result)
       }
     } else {
@@ -236,7 +252,7 @@ export class RentalService {
       invoicesCreated.push(result)
     }
 
-    return invoicesCreated
+    return [promises, invoicesCreated]
   }
 
   private lineItemToDescription(lineItem: LineItemToDescriptionLineItem) {
