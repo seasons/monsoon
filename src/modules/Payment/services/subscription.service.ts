@@ -12,6 +12,7 @@ import { head, orderBy, pick } from "lodash"
 import { DateTime } from "luxon"
 
 import { BillingAddress, Card } from "../payment.types"
+import { RentalService } from "./rental.service"
 
 export interface SubscriptionData {
   nextBillingAt: string
@@ -31,7 +32,8 @@ export class SubscriptionService {
     private readonly paymentUtils: PaymentUtilsService,
     private readonly error: ErrorService,
     private readonly segment: SegmentService,
-    private readonly timeUtils: TimeUtilsService
+    private readonly timeUtils: TimeUtilsService,
+    private readonly rental: RentalService
   ) {}
 
   async subscriptionEstimate(
@@ -473,6 +475,8 @@ export class SubscriptionService {
       where: { id: customer.id },
       data: updateData,
     })
+
+    await this.rental.initFirstRentalInvoice(customer.id)
 
     // Send welcome to seasons email
     await this.emailService.sendSubscribedEmail(customer.user)
