@@ -23,6 +23,13 @@ export class CustomerUtilsService {
             },
             createdAt: true,
           },
+          where: {
+            status: {
+              not: {
+                in: ["Lost", "Cancelled"],
+              },
+            },
+          },
         },
         membership: {
           select: {
