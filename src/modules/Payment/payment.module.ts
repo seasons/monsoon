@@ -32,7 +32,6 @@ export const PaymentModuleDef = {
     UtilsModule,
     AnalyticsModule,
     ErrorModule,
-    // ProductModule,
     forwardRef(() => ProductModule),
   ],
   providers: [
