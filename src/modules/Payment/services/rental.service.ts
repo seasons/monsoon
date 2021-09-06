@@ -216,12 +216,16 @@ export class RentalService {
     const reservationIds = customer.reservations.map(a => a.id)
     const physicalProductIds = customer.bagItems.map(b => b.physicalProductId)
     const now = new Date()
+    const billingEndAt = await this.getRentalInvoiceBillingEndAt(
+      membershipId,
+      now
+    )
     const data = {
       membership: {
         connect: { id: membershipId },
       },
       billingStartAt: now,
-      billingEndAt: this.getRentalInvoiceBillingEndAt(now),
+      billingEndAt,
       status: "Draft" as RentalInvoiceStatus,
       reservations: {
         connect: reservationIds.map(a => ({
@@ -247,25 +251,34 @@ export class RentalService {
     return await promise
   }
 
-  getRentalInvoiceBillingEndAt(billingStartAt: Date) {
-    const startYear = billingStartAt.getFullYear()
-    const startMonth = billingStartAt.getMonth()
-    const startDate = billingStartAt.getDate()
+  async getRentalInvoiceBillingEndAt(
+    customerMembershipId: string,
+    billingStartAt: Date
+  ) {
+    const membershipWithData = await this.prisma.client.customerMembership.findUnique(
+      {
+        where: { id: customerMembershipId },
+        select: { subscriptionId: true, plan: { select: { planID: true } } },
+      }
+    )
 
-    const billingEndYear = startMonth === 11 ? startYear + 1 : startYear
-    const billingEndMonth = startMonth === 11 ? 0 : startMonth + 1
-
-    let billingEndDate = startDate - 1
-    if (billingEndMonth === 1 && billingEndDate > 28) {
-      // e.g if billingStartAt is Jan 30, billingEndDate will be Feb 28
-      billingEndDate = 28
+    let billingEndAt
+    switch (membershipWithData.plan.planID) {
+      case "access-monthly":
+        billingEndAt = await this.getChargebeeNextBillingAt(
+          membershipWithData.subscriptionId
+        )
+        break
+      case "access-annual":
+        billingEndAt = await this.getRentalInvoiceBillingEndAtAccessAnnual(
+          customerMembershipId,
+          billingStartAt
+        )
+        break
+      default:
+        throw `Unrecognized planID: ${membershipWithData.plan.planID}`
     }
 
-    const billingEndAt = new Date(
-      billingEndYear,
-      billingEndMonth,
-      billingEndDate
-    )
     return billingEndAt
   }
 
@@ -456,6 +469,43 @@ export class RentalService {
     return lineItems
   }
 
+  private async getRentalInvoiceBillingEndAtAccessAnnual(
+    subscriptionId: string,
+    billingStartAt: Date
+  ) {
+    // TODO: If next month is their plan billing month, use next_billing_at from
+    // their chargebee data.
+    const startYear = billingStartAt.getFullYear()
+    const startMonth = billingStartAt.getMonth()
+    const startDate = billingStartAt.getDate()
+
+    const billingEndYear = startMonth === 11 ? startYear + 1 : startYear
+    const billingEndMonth = startMonth === 11 ? 0 : startMonth + 1
+
+    let billingEndDate = startDate - 1
+    if (billingEndMonth === 1 && billingEndDate > 28) {
+      // e.g if billingStartAt is Jan 30, billingEndDate will be Feb 28
+      billingEndDate = 28
+    }
+
+    const billingEndAt = new Date(
+      billingEndYear,
+      billingEndMonth,
+      billingEndDate
+    )
+    return billingEndAt
+  }
+
+  private async getChargebeeNextBillingAt(subscriptionId) {
+    const result = await chargebee.subscription
+      .retrieve(subscriptionId)
+      .request(this.handleChargebeeRequestResult)
+    const nextBillingAtTimestamp = result.subscription.next_billing_at
+    const nextBillingAtDate = this.timeUtils.dateFromUTCTimestamp(
+      nextBillingAtTimestamp
+    )
+    return this.timeUtils.xDaysBeforeDate(nextBillingAtDate, 1)
+  }
   private prismaLineItemToChargebeeChargeInput = prismaLineItem => {
     return {
       amount: prismaLineItem.price,
@@ -469,7 +519,7 @@ export class RentalService {
 
   private handleChargebeeRequestResult(error, result) {
     if (error) {
-      // TODO: Handle error
+      this.error.captureError(error)
       return error
     }
     return result

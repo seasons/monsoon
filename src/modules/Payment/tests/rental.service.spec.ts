@@ -3,10 +3,11 @@ import { ReservationService } from "@app/modules/Reservation"
 import { UtilsService } from "@app/modules/Utils/services/utils.service"
 import { PrismaService, SmartPrismaClient } from "@app/prisma/prisma.service"
 import { Test } from "@nestjs/testing"
-import { Prisma, ReservationStatus } from "@prisma/client"
+import { Prisma, RentalInvoice, ReservationStatus } from "@prisma/client"
 import chargebee from "chargebee"
 import { head, merge } from "lodash"
 import moment from "moment"
+import { util } from "prettier"
 
 import { PaymentService } from "../services/payment.service"
 import {
@@ -23,6 +24,7 @@ enum ChargebeeMockFunction {
   SubscriptionAddChargeAtTermEnd,
   SubscriptionAddChargeAtTermEndWithError,
   InvoiceCreate,
+  SubscriptionRetrieve,
 }
 
 class ChargeBeeMock {
@@ -86,8 +88,42 @@ class ChargeBeeMock {
         }
       case ChargebeeMockFunction.SubscriptionAddChargeAtTermEndWithError:
         throw "test error"
+      case ChargebeeMockFunction.SubscriptionRetrieve:
+        return {
+          customer: {},
+          subscription: {
+            next_billing_at: moment().add(5, "days").unix(),
+          },
+        }
     }
   }
+
+  async retrieve() {
+    return {
+      request: () => {
+        return {
+          customer: {},
+          subscription: {
+            next_billing_at: moment().add(5, "days").unix(),
+          },
+        }
+      },
+    }
+  }
+
+  // async retrieve() {
+  //   switch (this.mockFunction) {
+  //     case ChargebeeMockFunction.SubscriptionRetrieve:
+  //       return {
+  //         request: () => ({
+  //           customer: {},
+  //           subscription: {
+  //             next_billing_at: moment().add(5, "days").unix(),
+  //           },
+  //         }),
+  //       }
+  //   }
+  // }
 }
 
 let prisma: PrismaService
@@ -1138,8 +1174,52 @@ describe("Rental Service", () => {
   })
 
   describe("GetRentalInvoiceBillingEndAt", () => {
-    it("Uses whatever the next billing date is as per chargebee", async () => {
-      expect(0).toBe(1)
+    describe("Access Monthly Customers", () => {
+      let rentalInvoiceBillingEndAt: Date
+      let custWithData
+      beforeAll(async () => {
+        jest
+          .spyOn<any, any>(chargebee.subscription, "retrieve")
+          .mockReturnValue(
+            new ChargeBeeMock(ChargebeeMockFunction.SubscriptionRetrieve)
+          )
+
+        const { cleanupFunc, customer } = await createTestCustomer({
+          select: testCustomerSelect,
+        })
+        cleanupFuncs.push(cleanupFunc)
+        testCustomer = customer
+        await setCustomerPlanType("access-monthly")
+        custWithData = (await getCustWithData({
+          membership: {
+            select: {
+              id: true,
+            },
+          },
+        })) as any
+      })
+
+      it("queries chargebee and uses next_billing_at (minus 1)", async () => {
+        rentalInvoiceBillingEndAt = await rentalService.getRentalInvoiceBillingEndAt(
+          custWithData.membership.id,
+          null
+        )
+        expect(rentalInvoiceBillingEndAt).toBe(utils.xDaysFromNowISOString(4))
+      })
+    })
+
+    describe("Access Annual Customers", () => {
+      it("If the next month has the start date's date, it uses that", () => {
+        expect(0).toBe(1)
+      })
+
+      it("If the start date is the 31st and the next month only has 30 days, it uses 30", () => {
+        expect(0).toBe(1)
+      })
+
+      it("If the start date is 30 and the next month is February, it uses the 28th", () => {
+        expect(0).toBe(1)
+      })
     })
   })
 })
@@ -1154,6 +1234,7 @@ const createTestCustomer = async ({
   const upsGroundMethod = await prisma.client.shippingMethod.findFirst({
     where: { code: "UPSGround" },
   })
+  const chargebeeSubscriptionId = utils.randomString()
   const defaultCreateData = {
     status: "Active",
     user: {
@@ -1184,12 +1265,23 @@ const createTestCustomer = async ({
     },
     membership: {
       create: {
-        subscriptionId: utils.randomString(),
+        subscriptionId: chargebeeSubscriptionId,
         plan: { connect: { planID: "access-monthly" } },
         rentalInvoices: {
           create: {
             billingStartAt: utils.xDaysAgoISOString(30),
             billingEndAt: new Date(),
+          },
+        },
+        subscription: {
+          create: {
+            planID: "access-monthly",
+            subscriptionId: chargebeeSubscriptionId,
+            currentTermStart: utils.xDaysAgoISOString(1),
+            currentTermEnd: utils.xDaysFromNowISOString(1),
+            nextBillingAt: utils.xDaysFromNowISOString(1),
+            status: "Active",
+            planPrice: 2000,
           },
         },
       },

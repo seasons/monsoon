@@ -20,10 +20,10 @@ export class TimeUtilsService {
   xDaysBeforeDate(
     date: Date,
     x: number,
-    type: "isoString" | "timestamp" = "isoString"
+    returnType: "isoString" | "timestamp" = "isoString"
   ) {
     const returnDate = moment(date.toISOString()).subtract(x, "days")
-    if (type === "isoString") {
+    if (returnType === "isoString") {
       return returnDate.format()
     } else {
       return returnDate.utc().format("X")
@@ -65,5 +65,13 @@ export class TimeUtilsService {
     )
 
     return after.diff(before, "days")
+  }
+
+  dateFromUTCTimestamp(
+    timestamp,
+    unit: "seconds" | "milliseconds" = "seconds"
+  ): Date {
+    const multiplier = unit === "seconds" ? 1000 : 1
+    return new Date(timestamp * multiplier)
   }
 }
