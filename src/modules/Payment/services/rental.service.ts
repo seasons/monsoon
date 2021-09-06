@@ -263,7 +263,7 @@ export class RentalService {
     )
 
     let billingEndAt
-    switch (membershipWithData.plan.planID) {
+    switch (membershipWithData.plan.planID as AccessPlanID) {
       case "access-monthly":
         billingEndAt = await this.getChargebeeNextBillingAt(
           membershipWithData.subscriptionId
