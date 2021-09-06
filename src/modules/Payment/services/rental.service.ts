@@ -114,25 +114,20 @@ export class RentalService {
 
   async chargeTab(planID: AccessPlanID, invoice, lineItems: { id: string }[]) {
     let invoices, chargePromises
+    let promises = []
     try {
       // Chargebee stuff
       const chargeResult = await this.chargebeeChargeTab(planID, lineItems)
       ;[chargePromises, invoices] = chargeResult
 
       // DB Stuff
-      const promises = [...chargePromises]
+      promises.push(...chargePromises)
       promises.push(
         this.prisma.client.rentalInvoice.update({
           where: { id: invoice.id },
           data: { status: "Billed" },
         })
       )
-      const newRentalInvoicePromise = ((await this.initDraftRentalInvoice(
-        invoice.membership.id,
-        "promise"
-      )) as any).promise
-      promises.push(newRentalInvoicePromise)
-      await this.prisma.client.$transaction(promises)
     } catch (err) {
       // TODO: Capture exception
       console.log(err)
@@ -140,6 +135,13 @@ export class RentalService {
         where: { id: invoice.id },
         data: { status: "ChargeFailed" },
       })
+    } finally {
+      const newRentalInvoicePromise = ((await this.initDraftRentalInvoice(
+        invoice.membership.id,
+        "promise"
+      )) as any).promise
+      promises.push(newRentalInvoicePromise)
+      await this.prisma.client.$transaction(promises)
     }
 
     return invoices

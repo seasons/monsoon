@@ -21,6 +21,7 @@ class PaymentServiceMock {
 
 enum ChargebeeMockFunction {
   SubscriptionAddChargeAtTermEnd,
+  SubscriptionAddChargeAtTermEndWithError,
   InvoiceCreate,
 }
 
@@ -83,6 +84,8 @@ class ChargeBeeMock {
             },
           },
         }
+      case ChargebeeMockFunction.SubscriptionAddChargeAtTermEndWithError:
+        throw "test error"
     }
   }
 }
@@ -787,20 +790,6 @@ describe("Rental Service", () => {
     let lineItems
     let initialReservationProductSUIDs
 
-    beforeAll(async () => {
-      jest
-        .spyOn<any, any>(chargebee.subscription, "add_charge_at_term_end")
-        .mockReturnValue(
-          new ChargeBeeMock(
-            ChargebeeMockFunction.SubscriptionAddChargeAtTermEnd
-          )
-        )
-
-      jest
-        .spyOn<any, any>(chargebee.invoice, "create")
-        .mockReturnValue(new ChargeBeeMock(ChargebeeMockFunction.InvoiceCreate))
-    })
-
     describe("Properly charges an access-monthly customer", () => {
       let addedCharges = []
       let lineItemsWithDataAfterCharging
@@ -808,6 +797,14 @@ describe("Rental Service", () => {
       let expectedResultsBySUID
 
       beforeAll(async () => {
+        jest
+          .spyOn<any, any>(chargebee.subscription, "add_charge_at_term_end")
+          .mockReturnValue(
+            new ChargeBeeMock(
+              ChargebeeMockFunction.SubscriptionAddChargeAtTermEnd
+            )
+          )
+
         const { cleanupFunc, customer } = await createTestCustomer({
           select: testCustomerSelect,
         })
@@ -928,6 +925,12 @@ describe("Rental Service", () => {
       let expectedResultsBySUID
 
       beforeAll(async () => {
+        jest
+          .spyOn<any, any>(chargebee.invoice, "create")
+          .mockReturnValue(
+            new ChargeBeeMock(ChargebeeMockFunction.InvoiceCreate)
+          )
+
         const { cleanupFunc, customer } = await createTestCustomer({
           select: testCustomerSelect,
         })
@@ -1045,7 +1048,37 @@ describe("Rental Service", () => {
 
     describe("Properly handles an error", () => {
       beforeAll(async () => {
-        // TODO: Use a chargebee mock that will throw an error. Do the
+        jest
+          .spyOn<any, any>(chargebee.subscription, "add_charge_at_term_end")
+          .mockReturnValue(
+            new ChargeBeeMock(
+              ChargebeeMockFunction.SubscriptionAddChargeAtTermEnd
+            )
+          )
+
+        const { cleanupFunc, customer } = await createTestCustomer({
+          select: testCustomerSelect,
+        })
+        cleanupFuncs.push(cleanupFunc)
+        testCustomer = customer
+
+        const custWithData = (await getCustWithData({
+          membership: {
+            select: {
+              rentalInvoices: {
+                select: CREATE_RENTAL_INVOICE_LINE_ITEMS_INVOICE_SELECT,
+              },
+            },
+          },
+        })) as any
+
+        rentalInvoiceToBeBilled = await prisma.client.rentalInvoice.findUnique({
+          where: { id: custWithData.membership.rentalInvoices[0].id },
+          select: CREATE_RENTAL_INVOICE_LINE_ITEMS_INVOICE_SELECT,
+        })
+        lineItems = await rentalService.createRentalInvoiceLineItems(
+          rentalInvoiceToBeBilled
+        )
 
         await setCustomerPlanType("access-monthly")
         await rentalService.chargeTab(
