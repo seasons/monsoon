@@ -96,7 +96,6 @@ export class SubscriptionsScheduledJobs {
   // TODO: Turn on when we launch new plans
   // @Cron(CronExpression.EVERY_DAY_AT_4AM)
   async handleRentalInvoices() {
-    const now = new Date()
     this.logger.log(`Start update subscriptions field job`)
 
     let invoicesHandled = 0
@@ -120,7 +119,8 @@ export class SubscriptionsScheduledJobs {
         )
         await this.rental.chargeTab(planID, invoice, lineItems)
       } catch (err) {
-        // TODO: Capture error
+        this.error.setExtraContext(invoice)
+        this.error.captureError(err)
       }
     }
 
