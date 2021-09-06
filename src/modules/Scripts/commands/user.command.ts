@@ -342,6 +342,10 @@ export class UserCommands {
             },
           },
         })
+
+        if (["access-monthly", "access-yearly"].includes(planID)) {
+          await this.rental.initFirstRentalInvoice(customer.id)
+        }
       }
 
       // Give them a valid admissions record if appropriate
@@ -370,10 +374,6 @@ export class UserCommands {
           },
           where: { id: customer.id },
         })
-      }
-
-      if (["access-monthly", "access-yearly"].includes(planID)) {
-        await this.rental.initFirstRentalInvoice(customer.id)
       }
 
       // Make sure we always update these
