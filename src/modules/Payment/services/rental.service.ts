@@ -269,7 +269,7 @@ export class RentalService {
           membershipWithData.subscriptionId
         )
         break
-      case "access-annual":
+      case "access-yearly":
         billingEndAt = await this.getRentalInvoiceBillingEndAtAccessAnnual(
           customerMembershipId,
           billingStartAt
@@ -475,25 +475,42 @@ export class RentalService {
   ) {
     // TODO: If next month is their plan billing month, use next_billing_at from
     // their chargebee data.
+
     const startYear = billingStartAt.getFullYear()
     const startMonth = billingStartAt.getMonth()
     const startDate = billingStartAt.getDate()
 
     const billingEndYear = startMonth === 11 ? startYear + 1 : startYear
     const billingEndMonth = startMonth === 11 ? 0 : startMonth + 1
+    let billingEndDate = startDate
 
-    let billingEndDate = startDate - 1
-    if (billingEndMonth === 1 && billingEndDate > 28) {
-      // e.g if billingStartAt is Jan 30, billingEndDate will be Feb 28
-      billingEndDate = 28
-    }
-
-    const billingEndAt = new Date(
+    let billingEndAtDate = new Date(
       billingEndYear,
       billingEndMonth,
       billingEndDate
     )
-    return billingEndAt
+
+    while (
+      !(
+        billingEndAtDate.getDate() === billingEndDate &&
+        billingEndAtDate.getMonth() === billingEndMonth
+      )
+    ) {
+      billingEndDate--
+      if (startDate - billingEndDate > 3) {
+        // Max diff should be 3, for Jan 31 to Feb 28.
+        throw new Error(
+          `Error getting rental invoice billingEndAt for start date: ${billingStartAt.toISOString()}`
+        )
+      }
+      billingEndAtDate = new Date(
+        billingEndYear,
+        billingEndMonth,
+        billingEndDate
+      )
+    }
+
+    return billingEndAtDate
   }
 
   private async getChargebeeNextBillingAt(subscriptionId) {

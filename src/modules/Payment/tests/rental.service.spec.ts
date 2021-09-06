@@ -1,13 +1,12 @@
 import { APP_MODULE_DEF } from "@app/app.module"
 import { ReservationService } from "@app/modules/Reservation"
 import { UtilsService } from "@app/modules/Utils/services/utils.service"
-import { PrismaService, SmartPrismaClient } from "@app/prisma/prisma.service"
+import { PrismaService } from "@app/prisma/prisma.service"
 import { Test } from "@nestjs/testing"
-import { Prisma, RentalInvoice, ReservationStatus } from "@prisma/client"
+import { Prisma, ReservationStatus } from "@prisma/client"
 import chargebee from "chargebee"
 import { head, merge } from "lodash"
 import moment from "moment"
-import { util } from "prettier"
 
 import { PaymentService } from "../services/payment.service"
 import {
@@ -95,35 +94,10 @@ class ChargeBeeMock {
             next_billing_at: moment().add(5, "days").unix(),
           },
         }
+      default:
+        throw "unrecognized function call"
     }
   }
-
-  async retrieve() {
-    return {
-      request: () => {
-        return {
-          customer: {},
-          subscription: {
-            next_billing_at: moment().add(5, "days").unix(),
-          },
-        }
-      },
-    }
-  }
-
-  // async retrieve() {
-  //   switch (this.mockFunction) {
-  //     case ChargebeeMockFunction.SubscriptionRetrieve:
-  //       return {
-  //         request: () => ({
-  //           customer: {},
-  //           subscription: {
-  //             next_billing_at: moment().add(5, "days").unix(),
-  //           },
-  //         }),
-  //       }
-  //   }
-  // }
 }
 
 let prisma: PrismaService
@@ -152,6 +126,28 @@ describe("Rental Service", () => {
     rentalService = moduleRef.get<RentalService>(RentalService)
     utils = moduleRef.get<UtilsService>(UtilsService)
     reservationService = moduleRef.get<ReservationService>(ReservationService)
+
+    jest
+      .spyOn<any, any>(chargebee.subscription, "add_charge_at_term_end")
+      .mockReturnValue(
+        new ChargeBeeMock(ChargebeeMockFunction.SubscriptionAddChargeAtTermEnd)
+      )
+
+    jest
+      .spyOn<any, any>(chargebee.invoice, "create")
+      .mockReturnValue(new ChargeBeeMock(ChargebeeMockFunction.InvoiceCreate))
+
+    jest
+      .spyOn<any, any>(chargebee.subscription, "add_charge_at_term_end")
+      .mockReturnValue(
+        new ChargeBeeMock(ChargebeeMockFunction.SubscriptionAddChargeAtTermEnd)
+      )
+
+    jest
+      .spyOn<any, any>(chargebee.subscription, "retrieve")
+      .mockReturnValue(
+        new ChargeBeeMock(ChargebeeMockFunction.SubscriptionRetrieve)
+      )
   })
 
   // Bring this back if we get cascading deletes figured out
@@ -833,14 +829,6 @@ describe("Rental Service", () => {
       let expectedResultsBySUID
 
       beforeAll(async () => {
-        jest
-          .spyOn<any, any>(chargebee.subscription, "add_charge_at_term_end")
-          .mockReturnValue(
-            new ChargeBeeMock(
-              ChargebeeMockFunction.SubscriptionAddChargeAtTermEnd
-            )
-          )
-
         const { cleanupFunc, customer } = await createTestCustomer({
           select: testCustomerSelect,
         })
@@ -961,12 +949,6 @@ describe("Rental Service", () => {
       let expectedResultsBySUID
 
       beforeAll(async () => {
-        jest
-          .spyOn<any, any>(chargebee.invoice, "create")
-          .mockReturnValue(
-            new ChargeBeeMock(ChargebeeMockFunction.InvoiceCreate)
-          )
-
         const { cleanupFunc, customer } = await createTestCustomer({
           select: testCustomerSelect,
         })
@@ -1084,14 +1066,6 @@ describe("Rental Service", () => {
 
     describe("Properly handles an error", () => {
       beforeAll(async () => {
-        jest
-          .spyOn<any, any>(chargebee.subscription, "add_charge_at_term_end")
-          .mockReturnValue(
-            new ChargeBeeMock(
-              ChargebeeMockFunction.SubscriptionAddChargeAtTermEnd
-            )
-          )
-
         const { cleanupFunc, customer } = await createTestCustomer({
           select: testCustomerSelect,
         })
@@ -1174,21 +1148,19 @@ describe("Rental Service", () => {
   })
 
   describe("GetRentalInvoiceBillingEndAt", () => {
-    describe("Access Monthly Customers", () => {
-      let rentalInvoiceBillingEndAt: Date
-      let custWithData
-      beforeAll(async () => {
-        jest
-          .spyOn<any, any>(chargebee.subscription, "retrieve")
-          .mockReturnValue(
-            new ChargeBeeMock(ChargebeeMockFunction.SubscriptionRetrieve)
-          )
+    let rentalInvoiceBillingEndAt: Date
+    let custWithData
 
-        const { cleanupFunc, customer } = await createTestCustomer({
-          select: testCustomerSelect,
-        })
-        cleanupFuncs.push(cleanupFunc)
-        testCustomer = customer
+    beforeAll(async () => {
+      const { cleanupFunc, customer } = await createTestCustomer({
+        select: testCustomerSelect,
+      })
+      cleanupFuncs.push(cleanupFunc)
+      testCustomer = customer
+    })
+
+    describe("Access Monthly Customers", () => {
+      beforeAll(async () => {
         await setCustomerPlanType("access-monthly")
         custWithData = (await getCustWithData({
           membership: {
@@ -1209,16 +1181,69 @@ describe("Rental Service", () => {
     })
 
     describe("Access Annual Customers", () => {
-      it("If the next month has the start date's date, it uses that", () => {
-        expect(0).toBe(1)
+      beforeAll(async () => {
+        await setCustomerPlanType("access-yearly")
+        custWithData = (await getCustWithData({
+          membership: {
+            select: {
+              id: true,
+            },
+          },
+        })) as any
       })
 
-      it("If the start date is the 31st and the next month only has 30 days, it uses 30", () => {
-        expect(0).toBe(1)
+      it("If the next month has the start date's date, it uses that", async () => {
+        const februarySeventh2021 = new Date(2021, 1, 7)
+        rentalInvoiceBillingEndAt = await rentalService.getRentalInvoiceBillingEndAt(
+          custWithData.membership.id,
+          februarySeventh2021
+        )
+        expectTimeToEqual(rentalInvoiceBillingEndAt, new Date(2021, 2, 7))
       })
 
-      it("If the start date is 30 and the next month is February, it uses the 28th", () => {
-        expect(0).toBe(1)
+      it("If the start date is the 31st and the next month only has 30 days, it uses 30", async () => {
+        const marchThirtyFirst2021 = new Date(2021, 2, 31)
+        rentalInvoiceBillingEndAt = await rentalService.getRentalInvoiceBillingEndAt(
+          custWithData.membership.id,
+          marchThirtyFirst2021
+        )
+        expectTimeToEqual(rentalInvoiceBillingEndAt, new Date(2021, 3, 30))
+      })
+
+      it("If the start date is 30 and the next month is February in a non leap year, it uses the 28th", async () => {
+        const januaryThirty2021 = new Date(2021, 0, 30)
+        rentalInvoiceBillingEndAt = await rentalService.getRentalInvoiceBillingEndAt(
+          custWithData.membership.id,
+          januaryThirty2021
+        )
+        expectTimeToEqual(rentalInvoiceBillingEndAt, new Date(2021, 1, 28))
+      })
+
+      it("If the start date is 30 and the next month is February in a leap year, it uses the 29th", async () => {
+        const januaryThirty2024 = new Date(2024, 0, 30)
+        rentalInvoiceBillingEndAt = await rentalService.getRentalInvoiceBillingEndAt(
+          custWithData.membership.id,
+          januaryThirty2024
+        )
+        expectTimeToEqual(rentalInvoiceBillingEndAt, new Date(2024, 1, 29))
+      })
+
+      it("If the start date is 29 and the next month is February in a leap year, it uses the 29th", async () => {
+        const januaryTwentyNine2024 = new Date(2024, 0, 29)
+        rentalInvoiceBillingEndAt = await rentalService.getRentalInvoiceBillingEndAt(
+          custWithData.membership.id,
+          januaryTwentyNine2024
+        )
+        expectTimeToEqual(rentalInvoiceBillingEndAt, new Date(2024, 1, 29))
+      })
+
+      it("If the start date is in december, it creates the billing end at date in the following year", async () => {
+        const decemberThirtyOne2021 = new Date(2021, 11, 31)
+        rentalInvoiceBillingEndAt = await rentalService.getRentalInvoiceBillingEndAt(
+          custWithData.membership.id,
+          decemberThirtyOne2021
+        )
+        expectTimeToEqual(rentalInvoiceBillingEndAt, new Date(2022, 0, 31))
       })
     })
   })
