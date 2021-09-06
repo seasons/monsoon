@@ -6,7 +6,7 @@ import { CustomerUtilsService } from "@app/modules/User/services/customer.utils.
 import { StatementsService } from "@app/modules/Utils/services/statements.service"
 import { ResolveField, Resolver } from "@nestjs/graphql"
 import { PrismaService } from "@prisma1/prisma.service"
-
+import { merge } from "lodash"
 // estimate on customer --> membership --> plan requires planID to be on the plan
 const EnsureFieldsForDownstreamFieldResolvers = `fragment EnsureFieldsForDownstreamFieldResolvers on Customer {
   id
@@ -119,9 +119,18 @@ export class MeFieldsResolver {
         },
         saved: false,
       },
-      select,
+      select: merge(select, {
+        status: true,
+      }),
     })
-    return bagItems
+
+    const sortValues = {
+      Reserved: 0,
+      Received: 1,
+      Added: 2,
+    }
+
+    return bagItems.sort((a, b) => sortValues[a.status] - sortValues[b.status])
   }
 
   @ResolveField()
