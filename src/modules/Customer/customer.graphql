@@ -164,6 +164,7 @@ type CustomerMembership {
   subscriptionId: String!
   plan: PaymentPlan
   creditBalance: Int
+  adjustedCreditBalance: Int
   pauseRequests(
     where: PauseRequestWhereInput
     orderBy: PauseRequestOrderByInput
