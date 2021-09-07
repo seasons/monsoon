@@ -6,6 +6,7 @@ import { PaymentPlanFieldsResolver } from "../Payment/fields/paymentPlan.fields.
 import { BagItemFieldsResolver } from "./fields/bagItem.fields.resolvers"
 import { CustomerFieldsResolver } from "./fields/customer.fields.resolver"
 import { CustomerDetailFieldsResolver } from "./fields/customerDetail.fields.resolver"
+import { CustomerMembershipFieldsResolver } from "./fields/customerMembership.fields.resolver"
 import { CustomerQueriesResolver } from "./queries/customer.queries.resolver"
 import { PaymentModule, ReservationModule } from ".."
 
@@ -22,6 +23,7 @@ export const CustomerModuleDef = {
     CustomerFieldsResolver,
     CustomerDetailFieldsResolver,
     PaymentPlanFieldsResolver,
+    CustomerMembershipFieldsResolver,
   ],
 }
 @Module(CustomerModuleDef)
