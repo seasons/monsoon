@@ -108,7 +108,7 @@ export class UserCommands {
       name: "planID",
       describe: "Subscription plan of the user",
       type: "string",
-      default: "essential-2",
+      default: "access-monthly",
       choices: [
         "all-access",
         "essential",
@@ -116,6 +116,8 @@ export class UserCommands {
         "essential-1",
         "all-access-2",
         "essential-2",
+        "access-monthly",
+        "access-yearly",
       ],
     })
     planID,

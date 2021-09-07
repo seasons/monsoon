@@ -1,11 +1,7 @@
-import { resourceLimits } from "worker_threads"
-
 import { PrismaService } from "@app/prisma/prisma.service"
 import { UtilsService } from "@modules/Utils/services/utils.service"
 import { Injectable } from "@nestjs/common"
 import { Customer, ShippingCode, User } from "@prisma/client"
-import { ApolloError } from "apollo-server-errors"
-import { pick } from "lodash"
 import shippo from "shippo"
 
 import {
