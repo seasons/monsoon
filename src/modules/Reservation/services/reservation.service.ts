@@ -659,6 +659,7 @@ export class ReservationService {
             id: customer.id,
           },
           saved: false,
+          status: "Added",
         },
         select: {
           id: true,

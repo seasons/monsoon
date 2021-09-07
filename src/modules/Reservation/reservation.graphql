@@ -78,6 +78,7 @@ type ReservationFeedback {
 }
 
 enum ReservationLineItemRecordType {
+  ProductVariant
   Reservation
   Fee
   Total
@@ -88,6 +89,7 @@ type ReservationLineItem implements LineItem {
   name: String
   price: Int!
   recordType: ReservationLineItemRecordType!
+  taxPrice: Int
 }
 
 input ReservationWhereInput {
