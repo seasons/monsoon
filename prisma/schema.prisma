@@ -984,6 +984,7 @@ model Package {
   toAddress                    Location?             @relation("LocationToPackage_toAddress", fields: [toAddressId], references: [id])
   order                        Order?
   events                       PackageTransitEvent[]
+  amount                       Int?
   reservationOnReturnedPackage Reservation?          @relation("PackageToReservation_returnedPackage")
   reservationOnSentPackage     Reservation?          @relation("PackageToReservation_sentPackage")
   reservationOnReturnPackages  Reservation[]         @relation("PackageToReservationReturnPackages")

@@ -1291,6 +1291,22 @@ export class ReservationService {
 
     const returnPackagesToCarryOver =
       lastReservation?.returnPackages?.filter(a => a.events.length === 0) || []
+    const createPartialPackageCreateInput = (
+      shippoTransaction
+    ): Partial<Prisma.PackageCreateInput> => {
+      return {
+        transactionID: shippoTransaction.object_id,
+        shippingLabel: {
+          create: {
+            image: shippoTransaction.label_url || "",
+            trackingNumber: shippoTransaction.tracking_number || "",
+            trackingURL: shippoTransaction.tracking_url_provider || "",
+            name: "UPS",
+          },
+        },
+        amount: shippoTransaction.rate.amount * 100,
+      }
+    }
     let createData = Prisma.validator<Prisma.ReservationCreateInput>()({
       id: cuid(),
       products: {
@@ -1312,7 +1328,7 @@ export class ReservationService {
       phase: "BusinessToCustomer",
       sentPackage: {
         create: {
-          transactionID: seasonsToCustomerTransaction.object_id,
+          ...createPartialPackageCreateInput(seasonsToCustomerTransaction),
           weight: shipmentWeight,
           items: {
             // need to include the type on the function passed into map
@@ -1323,16 +1339,6 @@ export class ReservationService {
               }
             ),
           },
-          shippingLabel: {
-            create: {
-              image: seasonsToCustomerTransaction.label_url || "",
-              trackingNumber:
-                seasonsToCustomerTransaction.tracking_number || "",
-              trackingURL:
-                seasonsToCustomerTransaction.tracking_url_provider || "",
-              name: "UPS",
-            },
-          },
           fromAddress: {
             connect: {
               slug: process.env.SEASONS_CLEANER_LOCATION_SLUG,
@@ -1342,20 +1348,10 @@ export class ReservationService {
             connect: { id: customerShippingAddressRecordID },
           },
         },
-      },
+      } as any,
       returnPackages: {
         create: {
-          transactionID: customerToSeasonsTransaction.object_id,
-          shippingLabel: {
-            create: {
-              image: customerToSeasonsTransaction.label_url || "",
-              trackingNumber:
-                customerToSeasonsTransaction.tracking_number || "",
-              trackingURL:
-                customerToSeasonsTransaction.tracking_url_provider || "",
-              name: "UPS",
-            },
-          },
+          ...createPartialPackageCreateInput(customerToSeasonsTransaction),
           fromAddress: {
             connect: {
               id: customerShippingAddressRecordID,
@@ -1366,7 +1362,7 @@ export class ReservationService {
               slug: process.env.SEASONS_CLEANER_LOCATION_SLUG,
             },
           },
-        },
+        } as any,
         connect: returnPackagesToCarryOver.map(a => ({
           id: a.id,
         })),
