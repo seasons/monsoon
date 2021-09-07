@@ -772,6 +772,16 @@ export class ReservationService {
           ? [
               {
                 id: cuid(),
+                name: "Sub Total",
+                createdAt: Date.now(),
+                updatedAt: Date.now(),
+                recordType: "Total",
+                recordID: customer.id,
+                currencyCode: "USD",
+                price: invoice_estimate.total,
+              },
+              {
+                id: cuid(),
                 name: "Credits applied",
                 createdAt: Date.now(),
                 updatedAt: Date.now(),
@@ -780,18 +790,29 @@ export class ReservationService {
                 currencyCode: "USD",
                 price: invoice_estimate.credits_applied,
               },
+              {
+                id: cuid(),
+                name: "Total with credits applied",
+                createdAt: Date.now(),
+                updatedAt: Date.now(),
+                recordType: "Total",
+                recordID: customer.id,
+                currencyCode: "USD",
+                price: invoice_estimate.total,
+              },
             ]
-          : []),
-        {
-          id: cuid(),
-          name: "Total",
-          createdAt: Date.now(),
-          updatedAt: Date.now(),
-          recordType: "Total",
-          recordID: customer.id,
-          currencyCode: "USD",
-          price: invoice_estimate.total,
-        },
+          : [
+              {
+                id: cuid(),
+                name: "Total",
+                createdAt: Date.now(),
+                updatedAt: Date.now(),
+                recordType: "Total",
+                recordID: customer.id,
+                currencyCode: "USD",
+                price: invoice_estimate.total,
+              },
+            ]),
       ]
 
       return linesWithTotal
