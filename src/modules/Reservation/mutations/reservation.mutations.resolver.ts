@@ -63,11 +63,12 @@ export class ReservationMutationsResolver {
   async processReservation(@Args() { data }) {
     const { reservationNumber, productStates, trackingNumber = "" } = data
 
-    if (trackingNumber === "") {
-      throw new Error(
-        `Must specify return package tracking number when processing reservation`
-      )
-    }
+    // TODO: Uncomment this once we get the frontend portion up
+    // if (trackingNumber === "") {
+    //   throw new Error(
+    //     `Must specify return package tracking number when processing reservation`
+    //   )
+    // }
 
     const result = await this.reservation.processReservation(
       reservationNumber,
