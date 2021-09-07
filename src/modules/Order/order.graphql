@@ -34,7 +34,6 @@ enum OrderLineItemRecordType {
   ExternalProduct
   Package
   EarlySwap
-  Reservation
   Fee
   Total
 }
@@ -67,9 +66,15 @@ type Order {
   salesTaxTotal: Int!
 }
 
-type OrderLineItem {
+interface LineItem {
   id: ID!
-  recordID: ID!
+  name: String
+  price: Int!
+}
+
+type OrderLineItem implements LineItem {
+  id: ID!
+  recordID: ID
   recordType: OrderLineItemRecordType!
   needShipping: Boolean
   taxRate: Float

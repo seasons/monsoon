@@ -184,7 +184,6 @@ export class ReservationService {
       customerToSeasonsTransaction,
     ] = await this.shippingService.createReservationShippingLabels(
       newProductVariantsBeingReserved,
-      user,
       customer,
       shippingCode
     )
@@ -660,6 +659,7 @@ export class ReservationService {
             id: customer.id,
           },
           saved: false,
+          status: "Added",
         },
         select: {
           id: true,
@@ -687,24 +687,17 @@ export class ReservationService {
       const nextFreeSwapDate = await this.customerUtils.nextFreeSwapDate(
         customer.id
       )
-      const doesNotHaveFreeSwap =
-        DateTime.fromISO(nextFreeSwapDate) > DateTime.local()
-
-      const processingFeeLines = [
-        ...(doesNotHaveFreeSwap
-          ? [
-              {
-                recordID: customer.id,
-                price: 3000,
-                currencyCode: "USD",
-                recordType: "Fee",
-                name: "Early swap",
-              },
-            ]
-          : []),
-      ]
+      const hasFreeSwap = DateTime.fromISO(nextFreeSwapDate) <= DateTime.local()
 
       const isBillingAddressInNY = customerWithUser.billingInfo.state === "NY"
+
+      const createDraftLineItem = values => ({
+        id: cuid(),
+        createdAt: Date.now(),
+        updatedAt: Date.now(),
+        currencyCode: "USD",
+        ...values,
+      })
 
       const lines = bagItems.map(bagItem => {
         const product = bagItem?.productVariant?.product
@@ -712,16 +705,42 @@ export class ReservationService {
         const price = Math.ceil(rate / 5) * 500
 
         return {
-          id: cuid(),
           name: product.name,
-          createdAt: Date.now(),
-          updatedAt: Date.now(),
           recordType: "ProductVariant",
           recordID: bagItem.productVariant.id,
-          currencyCode: "USD",
           price,
         }
       })
+
+      // Calculate processing fee
+      // 1. Shipping charge (1st order: return package), 2+ order: both packages
+      // 2. $5.50 Flat processing fee per order
+      const calculateProcessingFee = async () => {
+        const baseflatFee = 550
+
+        const {
+          sentRate,
+          returnRate,
+        } = await this.shippingService.getShippingRateForVariantIDs(
+          bagItems.map(a => a.productVariant.id),
+          {
+            customer: customerWithUser,
+            includeSentPackage: !hasFreeSwap,
+            includeReturnPackage: true,
+          }
+        )
+
+        return baseflatFee + returnRate.amount + (sentRate?.amount || 0)
+      }
+
+      const processingFeeLines = [
+        {
+          name: "Processing Fees",
+          recordType: "Fee",
+          recordID: "",
+          price: await calculateProcessingFee(),
+        },
+      ]
 
       const chargebeeCharges = [...lines, ...processingFeeLines].map(line => {
         return {
@@ -759,42 +778,43 @@ export class ReservationService {
       const linesWithTotal = [
         ...lines,
         {
-          id: cuid(),
           name: "Processing + Tax",
-          createdAt: Date.now(),
-          updatedAt: Date.now(),
           recordType: "Fee",
           recordID: customer.id,
-          currencyCode: "USD",
           price: processingTotal + taxTotal,
         },
         ...(invoice_estimate.credits_applied
           ? [
               {
-                id: cuid(),
+                name: "Sub Total",
+                recordType: "Total",
+                recordID: customer.id,
+                price: invoice_estimate.total,
+              },
+              {
                 name: "Credits applied",
-                createdAt: Date.now(),
-                updatedAt: Date.now(),
                 recordType: "Credit",
                 recordID: customer.id,
-                currencyCode: "USD",
                 price: invoice_estimate.credits_applied,
               },
+              {
+                name: "Total with credits applied",
+                recordType: "Total",
+                recordID: customer.id,
+                price: invoice_estimate.total,
+              },
             ]
-          : []),
-        {
-          id: cuid(),
-          name: "Total",
-          createdAt: Date.now(),
-          updatedAt: Date.now(),
-          recordType: "Total",
-          recordID: customer.id,
-          currencyCode: "USD",
-          price: invoice_estimate.total,
-        },
+          : [
+              {
+                name: "Total",
+                recordType: "Total",
+                recordID: customer.id,
+                price: invoice_estimate.total,
+              },
+            ]),
       ]
 
-      return linesWithTotal
+      return linesWithTotal.map(createDraftLineItem)
     } catch (e) {
       this.error.setExtraContext(customerWithUser.user, "user")
       this.error.captureError(e)
