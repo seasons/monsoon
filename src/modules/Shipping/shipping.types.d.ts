@@ -1,8 +1,3 @@
-import {
-  PackageTransitEventStatus,
-  PackageTransitEventSubStatus,
-} from "@prisma/client"
-
 export interface ShippoShipment {
   object_id?: string
   address_from: any
@@ -22,7 +17,7 @@ export interface ShippoTransaction {
 }
 
 export type ShippoRate = {
-  amount: string
+  amount: number
   shipment: string
   servicelevel: {
     name: string
