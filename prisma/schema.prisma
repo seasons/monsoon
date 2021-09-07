@@ -943,13 +943,14 @@ model RentalInvoice {
 
 model RentalInvoiceLineItem {
   id                String          @id @default(cuid()) @db.VarChar(30)
-  physicalProductId String          @map("physicalProduct") @db.VarChar(30)
-  physicalProduct   PhysicalProduct @relation(fields: [physicalProductId], references: [id])
+  physicalProductId String?          @map("physicalProduct") @db.VarChar(30)
+  physicalProduct   PhysicalProduct? @relation(fields: [physicalProductId], references: [id])
   rentalInvoiceId   String          @map("rentalInvoice") @db.VarChar(30)
   rentalInvoice     RentalInvoice   @relation(fields: [rentalInvoiceId], references: [id])
-  daysRented        Int
+  daysRented        Int?
   rentalStartedAt   DateTime?
   rentalEndedAt     DateTime?
+  name              String?
   comment           String?
   taxRate           Float?
   taxName           String?

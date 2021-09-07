@@ -3,7 +3,12 @@ import { ReservationService } from "@app/modules/Reservation"
 import { UtilsService } from "@app/modules/Utils/services/utils.service"
 import { PrismaService } from "@app/prisma/prisma.service"
 import { Test } from "@nestjs/testing"
-import { Prisma, ReservationStatus } from "@prisma/client"
+import {
+  Prisma,
+  ReservationStatus,
+  ShippingCode,
+  ShippingOption,
+} from "@prisma/client"
 import chargebee from "chargebee"
 import { head, merge } from "lodash"
 import moment from "moment"
@@ -14,9 +19,38 @@ import {
   RentalService,
 } from "../services/rental.service"
 
+const BASE_PROCESSING_FEE = 550
+const UPS_GROUND_FEE = 1000
+const UPS_SELECT_FEE = 2000
+
 class PaymentServiceMock {
   addEarlySwapCharge = async () => null
   addShippingCharge = async () => {}
+}
+
+class ShippoMock {
+  shipping: any
+
+  constructor() {
+    this.shipping = {
+      create: () => [
+        {
+          amount: UPS_GROUND_FEE,
+          shipment: "",
+          servicelevel: { token: "ups_ground", name: "UPSGround", terms: "" },
+        },
+        {
+          amount: UPS_SELECT_FEE,
+          shipment: "",
+          servicelevel: {
+            token: "ups_3_day_select",
+            name: "UPSSelect",
+            terms: "",
+          },
+        },
+      ],
+    }
+  }
 }
 
 enum ChargebeeMockFunction {
@@ -119,6 +153,9 @@ describe("Rental Service", () => {
   beforeAll(async () => {
     const moduleBuilder = await Test.createTestingModule(APP_MODULE_DEF)
     moduleBuilder.overrideProvider(PaymentService).useClass(PaymentServiceMock)
+    // moduleBuilder
+    //   .overrideProvider(ShippingService)
+    //   .useClass(ShippingServiceMock)
 
     const moduleRef = await moduleBuilder.compile()
 
@@ -148,6 +185,8 @@ describe("Rental Service", () => {
       .mockReturnValue(
         new ChargeBeeMock(ChargebeeMockFunction.SubscriptionRetrieve)
       )
+
+    jest.mock("shippo", () => new ShippoMock(), { virtual: true })
   })
 
   // Bring this back if we get cascading deletes figured out
@@ -630,9 +669,11 @@ describe("Rental Service", () => {
   })
 
   describe("Create Rental Invoice Line Items", () => {
+    // TODO: Add the processing fees here
+    // TODO: Add other tests for other aspects of the processing fees
     describe("Properly creates line items for an invoice with 3 reservations and 4 products", () => {
-      let lineItemsBySUID
-      let expectedResultsBySUID
+      let lineItemsBySUIDOrName
+      let expectedResultsBySUIDOrName
       let lineItemsPhysicalProductSUIDs
       let invoicePhysicalProductSUIDs
 
@@ -679,7 +720,6 @@ describe("Rental Service", () => {
           },
         })) as any
         const rentalInvoice = custWithData.membership.rentalInvoices[0]
-        const rentalPriceOverrides = [30, 50, 80, 100]
         invoicePhysicalProductSUIDs = rentalInvoice.products.map(
           a => a.seasonsUID
         )
@@ -689,25 +729,7 @@ describe("Rental Service", () => {
           ...reservationTwoSUIDs,
           ...reservationThreeSUIDs,
         ]
-        // TODO: Use the new overridePrices func
-        for (const [i, overridePrice] of rentalPriceOverrides.entries()) {
-          const prodToUpdate = await prisma.client.product.findFirst({
-            where: {
-              variants: {
-                some: {
-                  physicalProducts: {
-                    some: { seasonsUID: reservationSUIDsInOrder[i] },
-                  },
-                },
-              },
-            },
-          })
-          await prisma.client.product.update({
-            where: { id: prodToUpdate.id },
-            data: { rentalPriceOverride: overridePrice },
-            select: { id: true, rentalPriceOverride: true },
-          })
-        }
+        await overridePrices(reservationSUIDsInOrder, [30, 50, 80, 100])
 
         const rentalInvoiceWithUpdatedPrices = await prisma.client.rentalInvoice.findUnique(
           {
@@ -732,6 +754,7 @@ describe("Rental Service", () => {
               taxPercentage: true,
               taxPrice: true,
               taxRate: true,
+              comment: true,
             },
           }
         )
@@ -739,10 +762,13 @@ describe("Rental Service", () => {
           a => a.physicalProduct.seasonsUID
         )
 
-        lineItemsBySUID = lineItemsWithData.reduce((acc, curVal) => {
-          return { ...acc, [curVal.physicalProduct.seasonsUID]: curVal }
+        lineItemsBySUIDOrName = lineItemsWithData.reduce((acc, curVal) => {
+          return {
+            ...acc,
+            [curVal.physicalProduct.seasonsUID || curVal.comment]: curVal,
+          }
         }, {})
-        expectedResultsBySUID = {
+        expectedResultsBySUIDOrName = {
           [initialReservationProductSUIDs[0]]: {
             daysRented: 23,
             rentalStartedAt: utils.xDaysAgoISOString(23),
@@ -767,6 +793,11 @@ describe("Rental Service", () => {
             rentalEndedAt: null,
             price: 0,
           },
+          Processing: {
+            // 3 reservations sent, none returned --> paying for 2 sent packages at 1000 each
+            // 3 new reservations, 3 * reservation_processing_cost (5500)
+            price: 3650,
+          },
         }
       })
 
@@ -778,18 +809,19 @@ describe("Rental Service", () => {
 
       it("Stores the proper value of days Rented", () => {
         for (const suid of invoicePhysicalProductSUIDs) {
-          expect(lineItemsBySUID[suid].daysRented).toEqual(
-            expectedResultsBySUID[suid].daysRented
+          expect(lineItemsBySUIDOrName[suid].daysRented).toEqual(
+            expectedResultsBySUIDOrName[suid].daysRented
           )
         }
       })
 
       it("Stores the proper values for rentalStartedAt and rentalEndedAt", () => {
         for (const suid of invoicePhysicalProductSUIDs) {
-          const testStart = lineItemsBySUID[suid]["rentalStartedAt"]
-          const expectedStart = expectedResultsBySUID[suid].rentalStartedAt
-          const testEnd = lineItemsBySUID[suid]["rentalEndedAt"]
-          const expectedEnd = expectedResultsBySUID[suid].rentalEndedAt
+          const testStart = lineItemsBySUIDOrName[suid]["rentalStartedAt"]
+          const expectedStart =
+            expectedResultsBySUIDOrName[suid].rentalStartedAt
+          const testEnd = lineItemsBySUIDOrName[suid]["rentalEndedAt"]
+          const expectedEnd = expectedResultsBySUIDOrName[suid].rentalEndedAt
           expectTimeToEqual(testStart, expectedStart)
           expectTimeToEqual(testEnd, expectedEnd)
         }
@@ -797,19 +829,150 @@ describe("Rental Service", () => {
 
       it("Stores the proper price", () => {
         for (const suid of invoicePhysicalProductSUIDs) {
-          const testPrice = lineItemsBySUID[suid].price
-          const expectedPrice = expectedResultsBySUID[suid].price
+          const testPrice = lineItemsBySUIDOrName[suid].price
+          const expectedPrice = expectedResultsBySUIDOrName[suid].price
           expect(testPrice).toEqual(expectedPrice)
         }
       })
 
+      /* By way of construction, this test covers the following cases
+      If a reservation was created but not returned in this billing cycle, we charge the 
+        base processing fee
+      If there are 2 or more new reservations in this billing cycle, we charge for the 
+        sent package on all but the first
+      */
+      it("Properly calculates the processing fees line item", () => {
+        expect(lineItemsBySUIDOrName["Processing"]).toBe(
+          expectedResultsBySUIDOrName["Processing"]
+        )
+      })
+
       it("Doesn't set the taxes on them", () => {
         for (const suid of invoicePhysicalProductSUIDs) {
-          expect(lineItemsBySUID[suid].taxPrice).toBe(null)
-          expect(lineItemsBySUID[suid].taxRate).toBe(null)
-          expect(lineItemsBySUID[suid].taxPercentage).toBe(null)
-          expect(lineItemsBySUID[suid].taxName).toBe(null)
+          expect(lineItemsBySUIDOrName[suid].taxPrice).toBe(null)
+          expect(lineItemsBySUIDOrName[suid].taxRate).toBe(null)
+          expect(lineItemsBySUIDOrName[suid].taxPercentage).toBe(null)
+          expect(lineItemsBySUIDOrName[suid].taxName).toBe(null)
         }
+      })
+    })
+
+    describe("Processing Edge cases", () => {
+      beforeEach(async () => {
+        const { cleanupFunc, customer } = await createTestCustomer({
+          select: testCustomerSelect,
+        })
+        cleanupFuncs.push(cleanupFunc)
+        testCustomer = customer
+      })
+
+      it("Does not charge any processing fee for a reservation created in a previous billing cycle and held throughout this billing cycle", async () => {
+        const initialReservation = await addToBagAndReserveForCustomer(2)
+        await setReservationCreatedAt(initialReservation.id, 40)
+        await setPackageDeliveredAt(initialReservation.sentPackage.id, 38)
+        await setReservationStatus(initialReservation.id, "Delivered")
+
+        const custWithData = (await getCustWithData({
+          membership: {
+            select: {
+              rentalInvoices: {
+                select: CREATE_RENTAL_INVOICE_LINE_ITEMS_INVOICE_SELECT,
+              },
+            },
+          },
+        })) as any
+        const rentalInvoice = custWithData.membership.rentalInvoices[0]
+        const lineItems = await rentalService.createRentalInvoiceLineItems(
+          rentalInvoice
+        )
+
+        const processingLineItem = lineItems.find(a => a.name === "Processing")
+        expect(processingLineItem.price).toBe(0)
+      })
+
+      it("Charges for the return package if a reservation was created in a previous billing cycle and returned in this one", async () => {
+        const initialReservation = await addToBagAndReserveForCustomer(2)
+        await setReservationCreatedAt(initialReservation.id, 40)
+        await setPackageDeliveredAt(initialReservation.sentPackage.id, 38)
+        await setReservationStatus(initialReservation.id, "Completed")
+
+        await setPackageDeliveredAt(initialReservation.returnPackages[0].id, 10)
+
+        const custWithData = (await getCustWithData({
+          membership: {
+            select: {
+              rentalInvoices: {
+                select: CREATE_RENTAL_INVOICE_LINE_ITEMS_INVOICE_SELECT,
+              },
+            },
+          },
+        })) as any
+        const rentalInvoice = custWithData.membership.rentalInvoices[0]
+        const lineItems = await rentalService.createRentalInvoiceLineItems(
+          rentalInvoice
+        )
+
+        const processingLineItem = lineItems.find(a => a.name === "Processing")
+        expect(processingLineItem.price).toBe(UPS_GROUND_FEE)
+      })
+
+      it("Charges for the return package and base processing fee if a reservation was created and returned in this billing cycle", async () => {
+        const initialReservation = await addToBagAndReserveForCustomer(2)
+        await setReservationCreatedAt(initialReservation.id, 25)
+        await setPackageDeliveredAt(initialReservation.sentPackage.id, 23)
+        await setReservationStatus(initialReservation.id, "Completed")
+
+        await setPackageDeliveredAt(initialReservation.returnPackages[0].id, 2)
+
+        const custWithData = (await getCustWithData({
+          membership: {
+            select: {
+              rentalInvoices: {
+                select: CREATE_RENTAL_INVOICE_LINE_ITEMS_INVOICE_SELECT,
+              },
+            },
+          },
+        })) as any
+        const rentalInvoice = custWithData.membership.rentalInvoices[0]
+        const lineItems = await rentalService.createRentalInvoiceLineItems(
+          rentalInvoice
+        )
+
+        const processingLineItem = lineItems.find(a => a.name === "Processing")
+        expect(processingLineItem.price).toBe(
+          BASE_PROCESSING_FEE + UPS_GROUND_FEE
+        )
+      })
+
+      it("Charges for the sent package if a reservation used a premium shipping option", async () => {
+        const initialReservation = await addToBagAndReserveForCustomer(2, {
+          shippingCode: "UPSSelect",
+        })
+        await setReservationCreatedAt(initialReservation.id, 25)
+        await setPackageDeliveredAt(initialReservation.sentPackage.id, 23)
+        await setReservationStatus(initialReservation.id, "Completed")
+        expect(0).toBe(1)
+
+        await setPackageDeliveredAt(initialReservation.returnPackages[0].id, 5)
+
+        const custWithData = (await getCustWithData({
+          membership: {
+            select: {
+              rentalInvoices: {
+                select: CREATE_RENTAL_INVOICE_LINE_ITEMS_INVOICE_SELECT,
+              },
+            },
+          },
+        })) as any
+        const rentalInvoice = custWithData.membership.rentalInvoices[0]
+        const lineItems = await rentalService.createRentalInvoiceLineItems(
+          rentalInvoice
+        )
+
+        const processingLineItem = lineItems.find(a => a.name === "Processing")
+        expect(processingLineItem.price).toBe(
+          BASE_PROCESSING_FEE + UPS_SELECT_FEE
+        )
       })
     })
   })
@@ -1331,7 +1494,11 @@ const setCustomerPlanType = async (
   })
 }
 
-const addToBagAndReserveForCustomer = async numProductsToAdd => {
+const addToBagAndReserveForCustomer = async (
+  numProductsToAdd,
+  options: { shippingCode?: ShippingCode } = {}
+) => {
+  const { shippingCode = null } = options
   const reservedBagItems = await prisma.client.bagItem.findMany({
     where: {
       customer: { id: testCustomer.id },
@@ -1394,7 +1561,7 @@ const addToBagAndReserveForCustomer = async numProductsToAdd => {
   const prodVarsToReserve = bagItemsToReserve.map(a => a.productVariant.id)
   return await reservationService.reserveItems(
     prodVarsToReserve,
-    null,
+    shippingCode,
     testCustomer.user,
     testCustomer as any,
     {
