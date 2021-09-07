@@ -38,34 +38,6 @@ export class PaymentService {
     private readonly paymentUtils: PaymentUtilsService
   ) {}
 
-  async addEarlySwapCharge(customerID: string) {
-    const customer = await this.prisma.client.customer.findUnique({
-      where: {
-        id: customerID,
-      },
-      select: {
-        id: true,
-        membership: true,
-      },
-    })
-
-    const subscriptionID = customer.membership.subscriptionId
-
-    try {
-      return await chargebee.invoice
-        .charge_addon({
-          subscription_id: subscriptionID,
-          addon_id: "early-swap",
-          addon_quantity: 1,
-        })
-        .request()
-    } catch (e) {
-      this.error.setExtraContext(customer, "customer")
-      this.error.captureError(e)
-      throw e
-    }
-  }
-
   async addShippingCharge(customer, shippingCode) {
     try {
       const customerWithShippingData = await this.prisma.client.customer.findUnique(

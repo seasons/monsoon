@@ -220,11 +220,6 @@ export class ReservationService {
       }
     }
 
-    // Fetch the nextFreeSwapDate BEFORE creating the reservation or we'll get an incorrect value
-    const nextFreeSwapDate = await this.customerUtils.nextFreeSwapDate(
-      customer.id
-    )
-
     // Create reservation records in prisma
     const reservationData = await this.createReservationData(
       seasonsToCustomerTransaction,
@@ -270,27 +265,6 @@ export class ReservationService {
       }),
     })) as any
 
-    let earlySwapLineItems = []
-
-    try {
-      earlySwapLineItems = await this.addEarlySwapLineItemsIfNeeded(
-        reservation?.id,
-        customer?.id,
-        nextFreeSwapDate
-      )
-      await this.addLineItemsToReservation(
-        [...earlySwapLineItems, ...shippingLineItems],
-        reservation.id
-      )
-    } catch (err) {
-      this.error.setUserContext(user)
-      this.error.setExtraContext({
-        reservationID: reservation.id,
-        lineItems: [...earlySwapLineItems, ...shippingLineItems],
-      })
-      this.error.captureError(err)
-    }
-
     // Send confirmation email
     await this.emails.sendReservationConfirmationEmail(
       user,
@@ -321,36 +295,6 @@ export class ReservationService {
           },
         },
       })
-    }
-  }
-
-  async addEarlySwapLineItemsIfNeeded(
-    reservationID,
-    customerID,
-    nextFreeSwapDate
-  ): Promise<Prisma.OrderLineItemCreateInput[]> {
-    const doesNotHaveFreeSwap =
-      nextFreeSwapDate && DateTime.fromISO(nextFreeSwapDate) > DateTime.local()
-
-    if (doesNotHaveFreeSwap && reservationID) {
-      // TODO: move to invoice generation logic
-      const swapCharge = await this.payment.addEarlySwapCharge(customerID)
-      if (swapCharge?.invoice) {
-        return [
-          {
-            recordID: reservationID,
-            price: swapCharge.invoice.sub_total,
-            currencyCode: "USD",
-            recordType: "Fee",
-            name: "Processing",
-            taxPrice: swapCharge?.invoice?.tax || 0,
-          },
-        ]
-      } else {
-        return []
-      }
-    } else {
-      return []
     }
   }
 
