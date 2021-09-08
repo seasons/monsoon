@@ -650,7 +650,7 @@ export class ProductService {
         recoupment: true,
         wholesalePrice: true,
         rentalPriceOverride: true,
-        rentalPrice: true,
+        computedRentalPrice: true,
       },
     })
 
@@ -715,7 +715,7 @@ export class ProductService {
       updateData.retailPrice
     )
 
-    let updatedRentalPrice = product.rentalPrice
+    let updatedRentalPrice = product.computedRentalPrice
     if (
       updateData.recoupment !== product.recoupment ||
       updateData.wholesalePrice !== product.wholesalePrice ||
@@ -773,7 +773,7 @@ export class ProductService {
       },
       status,
       photographyStatus,
-      rentalPrice: updatedRentalPrice,
+      computedRentalPrice: updatedRentalPrice,
     }
 
     const productUpdatePromise = this.prisma.client.product.update({

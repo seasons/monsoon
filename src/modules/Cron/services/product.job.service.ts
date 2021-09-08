@@ -22,14 +22,14 @@ export class ProductScheduledJobs {
       where: {
         OR: [
           { updatedAt: { gte: this.timeUtils.xDaysBeforeDate(new Date(), 7) } },
-          { rentalPrice: null },
+          { computedRentalPrice: null },
         ],
       },
       select: {
         id: true,
         wholesalePrice: true,
         rentalPriceOverride: true,
-        rentalPrice: true,
+        computedRentalPrice: true,
         recoupment: true,
       },
     })
@@ -42,10 +42,10 @@ export class ProductScheduledJobs {
       )
       try {
         const freshRentalPrice = this.utils.calcRentalPrice(prod)
-        if (freshRentalPrice !== prod.rentalPrice) {
+        if (freshRentalPrice !== prod.computedRentalPrice) {
           await this.prisma.client.product.update({
             where: { id: prod.id },
-            data: { rentalPrice: freshRentalPrice },
+            data: { computedRentalPrice: freshRentalPrice },
           })
         }
       } catch (err) {
