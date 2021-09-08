@@ -1,4 +1,7 @@
+import { ErrorService } from "@app/modules/Error/services/error.service"
+import { ProductUtilsService } from "@app/modules/Product"
 import { PhysicalProductUtilsService } from "@app/modules/Product/services/physicalProduct.utils.service"
+import { TimeUtilsService } from "@app/modules/Utils/services/time.service"
 import { UtilsService } from "@app/modules/Utils/services/utils.service"
 import { PrismaService } from "@modules/../prisma/prisma.service"
 import { Injectable, Logger } from "@nestjs/common"
@@ -13,7 +16,10 @@ export class ProductScheduledJobs {
   constructor(
     private readonly prisma: PrismaService,
     private readonly utils: UtilsService,
-    private readonly physicalProductUtils: PhysicalProductUtilsService
+    private readonly physicalProductUtils: PhysicalProductUtilsService,
+    private readonly productUtils: ProductUtilsService,
+    private readonly timeUtils: TimeUtilsService,
+    private readonly error: ErrorService
   ) {}
 
   @Cron(CronExpression.EVERY_DAY_AT_4AM)
@@ -80,5 +86,36 @@ export class ProductScheduledJobs {
     })
 
     this.logger.log(`[ByNext] Successfully synced ${total} physical products`)
+  }
+
+  @Cron(CronExpression.EVERY_DAY_AT_4AM)
+  async cacheRentalPrices() {
+    const productsToUpdate = await this.prisma.client.product.findMany({
+      where: {
+        updatedAt: { gte: this.timeUtils.xDaysBeforeDate(new Date(), 7) },
+      },
+      select: {
+        id: true,
+        wholesalePrice: true,
+        rentalPriceOverride: true,
+        cachedRentalPrice: true,
+        recoupment: true,
+      },
+    })
+
+    for (const prod of productsToUpdate) {
+      try {
+        const freshRentalPrice = this.productUtils.calcRentalPrice(prod)
+        if (freshRentalPrice !== prod.cachedRentalPrice) {
+          await this.prisma.client.product.update({
+            where: { id: prod.id },
+            data: { cachedRentalPrice: freshRentalPrice },
+          })
+        }
+      } catch (err) {
+        this.error.setExtraContext({ prod })
+        this.error.captureError(err)
+      }
+    }
   }
 }
