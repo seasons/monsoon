@@ -489,8 +489,10 @@ export class RentalService {
     const allReturnPackages = invoice.reservations.flatMap(
       a => a.returnPackages
     )
-    const packagesReturnedInThisBillingCycle = allReturnPackages.filter(a =>
-      this.timeUtils.isLaterDate(a.deliveredAt, invoice.billingStartAt)
+    const packagesReturnedInThisBillingCycle = allReturnPackages.filter(
+      a =>
+        !!a.deliveredAt &&
+        this.timeUtils.isLaterDate(a.deliveredAt, invoice.billingStartAt)
     )
 
     const baseProcessingFees =

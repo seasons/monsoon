@@ -766,17 +766,18 @@ describe("Rental Service", () => {
               taxPrice: true,
               taxRate: true,
               comment: true,
+              name: true,
             },
           }
         )
-        lineItemsPhysicalProductSUIDs = lineItemsWithData.map(
-          a => a.physicalProduct.seasonsUID
-        )
+        lineItemsPhysicalProductSUIDs = lineItemsWithData
+          .filter(a => !!a.physicalProduct)
+          .map(a => a.physicalProduct.seasonsUID)
 
         lineItemsBySUIDOrName = lineItemsWithData.reduce((acc, curVal) => {
           return {
             ...acc,
-            [curVal.physicalProduct.seasonsUID || curVal.comment]: curVal,
+            [curVal.physicalProduct?.seasonsUID || curVal.name]: curVal,
           }
         }, {})
         expectedResultsBySUIDOrName = {
@@ -838,7 +839,7 @@ describe("Rental Service", () => {
         }
       })
 
-      it("Stores the proper price", () => {
+      it("Stores the proper price for physical product line items", () => {
         for (const suid of invoicePhysicalProductSUIDs) {
           const testPrice = lineItemsBySUIDOrName[suid].price
           const expectedPrice = expectedResultsBySUIDOrName[suid].price
@@ -852,18 +853,18 @@ describe("Rental Service", () => {
       If there are 2 or more new reservations in this billing cycle, we charge for the 
         sent package on all but the first
       */
-      it("Properly calculates the processing fees line item", () => {
-        expect(lineItemsBySUIDOrName["Processing"]).toBe(
-          expectedResultsBySUIDOrName["Processing"]
+      it("Properly calculates the price for the processing fees line item", () => {
+        expect(lineItemsBySUIDOrName["Processing"].price).toBe(
+          expectedResultsBySUIDOrName["Processing"].price
         )
       })
 
       it("Doesn't set the taxes on them", () => {
-        for (const suid of invoicePhysicalProductSUIDs) {
-          expect(lineItemsBySUIDOrName[suid].taxPrice).toBe(null)
-          expect(lineItemsBySUIDOrName[suid].taxRate).toBe(null)
-          expect(lineItemsBySUIDOrName[suid].taxPercentage).toBe(null)
-          expect(lineItemsBySUIDOrName[suid].taxName).toBe(null)
+        for (const id of [...invoicePhysicalProductSUIDs, "Processing"]) {
+          expect(lineItemsBySUIDOrName[id].taxPrice).toBe(null)
+          expect(lineItemsBySUIDOrName[id].taxRate).toBe(null)
+          expect(lineItemsBySUIDOrName[id].taxPercentage).toBe(null)
+          expect(lineItemsBySUIDOrName[id].taxName).toBe(null)
         }
       })
     })
