@@ -13,6 +13,7 @@ import { Prisma } from "@prisma/client"
 import { PrismaService } from "@prisma1/prisma.service"
 import chargebee from "chargebee"
 
+import { RESERVATION_PROCESSING_FEE } from "../constants"
 import { AccessPlanID } from "../payment.types"
 
 export const RETURN_PACKAGE_CUSHION = 3 // TODO: Set as an env var
@@ -37,6 +38,7 @@ export const CREATE_RENTAL_INVOICE_LINE_ITEMS_INVOICE_SELECT = Prisma.validator<
   Prisma.RentalInvoiceSelect
 >()({
   id: true,
+  billingStartAt: true,
   products: {
     select: {
       id: true,
@@ -55,7 +57,13 @@ export const CREATE_RENTAL_INVOICE_LINE_ITEMS_INVOICE_SELECT = Prisma.validator<
       },
     },
   },
-  reservations: { select: { id: true } },
+  reservations: {
+    select: {
+      id: true,
+      createdAt: true,
+      returnPackages: { select: { deliveredAt: true, amount: true } },
+    },
+  },
   membership: {
     select: {
       plan: { select: { planID: true } },
@@ -441,7 +449,12 @@ export class RentalService {
   }
 
   async createRentalInvoiceLineItems(invoice) {
-    const lineItemCreateDatas = (await Promise.all(
+    const addLineItemBasics = input => ({
+      ...input,
+      rentalInvoice: { connect: { id: invoice.id } },
+      currencyCode: "USD",
+    })
+    const lineItemsForPhysicalProductDatas = (await Promise.all(
       invoice.products.map(async physicalProduct => {
         const { daysRented, ...daysRentedMetadata } = await this.calcDaysRented(
           invoice,
@@ -451,17 +464,41 @@ export class RentalService {
           physicalProduct.productVariant.product,
           "daily"
         )
-        return {
+        return addLineItemBasics({
           ...daysRentedMetadata,
           daysRented,
           physicalProduct: { connect: { id: physicalProduct.id } },
-          rentalInvoice: { connect: { id: invoice.id } },
           price: Math.round(daysRented * dailyRentalPrice * 100),
-          currencyCode: "USD",
-        } as Prisma.RentalInvoiceLineItemCreateInput
+        }) as Prisma.RentalInvoiceLineItemCreateInput
       })
     )) as any
-    const lineItemPromises = lineItemCreateDatas.map(data =>
+
+    const newReservationsInThisBillingCycle = invoice.reservations.filter(a =>
+      this.timeUtils.isLaterDate(a.createdAt, invoice.billingStartAt)
+    ).length
+    const allReturnPackages = invoice.reservations.flatMap(
+      a => a.returnPackages
+    )
+    const packagesReturnedInThisBillingCycle = allReturnPackages.filter(a =>
+      this.timeUtils.isLaterDate(a.deliveredAt, invoice.billingStartAt)
+    )
+
+    const baseProcessingFees =
+      newReservationsInThisBillingCycle * RESERVATION_PROCESSING_FEE
+    const returnPackageFees = packagesReturnedInThisBillingCycle.reduce(
+      (acc, curval) => acc + curval.amount,
+      0
+    )
+    const processingLineItem = addLineItemBasics({
+      price: baseProcessingFees + returnPackageFees,
+      name: "Processing",
+      // TODO: Add a useful comment here
+    }) as Prisma.RentalInvoiceLineItemCreateInput
+    const lineItemDatas = [
+      ...lineItemsForPhysicalProductDatas,
+      processingLineItem,
+    ]
+    const lineItemPromises = lineItemDatas.map(data =>
       this.prisma.client.rentalInvoiceLineItem.create({
         data,
       })

@@ -47,6 +47,8 @@ export class ProductUtilsService {
     >,
     type: "monthly" | "daily" = "monthly"
   ) {
+    // The calling function should also include the category on the product, including the dry cleaning fee
+    // Add (dry cleaning fee) / 30 to the monthly price
     let monthlyPrice
     if (product.rentalPriceOverride) {
       monthlyPrice = product.rentalPriceOverride

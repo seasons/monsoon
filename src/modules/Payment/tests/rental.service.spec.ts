@@ -28,30 +28,30 @@ class PaymentServiceMock {
   addShippingCharge = async () => {}
 }
 
-class ShippoMock {
-  shipping: any
+// class ShippoMock {
+//   shipping: any
 
-  constructor() {
-    this.shipping = {
-      create: () => [
-        {
-          amount: UPS_GROUND_FEE,
-          shipment: "",
-          servicelevel: { token: "ups_ground", name: "UPSGround", terms: "" },
-        },
-        {
-          amount: UPS_SELECT_FEE,
-          shipment: "",
-          servicelevel: {
-            token: "ups_3_day_select",
-            name: "UPSSelect",
-            terms: "",
-          },
-        },
-      ],
-    }
-  }
-}
+//   constructor() {
+//     this.shipping = {
+//       create: () => [
+//         {
+//           amount: UPS_GROUND_FEE,
+//           shipment: "",
+//           servicelevel: { token: "ups_ground", name: "UPSGround", terms: "" },
+//         },
+//         {
+//           amount: UPS_SELECT_FEE,
+//           shipment: "",
+//           servicelevel: {
+//             token: "ups_3_day_select",
+//             name: "UPSSelect",
+//             terms: "",
+//           },
+//         },
+//       ],
+//     }
+//   }
+// }
 
 enum ChargebeeMockFunction {
   SubscriptionAddChargeAtTermEnd,
@@ -186,7 +186,7 @@ describe("Rental Service", () => {
         new ChargeBeeMock(ChargebeeMockFunction.SubscriptionRetrieve)
       )
 
-    jest.mock("shippo", () => new ShippoMock(), { virtual: true })
+    // jest.mock("shippo", () => new ShippoMock(), { virtual: true })
   })
 
   // Bring this back if we get cascading deletes figured out
@@ -694,10 +694,18 @@ describe("Rental Service", () => {
         await setReservationCreatedAt(reservationTwo.id, 10)
         await setPackageDeliveredAt(reservationTwo.sentPackage.id, 9)
         await setReservationStatus(reservationTwo.id, "Delivered")
+        await setPackageAmount(
+          reservationTwo.returnPackages[0].id,
+          UPS_GROUND_FEE
+        )
 
         // One queued reservation
         const reservationThree = await addToBagAndReserveForCustomer(1)
         await setReservationCreatedAt(reservationTwo.id, 2)
+        await setPackageAmount(
+          reservationThree.returnPackages[0].id,
+          UPS_GROUND_FEE
+        )
 
         const initialReservationProductSUIDs = initialReservation.newProducts.map(
           a => a.seasonsUID
@@ -871,6 +879,10 @@ describe("Rental Service", () => {
         await setReservationCreatedAt(initialReservation.id, 40)
         await setPackageDeliveredAt(initialReservation.sentPackage.id, 38)
         await setReservationStatus(initialReservation.id, "Delivered")
+        await setPackageAmount(
+          initialReservation.returnPackages[0].id,
+          UPS_GROUND_FEE
+        )
 
         const custWithData = (await getCustWithData({
           membership: {
@@ -897,6 +909,10 @@ describe("Rental Service", () => {
         await setReservationStatus(initialReservation.id, "Completed")
 
         await setPackageDeliveredAt(initialReservation.returnPackages[0].id, 10)
+        await setPackageAmount(
+          initialReservation.returnPackages[0].id,
+          UPS_GROUND_FEE
+        )
 
         const custWithData = (await getCustWithData({
           membership: {
@@ -923,6 +939,10 @@ describe("Rental Service", () => {
         await setReservationStatus(initialReservation.id, "Completed")
 
         await setPackageDeliveredAt(initialReservation.returnPackages[0].id, 2)
+        await setPackageAmount(
+          initialReservation.returnPackages[0].id,
+          UPS_GROUND_FEE
+        )
 
         const custWithData = (await getCustWithData({
           membership: {
@@ -954,6 +974,10 @@ describe("Rental Service", () => {
         expect(0).toBe(1)
 
         await setPackageDeliveredAt(initialReservation.returnPackages[0].id, 5)
+        await setPackageAmount(
+          initialReservation.returnPackages[0].id,
+          UPS_SELECT_FEE
+        )
 
         const custWithData = (await getCustWithData({
           membership: {
@@ -1609,6 +1633,13 @@ const setPackageEnteredSystemAt = async (packageId, numDaysAgo) => {
   await prisma.client.package.update({
     where: { id: packageId },
     data: { enteredDeliverySystemAt: date },
+  })
+}
+
+const setPackageAmount = async (packageId, amount) => {
+  await prisma.client.package.update({
+    where: { id: packageId },
+    data: { amount },
   })
 }
 
