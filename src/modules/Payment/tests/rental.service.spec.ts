@@ -672,8 +672,6 @@ describe("Rental Service", () => {
   })
 
   describe("Create Rental Invoice Line Items", () => {
-    // TODO: Add the processing fees here
-    // TODO: Add other tests for other aspects of the processing fees
     describe("Properly creates line items for an invoice with 3 reservations and 4 products", () => {
       let lineItemsBySUIDOrName
       let expectedResultsBySUIDOrName
@@ -875,10 +873,6 @@ describe("Rental Service", () => {
         await setReservationCreatedAt(initialReservation.id, 40)
         await setPackageDeliveredAt(initialReservation.sentPackage.id, 38)
         await setReservationStatus(initialReservation.id, "Delivered")
-        await setPackageAmount(
-          initialReservation.returnPackages[0].id,
-          UPS_GROUND_FEE
-        )
 
         const custWithData = (await getCustWithData({
           membership: {
@@ -958,12 +952,9 @@ describe("Rental Service", () => {
         })
         await setReservationCreatedAt(initialReservation.id, 25)
         await setPackageDeliveredAt(initialReservation.sentPackage.id, 23)
-        await setReservationStatus(initialReservation.id, "Completed")
-        expect(0).toBe(1) // TODO: WRite this test
-
-        await setPackageDeliveredAt(initialReservation.returnPackages[0].id, 5)
+        await setReservationStatus(initialReservation.id, "Delivered")
         await setPackageAmount(
-          initialReservation.returnPackages[0].id,
+          initialReservation.sentPackage.id,
           UPS_SELECT_FEE
         )
 
@@ -1436,6 +1427,9 @@ const createTestCustomer = async ({
   const upsGroundMethod = await prisma.client.shippingMethod.findFirst({
     where: { code: "UPSGround" },
   })
+  const upsSelectMethod = await prisma.client.shippingMethod.findFirst({
+    where: { code: "UPSSelect" },
+  })
   const chargebeeSubscriptionId = utils.randomString()
   const defaultCreateData = {
     status: "Active",
@@ -1456,10 +1450,16 @@ const createTestCustomer = async ({
             state: "NY",
             zipCode: "11201",
             shippingOptions: {
-              create: {
-                shippingMethod: { connect: { id: upsGroundMethod.id } },
-                externalCost: 10,
-              },
+              create: [
+                {
+                  shippingMethod: { connect: { id: upsGroundMethod.id } },
+                  externalCost: 10,
+                },
+                {
+                  shippingMethod: { connect: { id: upsSelectMethod.id } },
+                  externalCost: 20,
+                },
+              ],
             },
           },
         },
