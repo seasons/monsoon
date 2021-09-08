@@ -25,7 +25,7 @@ export const SENT_PACKAGE_CUSHION = 3 // TODO: Set as an env var
 
 type LineItemToDescriptionLineItem = Pick<
   RentalInvoiceLineItem,
-  "daysRented"
+  "daysRented" | "name"
 > & {
   physicalProduct: {
     productVariant: {
@@ -144,6 +144,7 @@ export class RentalService {
         })
       )
     } catch (err) {
+      console.log(err)
       this.error.setExtraContext(
         { planID, invoice, lineItems },
         "chargeTabInputs"
@@ -604,10 +605,16 @@ export class RentalService {
     return {
       amount: prismaLineItem.price,
       description: this.lineItemToDescription(prismaLineItem),
-      date_from: this.timeUtils.secondsSinceEpoch(
-        prismaLineItem.rentalStartedAt
-      ),
-      date_to: this.timeUtils.secondsSinceEpoch(prismaLineItem.rentalEndedAt),
+      ...(prismaLineItem.name !== "Processing"
+        ? {
+            date_from: this.timeUtils.secondsSinceEpoch(
+              prismaLineItem.rentalStartedAt
+            ),
+            date_to: this.timeUtils.secondsSinceEpoch(
+              prismaLineItem.rentalEndedAt
+            ),
+          }
+        : {}),
     }
   }
 
@@ -635,6 +642,7 @@ export class RentalService {
         select: {
           id: true,
           price: true,
+          name: true,
           rentalStartedAt: true,
           rentalEndedAt: true,
           daysRented: true,
@@ -730,6 +738,11 @@ export class RentalService {
   }
 
   private lineItemToDescription(lineItem: LineItemToDescriptionLineItem) {
+    if (lineItem.name === "Processing") {
+      return `Processing`
+    }
+
+    // Else, it's for an actual item rented
     const productName = lineItem.physicalProduct.productVariant.product.name
     const displaySize = lineItem.physicalProduct.productVariant.displayShort
     const monthlyRentalPrice =
