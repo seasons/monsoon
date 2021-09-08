@@ -52,15 +52,18 @@ const run = async () => {
       : ""
     const adjsutedPriceRaw = unadjustedMonthlyRentalPrice * 0.25
     const roundToNearestMultipleOfFive = price => Math.ceil(price / 5) * 5
-    const adjustedPriceRounded = roundToNearestMultipleOfFive(adjsutedPriceRaw)
+    const adjustedPriceRounded = Math.max(
+      10,
+      roundToNearestMultipleOfFive(adjsutedPriceRaw)
+    )
     console.log(
       `${season} -- ${prod.name}. Would be: ${unadjustedMonthlyRentalPrice}. Discounted: ${adjustedPriceRounded}`
     )
 
-    // await ps.client.product.update({
-    //   where: { id: prod.id },
-    //   data: { rentalPriceOverride: adjustedPriceRounded },
-    // })
+    await ps.client.product.update({
+      where: { id: prod.id },
+      data: { rentalPriceOverride: adjustedPriceRounded },
+    })
   }
 }
 run()
