@@ -1,5 +1,5 @@
 import { ErrorService } from "@app/modules/Error/services/error.service"
-import { PhysicalProductService } from "@app/modules/Product"
+import { PhysicalProductService } from "@app/modules/Product/services/physicalProduct.service"
 import { PrismaService } from "@modules/../prisma/prisma.service"
 import { Injectable, Logger } from "@nestjs/common"
 import { Cron, CronExpression } from "@nestjs/schedule"

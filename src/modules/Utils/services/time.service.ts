@@ -17,12 +17,25 @@ export class TimeUtilsService {
     return date1.getTime() - date2.getTime() >= 0
   }
 
-  xDaysBeforeDate(date: Date, x: number) {
-    return moment(date.toISOString()).subtract(x, "days").format()
+  xDaysBeforeDate(
+    date: Date,
+    x: number,
+    returnType: "isoString" | "timestamp" = "isoString"
+  ) {
+    const returnDate = moment(date.toISOString()).subtract(x, "days")
+    if (returnType === "isoString") {
+      return returnDate.format()
+    } else {
+      return returnDate.utc().format("X")
+    }
   }
 
   xDaysAfterDate(date: Date, x: number) {
     return moment(date.toISOString()).add(x, "days").format()
+  }
+
+  secondsSinceEpoch(date: Date) {
+    return Math.round(date.getTime() / 1000)
   }
 
   numDaysBetween(date1: Date, date2: Date) {
@@ -52,5 +65,13 @@ export class TimeUtilsService {
     )
 
     return after.diff(before, "days")
+  }
+
+  dateFromUTCTimestamp(
+    timestamp,
+    unit: "seconds" | "milliseconds" = "seconds"
+  ): Date {
+    const multiplier = unit === "seconds" ? 1000 : 1
+    return new Date(timestamp * multiplier)
   }
 }

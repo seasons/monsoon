@@ -1,3 +1,4 @@
+import { ProductUtilsService } from "@app/modules/Utils/services/product.utils.service"
 import { Injectable } from "@nestjs/common"
 import { InventoryStatus, Prisma, ProductVariant } from "@prisma/client"
 import { PrismaService } from "@prisma1/prisma.service"
@@ -5,7 +6,6 @@ import { ApolloError } from "apollo-server"
 import { head, lowerFirst, omit, pick, uniq, uniqBy } from "lodash"
 
 import { PhysicalProductUtilsService } from "./physicalProduct.utils.service"
-import { ProductUtilsService } from "./product.utils.service"
 
 @Injectable()
 export class ProductVariantService {

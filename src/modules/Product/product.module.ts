@@ -35,7 +35,6 @@ import { LaunchService } from "./services/launch.service"
 import { PhysicalProductService } from "./services/physicalProduct.service"
 import { PhysicalProductUtilsService } from "./services/physicalProduct.utils.service"
 import { ProductService } from "./services/product.service"
-import { ProductUtilsService } from "./services/product.utils.service"
 import { ProductRequestService } from "./services/productRequest.service"
 import { ProductRequestUtilsService } from "./services/productRequest.utils.service"
 import { ProductVariantService } from "./services/productVariant.service"
@@ -67,7 +66,6 @@ export const ProductModuleDef = {
     ProductRequestService,
     ProductRequestUtilsService,
     ProductService,
-    ProductUtilsService,
     PhysicalProductUtilsService,
     PhysicalProductService,
     ProductVariantService,
@@ -85,7 +83,6 @@ export const ProductModuleDef = {
     AlgoliaService,
   ],
   exports: [
-    ProductUtilsService,
     ProductVariantService,
     PhysicalProductUtilsService,
     PhysicalProductService,

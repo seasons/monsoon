@@ -1,5 +1,6 @@
 import { SearchService } from "@app/modules/Search"
 import { SearchResultType } from "@app/modules/Search/services/search.service"
+import { ProductUtilsService } from "@app/modules/Utils/services/product.utils.service"
 import { QueryUtilsService } from "@app/modules/Utils/services/queryUtils.service"
 import { SizeType } from "@app/prisma/prisma.binding"
 import { ImageData } from "@modules/Image/image.types.d"
@@ -32,7 +33,6 @@ import { UtilsService } from "../../Utils/services/utils.service"
 import { bottomSizeRegex } from "../constants"
 import { ProductWithPhysicalProducts } from "../product.types.d"
 import { PhysicalProductUtilsService } from "./physicalProduct.utils.service"
-import { ProductUtilsService } from "./product.utils.service"
 import { ProductVariantService } from "./productVariant.service"
 
 @Injectable()
