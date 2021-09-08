@@ -21,6 +21,7 @@ import { DataScheduledJobs } from "./services/data.job.service"
 import { LogsScheduledJobs } from "./services/logs.job.service"
 import { MarketingScheduledJobs } from "./services/marketing.job.service"
 import { MembershipScheduledJobs } from "./services/membership.job.service"
+import { ProductScheduledJobs } from "./services/product.job.service"
 import { ReservationScheduledJobs } from "./services/reservations.job.service"
 import { SearchScheduledJobs } from "./services/search.job.service"
 import { ShopifyScheduledJobs } from "./services/shopify.job.service"
@@ -55,6 +56,7 @@ import { SubscriptionsScheduledJobs } from "./services/subscriptions.job.service
     AdmissionsScheduledJobs,
     ShopifyScheduledJobs,
     LogsScheduledJobs,
+    ProductScheduledJobs,
   ],
   exports: [DataScheduledJobs],
 })
