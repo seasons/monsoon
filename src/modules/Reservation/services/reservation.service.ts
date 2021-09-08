@@ -6,11 +6,7 @@ import { CustomerUtilsService } from "@app/modules/User/services/customer.utils.
 import { ProductUtilsService } from "@app/modules/Utils/services/product.utils.service"
 import { StatementsService } from "@app/modules/Utils/services/statements.service"
 import { UtilsService } from "@app/modules/Utils/services/utils.service"
-import {
-  InventoryStatus,
-  PhysicalProductStatus,
-  ShippingCode,
-} from "@app/prisma"
+import { InventoryStatus, PhysicalProductStatus } from "@app/prisma"
 import { EmailService } from "@modules/Email/services/email.service"
 import { ShippingService } from "@modules/Shipping/services/shipping.service"
 import { Injectable } from "@nestjs/common"
@@ -23,6 +19,7 @@ import {
   PrismaPromise,
   ReservationFeedback,
   ReservationStatus,
+  ShippingCode,
   User,
 } from "@prisma/client"
 import { PrismaService } from "@prisma1/prisma.service"
@@ -196,29 +193,6 @@ export class ReservationService {
     })
     promises.push(...bagItemPromises)
 
-    // Create one time charge for shipping addon
-    let shippingOptionID
-    let shippingLineItems = []
-    if (!!shippingCode) {
-      const { shippingOption } = await this.payment.addShippingCharge(
-        customer,
-        shippingCode
-      )
-      shippingOptionID = shippingOption.id
-      if (shippingCode === "UPSSelect" && shippingOptionID) {
-        shippingLineItems = [
-          {
-            recordID: shippingOptionID,
-            price: shippingOption.externalCost,
-            currencyCode: "USD",
-            recordType: "Package",
-            name: "UPS Select shipping",
-            taxPrice: 0,
-          },
-        ]
-      }
-    }
-
     // Create reservation records in prisma
     const reservationData = await this.createReservationData(
       seasonsToCustomerTransaction,
@@ -231,7 +205,7 @@ export class ReservationService {
       ),
       physicalProductsBeingReserved,
       heldPhysicalProducts,
-      shippingOptionID
+      shippingCode
     )
 
     const reservationPromise = this.prisma.client.reservation.create({
@@ -1261,12 +1235,32 @@ export class ReservationService {
       returnPackages: Array<Pick<Package, "id"> & { events: { id: string }[] }>
     },
     user: User,
-    customer: Customer,
+    customer: Pick<Customer, "id">,
     shipmentWeight: number,
     physicalProductsBeingReserved: PhysicalProduct[],
     heldPhysicalProducts: PhysicalProduct[],
-    shippingOptionID: string
+    shippingCode: ShippingCode | null
   ) {
+    const customerWithData = await this.prisma.client.customer.findUnique({
+      where: { id: customer.id },
+      select: {
+        detail: {
+          select: {
+            shippingAddress: {
+              select: {
+                id: true,
+                shippingOptions: {
+                  select: {
+                    id: true,
+                    shippingMethod: { select: { code: true } },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    })
     const allPhysicalProductsInReservation = [
       ...physicalProductsBeingReserved,
       ...heldPhysicalProducts,
@@ -1278,16 +1272,6 @@ export class ReservationService {
     const newPhysicalProductSUIDs = physicalProductsBeingReserved.map(p => ({
       seasonsUID: p.seasonsUID,
     }))
-
-    const customerShippingAddressRecordID = await (
-      await this.prisma.client.customer
-        .findUnique({ where: { id: customer.id } })
-        .detail()
-    ).shippingAddressId
-    interface UniqueIDObject {
-      id: string
-    }
-    const uniqueReservationNumber = await this.utils.getUniqueReservationNumber()
 
     const returnPackagesToCarryOver =
       lastReservation?.returnPackages?.filter(a => a.events.length === 0) || []
@@ -1307,6 +1291,18 @@ export class ReservationService {
         amount: shippoTransaction.rate.amount * 100,
       }
     }
+
+    let shippingOptionId
+    if (!!shippingCode) {
+      const shippingOption = customerWithData.detail.shippingAddress.shippingOptions.find(
+        a => a.shippingMethod.code === shippingCode
+      )
+      shippingOptionId = shippingOption?.id
+    }
+
+    const customerShippingAddressRecordID =
+      customerWithData.detail.shippingAddress.id
+    const uniqueReservationNumber = await this.utils.getUniqueReservationNumber()
     let createData = Prisma.validator<Prisma.ReservationCreateInput>()({
       id: cuid(),
       products: {
@@ -1333,11 +1329,9 @@ export class ReservationService {
           items: {
             // need to include the type on the function passed into map
             // or we get build errors comlaining about the type here
-            connect: physicalProductsBeingReserved.map(
-              (prod): UniqueIDObject => {
-                return { id: prod.id }
-              }
-            ),
+            connect: physicalProductsBeingReserved.map(prod => {
+              return { id: prod.id }
+            }),
           },
           fromAddress: {
             connect: {
@@ -1373,11 +1367,11 @@ export class ReservationService {
           slug: process.env.SEASONS_CLEANER_LOCATION_SLUG,
         },
       },
-      ...(!!shippingOptionID
+      ...(!!shippingOptionId
         ? {
             shippingOption: {
               connect: {
-                id: shippingOptionID,
+                id: shippingOptionId,
               },
             },
           }

@@ -10,6 +10,7 @@ import {
   RentalInvoiceLineItem,
   RentalInvoiceStatus,
   Reservation,
+  ShippingMethod,
 } from "@prisma/client"
 import { Prisma } from "@prisma/client"
 import { PrismaService } from "@prisma1/prisma.service"
@@ -63,7 +64,10 @@ export const CREATE_RENTAL_INVOICE_LINE_ITEMS_INVOICE_SELECT = Prisma.validator<
       id: true,
       createdAt: true,
       returnPackages: { select: { deliveredAt: true, amount: true } },
-      sentPackage: { select: { amount: true, shippingCode: true } },
+      sentPackage: { select: { amount: true } },
+      shippingOption: {
+        select: { shippingMethod: { select: { code: true } } },
+      },
     },
     orderBy: { createdAt: "asc" },
   },
@@ -455,6 +459,8 @@ export class RentalService {
     invoice: Pick<RentalInvoice, "id" | "billingStartAt"> & {
       reservations: (Pick<Reservation, "createdAt"> & {
         returnPackages: Pick<Package, "deliveredAt" | "amount">[]
+      } & {
+        shippingOption: { shippingMethod: Pick<ShippingMethod, "code"> }
       })[]
       products: (Pick<PhysicalProduct, "id" | "seasonsUID"> & {
         productVariant: { product: Pick<Product, "computedRentalPrice"> }
@@ -510,8 +516,8 @@ export class RentalService {
     const sentPackageFees = sortedNewReservations.reduce((acc, curval, idx) => {
       if (idx === 0) {
         const usedPremiumShipping =
-          !!curval.sentPackage.shippingCode &&
-          curval.sentPackage.shippingCode !== "UPSGround"
+          !!curval.shippingOption &&
+          curval.shippingOption.shippingMethod.code !== "UPSGround"
         if (usedPremiumShipping) {
           return acc + curval.sentPackage.amount
         }
@@ -520,14 +526,6 @@ export class RentalService {
 
       return acc + curval.sentPackage.amount
     }, 0)
-
-    // Calculate sent package fees
-    /*
-      Get all the reservations created in this billing cycle
-      For the first one, only charge if's UPS select prices
-      For subsequenct ones, charge the amount on the package
-
-    */
 
     const processingLineItem = addLineItemBasics({
       price: baseProcessingFees + returnPackageFees + sentPackageFees,
