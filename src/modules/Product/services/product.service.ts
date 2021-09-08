@@ -644,7 +644,7 @@ export class ProductService {
         brand: { select: { id: true, brandCode: true } },
         color: { select: { id: true, name: true } },
         season: { select: { id: true } },
-        category: { select: { id: true } },
+        category: { select: { id: true, dryCleaningFee: true } },
         functions: { select: { name: true } },
         tags: { select: { name: true } },
         recoupment: true,
@@ -715,16 +715,24 @@ export class ProductService {
       updateData.retailPrice
     )
 
+    // Note: Technically, we should also take the category into account here. But that is complicated
+    // logic, so we instead allow that case to fallback to the cron job which caches rental prices at 4AM everyday
     let updatedRentalPrice = product.computedRentalPrice
     if (
       updateData.recoupment !== product.recoupment ||
       updateData.wholesalePrice !== product.wholesalePrice ||
       updateData.rentalPriceOverride !== product.rentalPriceOverride
     ) {
-      updatedRentalPrice = this.productUtils.calcRentalPrice({
-        ...product,
-        ...updateData,
-      })
+      updatedRentalPrice = this.utils.calcRentalPrice(
+        {
+          recoupment: updateData.recoupment || product.recoupment,
+          wholesalePrice: updateData.wholesalePrice || product.wholesalePrice,
+          rentalPriceOverride:
+            updateData.rentalPriceOverride || product.rentalPriceOverride,
+          category: { dryCleaningFee: product.category.dryCleaningFee },
+        },
+        { type: "monthly", ignoreOverride: false }
+      )
     }
 
     const updateInput = {
