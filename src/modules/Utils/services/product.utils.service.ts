@@ -44,27 +44,32 @@ export class ProductUtilsService {
     product: Pick<
       Product,
       "rentalPriceOverride" | "wholesalePrice" | "recoupment"
-    >,
-    type: "monthly" | "daily" = "monthly"
+    > & { category: Pick<Category, "dryCleaningFee"> },
+    options: { ignoreOverride?: boolean } = {}
   ) {
-    // The calling function should also include the category on the product, including the dry cleaning fee
-    // Add (dry cleaning fee) / 30 to the monthly price
-    let monthlyPrice
-    if (product.rentalPriceOverride) {
-      monthlyPrice = product.rentalPriceOverride
+    let monthlyPriceInDollars
+    const { ignoreOverride = false } = options
+
+    // Manually ensure everything is in cents for now. Need to go back and
+    // get all price values in the DB into cents
+    const rentalPriceOverrideCents = (product.rentalPriceOverride || 0) * 100
+    const wholesalePriceCents = (product.wholesalePrice || 0) * 100
+    const dryCleaningFeeCents = product.category.dryCleaningFee || 0
+
+    const roundToNearestMultipleOfFive = price => Math.ceil(price / 5) * 5
+
+    let monthlyPriceInCents
+    if (!ignoreOverride && product.rentalPriceOverride) {
+      monthlyPriceInCents = rentalPriceOverrideCents
     } else {
-      const rate = product.wholesalePrice / product.recoupment
-      monthlyPrice = Math.ceil(rate / 5) * 5
+      monthlyPriceInCents =
+        wholesalePriceCents / product.recoupment + dryCleaningFeeCents
     }
+    monthlyPriceInDollars = roundToNearestMultipleOfFive(
+      monthlyPriceInCents / 100
+    )
 
-    if (type === "daily") {
-      // the + turns e.g '1.50' into 1.5
-      const roundedPriceAsString = (monthlyPrice / 30).toFixed(2)
-      const roundedPriceAsNum = +roundedPriceAsString
-      return roundedPriceAsNum
-    }
-
-    return monthlyPrice
+    return monthlyPriceInDollars
   }
 
   async getProductStyleCode(productID) {

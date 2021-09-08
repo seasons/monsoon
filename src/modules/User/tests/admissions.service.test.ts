@@ -2,6 +2,7 @@ import { AppModule } from "@app/app.module"
 import { SMSService } from "@app/modules/SMS/services/sms.service"
 import { QueryUtilsService } from "@app/modules/Utils/services/queryUtils.service"
 import { TestUtilsService } from "@app/modules/Utils/services/test.service"
+import { TimeUtilsService } from "@app/modules/Utils/services/time.service"
 import { UtilsService } from "@app/modules/Utils/services/utils.service"
 import { UtilsModule } from "@app/modules/Utils/utils.module"
 import {
@@ -297,6 +298,7 @@ xdescribe("Admissions Service", () => {
   describe("Inventory Threshold", () => {
     let testUtils: TestUtilsService
     let utils: UtilsService
+    let timeUtils: TimeUtilsService
     let prismaService: PrismaService
     let cleanupFuncs = []
     let allTestProductsToCreate: CreateTestProductInput[]
@@ -315,6 +317,7 @@ xdescribe("Admissions Service", () => {
       const app = await NestFactory.createApplicationContext(AppModule)
       testUtils = app.get(TestUtilsService)
       utils = app.get(UtilsService)
+      timeUtils = app.get(TimeUtilsService)
 
       // reservable products
       topXSReservable = createTestProductCreateInput("Top", "XS", "Reservable")
@@ -424,8 +427,8 @@ xdescribe("Admissions Service", () => {
               {
                 notified: false,
                 pausePending: false,
-                pauseDate: utils.xDaysAgoISOString(22),
-                resumeDate: utils.xDaysFromNowISOString(8),
+                pauseDate: timeUtils.xDaysAgoISOString(22),
+                resumeDate: timeUtils.xDaysFromNowISOString(8),
                 pauseType: "WithItems",
               },
             ],
@@ -441,20 +444,20 @@ xdescribe("Admissions Service", () => {
               {
                 notified: true,
                 pausePending: false,
-                pauseDate: utils.xDaysAgoISOString(356),
-                resumeDate: utils.xDaysAgoISOString(326),
+                pauseDate: timeUtils.xDaysAgoISOString(356),
+                resumeDate: timeUtils.xDaysAgoISOString(326),
               },
               {
                 notified: true,
                 pausePending: false,
-                pauseDate: utils.xDaysAgoISOString(120),
-                resumeDate: utils.xDaysAgoISOString(90),
+                pauseDate: timeUtils.xDaysAgoISOString(120),
+                resumeDate: timeUtils.xDaysAgoISOString(90),
               },
               {
                 notified: false,
                 pausePending: false,
-                pauseDate: utils.xDaysAgoISOString(24),
-                resumeDate: utils.xDaysFromNowISOString(6),
+                pauseDate: timeUtils.xDaysAgoISOString(24),
+                resumeDate: timeUtils.xDaysFromNowISOString(6),
               },
             ],
           },
@@ -546,6 +549,7 @@ const createEmailReceipts = (
   emailId: EmailId
 ): Array<any> => {
   const utils = new UtilsService(null)
+  const timeUtils = new TimeUtilsService()
 
   return Object.keys(emailsSentXDaysAgoObject).reduce(
     (emailReceipts, currentKey) => {
@@ -553,7 +557,7 @@ const createEmailReceipts = (
       while (i <= emailsSentXDaysAgoObject[currentKey]) {
         emailReceipts.push({
           emailId,
-          createdAt: utils.xDaysAgoISOString(parseInt(currentKey, 10)),
+          createdAt: timeUtils.xDaysAgoISOString(parseInt(currentKey, 10)),
           user: { id: utils.randomString() },
         })
         i++

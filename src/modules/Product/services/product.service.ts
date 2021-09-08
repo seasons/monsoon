@@ -723,7 +723,7 @@ export class ProductService {
       updateData.wholesalePrice !== product.wholesalePrice ||
       updateData.rentalPriceOverride !== product.rentalPriceOverride
     ) {
-      updatedRentalPrice = this.utils.calcRentalPrice(
+      updatedRentalPrice = this.productUtils.calcRentalPrice(
         {
           recoupment: updateData.recoupment || product.recoupment,
           wholesalePrice: updateData.wholesalePrice || product.wholesalePrice,
@@ -731,7 +731,7 @@ export class ProductService {
             updateData.rentalPriceOverride || product.rentalPriceOverride,
           category: { dryCleaningFee: product.category.dryCleaningFee },
         },
-        { type: "monthly", ignoreOverride: false }
+        { ignoreOverride: false }
       )
     }
 

@@ -1,5 +1,6 @@
 import { APP_MODULE_DEF } from "@app/app.module"
 import { ReservationService } from "@app/modules/Reservation"
+import { TimeUtilsService } from "@app/modules/Utils/services/time.service"
 import { UtilsService } from "@app/modules/Utils/services/utils.service"
 import { PrismaService } from "@app/prisma/prisma.service"
 import { Test } from "@nestjs/testing"
@@ -138,6 +139,7 @@ let prisma: PrismaService
 let rentalService: RentalService
 let reservationService: ReservationService
 let utils: UtilsService
+let timeUtils: TimeUtilsService
 let cleanupFuncs = []
 let testCustomer: any
 
@@ -162,6 +164,7 @@ describe("Rental Service", () => {
     prisma = moduleRef.get<PrismaService>(PrismaService)
     rentalService = moduleRef.get<RentalService>(RentalService)
     utils = moduleRef.get<UtilsService>(UtilsService)
+    timeUtils = moduleRef.get<TimeUtilsService>(TimeUtilsService)
     reservationService = moduleRef.get<ReservationService>(ReservationService)
 
     jest
@@ -215,7 +218,7 @@ describe("Rental Service", () => {
           await setPackageDeliveredAt(initialReservation.sentPackage.id, 23)
           await setReservationStatus(initialReservation.id, "Delivered")
           custWithData = await getCustWithData()
-          twentyThreeDaysAgo = utils.xDaysAgoISOString(23)
+          twentyThreeDaysAgo = timeUtils.xDaysAgoISOString(23)
         })
 
         it("reserved and returned on same reservation", async () => {
@@ -249,7 +252,7 @@ describe("Rental Service", () => {
           // run the expects
           expect(daysRented).toBe(21)
           expectTimeToEqual(rentalStartedAt, twentyThreeDaysAgo)
-          expectTimeToEqual(rentalEndedAt, utils.xDaysAgoISOString(2))
+          expectTimeToEqual(rentalEndedAt, timeUtils.xDaysAgoISOString(2))
 
           expectInitialReservationComment(
             comment,
@@ -293,7 +296,7 @@ describe("Rental Service", () => {
 
           expect(daysRented).toBe(19)
           expectTimeToEqual(rentalStartedAt, twentyThreeDaysAgo)
-          expectTimeToEqual(rentalEndedAt, utils.xDaysAgoISOString(4))
+          expectTimeToEqual(rentalEndedAt, timeUtils.xDaysAgoISOString(4))
 
           expectInitialReservationComment(
             comment,
@@ -649,7 +652,7 @@ describe("Rental Service", () => {
         )
 
         expect(daysRented).toBe(30)
-        expectTimeToEqual(rentalStartedAt, utils.xDaysAgoISOString(30))
+        expectTimeToEqual(rentalStartedAt, timeUtils.xDaysAgoISOString(30))
         expectTimeToEqual(rentalEndedAt, now)
 
         expectInitialReservationComment(
@@ -779,19 +782,19 @@ describe("Rental Service", () => {
         expectedResultsBySUIDOrName = {
           [initialReservationProductSUIDs[0]]: {
             daysRented: 23,
-            rentalStartedAt: utils.xDaysAgoISOString(23),
+            rentalStartedAt: timeUtils.xDaysAgoISOString(23),
             rentalEndedAt: now,
             price: 2300,
           },
           [initialReservationProductSUIDs[1]]: {
             daysRented: 23,
-            rentalStartedAt: utils.xDaysAgoISOString(23),
+            rentalStartedAt: timeUtils.xDaysAgoISOString(23),
             rentalEndedAt: now,
             price: 3841,
           },
           [reservationTwoSUIDs[0]]: {
             daysRented: 9,
-            rentalStartedAt: utils.xDaysAgoISOString(9),
+            rentalStartedAt: timeUtils.xDaysAgoISOString(9),
             rentalEndedAt: now,
             price: 2403,
           },
@@ -1363,7 +1366,9 @@ describe("Rental Service", () => {
           custWithData.membership.id,
           null
         )
-        expect(rentalInvoiceBillingEndAt).toBe(utils.xDaysFromNowISOString(4))
+        expect(rentalInvoiceBillingEndAt).toBe(
+          timeUtils.xDaysFromNowISOString(4)
+        )
       })
     })
 
@@ -1481,7 +1486,7 @@ const createTestCustomer = async ({
         plan: { connect: { planID: "access-monthly" } },
         rentalInvoices: {
           create: {
-            billingStartAt: utils.xDaysAgoISOString(30),
+            billingStartAt: timeUtils.xDaysAgoISOString(30),
             billingEndAt: new Date(),
           },
         },
@@ -1489,9 +1494,9 @@ const createTestCustomer = async ({
           create: {
             planID: "access-monthly",
             subscriptionId: chargebeeSubscriptionId,
-            currentTermStart: utils.xDaysAgoISOString(1),
-            currentTermEnd: utils.xDaysFromNowISOString(1),
-            nextBillingAt: utils.xDaysFromNowISOString(1),
+            currentTermStart: timeUtils.xDaysAgoISOString(1),
+            currentTermEnd: timeUtils.xDaysFromNowISOString(1),
+            nextBillingAt: timeUtils.xDaysFromNowISOString(1),
             status: "Active",
             planPrice: 2000,
           },
@@ -1604,7 +1609,7 @@ const addToBagAndReserveForCustomer = async (
 }
 
 const setPackageDeliveredAt = async (packageId, numDaysAgo) => {
-  const eighteenDaysAgo = utils.xDaysAgoISOString(numDaysAgo)
+  const eighteenDaysAgo = timeUtils.xDaysAgoISOString(numDaysAgo)
   await prisma.client.package.update({
     where: { id: packageId },
     data: { deliveredAt: eighteenDaysAgo },
@@ -1621,7 +1626,7 @@ const setReservationStatus = async (
   })
 }
 const setReservationCreatedAt = async (reservationId, numDaysAgo) => {
-  const date = utils.xDaysAgoISOString(numDaysAgo)
+  const date = timeUtils.xDaysAgoISOString(numDaysAgo)
   await prisma.client.reservation.update({
     where: { id: reservationId },
     data: { createdAt: date },
@@ -1629,7 +1634,7 @@ const setReservationCreatedAt = async (reservationId, numDaysAgo) => {
 }
 
 const setPackageEnteredSystemAt = async (packageId, numDaysAgo) => {
-  const date = utils.xDaysAgoISOString(numDaysAgo)
+  const date = timeUtils.xDaysAgoISOString(numDaysAgo)
   await prisma.client.package.update({
     where: { id: packageId },
     data: { enteredDeliverySystemAt: date },

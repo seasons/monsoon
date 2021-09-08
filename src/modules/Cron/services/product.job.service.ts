@@ -1,4 +1,5 @@
 import { ErrorService } from "@app/modules/Error/services/error.service"
+import { ProductUtilsService } from "@app/modules/Utils/services/product.utils.service"
 import { TimeUtilsService } from "@app/modules/Utils/services/time.service"
 import { UtilsService } from "@app/modules/Utils/services/utils.service"
 import { PrismaService } from "@modules/../prisma/prisma.service"
@@ -11,9 +12,9 @@ export class ProductScheduledJobs {
 
   constructor(
     private readonly prisma: PrismaService,
-    private readonly utils: UtilsService,
     private readonly timeUtils: TimeUtilsService,
-    private readonly error: ErrorService
+    private readonly error: ErrorService,
+    private readonly productUtils: ProductUtilsService
   ) {}
 
   @Cron(CronExpression.EVERY_DAY_AT_4AM)
@@ -42,7 +43,7 @@ export class ProductScheduledJobs {
         `Updating cached rental price for prod ${i++} of ${total}`
       )
       try {
-        const freshRentalPrice = this.utils.calcRentalPrice(prod)
+        const freshRentalPrice = this.productUtils.calcRentalPrice(prod)
         if (freshRentalPrice !== prod.computedRentalPrice) {
           await this.prisma.client.product.update({
             where: { id: prod.id },

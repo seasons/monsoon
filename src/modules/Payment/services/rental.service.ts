@@ -3,11 +3,13 @@ import { ProductUtilsService } from "@app/modules/Utils/services/product.utils.s
 import { TimeUtilsService } from "@app/modules/Utils/services/time.service"
 import { Injectable } from "@nestjs/common"
 import {
+  Package,
   PhysicalProduct,
   Product,
   RentalInvoice,
   RentalInvoiceLineItem,
   RentalInvoiceStatus,
+  Reservation,
 } from "@prisma/client"
 import { Prisma } from "@prisma/client"
 import { PrismaService } from "@prisma1/prisma.service"
@@ -25,10 +27,7 @@ type LineItemToDescriptionLineItem = Pick<
 > & {
   physicalProduct: {
     productVariant: {
-      product: Pick<
-        Product,
-        "name" | "recoupment" | "wholesalePrice" | "rentalPriceOverride"
-      >
+      product: Pick<Product, "name" | "computedRentalPrice">
       displayShort: string
     }
   }
@@ -51,6 +50,7 @@ export const CREATE_RENTAL_INVOICE_LINE_ITEMS_INVOICE_SELECT = Prisma.validator<
               rentalPriceOverride: true,
               wholesalePrice: true,
               recoupment: true,
+              computedRentalPrice: true,
             },
           },
         },
@@ -448,7 +448,16 @@ export class RentalService {
     }
   }
 
-  async createRentalInvoiceLineItems(invoice) {
+  async createRentalInvoiceLineItems(
+    invoice: Pick<RentalInvoice, "id" | "billingStartAt"> & {
+      reservations: (Pick<Reservation, "createdAt"> & {
+        returnPackages: Pick<Package, "deliveredAt" | "amount">[]
+      })[]
+      products: (Pick<PhysicalProduct, "id" | "seasonsUID"> & {
+        productVariant: { product: Pick<Product, "computedRentalPrice"> }
+      })[]
+    }
+  ) {
     const addLineItemBasics = input => ({
       ...input,
       rentalInvoice: { connect: { id: invoice.id } },
@@ -460,15 +469,16 @@ export class RentalService {
           invoice,
           physicalProduct
         )
-        const dailyRentalPrice = this.productUtils.calcRentalPrice(
-          physicalProduct.productVariant.product,
-          "daily"
-        )
+        const rawDailyRentalPrice =
+          physicalProduct.productVariant.product.computedRentalPrice / 30
+        const roundedDailyRentalPriceAsString = rawDailyRentalPrice.toFixed(2)
+        const roundedDailyRentalPrice = +roundedDailyRentalPriceAsString
+
         return addLineItemBasics({
           ...daysRentedMetadata,
           daysRented,
           physicalProduct: { connect: { id: physicalProduct.id } },
-          price: Math.round(daysRented * dailyRentalPrice * 100),
+          price: Math.round(daysRented * roundedDailyRentalPrice * 100),
         }) as Prisma.RentalInvoiceLineItemCreateInput
       })
     )) as any
@@ -694,11 +704,8 @@ export class RentalService {
   private lineItemToDescription(lineItem: LineItemToDescriptionLineItem) {
     const productName = lineItem.physicalProduct.productVariant.product.name
     const displaySize = lineItem.physicalProduct.productVariant.displayShort
-    const monthlyRentalPrice = this.productUtils.calcRentalPrice(
-      lineItem.physicalProduct.productVariant.product,
-      "monthly"
-    )
-
+    const monthlyRentalPrice =
+      lineItem.physicalProduct.productVariant.product.computedRentalPrice
     return `${productName} (${displaySize}) for ${lineItem.daysRented} days at \$${monthlyRentalPrice} per mo.`
   }
 
