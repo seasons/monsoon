@@ -1,25 +1,14 @@
 import { Customer, User } from "@app/decorators"
-import { EmailService } from "@app/modules/Email/services/email.service"
 import { ErrorService } from "@app/modules/Error/services/error.service"
-import { SubscriptionService } from "@app/modules/Payment/services/subscription.service"
 import { TwilioService } from "@app/modules/Twilio/services/twilio.service"
 import { TwilioUtils } from "@app/modules/Twilio/services/twilio.utils.service"
-import { TwilioEvent } from "@app/modules/Twilio/twilio.types.d"
-import { PaymentUtilsService } from "@app/modules/Utils/services/paymentUtils.service"
 import { UtilsService } from "@app/modules/Utils/services/utils.service"
-import { Inject, Injectable, forwardRef } from "@nestjs/common"
+import { Injectable } from "@nestjs/common"
 import { Args } from "@nestjs/graphql"
-import {
-  CustomerStatus,
-  Prisma,
-  SmsStatus,
-  UserVerificationStatus,
-} from "@prisma/client"
+import { Prisma, SmsStatus, UserVerificationStatus } from "@prisma/client"
 import { PrismaService } from "@prisma1/prisma.service"
 import { LinksAndEmails } from "@seasons/wind"
-import moment from "moment"
 import mustache from "mustache"
-import Twilio from "twilio"
 import { PhoneNumberInstance } from "twilio/lib/rest/lookups/v1/phoneNumber"
 import { VerificationCheckInstance } from "twilio/lib/rest/verify/v2/service/verificationCheck"
 
@@ -33,12 +22,8 @@ export class SMSService {
     private readonly prisma: PrismaService,
     private readonly twilio: TwilioService,
     private readonly twilioUtils: TwilioUtils,
-    private readonly paymentUtils: PaymentUtilsService,
     private readonly error: ErrorService,
-    private readonly email: EmailService,
-    private readonly utils: UtilsService,
-    @Inject(forwardRef(() => SubscriptionService))
-    private readonly subscription: SubscriptionService
+    private readonly utils: UtilsService
   ) {}
 
   async startSMSVerification(
@@ -251,229 +236,6 @@ export class SMSService {
     await this.prisma.client.smsReceipt.updateMany({
       data: { status },
       where: { externalId },
-    })
-  }
-
-  async handleSMSResponse(body: TwilioEvent) {
-    const twiml = new Twilio.twiml.MessagingResponse()
-    const genericError = `We're sorry, but we're having technical difficulties. Please contact ${process.env.MAIN_CONTACT_EMAIL}`
-
-    let sendCorrespondingEmailFunc
-    try {
-      let smsCust
-      let status
-      const lowercaseContent = body.Body.toLowerCase().replace(/"/g, "")
-      switch (lowercaseContent) {
-        case "1":
-        case "2":
-        case "3":
-          smsCust = await this.getSMSUser(body.From, "ResumeReminder", {
-            id: true,
-            status: true,
-            user: { select: { firstName: true, email: true, id: true } },
-            membership: {
-              select: {
-                id: true,
-                subscriptionId: true,
-                pauseRequests: {
-                  select: { id: true, resumeDate: true },
-                  orderBy: {
-                    createdAt: "desc",
-                  },
-                },
-              },
-            },
-          })
-          if (!smsCust) {
-            twiml.message(genericError)
-            break
-          }
-
-          status = smsCust.status as CustomerStatus
-          switch (status) {
-            case "Active":
-              twiml.message(
-                `Your account is already active.\n\nIf this is unexpected, please contact ${process.env.MAIN_CONTACT_EMAIL} for assistance.`
-              )
-              break
-            case "Deactivated":
-              twiml.message(
-                `Your account is currently deactivated.\n\nTo reactivate, please contact ${process.env.MAIN_CONTACT_EMAIL}.`
-              )
-              break
-            case "Paused":
-              const pauseRequest = smsCust.membership?.pauseRequests?.[0]
-              if (!pauseRequest) {
-                twiml.message(genericError)
-                break
-              }
-
-              const resumeDateMoment = moment(pauseRequest.resumeDate as string)
-              const now = moment()
-              if (resumeDateMoment.diff(now, "days") < 30) {
-                const numMonthsToExtend = Number(lowercaseContent)
-                const newResumeDate = moment(
-                  pauseRequest.resumeDate as string
-                ).add(numMonthsToExtend, "months")
-
-                await this.paymentUtils.updateResumeDate(
-                  newResumeDate.toISOString(),
-                  smsCust
-                )
-
-                twiml.message(
-                  `Your pause has been extended by ${lowercaseContent} month${
-                    numMonthsToExtend === 1 ? "" : "s"
-                  }! Your new resume date is ${this.formatResumeDate(
-                    newResumeDate
-                  )}.`
-                )
-                sendCorrespondingEmailFunc = async () => {
-                  const custWithUpdatedResumeDate = await this.prisma.client.customer.findUnique(
-                    {
-                      where: { id: smsCust.id },
-                      select: {
-                        id: true,
-                        user: {
-                          select: {
-                            id: true,
-                            email: true,
-                            firstName: true,
-                            lastName: true,
-                          },
-                        },
-                        membership: {
-                          select: {
-                            id: true,
-                            plan: {
-                              select: {
-                                id: true,
-                                tier: true,
-                                planID: true,
-                                itemCount: true,
-                              },
-                            },
-                            pauseRequests: {
-                              select: {
-                                id: true,
-                                createdAt: true,
-                                resumeDate: true,
-                                pauseDate: true,
-                                pauseType: true,
-                              },
-                            },
-                          },
-                        },
-                        reservations: {
-                          select: { id: true, status: true, createdAt: true },
-                        },
-                      },
-                    }
-                  )
-                  return await this.email.sendPausedEmail(
-                    custWithUpdatedResumeDate,
-                    true
-                  )
-                }
-              } else {
-                twiml.message(
-                  `You are scheduled to resume on ${this.formatResumeDate(
-                    resumeDateMoment
-                  )}. We'll reach out then to ask if you'd like to resume or extend your pause.`
-                )
-              }
-              break
-            default:
-              twiml.message(genericError)
-          }
-          break
-        case "resume":
-          smsCust = await this.getSMSUser(body.From, "ResumeReminder", {
-            id: true,
-            status: true,
-            user: {
-              select: {
-                id: true,
-                email: true,
-                firstName: true,
-                lastName: true,
-              },
-            },
-            membership: { select: { id: true, subscriptionId: true } },
-          })
-
-          if (!smsCust) {
-            twiml.message(genericError)
-            break
-          }
-
-          status = smsCust.status as CustomerStatus
-          switch (status) {
-            case "Paused":
-              await this.subscription.resumeSubscription(
-                smsCust.membership.subscriptionId,
-                null,
-                smsCust
-              )
-              sendCorrespondingEmailFunc = async () =>
-                await this.email.sendResumeConfirmationEmail(smsCust.user)
-              twiml.message(
-                `Your membership has been resumed!. You're free to place your next reservation.`
-              )
-              break
-            default:
-              twiml.message(genericError)
-          }
-          break
-        case "stop":
-        case "stopall":
-        case "unsubscribe":
-        case "cancel":
-        case "end":
-        case "quit":
-        case "start":
-        case "yes":
-        case "unstop":
-        case "help":
-        case "info":
-          // Twilio handles these reserved keywords. Do nothing.
-          // https://support.twilio.com/hc/en-us/articles/223134027-Twilio-support-for-opt-out-keywords-SMS-STOP-filtering-
-          break
-        default:
-          twiml.message(
-            `Sorry, we don't recognize that response. Please try again or contact ${process.env.MAIN_CONTACT_EMAIL}`
-          )
-      }
-    } catch (err) {
-      this.error.setExtraContext(body, "twilioEvent")
-      this.error.captureError(err)
-      twiml.message(genericError)
-    }
-
-    await sendCorrespondingEmailFunc?.()
-    return twiml.toString()
-  }
-
-  private formatResumeDate = date => date.format("dddd, MMMM Do")
-
-  private async getSMSUser(
-    from: string,
-    smsId: SMSID,
-    select: Prisma.CustomerSelect
-  ) {
-    return await this.prisma.client.customer.findFirst({
-      where: {
-        AND: [
-          {
-            user: {
-              smsReceipts: { some: { smsId } },
-            },
-          },
-          { detail: { phoneNumber: { contains: from.slice(2) } } },
-        ],
-      },
-      orderBy: { createdAt: "desc" },
-      select,
     })
   }
 
