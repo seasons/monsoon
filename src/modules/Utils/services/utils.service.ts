@@ -5,6 +5,7 @@ import { DateTime } from "@app/prisma/prisma.binding"
 import { Injectable } from "@nestjs/common"
 import {
   AdminActionLog,
+  Category,
   PauseRequest,
   Prisma,
   Product,
@@ -64,14 +65,16 @@ export class UtilsService {
     product: Pick<
       Product,
       "rentalPriceOverride" | "wholesalePrice" | "recoupment"
-    >,
+    > & { category: Pick<Category, "dryCleaningFee"> },
     type: "monthly" | "daily" = "monthly"
   ) {
     let monthlyPrice
     if (product.rentalPriceOverride) {
       monthlyPrice = product.rentalPriceOverride
     } else {
-      const rate = product.wholesalePrice / product.recoupment
+      const rate =
+        product.wholesalePrice / product.recoupment +
+        (product.category.dryCleaningFee || 0)
       monthlyPrice = Math.ceil(rate / 5) * 5
     }
 
