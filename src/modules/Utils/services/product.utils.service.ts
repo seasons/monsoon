@@ -1,3 +1,4 @@
+import { ProductWithPhysicalProducts } from "@app/modules/Product/product.types"
 import { UtilsService } from "@app/modules/Utils/services/utils.service"
 import { ImageData } from "@modules/Image/image.types.d"
 import { Injectable } from "@nestjs/common"
@@ -18,7 +19,6 @@ import { pick } from "lodash"
 import slugify from "slugify"
 
 import { ProductType } from "../../../prisma"
-import { ProductWithPhysicalProducts } from "../product.types.d"
 
 type JPSize = "0" | "1" | "2" | "3" | "4"
 type EUSize = "28" | "30" | "32" | "34" | "36" | "38" | "40" | "42"

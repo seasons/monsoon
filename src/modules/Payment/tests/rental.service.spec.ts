@@ -1,9 +1,10 @@
 import { APP_MODULE_DEF } from "@app/app.module"
 import { ReservationService } from "@app/modules/Reservation"
 import { UtilsService } from "@app/modules/Utils/services/utils.service"
-import { PrismaService, SmartPrismaClient } from "@app/prisma/prisma.service"
+import { PrismaService } from "@app/prisma/prisma.service"
 import { Test } from "@nestjs/testing"
 import { Prisma, ReservationStatus } from "@prisma/client"
+import chargebee from "chargebee"
 import { head, merge } from "lodash"
 import moment from "moment"
 
@@ -16,6 +17,87 @@ import {
 class PaymentServiceMock {
   addEarlySwapCharge = async () => null
   addShippingCharge = async () => {}
+}
+
+enum ChargebeeMockFunction {
+  SubscriptionAddChargeAtTermEnd,
+  SubscriptionAddChargeAtTermEndWithError,
+  InvoiceCreate,
+  SubscriptionRetrieve,
+}
+
+class ChargeBeeMock {
+  constructor(private readonly mockFunction: ChargebeeMockFunction) {}
+
+  private usageLineItems = [
+    {
+      amount: 2300,
+      date_from: 1628741509,
+      date_to: 1630642309,
+      tax_amount: 184,
+      tax_rate: 0.08,
+      description: "Some production description 1",
+      is_taxed: true,
+    },
+    {
+      amount: 3841,
+      date_from: 1628741509,
+      date_to: 1630642309,
+      tax_amount: 307,
+      tax_rate: 0.08,
+      description: "Some product description 2",
+      is_taxed: true,
+    },
+  ]
+
+  async request() {
+    switch (this.mockFunction) {
+      case ChargebeeMockFunction.InvoiceCreate:
+        return {
+          invoice: {
+            id: "17025",
+            customer_id: "ckt3y8o150000zzuv7d7iuesr",
+            recurring: false,
+            status: "paid",
+            total: 6632,
+            amount_paid: 6632,
+            tax: 491,
+            line_items: this.usageLineItems,
+          },
+        }
+      case ChargebeeMockFunction.SubscriptionAddChargeAtTermEnd:
+        return {
+          estimate: {
+            invoice_estimate: {
+              line_items: [
+                ...this.usageLineItems,
+                {
+                  amount: 2500,
+                  date_from: 1628741509,
+                  date_to: 1630642309,
+                  tax_rate: 0.08,
+                  tax_amount: 0,
+                  description: "access-monthly",
+                  tax_exempt_reason: "export",
+                  is_taxed: true,
+                },
+              ],
+            },
+          },
+        }
+      case ChargebeeMockFunction.SubscriptionAddChargeAtTermEndWithError:
+        throw "test error"
+      case ChargebeeMockFunction.SubscriptionRetrieve:
+        return {
+          customer: {},
+          subscription: {
+            next_billing_at: moment().add(5, "days").unix(),
+          },
+        }
+      default:
+        throw "unrecognized function call"
+    }
+  }
 }
 
 let prisma: PrismaService
@@ -44,6 +126,28 @@ describe("Rental Service", () => {
     rentalService = moduleRef.get<RentalService>(RentalService)
     utils = moduleRef.get<UtilsService>(UtilsService)
     reservationService = moduleRef.get<ReservationService>(ReservationService)
+
+    jest
+      .spyOn<any, any>(chargebee.subscription, "add_charge_at_term_end")
+      .mockReturnValue(
+        new ChargeBeeMock(ChargebeeMockFunction.SubscriptionAddChargeAtTermEnd)
+      )
+
+    jest
+      .spyOn<any, any>(chargebee.invoice, "create")
+      .mockReturnValue(new ChargeBeeMock(ChargebeeMockFunction.InvoiceCreate))
+
+    jest
+      .spyOn<any, any>(chargebee.subscription, "add_charge_at_term_end")
+      .mockReturnValue(
+        new ChargeBeeMock(ChargebeeMockFunction.SubscriptionAddChargeAtTermEnd)
+      )
+
+    jest
+      .spyOn<any, any>(chargebee.subscription, "retrieve")
+      .mockReturnValue(
+        new ChargeBeeMock(ChargebeeMockFunction.SubscriptionRetrieve)
+      )
   })
 
   // Bring this back if we get cascading deletes figured out
@@ -554,6 +658,16 @@ describe("Rental Service", () => {
         const reservationThree = await addToBagAndReserveForCustomer(1)
         await setReservationCreatedAt(reservationTwo.id, 2)
 
+        const initialReservationProductSUIDs = initialReservation.newProducts.map(
+          a => a.seasonsUID
+        )
+        const reservationTwoSUIDs = reservationTwo.newProducts.map(
+          b => b.seasonsUID
+        )
+        const reservationThreeSUIDs = reservationThree.newProducts.map(
+          c => c.seasonsUID
+        )
+
         // Override product prices so we can predict the proper price
         const custWithData = (await getCustWithData({
           membership: {
@@ -569,24 +683,30 @@ describe("Rental Service", () => {
         invoicePhysicalProductSUIDs = rentalInvoice.products.map(
           a => a.seasonsUID
         )
+
+        const reservationSUIDsInOrder = [
+          ...initialReservationProductSUIDs,
+          ...reservationTwoSUIDs,
+          ...reservationThreeSUIDs,
+        ]
+        // TODO: Use the new overridePrices func
         for (const [i, overridePrice] of rentalPriceOverrides.entries()) {
           const prodToUpdate = await prisma.client.product.findFirst({
             where: {
               variants: {
                 some: {
                   physicalProducts: {
-                    some: { seasonsUID: invoicePhysicalProductSUIDs[i] },
+                    some: { seasonsUID: reservationSUIDsInOrder[i] },
                   },
                 },
               },
             },
           })
-          const updatedProduct = await prisma.client.product.update({
+          await prisma.client.product.update({
             where: { id: prodToUpdate.id },
             data: { rentalPriceOverride: overridePrice },
             select: { id: true, rentalPriceOverride: true },
           })
-          console.log(updatedProduct)
         }
 
         const rentalInvoiceWithUpdatedPrices = await prisma.client.rentalInvoice.findUnique(
@@ -602,22 +722,23 @@ describe("Rental Service", () => {
         const lineItemsWithData = await prisma.client.rentalInvoiceLineItem.findMany(
           {
             where: { id: { in: (await lineItems).map(a => a.id) } },
-            select: { physicalProduct: { select: { seasonsUID: true } } },
+            select: {
+              physicalProduct: { select: { seasonsUID: true } },
+              daysRented: true,
+              rentalStartedAt: true,
+              rentalEndedAt: true,
+              price: true,
+              taxName: true,
+              taxPercentage: true,
+              taxPrice: true,
+              taxRate: true,
+            },
           }
         )
         lineItemsPhysicalProductSUIDs = lineItemsWithData.map(
           a => a.physicalProduct.seasonsUID
         )
 
-        const initialReservationProductSUIDs = initialReservation.products.map(
-          a => a.seasonsUID
-        )
-        const reservationTwoSUIDs = reservationTwo.products.map(
-          b => b.seasonsUID
-        )
-        const reservationThreeSUIDs = reservationThree.products.map(
-          c => c.seasonsUID
-        )
         lineItemsBySUID = lineItemsWithData.reduce((acc, curVal) => {
           return { ...acc, [curVal.physicalProduct.seasonsUID]: curVal }
         }, {})
@@ -626,19 +747,19 @@ describe("Rental Service", () => {
             daysRented: 23,
             rentalStartedAt: utils.xDaysAgoISOString(23),
             rentalEndedAt: now,
-            price: 23,
+            price: 2300,
           },
           [initialReservationProductSUIDs[1]]: {
             daysRented: 23,
             rentalStartedAt: utils.xDaysAgoISOString(23),
             rentalEndedAt: now,
-            price: 38.41,
+            price: 3841,
           },
           [reservationTwoSUIDs[0]]: {
             daysRented: 9,
             rentalStartedAt: utils.xDaysAgoISOString(9),
             rentalEndedAt: now,
-            price: 24.03,
+            price: 2403,
           },
           [reservationThreeSUIDs[0]]: {
             daysRented: 0,
@@ -665,27 +786,464 @@ describe("Rental Service", () => {
 
       it("Stores the proper values for rentalStartedAt and rentalEndedAt", () => {
         for (const suid of invoicePhysicalProductSUIDs) {
-          expectTimeToEqual(
-            lineItemsBySUID["rentalStartedAt"],
-            expectedResultsBySUID[suid].rentalStartedAt
-          )
-          expectTimeToEqual(
-            lineItemsBySUID["rentalEndedAt"],
-            expectedResultsBySUID[suid].rentalEndedAt
-          )
+          const testStart = lineItemsBySUID[suid]["rentalStartedAt"]
+          const expectedStart = expectedResultsBySUID[suid].rentalStartedAt
+          const testEnd = lineItemsBySUID[suid]["rentalEndedAt"]
+          const expectedEnd = expectedResultsBySUID[suid].rentalEndedAt
+          expectTimeToEqual(testStart, expectedStart)
+          expectTimeToEqual(testEnd, expectedEnd)
         }
       })
 
       it("Stores the proper price", () => {
         for (const suid of invoicePhysicalProductSUIDs) {
-          expect(lineItemsBySUID[suid].price).toEqual(
-            expectedResultsBySUID[suid].price
-          )
+          const testPrice = lineItemsBySUID[suid].price
+          const expectedPrice = expectedResultsBySUID[suid].price
+          expect(testPrice).toEqual(expectedPrice)
         }
       })
 
-      it("Stores the proper taxes", () => {
-        expect(0).toBe(1)
+      it("Doesn't set the taxes on them", () => {
+        for (const suid of invoicePhysicalProductSUIDs) {
+          expect(lineItemsBySUID[suid].taxPrice).toBe(null)
+          expect(lineItemsBySUID[suid].taxRate).toBe(null)
+          expect(lineItemsBySUID[suid].taxPercentage).toBe(null)
+          expect(lineItemsBySUID[suid].taxName).toBe(null)
+        }
+      })
+    })
+  })
+
+  // TODO: Add case for a rental invoice with no line items
+  describe("Charge customer", () => {
+    let rentalInvoiceToBeBilled
+    let billedRentalInvoice
+    let customerRentalInvoicesAfterBilling
+    let lineItems
+    let initialReservationProductSUIDs
+
+    describe("Properly charges an access-monthly customer", () => {
+      let addedCharges = []
+      let lineItemsWithDataAfterCharging
+      let lineItemsBySUID
+      let expectedResultsBySUID
+
+      beforeAll(async () => {
+        const { cleanupFunc, customer } = await createTestCustomer({
+          select: testCustomerSelect,
+        })
+        cleanupFuncs.push(cleanupFunc)
+        testCustomer = customer
+
+        const initialReservation = await addToBagAndReserveForCustomer(2)
+        await setReservationCreatedAt(initialReservation.id, 25)
+        await setPackageDeliveredAt(initialReservation.sentPackage.id, 23)
+        await setReservationStatus(initialReservation.id, "Delivered")
+
+        const custWithData = (await getCustWithData({
+          membership: {
+            select: {
+              rentalInvoices: {
+                select: CREATE_RENTAL_INVOICE_LINE_ITEMS_INVOICE_SELECT,
+              },
+            },
+          },
+        })) as any
+
+        initialReservationProductSUIDs = initialReservation.products.map(
+          a => a.seasonsUID
+        )
+        await overridePrices(initialReservationProductSUIDs, [30, 50])
+        rentalInvoiceToBeBilled = await prisma.client.rentalInvoice.findUnique({
+          where: { id: custWithData.membership.rentalInvoices[0].id },
+          select: CREATE_RENTAL_INVOICE_LINE_ITEMS_INVOICE_SELECT,
+        })
+
+        lineItems = await rentalService.createRentalInvoiceLineItems(
+          rentalInvoiceToBeBilled
+        )
+
+        await setCustomerPlanType("access-monthly")
+        addedCharges = await rentalService.chargeTab(
+          "access-monthly",
+          rentalInvoiceToBeBilled,
+          lineItems
+        )
+        billedRentalInvoice = await prisma.client.rentalInvoice.findUnique({
+          where: { id: rentalInvoiceToBeBilled.id },
+          select: { id: true, status: true },
+        })
+
+        const custWithUpdatedData = (await getCustWithData({
+          membership: {
+            select: {
+              rentalInvoices: {
+                select: CREATE_RENTAL_INVOICE_LINE_ITEMS_INVOICE_SELECT,
+                orderBy: { createdAt: "desc" },
+              },
+            },
+          },
+        })) as any
+        customerRentalInvoicesAfterBilling =
+          custWithUpdatedData.membership.rentalInvoices
+
+        lineItemsWithDataAfterCharging = await prisma.client.rentalInvoiceLineItem.findMany(
+          {
+            where: { id: { in: lineItems.map(a => a.id) } },
+            select: {
+              taxPrice: true,
+              taxRate: true,
+              physicalProduct: { select: { seasonsUID: true } },
+            },
+          }
+        )
+
+        lineItemsBySUID = lineItemsWithDataAfterCharging.reduce(
+          (acc, curVal) => {
+            return { ...acc, [curVal.physicalProduct.seasonsUID]: curVal }
+          },
+          {}
+        )
+        expectedResultsBySUID = {
+          [initialReservationProductSUIDs[0]]: {
+            taxPrice: 184,
+            taxRate: 0.08,
+          },
+          [initialReservationProductSUIDs[1]]: {
+            taxPrice: 307,
+            taxRate: 0.08,
+          },
+        }
+      })
+
+      it("Creates a charge for each line item", () => {
+        expect(addedCharges.length).toBe(2)
+      })
+
+      it("Marks their current rental invoice as billed", () => {
+        expect(billedRentalInvoice.status).toBe("Billed")
+      })
+
+      it("Initializes their next rental invoice", () => {
+        expect(customerRentalInvoicesAfterBilling.length).toBe(2)
+        expect(customerRentalInvoicesAfterBilling[0].status).toBe("Draft")
+        expect(customerRentalInvoicesAfterBilling[1].status).toBe("Billed")
+      })
+
+      it("Adds taxes to the line items", () => {
+        for (const suid of initialReservationProductSUIDs) {
+          expect(lineItemsBySUID[suid].taxPrice).toEqual(
+            expectedResultsBySUID[suid].taxPrice
+          )
+          expect(lineItemsBySUID[suid].taxRate).toEqual(
+            expectedResultsBySUID[suid].taxRate
+          )
+        }
+      })
+    })
+
+    describe("Properly charges an access-annual customer", () => {
+      let addedCharges
+      let lineItemsWithDataAfterCharging
+      let lineItemsBySUID
+      let expectedResultsBySUID
+
+      beforeAll(async () => {
+        const { cleanupFunc, customer } = await createTestCustomer({
+          select: testCustomerSelect,
+        })
+        cleanupFuncs.push(cleanupFunc)
+        testCustomer = customer
+
+        const initialReservation = await addToBagAndReserveForCustomer(2)
+        await setReservationCreatedAt(initialReservation.id, 25)
+        await setPackageDeliveredAt(initialReservation.sentPackage.id, 23)
+        await setReservationStatus(initialReservation.id, "Delivered")
+
+        // Override product prices so we can predict the proper price
+        const custWithData = (await getCustWithData({
+          membership: {
+            select: {
+              rentalInvoices: {
+                select: CREATE_RENTAL_INVOICE_LINE_ITEMS_INVOICE_SELECT,
+              },
+            },
+          },
+        })) as any
+
+        initialReservationProductSUIDs = initialReservation.products.map(
+          a => a.seasonsUID
+        )
+        await overridePrices(initialReservationProductSUIDs, [30, 50])
+        rentalInvoiceToBeBilled = await prisma.client.rentalInvoice.findUnique({
+          where: { id: custWithData.membership.rentalInvoices[0].id },
+          select: CREATE_RENTAL_INVOICE_LINE_ITEMS_INVOICE_SELECT,
+        })
+
+        lineItems = await rentalService.createRentalInvoiceLineItems(
+          rentalInvoiceToBeBilled
+        )
+
+        await setCustomerPlanType("access-yearly")
+        addedCharges = await rentalService.chargeTab(
+          "access-yearly",
+          rentalInvoiceToBeBilled,
+          lineItems
+        )
+
+        billedRentalInvoice = await prisma.client.rentalInvoice.findUnique({
+          where: { id: rentalInvoiceToBeBilled.id },
+          select: { id: true, status: true },
+        })
+
+        const custWithUpdatedData = (await getCustWithData({
+          membership: {
+            select: {
+              rentalInvoices: {
+                select: CREATE_RENTAL_INVOICE_LINE_ITEMS_INVOICE_SELECT,
+                orderBy: { createdAt: "desc" },
+              },
+            },
+          },
+        })) as any
+        customerRentalInvoicesAfterBilling =
+          custWithUpdatedData.membership.rentalInvoices
+
+        lineItemsWithDataAfterCharging = await prisma.client.rentalInvoiceLineItem.findMany(
+          {
+            where: { id: { in: lineItems.map(a => a.id) } },
+            select: {
+              taxPrice: true,
+              taxRate: true,
+              physicalProduct: { select: { seasonsUID: true } },
+            },
+          }
+        )
+
+        lineItemsBySUID = lineItemsWithDataAfterCharging.reduce(
+          (acc, curVal) => {
+            return { ...acc, [curVal.physicalProduct.seasonsUID]: curVal }
+          },
+          {}
+        )
+        expectedResultsBySUID = {
+          [initialReservationProductSUIDs[0]]: {
+            taxPrice: 184,
+            taxRate: 0.08,
+          },
+          [initialReservationProductSUIDs[1]]: {
+            taxPrice: 307,
+            taxRate: 0.08,
+          },
+        }
+      })
+
+      it("Creates a single chargebee invoice for the whole RentalInvoice", () => {
+        expect(addedCharges.length).toBe(1)
+      })
+
+      it("Marks their current rental invoice as billed", () => {
+        expect(billedRentalInvoice.status).toBe("Billed")
+      })
+
+      it("Initializes their next rental invoice", () => {
+        expect(customerRentalInvoicesAfterBilling.length).toBe(2)
+        expect(customerRentalInvoicesAfterBilling[0].status).toBe("Draft")
+        expect(customerRentalInvoicesAfterBilling[1].status).toBe("Billed")
+      })
+
+      it("Adds taxes to the line items", () => {
+        for (const suid of initialReservationProductSUIDs) {
+          expect(lineItemsBySUID[suid].taxPrice).toEqual(
+            expectedResultsBySUID[suid].taxPrice
+          )
+          expect(lineItemsBySUID[suid].taxRate).toEqual(
+            expectedResultsBySUID[suid].taxRate
+          )
+        }
+      })
+    })
+
+    describe("Properly handles an error", () => {
+      beforeAll(async () => {
+        const { cleanupFunc, customer } = await createTestCustomer({
+          select: testCustomerSelect,
+        })
+        cleanupFuncs.push(cleanupFunc)
+        testCustomer = customer
+
+        const custWithData = (await getCustWithData({
+          membership: {
+            select: {
+              rentalInvoices: {
+                select: CREATE_RENTAL_INVOICE_LINE_ITEMS_INVOICE_SELECT,
+              },
+            },
+          },
+        })) as any
+
+        rentalInvoiceToBeBilled = await prisma.client.rentalInvoice.findUnique({
+          where: { id: custWithData.membership.rentalInvoices[0].id },
+          select: CREATE_RENTAL_INVOICE_LINE_ITEMS_INVOICE_SELECT,
+        })
+        lineItems = await rentalService.createRentalInvoiceLineItems(
+          rentalInvoiceToBeBilled
+        )
+
+        await setCustomerPlanType("access-monthly")
+        await rentalService.chargeTab(
+          "access-monthly",
+          rentalInvoiceToBeBilled,
+          lineItems
+        )
+
+        billedRentalInvoice = await prisma.client.rentalInvoice.findUnique({
+          where: { id: rentalInvoiceToBeBilled.id },
+          select: { id: true, status: true },
+        })
+
+        const custWithUpdatedData = (await getCustWithData({
+          membership: {
+            select: {
+              rentalInvoices: {
+                select: CREATE_RENTAL_INVOICE_LINE_ITEMS_INVOICE_SELECT,
+                orderBy: { createdAt: "desc" },
+              },
+            },
+          },
+        })) as any
+        customerRentalInvoicesAfterBilling =
+          custWithUpdatedData.membership.rentalInvoices
+      })
+
+      it("Marks the current rental invoice as ChargeFailed", () => {
+        expect(billedRentalInvoice.status).toBe("ChargeFailed")
+      })
+
+      it("Initializes their next rental invoice", () => {
+        expect(customerRentalInvoicesAfterBilling.length).toBe(2)
+        expect(customerRentalInvoicesAfterBilling[0].status).toBe("Draft")
+        expect(customerRentalInvoicesAfterBilling[1].status).toBe(
+          "ChargeFailed"
+        )
+      })
+    })
+  })
+
+  describe("Initialize rental invoice", () => {
+    /*
+    Creates it correctly the first time around
+      no reservations
+      no products
+      proper membership, billing start at, billing end at
+
+    Creates it correctly when the customer has a complex reservation history
+      only reserved bag items for physical products
+      only active reservations get carried over
+      proper membership, billing start at, billing end at
+
+
+
+    */
+  })
+
+  describe("GetRentalInvoiceBillingEndAt", () => {
+    let rentalInvoiceBillingEndAt: Date
+    let custWithData
+
+    beforeAll(async () => {
+      const { cleanupFunc, customer } = await createTestCustomer({
+        select: testCustomerSelect,
+      })
+      cleanupFuncs.push(cleanupFunc)
+      testCustomer = customer
+    })
+
+    describe("Access Monthly Customers", () => {
+      beforeAll(async () => {
+        await setCustomerPlanType("access-monthly")
+        custWithData = (await getCustWithData({
+          membership: {
+            select: {
+              id: true,
+            },
+          },
+        })) as any
+      })
+
+      it("queries chargebee and uses next_billing_at (minus 1)", async () => {
+        rentalInvoiceBillingEndAt = await rentalService.getRentalInvoiceBillingEndAt(
+          custWithData.membership.id,
+          null
+        )
+        expect(rentalInvoiceBillingEndAt).toBe(utils.xDaysFromNowISOString(4))
+      })
+    })
+
+    describe("Access Annual Customers", () => {
+      beforeAll(async () => {
+        await setCustomerPlanType("access-yearly")
+        custWithData = (await getCustWithData({
+          membership: {
+            select: {
+              id: true,
+            },
+          },
+        })) as any
+      })
+
+      it("If the next month has the start date's date, it uses that", async () => {
+        const februarySeventh2021 = new Date(2021, 1, 7)
+        rentalInvoiceBillingEndAt = await rentalService.getRentalInvoiceBillingEndAt(
+          custWithData.membership.id,
+          februarySeventh2021
+        )
+        expectTimeToEqual(rentalInvoiceBillingEndAt, new Date(2021, 2, 7))
+      })
+
+      it("If the start date is the 31st and the next month only has 30 days, it uses 30", async () => {
+        const marchThirtyFirst2021 = new Date(2021, 2, 31)
+        rentalInvoiceBillingEndAt = await rentalService.getRentalInvoiceBillingEndAt(
+          custWithData.membership.id,
+          marchThirtyFirst2021
+        )
+        expectTimeToEqual(rentalInvoiceBillingEndAt, new Date(2021, 3, 30))
+      })
+
+      it("If the start date is 30 and the next month is February in a non leap year, it uses the 28th", async () => {
+        const januaryThirty2021 = new Date(2021, 0, 30)
+        rentalInvoiceBillingEndAt = await rentalService.getRentalInvoiceBillingEndAt(
+          custWithData.membership.id,
+          januaryThirty2021
+        )
+        expectTimeToEqual(rentalInvoiceBillingEndAt, new Date(2021, 1, 28))
+      })
+
+      it("If the start date is 30 and the next month is February in a leap year, it uses the 29th", async () => {
+        const januaryThirty2024 = new Date(2024, 0, 30)
+        rentalInvoiceBillingEndAt = await rentalService.getRentalInvoiceBillingEndAt(
+          custWithData.membership.id,
+          januaryThirty2024
+        )
+        expectTimeToEqual(rentalInvoiceBillingEndAt, new Date(2024, 1, 29))
+      })
+
+      it("If the start date is 29 and the next month is February in a leap year, it uses the 29th", async () => {
+        const januaryTwentyNine2024 = new Date(2024, 0, 29)
+        rentalInvoiceBillingEndAt = await rentalService.getRentalInvoiceBillingEndAt(
+          custWithData.membership.id,
+          januaryTwentyNine2024
+        )
+        expectTimeToEqual(rentalInvoiceBillingEndAt, new Date(2024, 1, 29))
+      })
+
+      it("If the start date is in december, it creates the billing end at date in the following year", async () => {
+        const decemberThirtyOne2021 = new Date(2021, 11, 31)
+        rentalInvoiceBillingEndAt = await rentalService.getRentalInvoiceBillingEndAt(
+          custWithData.membership.id,
+          decemberThirtyOne2021
+        )
+        expectTimeToEqual(rentalInvoiceBillingEndAt, new Date(2022, 0, 31))
       })
     })
   })
@@ -701,6 +1259,7 @@ const createTestCustomer = async ({
   const upsGroundMethod = await prisma.client.shippingMethod.findFirst({
     where: { code: "UPSGround" },
   })
+  const chargebeeSubscriptionId = utils.randomString()
   const defaultCreateData = {
     status: "Active",
     user: {
@@ -731,12 +1290,23 @@ const createTestCustomer = async ({
     },
     membership: {
       create: {
-        subscriptionId: utils.randomString(),
+        subscriptionId: chargebeeSubscriptionId,
         plan: { connect: { planID: "access-monthly" } },
         rentalInvoices: {
           create: {
             billingStartAt: utils.xDaysAgoISOString(30),
             billingEndAt: new Date(),
+          },
+        },
+        subscription: {
+          create: {
+            planID: "access-monthly",
+            subscriptionId: chargebeeSubscriptionId,
+            currentTermStart: utils.xDaysAgoISOString(1),
+            currentTermEnd: utils.xDaysFromNowISOString(1),
+            nextBillingAt: utils.xDaysFromNowISOString(1),
+            status: "Active",
+            planPrice: 2000,
           },
         },
       },
@@ -750,6 +1320,15 @@ const createTestCustomer = async ({
   const cleanupFunc = async () =>
     prisma.client.customer.delete({ where: { id: customer.id } })
   return { cleanupFunc, customer }
+}
+
+const setCustomerPlanType = async (
+  planID: "access-monthly" | "access-yearly"
+) => {
+  await prisma.client.customer.update({
+    where: { id: testCustomer.id },
+    data: { membership: { update: { plan: { connect: { planID } } } } },
+  })
 }
 
 const addToBagAndReserveForCustomer = async numProductsToAdd => {
@@ -769,18 +1348,30 @@ const addToBagAndReserveForCustomer = async numProductsToAdd => {
   const reservedProductIds = reservedBagItems.map(
     b => b.productVariant.product.id
   )
-  const reservableProdVars = await prisma.client.productVariant.findMany({
-    where: {
-      reservable: { gte: 1 },
-      sku: { notIn: reservedSKUs },
-      // Ensure we reserve diff products each time. Needed for some tests
-      product: { id: { notIn: reservedProductIds } },
-      // We shouldn't need to check this since we're checking counts,
-      // but there's some corrupt data so we do this to circumvent that.
-      physicalProducts: { some: { inventoryStatus: "Reservable" } },
-    },
-    take: numProductsToAdd,
-  })
+  let reservableProdVars = []
+  let reservableProductIds = []
+  for (let i = 0; i < numProductsToAdd; i++) {
+    const nextProdVar = await prisma.client.productVariant.findFirst({
+      where: {
+        reservable: { gte: 1 },
+        sku: { notIn: reservedSKUs },
+        // Ensure we reserve diff products each time. Needed for some tests
+        product: {
+          id: { notIn: [...reservedProductIds, ...reservableProductIds] },
+        },
+        // We shouldn't need to check this since we're checking counts,
+        // but there's some corrupt data so we do this to circumvent that.
+        physicalProducts: { some: { inventoryStatus: "Reservable" } },
+      },
+      take: numProductsToAdd,
+      select: {
+        id: true,
+        productId: true,
+      },
+    })
+    reservableProdVars.push(nextProdVar)
+    reservableProductIds.push(nextProdVar.productId)
+  }
   for (const prodVar of reservableProdVars) {
     await prisma.client.bagItem.create({
       data: {
@@ -809,6 +1400,7 @@ const addToBagAndReserveForCustomer = async numProductsToAdd => {
     {
       reservationNumber: true,
       products: { select: { seasonsUID: true } },
+      newProducts: { select: { seasonsUID: true } },
       sentPackage: { select: { id: true } },
       returnPackages: {
         select: {
@@ -899,4 +1491,28 @@ const expectTimeToEqual = (time, expectedValue) => {
     expect(time).toBe(expectedValue)
   }
   expect(moment(time).format("ll")).toEqual(moment(expectedValue).format("ll"))
+}
+
+const overridePrices = async (seasonsUIDs, prices) => {
+  if (seasonsUIDs.length !== prices.length) {
+    throw "must pass in same length arrays"
+  }
+  for (const [i, overridePrice] of prices.entries()) {
+    const prodToUpdate = await prisma.client.product.findFirst({
+      where: {
+        variants: {
+          some: {
+            physicalProducts: {
+              some: { seasonsUID: seasonsUIDs[i] },
+            },
+          },
+        },
+      },
+    })
+    await prisma.client.product.update({
+      where: { id: prodToUpdate.id },
+      data: { rentalPriceOverride: overridePrice },
+      select: { id: true, rentalPriceOverride: true },
+    })
+  }
 }

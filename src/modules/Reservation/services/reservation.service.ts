@@ -1,7 +1,9 @@
 import { ErrorService } from "@app/modules/Error/services/error.service"
 import { PaymentService } from "@app/modules/Payment/services/payment.service"
+import { ProductVariantService } from "@app/modules/Product/services/productVariant.service"
 import { PushNotificationService } from "@app/modules/PushNotification"
 import { CustomerUtilsService } from "@app/modules/User/services/customer.utils.service"
+import { ProductUtilsService } from "@app/modules/Utils/services/product.utils.service"
 import { StatementsService } from "@app/modules/Utils/services/statements.service"
 import { UtilsService } from "@app/modules/Utils/services/utils.service"
 import {
@@ -10,7 +12,6 @@ import {
   ShippingCode,
 } from "@app/prisma"
 import { EmailService } from "@modules/Email/services/email.service"
-import { ProductUtilsService, ProductVariantService } from "@modules/Product"
 import { ShippingService } from "@modules/Shipping/services/shipping.service"
 import { Injectable } from "@nestjs/common"
 import {
@@ -28,8 +29,7 @@ import { PrismaService } from "@prisma1/prisma.service"
 import { ApolloError } from "apollo-server"
 import chargebee from "chargebee"
 import cuid from "cuid"
-import { intersection } from "lodash"
-import { merge } from "lodash"
+import { intersection, merge } from "lodash"
 import { DateTime } from "luxon"
 
 import { ReservationUtilsService } from "./reservation.utils.service"

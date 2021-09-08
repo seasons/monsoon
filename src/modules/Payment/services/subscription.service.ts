@@ -1,6 +1,7 @@
 import { SegmentService } from "@app/modules/Analytics/services/segment.service"
 import { ErrorService } from "@app/modules/Error/services/error.service"
 import { PaymentUtilsService } from "@app/modules/Utils/services/paymentUtils.service"
+import { TimeUtilsService } from "@app/modules/Utils/services/time.service"
 import { EmailService } from "@modules/Email/services/email.service"
 import { Injectable } from "@nestjs/common"
 import { Customer, PauseType, PaymentPlan, User } from "@prisma/client"
@@ -11,6 +12,7 @@ import { head, orderBy, pick } from "lodash"
 import { DateTime } from "luxon"
 
 import { BillingAddress, Card } from "../payment.types"
+import { RentalService } from "./rental.service"
 
 export interface SubscriptionData {
   nextBillingAt: string
@@ -29,7 +31,8 @@ export class SubscriptionService {
     private readonly emailService: EmailService,
     private readonly paymentUtils: PaymentUtilsService,
     private readonly error: ErrorService,
-    private readonly segment: SegmentService
+    private readonly segment: SegmentService,
+    private readonly rental: RentalService
   ) {}
 
   async subscriptionEstimate(
@@ -472,6 +475,8 @@ export class SubscriptionService {
       data: updateData,
     })
 
+    await this.rental.initFirstRentalInvoice(customer.id)
+
     // Send welcome to seasons email
     await this.emailService.sendSubscribedEmail(customer.user)
   }
@@ -523,10 +528,12 @@ export class SubscriptionService {
     user: User,
     card: Card
   ) {
+    const start_date = this.paymentUtils.getSubscriptionStartDate()
     return await chargebee.subscription
       .create({
         plan_id: planID,
         billingAddress,
+        start_date,
         customer: {
           id: user.id,
           first_name: user.firstName,

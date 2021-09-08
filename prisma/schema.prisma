@@ -924,6 +924,7 @@ model OrderLineItem {
 enum RentalInvoiceStatus {
   Draft
   Billed
+  ChargeFailed
 }
 
 model RentalInvoice {
@@ -954,8 +955,10 @@ model RentalInvoiceLineItem {
   taxName           String?
   taxPercentage     Float?
   taxPrice          Int?
-  price             Float
+  price             Int
   currencyCode      String
+
+  @@unique([physicalProductId, rentalInvoiceId])
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

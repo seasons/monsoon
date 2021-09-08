@@ -1,11 +1,9 @@
 import { EmailService } from "@app/modules/Email/services/email.service"
 import { ErrorService } from "@app/modules/Error/services/error.service"
-import {
-  ProductUtilsService,
-  ProductVariantService,
-} from "@app/modules/Product"
 import { BagService } from "@app/modules/Product/services/bag.service"
+import { ProductVariantService } from "@app/modules/Product/services/productVariant.service"
 import { ShopifyService } from "@app/modules/Shopify/services/shopify.service"
+import { ProductUtilsService } from "@app/modules/Utils/services/product.utils.service"
 import { ShippingService } from "@modules/Shipping/services/shipping.service"
 import { Injectable } from "@nestjs/common"
 import {
