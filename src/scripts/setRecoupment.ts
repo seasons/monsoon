@@ -6,8 +6,9 @@ const run = async () => {
   const ps = new PrismaService()
 
   await ps.client.product.updateMany({
+    where: { recoupment: 4 },
     data: {
-      recoupment: 4,
+      recoupment: null,
     },
   })
 }

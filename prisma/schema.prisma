@@ -1112,7 +1112,7 @@ model Product {
   wholesalePrice              Int?
   rentalPriceOverride         Int?
   computedRentalPrice         Int?
-  recoupment                  Float?                   @default(4)
+  recoupment                  Float?                   
   status                      ProductStatus?
   createdAt                   DateTime                 @default(now())
   updatedAt                   DateTime                 @updatedAt

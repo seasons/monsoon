@@ -44,11 +44,13 @@ export class ProductUtilsService {
     product: Pick<
       Product,
       "rentalPriceOverride" | "wholesalePrice" | "recoupment"
-    > & { category: Pick<Category, "dryCleaningFee"> },
+    > & { category: Pick<Category, "dryCleaningFee" | "recoupment"> },
     options: { ignoreOverride?: boolean } = {}
   ) {
     let monthlyPriceInDollars
     const { ignoreOverride = false } = options
+
+    const recoupment = product.recoupment || product.category.recoupment
 
     // Manually ensure everything is in cents for now. Need to go back and
     // get all price values in the DB into cents
@@ -63,7 +65,7 @@ export class ProductUtilsService {
       monthlyPriceInCents = rentalPriceOverrideCents
     } else {
       monthlyPriceInCents =
-        wholesalePriceCents / product.recoupment + dryCleaningFeeCents
+        wholesalePriceCents / recoupment + dryCleaningFeeCents
     }
     monthlyPriceInDollars = roundToNearestMultipleOfFive(
       monthlyPriceInCents / 100

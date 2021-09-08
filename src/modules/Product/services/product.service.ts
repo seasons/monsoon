@@ -644,7 +644,9 @@ export class ProductService {
         brand: { select: { id: true, brandCode: true } },
         color: { select: { id: true, name: true } },
         season: { select: { id: true } },
-        category: { select: { id: true, dryCleaningFee: true } },
+        category: {
+          select: { id: true, dryCleaningFee: true, recoupment: true },
+        },
         functions: { select: { name: true } },
         tags: { select: { name: true } },
         recoupment: true,
@@ -729,7 +731,10 @@ export class ProductService {
           wholesalePrice: updateData.wholesalePrice || product.wholesalePrice,
           rentalPriceOverride:
             updateData.rentalPriceOverride || product.rentalPriceOverride,
-          category: { dryCleaningFee: product.category.dryCleaningFee },
+          category: {
+            dryCleaningFee: product.category.dryCleaningFee,
+            recoupment: product.category.recoupment,
+          },
         },
         { ignoreOverride: false }
       )
