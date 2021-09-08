@@ -2,7 +2,6 @@ import { EmailService } from "@app/modules/Email/services/email.service"
 import { ErrorService } from "@app/modules/Error/services/error.service"
 import { SubscriptionService } from "@app/modules/Payment/services/subscription.service"
 import { SMSService } from "@app/modules/SMS/services/sms.service"
-import { PaymentUtilsService } from "@app/modules/Utils/services/paymentUtils.service"
 import { UtilsService } from "@app/modules/Utils/services/utils.service"
 import { PrismaService } from "@modules/../prisma/prisma.service"
 import { Injectable, Logger } from "@nestjs/common"
@@ -19,7 +18,6 @@ export class MembershipScheduledJobs {
 
   constructor(
     private readonly prisma: PrismaService,
-    private readonly paymentUtils: PaymentUtilsService,
     private readonly email: EmailService,
     private readonly sms: SMSService,
     private readonly utils: UtilsService,
@@ -236,15 +234,6 @@ export class MembershipScheduledJobs {
 
   async sendReminderComms(customer, pauseRequest) {
     if (!pauseRequest.notified) {
-      await this.sms.sendSMSById({
-        to: { id: customer.user.id },
-        renderData: {
-          name: customer.user.firstName,
-          resumeDate: moment(pauseRequest.resumeDate).format("dddd, MMMM Do"),
-        },
-        smsId: "ResumeReminder",
-      })
-
       await this.email.sendResumeReminderEmail(
         customer.user,
         pauseRequest.resumeDate

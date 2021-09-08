@@ -7,6 +7,7 @@ import {
   AdminActionLog,
   PauseRequest,
   Prisma,
+  Product,
   SyncTimingType,
 } from "@prisma/client"
 import { Location } from "@prisma/client"
@@ -56,6 +57,33 @@ export class UtilsService {
     utm_campaign: utm?.campaign,
     utm_term: utm?.term,
   })
+
+  // TODO: When we merge in the remainder of the billing code, which fixes the circular dependencies
+  // around the product utils service, deprecate this in favor of using the product utils func
+  calcRentalPrice(
+    product: Pick<
+      Product,
+      "rentalPriceOverride" | "wholesalePrice" | "recoupment"
+    >,
+    type: "monthly" | "daily" = "monthly"
+  ) {
+    let monthlyPrice
+    if (product.rentalPriceOverride) {
+      monthlyPrice = product.rentalPriceOverride
+    } else {
+      const rate = product.wholesalePrice / product.recoupment
+      monthlyPrice = Math.ceil(rate / 5) * 5
+    }
+
+    if (type === "daily") {
+      // the + turns e.g '1.50' into 1.5
+      const roundedPriceAsString = (monthlyPrice / 30).toFixed(2)
+      const roundedPriceAsNum = +roundedPriceAsString
+      return roundedPriceAsNum
+    }
+
+    return monthlyPrice
+  }
 
   abbreviateState(state: string) {
     if (state.length === 2) {

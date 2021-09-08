@@ -1111,6 +1111,7 @@ model Product {
   retailPrice                 Int?
   wholesalePrice              Int?
   rentalPriceOverride         Int?
+  computedRentalPrice         Int?
   recoupment                  Float?                   @default(4)
   status                      ProductStatus?
   createdAt                   DateTime                 @default(now())

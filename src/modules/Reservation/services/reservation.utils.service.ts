@@ -42,12 +42,9 @@ export class ReservationUtilsService {
       a => a.shippingLabel.trackingNumber === trackingNumber
     )
     if (!packageToUpdate) {
-      // TODO: Once we get the frontend to send this value, we should no longer default
-      // to the first return package. We should instead throw the error outlined below.
-      packageToUpdate = head(prismaReservation.returnPackages)
-      // throw new Error(
-      //   `No return package found with tracking number: ${trackingNumber}`
-      // )
+      throw new Error(
+        `No return package found with tracking number: ${trackingNumber}`
+      )
     }
     return [
       this.prisma.client.package.update({
