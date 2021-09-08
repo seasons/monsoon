@@ -9,7 +9,9 @@
     "node": "14.x"
   },
   "resolutions": {
-    "graphql": "14.5.7"
+    "graphql": "14.5.7",
+    "**/**/fs-capacitor": "^6.2.0",
+    "**/graphql-upload": "^11.0.0"
   },
   "scripts": {
     "apollo": "apollo service:push",
