@@ -137,10 +137,14 @@ export class ReservationFieldsResolver {
     const mostRecentReturnedPackage = head(
       reservationWithReturnPackages.returnPackages
     )
-    const returnedPackageWithData = await returnedPackageLoader.load(
-      mostRecentReturnedPackage.id
-    )
-    return returnedPackageWithData
+    if (mostRecentReturnedPackage) {
+      const returnedPackageWithData = await returnedPackageLoader.load(
+        mostRecentReturnedPackage.id
+      )
+      return returnedPackageWithData
+    } else {
+      return null
+    }
   }
 
   @ResolveField()

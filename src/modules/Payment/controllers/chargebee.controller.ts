@@ -1,7 +1,6 @@
 import { SegmentService } from "@app/modules/Analytics/services/segment.service"
 import { EmailService } from "@app/modules/Email/services/email.service"
 import { ErrorService } from "@app/modules/Error/services/error.service"
-import { PaymentUtilsService } from "@app/modules/Utils/services/paymentUtils.service"
 import { StatementsService } from "@app/modules/Utils/services/statements.service"
 import { UtilsService } from "@app/modules/Utils/services/utils.service"
 import { PrismaService } from "@app/prisma/prisma.service"
@@ -11,6 +10,7 @@ import chargebee from "chargebee"
 import { pick } from "lodash"
 
 import { PaymentService } from "../services/payment.service"
+import { RentalService } from "../services/rental.service"
 
 export type ChargebeeEvent = {
   content: any
@@ -36,7 +36,7 @@ export class ChargebeeController {
     private readonly email: EmailService,
     private readonly utils: UtilsService,
     private readonly statements: StatementsService,
-    private readonly paymentUtils: PaymentUtilsService
+    private readonly rental: RentalService
   ) {}
 
   @Post()
@@ -255,30 +255,13 @@ export class ChargebeeController {
   private async chargebeeSubscriptionCreated(content: any) {
     const { customer } = content
 
-    const customerWithData = await this.prisma.client.customer.findFirst({
+    const prismaCustomer = await this.prisma.client.customer.findFirst({
       where: { user: { id: customer.id } },
       orderBy: { createdAt: "desc" },
-      select: {
-        id: true,
-        membership: {
-          select: {
-            rentalInvoices: { select: { id: true } },
-            id: true,
-            plan: { select: { tier: true } },
-          },
-        },
-      },
+      select: { id: true },
     })
 
-    // Create their first rental invoice
-    const hasRentalInvoice =
-      customerWithData.membership.rentalInvoices.length > 0
-    const onAccessPlan = customerWithData.membership.plan.tier === "Access"
-    if (!hasRentalInvoice && onAccessPlan) {
-      await this.paymentUtils.initDraftRentalInvoice(
-        customerWithData.membership.id
-      )
-    }
+    await this.rental.initFirstRentalInvoice(prismaCustomer.id)
   }
 
   private async chargebeeCustomerChanged(content: any) {

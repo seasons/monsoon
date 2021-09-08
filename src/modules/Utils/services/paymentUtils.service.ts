@@ -7,13 +7,18 @@ import { get } from "lodash"
 import { DateTime } from "luxon"
 import Stripe from "stripe"
 
+import { TimeUtilsService } from "./time.service"
+
 export const stripe = new Stripe(process.env.STRIPE_API_KEY, {
   apiVersion: "2020-08-27",
 })
 
 @Injectable()
 export class PaymentUtilsService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly timeUtils: TimeUtilsService
+  ) {}
 
   createBillingAddresses(user, token, billing) {
     let chargebeeBillingAddress
@@ -70,6 +75,17 @@ export class PaymentUtilsService {
     }
 
     return { prismaBillingAddress, chargebeeBillingAddress }
+  }
+
+  getSubscriptionStartDate() {
+    // Meant to be used when creating a chargebee subscription
+    // If we're in a dev/staging environment, backdate their subscription by 29 days
+    // so we can test billing code easily.
+    const start_date =
+      process.env.NODE_ENV !== "production"
+        ? this.timeUtils.xDaysBeforeDate(new Date(), 29, "timestamp")
+        : undefined
+    return start_date
   }
 
   async createPaymentIntent(paymentMethodID, amountDue) {
@@ -174,49 +190,5 @@ export class PaymentUtilsService {
       throw new Error(JSON.stringify(error))
     })
     return cardInfo
-  }
-
-  async initDraftRentalInvoice(
-    membershipId,
-    reservationIds = [],
-    physicalProductIds = []
-  ) {
-    const now = new Date()
-    const data = {
-      membership: {
-        connect: { id: membershipId },
-      },
-      billingStartAt: now,
-      billingEndAt: this.getRentalInvoiceBillingEndAt(now),
-      status: "Draft" as RentalInvoiceStatus,
-      reservations: { connect: reservationIds },
-      products: { connect: physicalProductIds },
-    } as Prisma.RentalInvoiceCreateInput
-    await this.prisma.client.rentalInvoice.create({
-      data,
-    })
-  }
-
-  // TODO: Write unit test for this. Test various edge cases
-  getRentalInvoiceBillingEndAt(billingStartAt: Date) {
-    const startYear = billingStartAt.getFullYear()
-    const startMonth = billingStartAt.getMonth()
-    const startDate = billingStartAt.getDate()
-
-    const billingEndYear = startMonth === 11 ? startYear + 1 : startYear
-    const billingEndMonth = startMonth === 11 ? 0 : startMonth + 1
-
-    let billingEndDate = startDate - 1
-    if (billingEndMonth === 1 && billingEndDate > 28) {
-      // e.g if billingStartAt is Jan 30, billingEndDate will be Feb 28
-      billingEndDate = 28
-    }
-
-    const billingEndAt = new Date(
-      billingEndYear,
-      billingEndMonth,
-      billingEndDate
-    )
-    return billingEndAt
   }
 }

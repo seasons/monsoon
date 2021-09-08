@@ -1,5 +1,7 @@
 import DataLoader from "dataloader"
 
+export type AccessPlanID = "access-monthly" | "access-yearly"
+
 /**
  * A subset of all the fields specified in chargebee API.
  * For full list, see: https://apidocs.chargebee.com/docs/api/invoices
