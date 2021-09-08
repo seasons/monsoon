@@ -647,6 +647,10 @@ export class ProductService {
         category: { select: { id: true } },
         functions: { select: { name: true } },
         tags: { select: { name: true } },
+        recoupment: true,
+        wholesalePrice: true,
+        rentalPriceOverride: true,
+        cachedRentalPrice: true,
       },
     })
 
@@ -710,6 +714,19 @@ export class ProductService {
       product.category,
       updateData.retailPrice
     )
+
+    let updatedRentalPrice = product.cachedRentalPrice
+    if (
+      updateData.recoupment !== product.recoupment ||
+      updateData.wholesalePrice !== product.wholesalePrice ||
+      updateData.rentalPriceOverride !== product.rentalPriceOverride
+    ) {
+      updatedRentalPrice = this.productUtils.calcRentalPrice({
+        ...product,
+        ...updateData,
+      })
+    }
+
     const updateInput = {
       ...prismaTwoUpdateData,
       tier: { connect: { id: tier.id } },
@@ -756,6 +773,7 @@ export class ProductService {
       },
       status,
       photographyStatus,
+      cachedRentalPrice: updatedRentalPrice,
     }
 
     const productUpdatePromise = this.prisma.client.product.update({
