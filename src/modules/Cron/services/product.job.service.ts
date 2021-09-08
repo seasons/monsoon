@@ -31,6 +31,7 @@ export class ProductScheduledJobs {
         rentalPriceOverride: true,
         computedRentalPrice: true,
         recoupment: true,
+        category: { select: { dryCleaningFee: true } },
       },
     })
 
