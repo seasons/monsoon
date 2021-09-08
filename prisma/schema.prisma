@@ -985,6 +985,7 @@ model Package {
   order                        Order?
   events                       PackageTransitEvent[]
   amount                       Int?
+  shippingCode                 ShippingCode?
   reservationOnReturnedPackage Reservation?          @relation("PackageToReservation_returnedPackage")
   reservationOnSentPackage     Reservation?          @relation("PackageToReservation_sentPackage")
   reservationOnReturnPackages  Reservation[]         @relation("PackageToReservationReturnPackages")

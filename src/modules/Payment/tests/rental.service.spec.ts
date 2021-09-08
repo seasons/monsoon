@@ -697,18 +697,10 @@ describe("Rental Service", () => {
         await setReservationCreatedAt(reservationTwo.id, 10)
         await setPackageDeliveredAt(reservationTwo.sentPackage.id, 9)
         await setReservationStatus(reservationTwo.id, "Delivered")
-        await setPackageAmount(
-          reservationTwo.returnPackages[0].id,
-          UPS_GROUND_FEE
-        )
 
         // One queued reservation
         const reservationThree = await addToBagAndReserveForCustomer(1)
         await setReservationCreatedAt(reservationTwo.id, 2)
-        await setPackageAmount(
-          reservationThree.returnPackages[0].id,
-          UPS_GROUND_FEE
-        )
 
         const initialReservationProductSUIDs = initialReservation.newProducts.map(
           a => a.seasonsUID
@@ -806,8 +798,8 @@ describe("Rental Service", () => {
             price: 0,
           },
           Processing: {
-            // 3 reservations sent, none returned --> paying for 2 sent packages at 1000 each
-            // 3 new reservations, 3 * reservation_processing_cost (5500)
+            // 3 reservations sent, none returned --> paying for 2 sent packages at 1000 each. 1st package is on us --> 2000
+            // 3 new reservations, 3 * reservation_processing_cost (550) --> 1650
             price: 3650,
           },
         }
@@ -913,10 +905,6 @@ describe("Rental Service", () => {
         await setReservationStatus(initialReservation.id, "Completed")
 
         await setPackageDeliveredAt(initialReservation.returnPackages[0].id, 10)
-        await setPackageAmount(
-          initialReservation.returnPackages[0].id,
-          UPS_GROUND_FEE
-        )
 
         const custWithData = (await getCustWithData({
           membership: {
@@ -943,10 +931,6 @@ describe("Rental Service", () => {
         await setReservationStatus(initialReservation.id, "Completed")
 
         await setPackageDeliveredAt(initialReservation.returnPackages[0].id, 2)
-        await setPackageAmount(
-          initialReservation.returnPackages[0].id,
-          UPS_GROUND_FEE
-        )
 
         const custWithData = (await getCustWithData({
           membership: {
@@ -975,7 +959,7 @@ describe("Rental Service", () => {
         await setReservationCreatedAt(initialReservation.id, 25)
         await setPackageDeliveredAt(initialReservation.sentPackage.id, 23)
         await setReservationStatus(initialReservation.id, "Completed")
-        expect(0).toBe(1)
+        expect(0).toBe(1) // TODO: WRite this test
 
         await setPackageDeliveredAt(initialReservation.returnPackages[0].id, 5)
         await setPackageAmount(
@@ -1589,7 +1573,7 @@ const addToBagAndReserveForCustomer = async (
     select: { productVariant: { select: { id: true } } },
   })
   const prodVarsToReserve = bagItemsToReserve.map(a => a.productVariant.id)
-  return await reservationService.reserveItems(
+  const r = await reservationService.reserveItems(
     prodVarsToReserve,
     shippingCode,
     testCustomer.user,
@@ -1607,6 +1591,9 @@ const addToBagAndReserveForCustomer = async (
       },
     }
   )
+  await setPackageAmount(r.sentPackage.id, UPS_GROUND_FEE)
+  await setPackageAmount(r.returnPackages[0].id, UPS_GROUND_FEE)
+  return r
 }
 
 const setPackageDeliveredAt = async (packageId, numDaysAgo) => {
@@ -1715,8 +1702,7 @@ const overridePrices = async (seasonsUIDs, prices) => {
     })
     await prisma.client.product.update({
       where: { id: prodToUpdate.id },
-      data: { rentalPriceOverride: overridePrice },
-      select: { id: true, rentalPriceOverride: true },
+      data: { computedRentalPrice: overridePrice },
     })
   }
 }

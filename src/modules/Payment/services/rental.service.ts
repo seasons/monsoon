@@ -14,6 +14,7 @@ import {
 import { Prisma } from "@prisma/client"
 import { PrismaService } from "@prisma1/prisma.service"
 import chargebee from "chargebee"
+import { orderBy } from "lodash"
 
 import { RESERVATION_PROCESSING_FEE } from "../constants"
 import { AccessPlanID } from "../payment.types"
@@ -62,7 +63,9 @@ export const CREATE_RENTAL_INVOICE_LINE_ITEMS_INVOICE_SELECT = Prisma.validator<
       id: true,
       createdAt: true,
       returnPackages: { select: { deliveredAt: true, amount: true } },
+      sentPackage: { select: { amount: true, shippingCode: true } },
     },
+    orderBy: { createdAt: "asc" },
   },
   membership: {
     select: {
@@ -463,6 +466,7 @@ export class RentalService {
       rentalInvoice: { connect: { id: invoice.id } },
       currencyCode: "USD",
     })
+
     const lineItemsForPhysicalProductDatas = (await Promise.all(
       invoice.products.map(async physicalProduct => {
         const { daysRented, ...daysRentedMetadata } = await this.calcDaysRented(
@@ -483,26 +487,50 @@ export class RentalService {
       })
     )) as any
 
-    const newReservationsInThisBillingCycle = invoice.reservations.filter(a =>
+    // Calculate the processing fee
+    const newReservations = invoice.reservations.filter(a =>
       this.timeUtils.isLaterDate(a.createdAt, invoice.billingStartAt)
-    ).length
+    )
+    const sortedNewReservations = orderBy(newReservations, "createdAt", "asc")
     const allReturnPackages = invoice.reservations.flatMap(
       a => a.returnPackages
     )
-    const packagesReturnedInThisBillingCycle = allReturnPackages.filter(
+    const packagesReturned = allReturnPackages.filter(
       a =>
         !!a.deliveredAt &&
         this.timeUtils.isLaterDate(a.deliveredAt, invoice.billingStartAt)
     )
 
     const baseProcessingFees =
-      newReservationsInThisBillingCycle * RESERVATION_PROCESSING_FEE
-    const returnPackageFees = packagesReturnedInThisBillingCycle.reduce(
+      newReservations.length * RESERVATION_PROCESSING_FEE
+    const returnPackageFees = packagesReturned.reduce(
       (acc, curval) => acc + curval.amount,
       0
     )
+    const sentPackageFees = sortedNewReservations.reduce((acc, curval, idx) => {
+      if (idx === 0) {
+        const usedPremiumShipping =
+          !!curval.sentPackage.shippingCode &&
+          curval.sentPackage.shippingCode !== "UPSGround"
+        if (usedPremiumShipping) {
+          return acc + curval.sentPackage.amount
+        }
+        return acc
+      }
+
+      return acc + curval.sentPackage.amount
+    }, 0)
+
+    // Calculate sent package fees
+    /*
+      Get all the reservations created in this billing cycle
+      For the first one, only charge if's UPS select prices
+      For subsequenct ones, charge the amount on the package
+
+    */
+
     const processingLineItem = addLineItemBasics({
-      price: baseProcessingFees + returnPackageFees,
+      price: baseProcessingFees + returnPackageFees + sentPackageFees,
       name: "Processing",
       // TODO: Add a useful comment here
     }) as Prisma.RentalInvoiceLineItemCreateInput
