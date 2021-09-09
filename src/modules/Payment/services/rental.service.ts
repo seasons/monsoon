@@ -106,7 +106,6 @@ export class RentalService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly timeUtils: TimeUtilsService,
-    private readonly productUtils: ProductUtilsService,
     private readonly error: ErrorService
   ) {}
 
