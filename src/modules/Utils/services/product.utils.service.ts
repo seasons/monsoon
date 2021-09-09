@@ -71,7 +71,7 @@ export class ProductUtilsService {
       monthlyPriceInCents / 100
     )
 
-    return monthlyPriceInDollars
+    return Math.max(monthlyPriceInDollars, 10)
   }
 
   async getProductStyleCode(productID) {
