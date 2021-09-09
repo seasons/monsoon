@@ -1,11 +1,13 @@
 import "module-alias/register"
 
+import { ProductUtilsService } from "../../modules/Utils/services/product.utils.service"
 import { UtilsService } from "../../modules/Utils/services/utils.service"
 import { PrismaService } from "../../prisma/prisma.service"
 
 const run = async () => {
   const ps = new PrismaService()
   const utils = new UtilsService(ps)
+  const productUtils = new ProductUtilsService(ps, utils)
 
   /*
     Query all products
@@ -41,25 +43,27 @@ const run = async () => {
   })
 
   for (const prod of productsPurchasedAtRetail) {
-    const unadjustedMonthlyRentalPrice = utils.calcRentalPrice(prod, {
-      type: "monthly",
+    const unadjustedMonthlyRentalPrice = productUtils.calcRentalPrice(prod, {
       ignoreOverride: true,
     })
 
     const season = !!prod.season
       ? `${prod.season?.internalSeason?.seasonCode}${prod.season?.internalSeason?.year}`
       : ""
-    const adjsutedPriceRaw = unadjustedMonthlyRentalPrice / 2
+    const adjsutedPriceRaw = unadjustedMonthlyRentalPrice * 0.25
     const roundToNearestMultipleOfFive = price => Math.ceil(price / 5) * 5
-    const adjustedPriceRounded = roundToNearestMultipleOfFive(adjsutedPriceRaw)
+    const adjustedPriceRounded = Math.max(
+      10,
+      roundToNearestMultipleOfFive(adjsutedPriceRaw)
+    )
     console.log(
       `${season} -- ${prod.name}. Would be: ${unadjustedMonthlyRentalPrice}. Discounted: ${adjustedPriceRounded}`
     )
 
-    // await ps.client.product.update({
-    //   where: { id: prod.id },
-    //   data: { rentalPriceOverride: adjustedPriceRounded },
-    // })
+    await ps.client.product.update({
+      where: { id: prod.id },
+      data: { rentalPriceOverride: adjustedPriceRounded },
+    })
   }
 }
 run()

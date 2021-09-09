@@ -6,11 +6,7 @@ import { CustomerUtilsService } from "@app/modules/User/services/customer.utils.
 import { ProductUtilsService } from "@app/modules/Utils/services/product.utils.service"
 import { StatementsService } from "@app/modules/Utils/services/statements.service"
 import { UtilsService } from "@app/modules/Utils/services/utils.service"
-import {
-  InventoryStatus,
-  PhysicalProductStatus,
-  ShippingCode,
-} from "@app/prisma"
+import { InventoryStatus, PhysicalProductStatus } from "@app/prisma"
 import { EmailService } from "@modules/Email/services/email.service"
 import { ShippingService } from "@modules/Shipping/services/shipping.service"
 import { Injectable } from "@nestjs/common"
@@ -23,6 +19,7 @@ import {
   PrismaPromise,
   ReservationFeedback,
   ReservationStatus,
+  ShippingCode,
   User,
 } from "@prisma/client"
 import { PrismaService } from "@prisma1/prisma.service"
@@ -184,7 +181,6 @@ export class ReservationService {
       customerToSeasonsTransaction,
     ] = await this.shippingService.createReservationShippingLabels(
       newProductVariantsBeingReserved,
-      user,
       customer,
       shippingCode
     )
@@ -196,34 +192,6 @@ export class ReservationService {
       physicalProductsBeingReserved,
     })
     promises.push(...bagItemPromises)
-
-    // Create one time charge for shipping addon
-    let shippingOptionID
-    let shippingLineItems = []
-    if (!!shippingCode) {
-      const { shippingOption } = await this.payment.addShippingCharge(
-        customer,
-        shippingCode
-      )
-      shippingOptionID = shippingOption.id
-      if (shippingCode === "UPSSelect" && shippingOptionID) {
-        shippingLineItems = [
-          {
-            recordID: shippingOptionID,
-            price: shippingOption.externalCost,
-            currencyCode: "USD",
-            recordType: "Package",
-            name: "UPS Select shipping",
-            taxPrice: 0,
-          },
-        ]
-      }
-    }
-
-    // Fetch the nextFreeSwapDate BEFORE creating the reservation or we'll get an incorrect value
-    const nextFreeSwapDate = await this.customerUtils.nextFreeSwapDate(
-      customer.id
-    )
 
     // Create reservation records in prisma
     const reservationData = await this.createReservationData(
@@ -237,7 +205,7 @@ export class ReservationService {
       ),
       physicalProductsBeingReserved,
       heldPhysicalProducts,
-      shippingOptionID
+      shippingCode
     )
 
     const reservationPromise = this.prisma.client.reservation.create({
@@ -270,27 +238,6 @@ export class ReservationService {
       }),
     })) as any
 
-    let earlySwapLineItems = []
-
-    try {
-      earlySwapLineItems = await this.addEarlySwapLineItemsIfNeeded(
-        reservation?.id,
-        customer?.id,
-        nextFreeSwapDate
-      )
-      await this.addLineItemsToReservation(
-        [...earlySwapLineItems, ...shippingLineItems],
-        reservation.id
-      )
-    } catch (err) {
-      this.error.setUserContext(user)
-      this.error.setExtraContext({
-        reservationID: reservation.id,
-        lineItems: [...earlySwapLineItems, ...shippingLineItems],
-      })
-      this.error.captureError(err)
-    }
-
     // Send confirmation email
     await this.emails.sendReservationConfirmationEmail(
       user,
@@ -321,36 +268,6 @@ export class ReservationService {
           },
         },
       })
-    }
-  }
-
-  async addEarlySwapLineItemsIfNeeded(
-    reservationID,
-    customerID,
-    nextFreeSwapDate
-  ): Promise<Prisma.OrderLineItemCreateInput[]> {
-    const doesNotHaveFreeSwap =
-      nextFreeSwapDate && DateTime.fromISO(nextFreeSwapDate) > DateTime.local()
-
-    if (doesNotHaveFreeSwap && reservationID) {
-      // TODO: move to invoice generation logic
-      const swapCharge = await this.payment.addEarlySwapCharge(customerID)
-      if (swapCharge?.invoice) {
-        return [
-          {
-            recordID: reservationID,
-            price: swapCharge.invoice.sub_total,
-            currencyCode: "USD",
-            recordType: "Fee",
-            name: "Processing",
-            taxPrice: swapCharge?.invoice?.tax || 0,
-          },
-        ]
-      } else {
-        return []
-      }
-    } else {
-      return []
     }
   }
 
@@ -716,6 +633,7 @@ export class ReservationService {
             id: customer.id,
           },
           saved: false,
+          status: "Added",
         },
         select: {
           id: true,
@@ -743,24 +661,17 @@ export class ReservationService {
       const nextFreeSwapDate = await this.customerUtils.nextFreeSwapDate(
         customer.id
       )
-      const doesNotHaveFreeSwap =
-        DateTime.fromISO(nextFreeSwapDate) > DateTime.local()
-
-      const processingFeeLines = [
-        ...(doesNotHaveFreeSwap
-          ? [
-              {
-                recordID: customer.id,
-                price: 3000,
-                currencyCode: "USD",
-                recordType: "Fee",
-                name: "Early swap",
-              },
-            ]
-          : []),
-      ]
+      const hasFreeSwap = DateTime.fromISO(nextFreeSwapDate) <= DateTime.local()
 
       const isBillingAddressInNY = customerWithUser.billingInfo.state === "NY"
+
+      const createDraftLineItem = values => ({
+        id: cuid(),
+        createdAt: Date.now(),
+        updatedAt: Date.now(),
+        currencyCode: "USD",
+        ...values,
+      })
 
       const lines = bagItems.map(bagItem => {
         const product = bagItem?.productVariant?.product
@@ -768,16 +679,42 @@ export class ReservationService {
         const price = Math.ceil(rate / 5) * 500
 
         return {
-          id: cuid(),
           name: product.name,
-          createdAt: Date.now(),
-          updatedAt: Date.now(),
           recordType: "ProductVariant",
           recordID: bagItem.productVariant.id,
-          currencyCode: "USD",
           price,
         }
       })
+
+      // Calculate processing fee
+      // 1. Shipping charge (1st order: return package), 2+ order: both packages
+      // 2. $5.50 Flat processing fee per order
+      const calculateProcessingFee = async () => {
+        const baseflatFee = 550
+
+        const {
+          sentRate,
+          returnRate,
+        } = await this.shippingService.getShippingRateForVariantIDs(
+          bagItems.map(a => a.productVariant.id),
+          {
+            customer: customerWithUser,
+            includeSentPackage: !hasFreeSwap,
+            includeReturnPackage: true,
+          }
+        )
+
+        return baseflatFee + returnRate.amount + (sentRate?.amount || 0)
+      }
+
+      const processingFeeLines = [
+        {
+          name: "Processing Fees",
+          recordType: "Fee",
+          recordID: "",
+          price: await calculateProcessingFee(),
+        },
+      ]
 
       const chargebeeCharges = [...lines, ...processingFeeLines].map(line => {
         return {
@@ -815,42 +752,43 @@ export class ReservationService {
       const linesWithTotal = [
         ...lines,
         {
-          id: cuid(),
           name: "Processing + Tax",
-          createdAt: Date.now(),
-          updatedAt: Date.now(),
           recordType: "Fee",
           recordID: customer.id,
-          currencyCode: "USD",
           price: processingTotal + taxTotal,
         },
         ...(invoice_estimate.credits_applied
           ? [
               {
-                id: cuid(),
+                name: "Sub Total",
+                recordType: "Total",
+                recordID: customer.id,
+                price: invoice_estimate.total,
+              },
+              {
                 name: "Credits applied",
-                createdAt: Date.now(),
-                updatedAt: Date.now(),
                 recordType: "Credit",
                 recordID: customer.id,
-                currencyCode: "USD",
                 price: invoice_estimate.credits_applied,
               },
+              {
+                name: "Total with credits applied",
+                recordType: "Total",
+                recordID: customer.id,
+                price: invoice_estimate.total,
+              },
             ]
-          : []),
-        {
-          id: cuid(),
-          name: "Total",
-          createdAt: Date.now(),
-          updatedAt: Date.now(),
-          recordType: "Total",
-          recordID: customer.id,
-          currencyCode: "USD",
-          price: invoice_estimate.total,
-        },
+          : [
+              {
+                name: "Total",
+                recordType: "Total",
+                recordID: customer.id,
+                price: invoice_estimate.total,
+              },
+            ]),
       ]
 
-      return linesWithTotal
+      return linesWithTotal.map(createDraftLineItem)
     } catch (e) {
       this.error.setExtraContext(customerWithUser.user, "user")
       this.error.captureError(e)
@@ -1297,12 +1235,32 @@ export class ReservationService {
       returnPackages: Array<Pick<Package, "id"> & { events: { id: string }[] }>
     },
     user: User,
-    customer: Customer,
+    customer: Pick<Customer, "id">,
     shipmentWeight: number,
     physicalProductsBeingReserved: PhysicalProduct[],
     heldPhysicalProducts: PhysicalProduct[],
-    shippingOptionID: string
+    shippingCode: ShippingCode | null
   ) {
+    const customerWithData = await this.prisma.client.customer.findUnique({
+      where: { id: customer.id },
+      select: {
+        detail: {
+          select: {
+            shippingAddress: {
+              select: {
+                id: true,
+                shippingOptions: {
+                  select: {
+                    id: true,
+                    shippingMethod: { select: { code: true } },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    })
     const allPhysicalProductsInReservation = [
       ...physicalProductsBeingReserved,
       ...heldPhysicalProducts,
@@ -1315,18 +1273,36 @@ export class ReservationService {
       seasonsUID: p.seasonsUID,
     }))
 
-    const customerShippingAddressRecordID = await (
-      await this.prisma.client.customer
-        .findUnique({ where: { id: customer.id } })
-        .detail()
-    ).shippingAddressId
-    interface UniqueIDObject {
-      id: string
-    }
-    const uniqueReservationNumber = await this.utils.getUniqueReservationNumber()
-
     const returnPackagesToCarryOver =
       lastReservation?.returnPackages?.filter(a => a.events.length === 0) || []
+    const createPartialPackageCreateInput = (
+      shippoTransaction
+    ): Partial<Prisma.PackageCreateInput> => {
+      return {
+        transactionID: shippoTransaction.object_id,
+        shippingLabel: {
+          create: {
+            image: shippoTransaction.label_url || "",
+            trackingNumber: shippoTransaction.tracking_number || "",
+            trackingURL: shippoTransaction.tracking_url_provider || "",
+            name: "UPS",
+          },
+        },
+        amount: shippoTransaction.rate.amount * 100,
+      }
+    }
+
+    let shippingOptionId
+    if (!!shippingCode) {
+      const shippingOption = customerWithData.detail.shippingAddress.shippingOptions.find(
+        a => a.shippingMethod.code === shippingCode
+      )
+      shippingOptionId = shippingOption?.id
+    }
+
+    const customerShippingAddressRecordID =
+      customerWithData.detail.shippingAddress.id
+    const uniqueReservationNumber = await this.utils.getUniqueReservationNumber()
     let createData = Prisma.validator<Prisma.ReservationCreateInput>()({
       id: cuid(),
       products: {
@@ -1348,26 +1324,14 @@ export class ReservationService {
       phase: "BusinessToCustomer",
       sentPackage: {
         create: {
-          transactionID: seasonsToCustomerTransaction.object_id,
+          ...createPartialPackageCreateInput(seasonsToCustomerTransaction),
           weight: shipmentWeight,
           items: {
             // need to include the type on the function passed into map
             // or we get build errors comlaining about the type here
-            connect: physicalProductsBeingReserved.map(
-              (prod): UniqueIDObject => {
-                return { id: prod.id }
-              }
-            ),
-          },
-          shippingLabel: {
-            create: {
-              image: seasonsToCustomerTransaction.label_url || "",
-              trackingNumber:
-                seasonsToCustomerTransaction.tracking_number || "",
-              trackingURL:
-                seasonsToCustomerTransaction.tracking_url_provider || "",
-              name: "UPS",
-            },
+            connect: physicalProductsBeingReserved.map(prod => {
+              return { id: prod.id }
+            }),
           },
           fromAddress: {
             connect: {
@@ -1378,20 +1342,10 @@ export class ReservationService {
             connect: { id: customerShippingAddressRecordID },
           },
         },
-      },
+      } as any,
       returnPackages: {
         create: {
-          transactionID: customerToSeasonsTransaction.object_id,
-          shippingLabel: {
-            create: {
-              image: customerToSeasonsTransaction.label_url || "",
-              trackingNumber:
-                customerToSeasonsTransaction.tracking_number || "",
-              trackingURL:
-                customerToSeasonsTransaction.tracking_url_provider || "",
-              name: "UPS",
-            },
-          },
+          ...createPartialPackageCreateInput(customerToSeasonsTransaction),
           fromAddress: {
             connect: {
               id: customerShippingAddressRecordID,
@@ -1402,7 +1356,7 @@ export class ReservationService {
               slug: process.env.SEASONS_CLEANER_LOCATION_SLUG,
             },
           },
-        },
+        } as any,
         connect: returnPackagesToCarryOver.map(a => ({
           id: a.id,
         })),
@@ -1413,11 +1367,11 @@ export class ReservationService {
           slug: process.env.SEASONS_CLEANER_LOCATION_SLUG,
         },
       },
-      ...(!!shippingOptionID
+      ...(!!shippingOptionId
         ? {
             shippingOption: {
               connect: {
-                id: shippingOptionID,
+                id: shippingOptionId,
               },
             },
           }

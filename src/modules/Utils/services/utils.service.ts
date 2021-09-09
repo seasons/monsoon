@@ -59,47 +59,6 @@ export class UtilsService {
     utm_term: utm?.term,
   })
 
-  // TODO: When we merge in the remainder of the billing code, which fixes the circular dependencies
-  // around the product utils service, deprecate this in favor of using the product utils func
-  calcRentalPrice(
-    product: Pick<
-      Product,
-      "rentalPriceOverride" | "wholesalePrice" | "recoupment"
-    > & { category: Pick<Category, "dryCleaningFee"> },
-    options: { type?: "monthly" | "daily"; ignoreOverride?: boolean } = {}
-  ) {
-    let monthlyPriceInDollars
-    const { type = "monthly", ignoreOverride = false } = options
-
-    // Manually ensure everything is in cents for now. Need to go back and
-    // get all price values in the DB into cents
-    const rentalPriceOverrideCents = (product.rentalPriceOverride || 0) * 100
-    const wholesalePriceCents = (product.wholesalePrice || 0) * 100
-    const dryCleaningFeeCents = product.category.dryCleaningFee || 0
-
-    const roundToNearestMultipleOfFive = price => Math.ceil(price / 5) * 5
-
-    let monthlyPriceInCents
-    if (!ignoreOverride && product.rentalPriceOverride) {
-      monthlyPriceInCents = rentalPriceOverrideCents
-    } else {
-      monthlyPriceInCents =
-        wholesalePriceCents / product.recoupment + dryCleaningFeeCents
-    }
-    monthlyPriceInDollars = roundToNearestMultipleOfFive(
-      monthlyPriceInCents / 100
-    )
-
-    if (type === "monthly") {
-      return monthlyPriceInDollars
-    }
-
-    // Type === daily
-    const dailyPriceInDollarsAsString = (monthlyPriceInDollars / 30).toFixed(2)
-    const dailyPriceInDollarsAsNum = +dailyPriceInDollarsAsString // the + turns e.g '1.50' into 1.5
-    return dailyPriceInDollarsAsNum
-  }
-
   abbreviateState(state: string) {
     if (state.length === 2) {
       return state
@@ -117,15 +76,6 @@ export class UtilsService {
     }
 
     return abbr
-  }
-
-  // Returns an ISO string for a date that's X days ago
-  xDaysAgoISOString(x: number) {
-    return moment().subtract(x, "days").format()
-  }
-
-  xDaysFromNowISOString(x: number) {
-    return moment().add(x, "days").format()
   }
 
   randomString() {

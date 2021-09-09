@@ -3,16 +3,21 @@ import { ProductUtilsService } from "@app/modules/Utils/services/product.utils.s
 import { TimeUtilsService } from "@app/modules/Utils/services/time.service"
 import { Injectable } from "@nestjs/common"
 import {
+  Package,
   PhysicalProduct,
   Product,
   RentalInvoice,
   RentalInvoiceLineItem,
   RentalInvoiceStatus,
+  Reservation,
+  ShippingMethod,
 } from "@prisma/client"
 import { Prisma } from "@prisma/client"
 import { PrismaService } from "@prisma1/prisma.service"
 import chargebee from "chargebee"
+import { orderBy } from "lodash"
 
+import { RESERVATION_PROCESSING_FEE } from "../constants"
 import { AccessPlanID } from "../payment.types"
 
 export const RETURN_PACKAGE_CUSHION = 3 // TODO: Set as an env var
@@ -20,14 +25,11 @@ export const SENT_PACKAGE_CUSHION = 3 // TODO: Set as an env var
 
 type LineItemToDescriptionLineItem = Pick<
   RentalInvoiceLineItem,
-  "daysRented"
+  "daysRented" | "name"
 > & {
   physicalProduct: {
     productVariant: {
-      product: Pick<
-        Product,
-        "name" | "recoupment" | "wholesalePrice" | "rentalPriceOverride"
-      >
+      product: Pick<Product, "name" | "computedRentalPrice">
       displayShort: string
     }
   }
@@ -37,6 +39,7 @@ export const CREATE_RENTAL_INVOICE_LINE_ITEMS_INVOICE_SELECT = Prisma.validator<
   Prisma.RentalInvoiceSelect
 >()({
   id: true,
+  billingStartAt: true,
   products: {
     select: {
       id: true,
@@ -49,13 +52,25 @@ export const CREATE_RENTAL_INVOICE_LINE_ITEMS_INVOICE_SELECT = Prisma.validator<
               rentalPriceOverride: true,
               wholesalePrice: true,
               recoupment: true,
+              computedRentalPrice: true,
             },
           },
         },
       },
     },
   },
-  reservations: { select: { id: true } },
+  reservations: {
+    select: {
+      id: true,
+      createdAt: true,
+      returnPackages: { select: { deliveredAt: true, amount: true } },
+      sentPackage: { select: { amount: true } },
+      shippingOption: {
+        select: { shippingMethod: { select: { code: true } } },
+      },
+    },
+    orderBy: { createdAt: "asc" },
+  },
   membership: {
     select: {
       plan: { select: { planID: true } },
@@ -129,6 +144,7 @@ export class RentalService {
         })
       )
     } catch (err) {
+      console.log(err)
       this.error.setExtraContext(
         { planID, invoice, lineItems },
         "chargeTabInputs"
@@ -440,28 +456,88 @@ export class RentalService {
     }
   }
 
-  async createRentalInvoiceLineItems(invoice) {
-    const lineItemCreateDatas = (await Promise.all(
+  async createRentalInvoiceLineItems(
+    invoice: Pick<RentalInvoice, "id" | "billingStartAt"> & {
+      reservations: (Pick<Reservation, "createdAt"> & {
+        returnPackages: Pick<Package, "deliveredAt" | "amount">[]
+      } & {
+        shippingOption: { shippingMethod: Pick<ShippingMethod, "code"> }
+      })[]
+      products: (Pick<PhysicalProduct, "id" | "seasonsUID"> & {
+        productVariant: { product: Pick<Product, "computedRentalPrice"> }
+      })[]
+    }
+  ) {
+    const addLineItemBasics = input => ({
+      ...input,
+      rentalInvoice: { connect: { id: invoice.id } },
+      currencyCode: "USD",
+    })
+
+    const lineItemsForPhysicalProductDatas = (await Promise.all(
       invoice.products.map(async physicalProduct => {
         const { daysRented, ...daysRentedMetadata } = await this.calcDaysRented(
           invoice,
           physicalProduct
         )
-        const dailyRentalPrice = this.productUtils.calcRentalPrice(
-          physicalProduct.productVariant.product,
-          "daily"
-        )
-        return {
+        const rawDailyRentalPrice =
+          physicalProduct.productVariant.product.computedRentalPrice / 30
+        const roundedDailyRentalPriceAsString = rawDailyRentalPrice.toFixed(2)
+        const roundedDailyRentalPrice = +roundedDailyRentalPriceAsString
+
+        return addLineItemBasics({
           ...daysRentedMetadata,
           daysRented,
           physicalProduct: { connect: { id: physicalProduct.id } },
-          rentalInvoice: { connect: { id: invoice.id } },
-          price: Math.round(daysRented * dailyRentalPrice * 100),
-          currencyCode: "USD",
-        } as Prisma.RentalInvoiceLineItemCreateInput
+          price: Math.round(daysRented * roundedDailyRentalPrice * 100),
+        }) as Prisma.RentalInvoiceLineItemCreateInput
       })
     )) as any
-    const lineItemPromises = lineItemCreateDatas.map(data =>
+
+    // Calculate the processing fee
+    const newReservations = invoice.reservations.filter(a =>
+      this.timeUtils.isLaterDate(a.createdAt, invoice.billingStartAt)
+    )
+    const sortedNewReservations = orderBy(newReservations, "createdAt", "asc")
+    const allReturnPackages = invoice.reservations.flatMap(
+      a => a.returnPackages
+    )
+    const packagesReturned = allReturnPackages.filter(
+      a =>
+        !!a.deliveredAt &&
+        this.timeUtils.isLaterDate(a.deliveredAt, invoice.billingStartAt)
+    )
+
+    const baseProcessingFees =
+      newReservations.length * RESERVATION_PROCESSING_FEE
+    const returnPackageFees = packagesReturned.reduce(
+      (acc, curval) => acc + curval.amount,
+      0
+    )
+    const sentPackageFees = sortedNewReservations.reduce((acc, curval, idx) => {
+      if (idx === 0) {
+        const usedPremiumShipping =
+          !!curval.shippingOption &&
+          curval.shippingOption.shippingMethod.code !== "UPSGround"
+        if (usedPremiumShipping) {
+          return acc + curval.sentPackage.amount
+        }
+        return acc
+      }
+
+      return acc + curval.sentPackage.amount
+    }, 0)
+
+    const processingLineItem = addLineItemBasics({
+      price: baseProcessingFees + returnPackageFees + sentPackageFees,
+      name: "Processing",
+      // TODO: Add a useful comment here
+    }) as Prisma.RentalInvoiceLineItemCreateInput
+    const lineItemDatas = [
+      ...lineItemsForPhysicalProductDatas,
+      processingLineItem,
+    ]
+    const lineItemPromises = lineItemDatas.map(data =>
       this.prisma.client.rentalInvoiceLineItem.create({
         data,
       })
@@ -529,10 +605,16 @@ export class RentalService {
     return {
       amount: prismaLineItem.price,
       description: this.lineItemToDescription(prismaLineItem),
-      date_from: this.timeUtils.secondsSinceEpoch(
-        prismaLineItem.rentalStartedAt
-      ),
-      date_to: this.timeUtils.secondsSinceEpoch(prismaLineItem.rentalEndedAt),
+      ...(prismaLineItem.name !== "Processing"
+        ? {
+            date_from: this.timeUtils.secondsSinceEpoch(
+              prismaLineItem.rentalStartedAt
+            ),
+            date_to: this.timeUtils.secondsSinceEpoch(
+              prismaLineItem.rentalEndedAt
+            ),
+          }
+        : {}),
     }
   }
 
@@ -560,6 +642,7 @@ export class RentalService {
         select: {
           id: true,
           price: true,
+          name: true,
           rentalStartedAt: true,
           rentalEndedAt: true,
           daysRented: true,
@@ -655,13 +738,15 @@ export class RentalService {
   }
 
   private lineItemToDescription(lineItem: LineItemToDescriptionLineItem) {
+    if (lineItem.name === "Processing") {
+      return `Processing`
+    }
+
+    // Else, it's for an actual item rented
     const productName = lineItem.physicalProduct.productVariant.product.name
     const displaySize = lineItem.physicalProduct.productVariant.displayShort
-    const monthlyRentalPrice = this.productUtils.calcRentalPrice(
-      lineItem.physicalProduct.productVariant.product,
-      "monthly"
-    )
-
+    const monthlyRentalPrice =
+      lineItem.physicalProduct.productVariant.product.computedRentalPrice
     return `${productName} (${displaySize}) for ${lineItem.daysRented} days at \$${monthlyRentalPrice} per mo.`
   }
 
