@@ -651,6 +651,14 @@ export class ReservationService {
                   name: true,
                   recoupment: true,
                   wholesalePrice: true,
+                  rentalPriceOverride: true,
+                  category: {
+                    select: {
+                      id: true,
+                      dryCleaningFee: true,
+                      recoupment: true,
+                    },
+                  },
                 },
               },
             },
@@ -675,8 +683,7 @@ export class ReservationService {
 
       const lines = bagItems.map(bagItem => {
         const product = bagItem?.productVariant?.product
-        const rate = product.wholesalePrice / product.recoupment
-        const price = Math.ceil(rate / 5) * 500
+        const price = this.productUtils.calcRentalPrice(product)
 
         return {
           name: product.name,
@@ -757,22 +764,22 @@ export class ReservationService {
           recordID: customer.id,
           price: processingTotal + taxTotal,
         },
-        ...(invoice_estimate.credits_applied
+        ...(invoice_estimate.discounts.length > 0
           ? [
               {
-                name: "Sub Total",
+                name: "Sub-total",
                 recordType: "Total",
                 recordID: customer.id,
-                price: invoice_estimate.total,
+                price: invoice_estimate.sub_total,
               },
               {
                 name: "Credits applied",
                 recordType: "Credit",
                 recordID: customer.id,
-                price: invoice_estimate.credits_applied,
+                price: -invoice_estimate.discounts[0].amount,
               },
               {
-                name: "Total with credits applied",
+                name: "Total",
                 recordType: "Total",
                 recordID: customer.id,
                 price: invoice_estimate.total,
