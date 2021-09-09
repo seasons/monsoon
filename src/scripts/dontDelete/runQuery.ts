@@ -5,5 +5,9 @@ import { PrismaService } from "../../prisma/prisma.service"
 const run = async () => {
   const ps = new PrismaService()
 
-  ps.client2.user.aggregate
+  await ps.client.product.updateMany({
+    where: { rentalPriceOverride: { gt: 0 } },
+    data: { rentalPriceOverride: null },
+  })
 }
+run()

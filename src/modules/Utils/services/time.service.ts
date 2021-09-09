@@ -30,6 +30,15 @@ export class TimeUtilsService {
     }
   }
 
+  // Returns an ISO string for a date that's X days ago
+  xDaysAgoISOString(x: number) {
+    return moment().subtract(x, "days").format()
+  }
+
+  xDaysFromNowISOString(x: number) {
+    return moment().add(x, "days").format()
+  }
+
   xDaysAfterDate(date: Date, x: number) {
     return moment(date.toISOString()).add(x, "days").format()
   }

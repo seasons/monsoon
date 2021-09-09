@@ -34,22 +34,14 @@ export class ProductFieldsResolver {
         model: "Product",
         select: Prisma.validator<Prisma.ProductSelect>()({
           id: true,
-          wholesalePrice: true,
-          recoupment: true,
-          rentalPriceOverride: true,
+          computedRentalPrice: true,
         }),
       },
     })
-    productLoader: PrismaDataLoader<{
-      id: string
-      wholesalePrice: number
-      recoupment: number
-      rentalPriceOverride: number
-    }>
+    productLoader: PrismaDataLoader<Pick<Product, "id" | "computedRentalPrice">>
   ) {
     const product = await productLoader.load(parent.id)
-
-    return this.productUtilsService.calcRentalPrice(product)
+    return product.computedRentalPrice
   }
 
   @ResolveField()

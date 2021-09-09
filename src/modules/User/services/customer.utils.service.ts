@@ -66,17 +66,10 @@ export class CustomerUtilsService {
       return null
     }
 
-    // Check if the customer has upgraded their plan since their last reservation
-    const justUpgradedPlan =
-      latestReservation &&
-      latestReservation?.products?.length < customerPlan?.itemCount
-
-    const reservationCreatedBeforeTermStart =
+    const hasAvailableSwap =
       latestReservationCreatedAt &&
       currentTermStart &&
       latestReservationCreatedAt < currentTermStart
-    const hasAvailableSwap =
-      reservationCreatedBeforeTermStart || justUpgradedPlan
 
     if (hasAvailableSwap) {
       return currentTermStart

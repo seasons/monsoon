@@ -943,13 +943,14 @@ model RentalInvoice {
 
 model RentalInvoiceLineItem {
   id                String          @id @default(cuid()) @db.VarChar(30)
-  physicalProductId String          @map("physicalProduct") @db.VarChar(30)
-  physicalProduct   PhysicalProduct @relation(fields: [physicalProductId], references: [id])
+  physicalProductId String?          @map("physicalProduct") @db.VarChar(30)
+  physicalProduct   PhysicalProduct? @relation(fields: [physicalProductId], references: [id])
   rentalInvoiceId   String          @map("rentalInvoice") @db.VarChar(30)
   rentalInvoice     RentalInvoice   @relation(fields: [rentalInvoiceId], references: [id])
-  daysRented        Int
+  daysRented        Int?
   rentalStartedAt   DateTime?
   rentalEndedAt     DateTime?
+  name              String?
   comment           String?
   taxRate           Float?
   taxName           String?
@@ -957,8 +958,6 @@ model RentalInvoiceLineItem {
   taxPrice          Int?
   price             Int
   currencyCode      String
-
-  @@unique([physicalProductId, rentalInvoiceId])
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -983,6 +982,7 @@ model Package {
   toAddress                    Location?             @relation("LocationToPackage_toAddress", fields: [toAddressId], references: [id])
   order                        Order?
   events                       PackageTransitEvent[]
+  amount                       Int?
   reservationOnReturnedPackage Reservation?          @relation("PackageToReservation_returnedPackage")
   reservationOnSentPackage     Reservation?          @relation("PackageToReservation_sentPackage")
   reservationOnReturnPackages  Reservation[]         @relation("PackageToReservationReturnPackages")
@@ -1110,7 +1110,7 @@ model Product {
   wholesalePrice              Int?
   rentalPriceOverride         Int?
   computedRentalPrice         Int?
-  recoupment                  Float?                   @default(4)
+  recoupment                  Float?                   
   status                      ProductStatus?
   createdAt                   DateTime                 @default(now())
   updatedAt                   DateTime                 @updatedAt

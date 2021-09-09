@@ -1,6 +1,7 @@
 import { BillingAddress, Card } from "@app/modules/Payment/payment.types"
 import { RentalService } from "@app/modules/Payment/services/rental.service"
 import { SubscriptionService } from "@app/modules/Payment/services/subscription.service"
+import { CustomerService } from "@app/modules/User/services/customer.service"
 import { PaymentUtilsService } from "@app/modules/Utils/services/paymentUtils.service"
 import { UtilsService } from "@app/modules/Utils/services/utils.service"
 import { AuthService } from "@modules/User/services/auth.service"
@@ -36,7 +37,8 @@ export class UserCommands {
     @Inject(forwardRef(() => RentalService))
     private readonly rental: RentalService,
     private moduleRef: ModuleRef,
-    private readonly subscription: SubscriptionService
+    private readonly subscription: SubscriptionService,
+    private readonly customer: CustomerService
   ) {}
 
   @Command({
@@ -292,7 +294,7 @@ export class UserCommands {
           this.utils.snakeCaseify(card)
         )
 
-        await this.prisma.client.customer.update({
+        const cust = await this.prisma.client.customer.update({
           data: {
             membership: {
               create: {
@@ -326,7 +328,14 @@ export class UserCommands {
           },
 
           where: { id: customer.id },
+          select: {
+            detail: { select: { shippingAddress: { select: { id: true } } } },
+          },
         })
+        await this.customer.addCustomerLocationShippingOptions(
+          "NY",
+          cust.detail.shippingAddress.id
+        )
 
         await this.prisma.client.billingInfo.create({
           data: {

@@ -4,10 +4,11 @@ import { ReservationService } from "@app/modules/Reservation/services/reservatio
 import { CustomerService } from "@app/modules/User/services/customer.service"
 import { CustomerUtilsService } from "@app/modules/User/services/customer.utils.service"
 import { StatementsService } from "@app/modules/Utils/services/statements.service"
-import { ResolveField, Resolver } from "@nestjs/graphql"
+import { Args, ResolveField, Resolver } from "@nestjs/graphql"
+import { BagItemStatus } from "@prisma/client"
 import { PrismaService } from "@prisma1/prisma.service"
 import { merge } from "lodash"
-// estimate on customer --> membership --> plan requires planID to be on the plan
+
 const EnsureFieldsForDownstreamFieldResolvers = `fragment EnsureFieldsForDownstreamFieldResolvers on Customer {
   id
   membership {
@@ -108,7 +109,11 @@ export class MeFieldsResolver {
   }
 
   @ResolveField()
-  async bag(@Customer() customer, @Select() select) {
+  async bag(
+    @Args() { status }: { status?: BagItemStatus },
+    @Customer() customer,
+    @Select() select
+  ) {
     if (!customer) {
       return null
     }
@@ -118,6 +123,7 @@ export class MeFieldsResolver {
           id: customer.id,
         },
         saved: false,
+        status,
       },
       select: merge(select, {
         status: true,
