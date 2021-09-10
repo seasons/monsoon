@@ -66,13 +66,13 @@ type Order {
   salesTaxTotal: Int!
 }
 
-interface LineItem {
+interface LineItemInterface {
   id: ID!
   name: String
   price: Int!
 }
 
-type OrderLineItem implements LineItem {
+type OrderLineItem implements LineItemInterface {
   id: ID!
   recordID: ID
   recordType: OrderLineItemRecordType!

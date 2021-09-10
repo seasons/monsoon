@@ -457,15 +457,15 @@ export class PaymentService {
     invoicesLoader: InvoicesDataLoader,
     transactionsForCustomerLoader: TransactionsDataLoader
   ) {
-    const invoices = this.utils.filterErrors<Invoice>(
+    const _invoices = this.utils.filterErrors<Invoice>(
       await invoicesLoader.load(customerId)
     )
-    if (!invoices) {
+    if (!_invoices) {
       return null
     }
 
-    return Promise.all(
-      invoices.map(async invoice => ({
+    const invoices = Promise.all(
+      _invoices.map(async invoice => ({
         ...this.formatInvoice(invoice),
         transactions: this.utils
           .filterErrors<Transaction>(
@@ -475,6 +475,8 @@ export class PaymentService {
           ?.map(this.formatTransaction),
       }))
     )
+    console.log("invoices", invoices)
+    return invoices
   }
 
   async getCustomerTransactionHistory(
@@ -553,25 +555,30 @@ export class PaymentService {
   /**
    * Define as arrow func to preserve `this` binding
    */
-  private formatInvoice = (invoice: Invoice) => ({
-    ...invoice,
-    status: upperFirst(camelCase(invoice.status)),
-    amount: invoice.total,
-    closingDate: this.utils.secondsSinceEpochToISOString(invoice.date),
-    dueDate: this.utils.secondsSinceEpochToISOString(invoice.dueDate, true),
-    creditNotes: invoice.issuedCreditNotes.map(a => ({
-      ...a,
-      reasonCode: upperFirst(camelCase(a.reasonCode)),
-      status: upperFirst(camelCase(a.status)),
-      date: this.utils.secondsSinceEpochToISOString(a.date),
-    })),
-    lineItems: invoice.lineItems.map(a => ({
-      ...a,
-      entityType: upperFirst(camelCase(a.entityType)),
-      dateFrom: this.utils.secondsSinceEpochToISOString(a.dateFrom),
-      dateTo: this.utils.secondsSinceEpochToISOString(a.dateTo),
-    })),
-  })
+  private formatInvoice = (invoice: Invoice) => {
+    return {
+      ...invoice,
+      status: upperFirst(camelCase(invoice.status)),
+      price: invoice.total,
+      closingDate: this.utils.secondsSinceEpochToISOString(invoice.date),
+      dueDate: this.utils.secondsSinceEpochToISOString(invoice.dueDate, true),
+      creditNotes: invoice.issuedCreditNotes.map(a => ({
+        ...a,
+        reasonCode: upperFirst(camelCase(a.reasonCode)),
+        status: upperFirst(camelCase(a.status)),
+        date: this.utils.secondsSinceEpochToISOString(a.date),
+      })),
+      lineItems: invoice.lineItems.map(a => ({
+        ...a,
+        price: a.amount,
+        name: upperFirst(a.description),
+        recordID: a.entityId,
+        recordType: upperFirst(camelCase(a.entityType)),
+        dateFrom: this.utils.secondsSinceEpochToISOString(a.dateFrom),
+        dateTo: this.utils.secondsSinceEpochToISOString(a.dateTo),
+      })),
+    }
+  }
 
   /**
    * Define as arrow func to preserve `this` binding

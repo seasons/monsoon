@@ -182,16 +182,45 @@ type Coupon {
   type: CouponType!
 }
 
+enum RentalInvoiceStatus {
+  Draft
+  Billed
+  ChargeFailed
+}
+
+enum LineItemIdentityType {
+  PlanSetup
+  Plan
+  Addon
+  Adhoc
+}
+
+type ChargebeeLineItem implements LineItemInterface {
+  id: ID!
+  dateFrom: DateTime
+  dateTo: DateTime
+  isTaxed: Boolean
+  taxAmount: Int
+  taxRate: Float
+  discountAmount: Int
+  description: String!
+  entityDescription: String
+  recordType: LineItemIdentityType!
+  recordID: String
+  price: Int!
+  name: String
+}
+
 type Invoice {
-  id: String!
+  id: ID!
   subscriptionId: String
   recurring: Boolean
   status: InvoiceStatus
   closingDate: DateTime
   dueDate: DateTime
-  amount: Int
+  price: Int
   transactions: [Transaction]
-  lineItems: [LineItem]
+  lineItems: [ChargebeeLineItem!]
   creditNotes: [CreditNote]
   billingAddress: ChargebeeAddress
   discounts: [Discount]
@@ -221,28 +250,6 @@ type Transaction {
   status: TransactionStatus
   type: TransactionType!
   settledAt: DateTime
-}
-
-enum LineItemIdentityType {
-  PlanSetup
-  Plan
-  Addon
-  Adhoc
-}
-
-type LineItem {
-  id: String!
-  dateFrom: DateTime
-  dateTo: DateTime
-  isTaxed: Boolean
-  taxAmount: Int
-  taxRate: Float
-  discountAmount: Int
-  description: String!
-  entityDescription: String
-  entityType: LineItemIdentityType!
-  entityId: String
-  amount: Int
 }
 
 type CreditNote {

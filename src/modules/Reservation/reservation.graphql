@@ -84,7 +84,7 @@ enum ReservationLineItemRecordType {
   Total
 }
 
-type ReservationLineItem implements LineItem {
+type ReservationLineItem implements LineItemInterface {
   id: ID!
   name: String
   price: Int!
