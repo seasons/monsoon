@@ -195,6 +195,37 @@ enum LineItemIdentityType {
   Adhoc
 }
 
+type RentalInvoiceLineItem {
+  id: ID!
+  physicalProduct: PhysicalProduct
+  rentalInvoice: RentalInvoice
+  daysRented: Int!
+  rentalStartedAt: DateTime!
+  rentalEndedAt: DateTime!
+  comment: String
+  taxRate: Float
+  taxName: String
+  taxPercentage: Float
+  taxPrice: Int
+  price: Int
+  currencyCode: String
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+type RentalInvoice {
+  id: ID!
+  lineItems: [RentalInvoiceLineItem!]
+  products: [PhysicalProduct!]
+  billingStartAt: DateTime!
+  billingEndAt: DateTime!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  membership: CustomerMembership
+  status: RentalInvoiceStatus
+  reservations: [Reservation!]
+}
+
 type ChargebeeLineItem implements LineItemInterface {
   id: ID!
   dateFrom: DateTime
