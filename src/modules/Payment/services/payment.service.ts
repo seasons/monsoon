@@ -457,15 +457,15 @@ export class PaymentService {
     invoicesLoader: InvoicesDataLoader,
     transactionsForCustomerLoader: TransactionsDataLoader
   ) {
-    const _invoices = this.utils.filterErrors<Invoice>(
+    const invoices = this.utils.filterErrors<Invoice>(
       await invoicesLoader.load(customerId)
     )
-    if (!_invoices) {
+    if (!invoices) {
       return null
     }
 
-    const invoices = Promise.all(
-      _invoices.map(async invoice => ({
+    return Promise.all(
+      invoices.map(async invoice => ({
         ...this.formatInvoice(invoice),
         transactions: this.utils
           .filterErrors<Transaction>(
@@ -475,8 +475,6 @@ export class PaymentService {
           ?.map(this.formatTransaction),
       }))
     )
-    console.log("invoices", invoices)
-    return invoices
   }
 
   async getCustomerTransactionHistory(
@@ -560,6 +558,7 @@ export class PaymentService {
       ...invoice,
       status: upperFirst(camelCase(invoice.status)),
       price: invoice.total,
+      amount: invoice.total,
       closingDate: this.utils.secondsSinceEpochToISOString(invoice.date),
       dueDate: this.utils.secondsSinceEpochToISOString(invoice.dueDate, true),
       creditNotes: invoice.issuedCreditNotes.map(a => ({
@@ -570,6 +569,7 @@ export class PaymentService {
       })),
       lineItems: invoice.lineItems.map(a => ({
         ...a,
+        entityType: upperFirst(camelCase(a.entityType)),
         price: a.amount,
         name: upperFirst(a.description),
         recordID: a.entityId,

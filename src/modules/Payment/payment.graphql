@@ -209,6 +209,9 @@ type ChargebeeLineItem implements LineItemInterface {
   recordID: String
   price: Int!
   name: String
+  amount: Int @deprecated(reason: "Use price")
+  entityType: LineItemIdentityType! @deprecated(reason: "Use recordType")
+  entityId: String @deprecated(reason: "Use recordID")
 }
 
 type Invoice {
@@ -219,6 +222,7 @@ type Invoice {
   closingDate: DateTime
   dueDate: DateTime
   price: Int
+  amount: Int @deprecated(reason: "Use price")
   transactions: [Transaction]
   lineItems: [ChargebeeLineItem!]
   creditNotes: [CreditNote]
