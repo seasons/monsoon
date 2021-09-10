@@ -42,7 +42,7 @@ export class BagService {
 
     const bag = custWithData.bagItems?.filter(a => a.saved === false)
     const savedItems = custWithData.bagItems?.filter(a => a.saved === true)
-    const customerPlanItemCount = custWithData.membership?.plan?.itemCount || 3
+    const customerPlanItemCount = custWithData.membership?.plan?.itemCount || 6
 
     if (bag.some(i => i.productVariant?.id === itemId)) {
       throw new ApolloError("Item already in bag", "515")

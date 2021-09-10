@@ -159,12 +159,14 @@ input NotificationBarReceiptUpdateInput {
   viewCount: Int
   clickCount: Int
 }
+
 type CustomerMembership {
   id: ID!
   subscriptionId: String!
   plan: PaymentPlan
   creditBalance: Int
   adjustedCreditBalance: Int
+  rentalInvoices: [RentalInvoice!]
   pauseRequests(
     where: PauseRequestWhereInput
     orderBy: PauseRequestOrderByInput

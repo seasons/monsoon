@@ -24,7 +24,7 @@ import {
 import { PrismaService } from "@prisma1/prisma.service"
 import * as Sentry from "@sentry/node"
 import { ApolloError } from "apollo-server"
-import { defaultsDeep, pick } from "lodash"
+import { defaultsDeep, head, pick } from "lodash"
 import { DateTime } from "luxon"
 
 import { AdmissionsService, TriageFuncResult } from "./admissions.service"
@@ -131,17 +131,33 @@ export class CustomerService {
           abbreviatedDestState
         ]
 
-      const shippingOption = await this.prisma.client.shippingOption.create({
-        data: {
-          origin: { connect: { id: warehouseLocation.id } },
-          destination: { connect: { id: shippingAddressID } },
-          shippingMethod: { connect: { id: method.id } },
-          externalCost: stateData.price,
-          averageDuration: stateData.averageDuration,
-        },
-      })
+      const existingShippingOptions = await this.prisma.client.shippingOption.findMany(
+        {
+          where: {
+            originId: warehouseLocation.id,
+            destinationId: shippingAddressID,
+            shippingMethodId: method.id,
+          },
+        }
+      )
 
-      shippingOptions.push(shippingOption)
+      const existingShippingOption = head(existingShippingOptions)
+
+      if (existingShippingOption) {
+        shippingOptions.push(existingShippingOption)
+      } else {
+        const shippingOption = await this.prisma.client.shippingOption.create({
+          data: {
+            origin: { connect: { id: warehouseLocation.id } },
+            destination: { connect: { id: shippingAddressID } },
+            shippingMethod: { connect: { id: method.id } },
+            externalCost: stateData.price,
+            averageDuration: stateData.averageDuration,
+          },
+        })
+
+        shippingOptions.push(shippingOption)
+      }
     }
 
     return await this.prisma.client.location.update({

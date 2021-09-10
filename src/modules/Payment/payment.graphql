@@ -182,16 +182,80 @@ type Coupon {
   type: CouponType!
 }
 
+enum RentalInvoiceStatus {
+  Draft
+  Billed
+  ChargeFailed
+}
+
+enum LineItemIdentityType {
+  PlanSetup
+  Plan
+  Addon
+  Adhoc
+}
+
+type RentalInvoiceLineItem {
+  id: ID!
+  physicalProduct: PhysicalProduct
+  rentalInvoice: RentalInvoice
+  daysRented: Int!
+  rentalStartedAt: DateTime!
+  rentalEndedAt: DateTime!
+  comment: String
+  taxRate: Float
+  taxName: String
+  taxPercentage: Float
+  taxPrice: Int
+  price: Int
+  currencyCode: String
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+type RentalInvoice {
+  id: ID!
+  lineItems: [RentalInvoiceLineItem!]
+  products: [PhysicalProduct!]
+  billingStartAt: DateTime!
+  billingEndAt: DateTime!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  membership: CustomerMembership
+  status: RentalInvoiceStatus
+  reservations: [Reservation!]
+}
+
+type ChargebeeLineItem implements LineItemInterface {
+  id: ID!
+  dateFrom: DateTime
+  dateTo: DateTime
+  isTaxed: Boolean
+  taxAmount: Int
+  taxRate: Float
+  discountAmount: Int
+  description: String!
+  entityDescription: String
+  recordType: LineItemIdentityType!
+  recordID: String
+  price: Int!
+  name: String
+  amount: Int @deprecated(reason: "Use price")
+  entityType: LineItemIdentityType! @deprecated(reason: "Use recordType")
+  entityId: String @deprecated(reason: "Use recordID")
+}
+
 type Invoice {
-  id: String!
+  id: ID!
   subscriptionId: String
   recurring: Boolean
   status: InvoiceStatus
   closingDate: DateTime
   dueDate: DateTime
-  amount: Int
+  price: Int
+  amount: Int @deprecated(reason: "Use price")
   transactions: [Transaction]
-  lineItems: [LineItem]
+  lineItems: [ChargebeeLineItem!]
   creditNotes: [CreditNote]
   billingAddress: ChargebeeAddress
   discounts: [Discount]
@@ -221,28 +285,6 @@ type Transaction {
   status: TransactionStatus
   type: TransactionType!
   settledAt: DateTime
-}
-
-enum LineItemIdentityType {
-  PlanSetup
-  Plan
-  Addon
-  Adhoc
-}
-
-type LineItem {
-  id: String!
-  dateFrom: DateTime
-  dateTo: DateTime
-  isTaxed: Boolean
-  taxAmount: Int
-  taxRate: Float
-  discountAmount: Int
-  description: String!
-  entityDescription: String
-  entityType: LineItemIdentityType!
-  entityId: String
-  amount: Int
 }
 
 type CreditNote {
