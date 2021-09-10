@@ -80,6 +80,11 @@ type ResetPasswordPayload {
   message: String!
 }
 
+enum ReservationLineItemsFilter {
+  AllItems
+  NewItems
+}
+
 type Me @cacheControl(maxAge: 0, scope: PRIVATE) {
   id: ID
   user: User
@@ -87,7 +92,9 @@ type Me @cacheControl(maxAge: 0, scope: PRIVATE) {
   activeReservation: Reservation
   bag(status: BagItemStatus): [BagItem!]
   savedItems: [BagItem!]
-  reservationLineItems: [ReservationLineItem!]
+  reservationLineItems(
+    filterBy: ReservationLineItemsFilter
+  ): [ReservationLineItem!]
   notificationBar: NotificationBar
   nextFreeSwapDate: DateTime
 }
