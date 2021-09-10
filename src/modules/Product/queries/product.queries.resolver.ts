@@ -150,11 +150,6 @@ export class ProductQueriesResolver {
 
   @Query()
   async categories(@FindManyArgs() args) {
-    if (args.orderBy && args.orderBy.browseFilte) {
-      args.orderBy = { position: "asc" }
-      return this.queryUtils.resolveFindMany(args, "Category")
-    }
-
     return this.queryUtils.resolveFindMany(args, "Category")
   }
 
