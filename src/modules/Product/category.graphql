@@ -62,5 +62,5 @@ enum CategoryOrderByInput {
   measurementType_ASC
   measurementType_DESC
   position_ASC
-  position_Desc
+  position_DESC
 }
