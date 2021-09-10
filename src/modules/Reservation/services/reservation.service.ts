@@ -31,6 +31,11 @@ import { DateTime } from "luxon"
 
 import { ReservationUtilsService } from "./reservation.utils.service"
 
+export enum ReservationLineItemsFilter {
+  AllItems = "AllItems",
+  NewItems = "NewItems",
+}
+
 interface PhysicalProductWithProductVariant extends PhysicalProduct {
   productVariant: { id: string }
 }
@@ -256,19 +261,6 @@ export class ReservationService {
     }
 
     return reservation
-  }
-
-  async addLineItemsToReservation(lineItems, reservationID: string) {
-    if (lineItems?.length > 0 && reservationID) {
-      await this.prisma.client.reservation.update({
-        where: { id: reservationID },
-        data: {
-          lineItems: {
-            create: lineItems,
-          },
-        },
-      })
-    }
   }
 
   async cancelReturn(customer: Customer) {
@@ -610,7 +602,10 @@ export class ReservationService {
     return this.utils.filterAdminLogs(logs, keysWeDontCareAbout)
   }
 
-  async draftReservationLineItems(customer: Customer) {
+  async draftReservationLineItems(
+    customer: Customer,
+    filterBy: ReservationLineItemsFilter = ReservationLineItemsFilter.AllItems
+  ) {
     const customerWithUser = await this.prisma.client.customer.findUnique({
       where: {
         id: customer.id,
@@ -633,7 +628,9 @@ export class ReservationService {
             id: customer.id,
           },
           saved: false,
-          status: "Added",
+          ...(filterBy === ReservationLineItemsFilter.NewItems
+            ? { status: "Added" }
+            : {}),
         },
         select: {
           id: true,
@@ -651,6 +648,14 @@ export class ReservationService {
                   name: true,
                   recoupment: true,
                   wholesalePrice: true,
+                  rentalPriceOverride: true,
+                  category: {
+                    select: {
+                      id: true,
+                      dryCleaningFee: true,
+                      recoupment: true,
+                    },
+                  },
                 },
               },
             },
@@ -675,8 +680,7 @@ export class ReservationService {
 
       const lines = bagItems.map(bagItem => {
         const product = bagItem?.productVariant?.product
-        const rate = product.wholesalePrice / product.recoupment
-        const price = Math.ceil(rate / 5) * 500
+        const price = this.productUtils.calcRentalPrice(product) * 100
 
         return {
           name: product.name,
@@ -686,35 +690,11 @@ export class ReservationService {
         }
       })
 
-      // Calculate processing fee
-      // 1. Shipping charge (1st order: return package), 2+ order: both packages
-      // 2. $5.50 Flat processing fee per order
-      const calculateProcessingFee = async () => {
-        const baseflatFee = 550
-
-        const {
-          sentRate,
-          returnRate,
-        } = await this.shippingService.getShippingRateForVariantIDs(
-          bagItems.map(a => a.productVariant.id),
-          {
-            customer: customerWithUser,
-            includeSentPackage: !hasFreeSwap,
-            includeReturnPackage: true,
-          }
-        )
-
-        return baseflatFee + returnRate.amount + (sentRate?.amount || 0)
-      }
-
-      const processingFeeLines = [
-        {
-          name: "Processing Fees",
-          recordType: "Fee",
-          recordID: "",
-          price: await calculateProcessingFee(),
-        },
-      ]
+      const processingFeeLines = await this.calculateProcessingFee({
+        bagItems,
+        customer: customerWithUser,
+        hasFreeSwap,
+      })
 
       const chargebeeCharges = [...lines, ...processingFeeLines].map(line => {
         return {
@@ -757,22 +737,22 @@ export class ReservationService {
           recordID: customer.id,
           price: processingTotal + taxTotal,
         },
-        ...(invoice_estimate.credits_applied
+        ...(invoice_estimate.discounts.length > 0
           ? [
               {
-                name: "Sub Total",
+                name: "Sub-total",
                 recordType: "Total",
                 recordID: customer.id,
-                price: invoice_estimate.total,
+                price: invoice_estimate.sub_total,
               },
               {
                 name: "Credits applied",
                 recordType: "Credit",
                 recordID: customer.id,
-                price: invoice_estimate.credits_applied,
+                price: -invoice_estimate.discounts[0].amount,
               },
               {
-                name: "Total with credits applied",
+                name: "Total",
                 recordType: "Total",
                 recordID: customer.id,
                 price: invoice_estimate.total,
@@ -1104,6 +1084,46 @@ export class ReservationService {
     ]
   }
 
+  private async calculateProcessingFee({
+    bagItems,
+    customer,
+    hasFreeSwap,
+  }: {
+    bagItems: { productVariant: { id: string } }[]
+    customer: { id: string }
+    hasFreeSwap: boolean
+  }) {
+    const {
+      sentRate,
+      returnRate,
+    } = await this.shippingService.getShippingRateForVariantIDs(
+      bagItems.map(a => a.productVariant.id),
+      {
+        customer,
+        includeSentPackage: !hasFreeSwap,
+        includeReturnPackage: true,
+      }
+    )
+
+    return [
+      {
+        name: "Base Fee",
+        recordType: "Fee",
+        price: 550,
+      },
+      {
+        name: "Inbound shipping",
+        recordType: "Fee",
+        price: sentRate?.amount,
+      },
+      {
+        name: "Outbound shipping",
+        recordAType: "Fee",
+        price: returnRate?.amount,
+      },
+    ].filter(a => a.price > 0)
+  }
+
   private async validateLastReservation(lastReservation, items) {
     if (!lastReservation) {
       return
@@ -1124,13 +1144,6 @@ export class ReservationService {
           status: "Completed",
         },
       })
-    } else if (
-      !!lastReservation &&
-      this.statements.reservationIsActive(lastReservation)
-    ) {
-      throw new ApolloError(
-        `Last reservation must either be null, completed, cancelled, or lost. Last Reservation number. Last Reservation number, status: ${lastReservation.reservationNumber}, ${lastReservation.status}`
-      )
     }
   }
 

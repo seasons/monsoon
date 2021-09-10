@@ -78,6 +78,7 @@ type ReservationFeedback {
 }
 
 enum ReservationLineItemRecordType {
+  Credit
   ProductVariant
   Reservation
   Fee
