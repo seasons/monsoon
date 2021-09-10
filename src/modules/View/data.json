@@ -2,22 +2,22 @@
   "Referral": {
     "id": "referral",
     "type": "Referral",
-    "title": "Refer a friend. Get 50% off",
-    "caption": "Refer a friend and you'll both get 50% off on your next month of Seasons when they successfully sign up!",
+    "title": "Refer a friend, get a $20 credit",
+    "caption": "Refer a friend and you'll both receive a $20 credit when they successfully sign up!",
     "properties": {
       "imageURL": "https://seasons-s3.imgix.net/referral-view/referral-view-image.png",
-      "shareMessage": "Here’s my referral link for Seasons. Get a free month when you sign-up.",
+      "shareMessage": "Here’s my referral link for Seasons. Get a $20 credit when you sign-up.",
       "listText": [
-        "Limited to Essential plans",
+        "Maximum 3 invites per member",
         "Credits are automatically applied",
-        "Maximum three invites per member"
+        "Referred friends skip the waitlist"
       ]
     }
   },
   "Banner": {
     "id": "banner",
     "type": "Banner",
-    "title": "Refer a friend. Get 50% off",
+    "title": "Refer a friend, get a $20 credit",
     "caption": "You have a new invite. Get your link",
     "properties": {
       "icon": "InviteSVG",
