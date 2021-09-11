@@ -29,6 +29,7 @@ type Category {
   updatedAt: DateTime
   productType: ProductType
   measurementType: MeasurementType
+  position: Int
 }
 
 input CustomCategoryUpsertInput {
@@ -39,4 +40,27 @@ input CustomCategoryUpsertInput {
   visible: Boolean
   description: String
   slug: String
+}
+
+enum CategoryOrderByInput {
+  id_ASC
+  id_DESC
+  slug_ASC
+  slug_DESC
+  name_ASC
+  name_DESC
+  image_ASC
+  image_DESC
+  description_ASC
+  description_DESC
+  visible_ASC
+  visible_DESC
+  updatedAt_ASC
+  updatedAt_DESC
+  productType_ASC
+  productType_DESC
+  measurementType_ASC
+  measurementType_DESC
+  position_ASC
+  position_DESC
 }

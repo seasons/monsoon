@@ -614,6 +614,7 @@ model Category {
   warehouseLocationConstraints WarehouseLocationConstraint[]
   children                     Category[]                    @relation("CategoryToChildren")
   parents                      Category[]                    @relation("CategoryToChildren")
+  position                     Int?
 }
 
 model Collection {
