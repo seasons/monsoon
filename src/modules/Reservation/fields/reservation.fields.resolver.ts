@@ -149,7 +149,7 @@ export class ReservationFieldsResolver {
 
   @ResolveField()
   async lineItems(@Parent() reservation, @Customer() customer) {
-    if (reservation.lineItems) {
+    if (reservation.lineItems && reservation.lineItems.length > 0) {
       return reservation.lineItems
     }
 

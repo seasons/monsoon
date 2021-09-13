@@ -737,7 +737,7 @@ export class ReservationService {
           recordID: customer.id,
           price: processingTotal + taxTotal,
         },
-        ...(invoice_estimate.discounts.length > 0
+        ...(invoice_estimate?.discounts?.length > 0
           ? [
               {
                 name: "Sub-total",
@@ -1144,6 +1144,13 @@ export class ReservationService {
           status: "Completed",
         },
       })
+    } else if (
+      !!lastReservation &&
+      this.statements.reservationIsActive(lastReservation)
+    ) {
+      throw new ApolloError(
+        `Last reservation must either be null, completed, cancelled, or lost. Last Reservation number. Last Reservation number, status: ${lastReservation.reservationNumber}, ${lastReservation.status}`
+      )
     }
   }
 
