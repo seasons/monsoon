@@ -103,6 +103,8 @@ export class ReservationMutationsResolver {
       units: returnData.products.map(a => a.seasonsUID),
       application,
     })
+
+    return returnData
   }
 
   @Mutation()
