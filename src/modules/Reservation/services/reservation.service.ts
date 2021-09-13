@@ -873,12 +873,9 @@ export class ReservationService {
     }
 
     // If setting to lost, execute implied updates
-    const cannotMarkReservationAsLost = [
-      "Queued",
-      "Picked",
-      "Packed",
-      "Completed",
-    ].includes(reservation.status)
+    const cannotMarkReservationAsLost = ["Queued", "Picked", "Packed"].includes(
+      reservation.status
+    )
     if (changingStatusTo("Lost")) {
       if (cannotMarkReservationAsLost) {
         throw new Error(
