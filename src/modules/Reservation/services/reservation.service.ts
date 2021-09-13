@@ -1298,7 +1298,7 @@ export class ReservationService {
             name: "UPS",
           },
         },
-        amount: shippoTransaction.rate.amount * 100,
+        amount: Math.round(shippoTransaction.rate.amount * 100),
       }
     }
 
