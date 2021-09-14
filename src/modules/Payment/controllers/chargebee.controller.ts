@@ -226,12 +226,18 @@ export class ChargebeeController {
   }
 
   private async chargebeePaymentFailed(content: any) {
-    const { customer, subscription } = content
+    const { customer, invoice } = content
 
-    const isFailureForSubscription = !!subscription
-    if (!isFailureForSubscription) {
+    const isFailureForBuyUsed = invoice?.notes?.find(a =>
+      a.note?.includes("Purchase Used")
+    )
+    const isFailureForBuyNew = invoice?.notes?.find(a =>
+      a.note?.includes("Purchase New")
+    )
+    if (isFailureForBuyUsed || isFailureForBuyNew) {
       return
     }
+    // Else, it's a failure for a subscription charge, or a custom charge.
 
     const userId = customer?.id
     const cust = await this.prisma.client.customer.findFirst({
