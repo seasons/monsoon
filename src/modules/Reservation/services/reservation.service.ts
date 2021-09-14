@@ -666,6 +666,7 @@ export class ReservationService {
     try {
       let lines = []
       let variantIDs = []
+      let updatedShippingCode = shippingCode
 
       if (reservation) {
         const key =
@@ -693,6 +694,11 @@ export class ReservationService {
                   },
                 },
               },
+              shippingOption: {
+                select: {
+                  shippingMethod: true,
+                },
+              },
             },
           }
         )
@@ -710,6 +716,8 @@ export class ReservationService {
         })
 
         variantIDs = reservationWithProducts[key].map(p => p.productVariant.id)
+        updatedShippingCode = (reservationWithProducts as any)?.shippingOption
+          ?.shippingMethod?.code
       } else {
         const bagItems = await this.prisma.client.bagItem.findMany({
           where: {
@@ -764,7 +772,7 @@ export class ReservationService {
         variantIDs,
         customer: customerWithUser,
         hasFreeSwap,
-        shippingCode,
+        shippingCode: updatedShippingCode,
       })
 
       const chargebeeCharges = [...lines, ...processingFeeLines].map(line => {

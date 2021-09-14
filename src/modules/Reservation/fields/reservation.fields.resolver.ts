@@ -149,13 +149,7 @@ export class ReservationFieldsResolver {
   }
 
   @ResolveField()
-  async lineItems(
-    @Parent() reservation,
-    @Customer() customer,
-    @Args() args,
-    @Select() select
-  ) {
-    console.log(JSON.stringify(select, null, 2))
+  async lineItems(@Parent() reservation, @Customer() customer, @Args() args) {
     return this.reservationService.draftReservationLineItems({
       reservation,
       customer,
