@@ -1,4 +1,5 @@
 import { Customer, User } from "@app/decorators"
+import { Select } from "@app/decorators/select.decorator"
 import { Loader } from "@app/modules/DataLoader/decorators/dataloader.decorator"
 import { UtilsService } from "@app/modules/Utils/services/utils.service"
 import { PrismaDataLoader } from "@app/prisma/prisma.loader"
@@ -148,11 +149,17 @@ export class ReservationFieldsResolver {
   }
 
   @ResolveField()
-  async lineItems(@Parent() reservation, @Customer() customer) {
-    if (reservation.lineItems && reservation.lineItems.length > 0) {
-      return reservation.lineItems
-    }
-
-    return this.reservationService.draftReservationLineItems(customer)
+  async lineItems(
+    @Parent() reservation,
+    @Customer() customer,
+    @Args() args,
+    @Select() select
+  ) {
+    console.log(JSON.stringify(select, null, 2))
+    return this.reservationService.draftReservationLineItems({
+      reservation,
+      customer,
+      filterBy: args?.filterBy,
+    })
   }
 }
