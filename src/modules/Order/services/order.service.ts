@@ -209,6 +209,8 @@ export class OrderService {
       orderLineItems,
       invoice: {
         customer_id: user.id,
+        // We used "Purchase Used" to ID a buy used invoice in chargebee webhooks. Change
+        // with caution.
         invoice_note: `Purchase Used ${productName}`,
         shipping_address: this.getChargebeeShippingAddress({
           location: shippingAddress,
@@ -438,6 +440,7 @@ export class OrderService {
               user,
               location: shippingAddress,
             }),
+            invoice_note: `Purchase New ${productName}`,
             charges: orderWithLineItems.lineItems
               .map(orderLineItem =>
                 this.getChargebeeChargeForOrderLineItem({

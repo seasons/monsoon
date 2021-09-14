@@ -226,7 +226,7 @@ export class ChargebeeController {
   }
 
   private async chargebeePaymentFailed(content: any) {
-    const { customer, invoice } = content
+    const { customer, invoice, subscription } = content
 
     const isFailureForBuyUsed = invoice?.notes?.find(a =>
       a.note?.includes("Purchase Used")
@@ -250,11 +250,15 @@ export class ChargebeeController {
     })
     if (!!cust) {
       if (this.statements.isPayingCustomer(cust)) {
+        const isFailureForSubscription = !!subscription
         await this.prisma.client.customer.update({
           where: { id: cust.id },
           data: { status: "PaymentFailed" },
         })
-        await this.email.sendUnpaidMembershipEmail(cust.user)
+        if (isFailureForSubscription) {
+          await this.email.sendUnpaidMembershipEmail(cust.user)
+        }
+        // TODO: Send email for other kinds of failures
       }
     } else {
       this.error.setExtraContext({ payload: content }, "chargebeePayload")
