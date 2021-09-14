@@ -856,27 +856,6 @@ export class ReservationService {
     }
   }
 
-  private async addShippingLineItem(customer, shippingCode) {
-    const { detail } = customer
-    const shippingOptions = detail?.shippingAddress?.shippingOptions
-    const shippingOption = shippingOptions.find(
-      option => option.shippingMethod.code === shippingCode
-    )
-
-    if (!shippingOption) {
-      return []
-    }
-
-    return [
-      this.createDraftLineItem({
-        name: "Shipping",
-        recordType: "Fee",
-        recordID: shippingOption.id,
-        price: shippingOption.externalCost,
-      }),
-    ]
-  }
-
   private createDraftLineItem = values => ({
     id: cuid(),
     createdAt: Date.now(),
