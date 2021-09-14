@@ -1,5 +1,4 @@
 import { ErrorService } from "@app/modules/Error/services/error.service"
-import { PaymentService } from "@app/modules/Payment/services/payment.service"
 import { ProductVariantService } from "@app/modules/Product/services/productVariant.service"
 import { PushNotificationService } from "@app/modules/PushNotification"
 import { CustomerUtilsService } from "@app/modules/User/services/customer.utils.service"
@@ -20,7 +19,6 @@ import {
   ReservationFeedback,
   ReservationStatus,
   ShippingCode,
-  User,
 } from "@prisma/client"
 import { PrismaService } from "@prisma1/prisma.service"
 import { ApolloError } from "apollo-server"
@@ -58,7 +56,6 @@ export interface ReservationWithProductVariantData {
 export class ReservationService {
   constructor(
     private readonly prisma: PrismaService,
-    private readonly payment: PaymentService,
     private readonly productUtils: ProductUtilsService,
     private readonly productVariantService: ProductVariantService,
     private readonly shippingService: ShippingService,
@@ -74,19 +71,14 @@ export class ReservationService {
   async reserveItems(
     items: string[],
     shippingCode: ShippingCode,
-    user: User,
-    customer: Customer,
+    customer: Pick<Customer, "id">,
     select: Prisma.ReservationSelect = { id: true }
   ) {
-    if (customer.status !== "Active") {
-      throw new Error(`Only Active customers can place a reservation`)
-    }
-
-    const promises = []
-
     const customerWithData = await this.prisma.client.customer.findUnique({
       where: { id: customer.id },
       select: {
+        id: true,
+        status: true,
         membership: {
           select: {
             plan: { select: { itemCount: true, tier: true } },
@@ -96,8 +88,17 @@ export class ReservationService {
             },
           },
         },
+        user: {
+          select: { id: true, email: true, firstName: true },
+        },
       },
     })
+
+    if (customerWithData.status !== "Active") {
+      throw new Error(`Only Active customers can place a reservation`)
+    }
+
+    const promises = []
 
     // Do a quick validation on the data
     const customerPlanType = customerWithData.membership.plan.tier
@@ -203,7 +204,6 @@ export class ReservationService {
       seasonsToCustomerTransaction,
       customerToSeasonsTransaction,
       lastReservation as any,
-      user,
       customer,
       await this.shippingService.calcShipmentWeightFromProductVariantIDs(
         newProductVariantsBeingReserved as string[]
@@ -245,7 +245,7 @@ export class ReservationService {
 
     // Send confirmation email
     await this.emails.sendReservationConfirmationEmail(
-      user,
+      customerWithData.user,
       productsBeingReserved,
       reservation,
       seasonsToCustomerTransaction.tracking_number,
@@ -255,7 +255,7 @@ export class ReservationService {
     try {
       await this.removeRestockNotifications(items, customer?.id)
     } catch (err) {
-      this.error.setUserContext(user)
+      this.error.setUserContext(customerWithData.user)
       this.error.setExtraContext({ items })
       this.error.captureError(err)
     }
@@ -1219,7 +1219,7 @@ export class ReservationService {
   }
 
   private async getHeldPhysicalProducts(
-    customer: Customer,
+    customer: Pick<Customer, "id">,
     lastCompletedReservation
   ): Promise<PhysicalProduct[]> {
     if (lastCompletedReservation == null) return []
@@ -1244,7 +1244,6 @@ export class ReservationService {
     lastReservation: {
       returnPackages: Array<Pick<Package, "id"> & { events: { id: string }[] }>
     },
-    user: User,
     customer: Pick<Customer, "id">,
     shipmentWeight: number,
     physicalProductsBeingReserved: PhysicalProduct[],
@@ -1254,6 +1253,7 @@ export class ReservationService {
     const customerWithData = await this.prisma.client.customer.findUnique({
       where: { id: customer.id },
       select: {
+        user: { select: { id: true } },
         detail: {
           select: {
             shippingAddress: {
@@ -1298,7 +1298,7 @@ export class ReservationService {
             name: "UPS",
           },
         },
-        amount: shippoTransaction.rate.amount * 100,
+        amount: Math.round(shippoTransaction.rate.amount * 100),
       }
     }
 
@@ -1328,7 +1328,7 @@ export class ReservationService {
       },
       user: {
         connect: {
-          id: user.id,
+          id: customerWithData.user.id,
         },
       },
       phase: "BusinessToCustomer",

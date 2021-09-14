@@ -2,7 +2,7 @@ import { ProductWithPhysicalProducts } from "@app/modules/Product/product.types"
 import { UtilsService } from "@app/modules/Utils/services/utils.service"
 import { ImageData } from "@modules/Image/image.types.d"
 import { Injectable } from "@nestjs/common"
-import { Prisma, ProductVariant, SizeType } from "@prisma/client"
+import { Customer, Prisma, ProductVariant, SizeType } from "@prisma/client"
 import { Category, Product, Size } from "@prisma/client"
 import { PrismaService } from "@prisma1/prisma.service"
 import {
@@ -326,7 +326,7 @@ export class ProductUtilsService {
       }
     }
   }
-  async getReservedBagItems(customer) {
+  async getReservedBagItems(customer: Pick<Customer, "id">) {
     const reservedBagItems = await this.prisma.client.bagItem.findMany({
       where: { customer: { id: customer.id }, status: "Reserved" },
       select: {

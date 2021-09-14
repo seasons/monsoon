@@ -33,6 +33,10 @@ type Mutation {
     options: ReserveItemsOptions
     shippingCode: ShippingCode
   ): Reservation @hasRole(roles: [Customer])
+  reserveItemsForCustomer(
+    customerID: ID!
+    shippingCode: ShippingCode
+  ): Reservation @hasRole(roles: [Admin])
   draftReservationLineItems(hasFreeSwap: Boolean): [OrderLineItem!]
   checkItemsAvailability(items: [ID!]!): Boolean! @hasRole(roles: [Customer])
   updateReservationFeedback(

@@ -114,7 +114,7 @@ export class ShippingService {
 
   async createReservationShippingLabels(
     newProductVariantsBeingReserved: string[],
-    customer: Customer,
+    customer: Pick<Customer, "id">,
     shippingCode: ShippingCode
   ): Promise<ShippoTransaction[]> {
     const shipmentWeight = await this.calcShipmentWeightFromProductVariantIDs(

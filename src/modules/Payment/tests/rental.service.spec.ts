@@ -1497,7 +1497,6 @@ const addToBagAndReserveForCustomer = async (
   const r = await reservationService.reserveItems(
     prodVarsToReserve,
     shippingCode,
-    testCustomer.user,
     testCustomer as any,
     {
       reservationNumber: true,
