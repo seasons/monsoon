@@ -277,12 +277,7 @@ export class RentalService {
     )
 
     let billingEndAt
-    switch (membershipWithData.plan.planID as AccessPlanID) {
-      case "access-monthly":
-        billingEndAt = await this.getChargebeeNextBillingAt(
-          membershipWithData.subscriptionId
-        )
-        break
+    switch (membershipWithData.plan.planID) {
       case "access-yearly":
         billingEndAt = await this.getRentalInvoiceBillingEndAtAccessAnnual(
           customerMembershipId,
@@ -290,7 +285,10 @@ export class RentalService {
         )
         break
       default:
-        throw `Unrecognized planID: ${membershipWithData.plan.planID}`
+        billingEndAt = await this.getChargebeeNextBillingAt(
+          membershipWithData.subscriptionId
+        )
+        break
     }
 
     return billingEndAt
@@ -677,23 +675,7 @@ export class RentalService {
         },
       }
     )
-    if (planID === "access-monthly") {
-      for (const lineItem of lineItemsWithData) {
-        const subscriptionId = lineItem.rentalInvoice.membership.subscriptionId
-        const payload = this.prismaLineItemToChargebeeChargeInput(lineItem)
-        const result = await chargebee.subscription
-          .add_charge_at_term_end(subscriptionId, payload)
-          .request(this.handleChargebeeRequestResult)
-        const chargebeeLineItems =
-          result?.estimate?.invoice_estimate?.line_items
-        const taxPromise = this.getLineItemTaxUpdatePromise(
-          lineItem,
-          chargebeeLineItems
-        )
-        promises.push(taxPromise)
-        invoicesCreated.push(result)
-      }
-    } else {
+    if (planID === "access-yearly") {
       const prismaUserId =
         lineItemsWithData[0].rentalInvoice.membership.customer.user.id
       const result = await chargebee.invoice
@@ -714,6 +696,23 @@ export class RentalService {
         promises.push(taxPromise)
       }
       invoicesCreated.push(result)
+    } else {
+      // access-monthly, and any other plan
+      for (const lineItem of lineItemsWithData) {
+        const subscriptionId = lineItem.rentalInvoice.membership.subscriptionId
+        const payload = this.prismaLineItemToChargebeeChargeInput(lineItem)
+        const result = await chargebee.subscription
+          .add_charge_at_term_end(subscriptionId, payload)
+          .request(this.handleChargebeeRequestResult)
+        const chargebeeLineItems =
+          result?.estimate?.invoice_estimate?.line_items
+        const taxPromise = this.getLineItemTaxUpdatePromise(
+          lineItem,
+          chargebeeLineItems
+        )
+        promises.push(taxPromise)
+        invoicesCreated.push(result)
+      }
     }
 
     return [promises, invoicesCreated]
