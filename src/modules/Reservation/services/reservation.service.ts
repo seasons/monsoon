@@ -1234,7 +1234,7 @@ export class ReservationService {
       this.statements.reservationIsActive(lastReservation)
     ) {
       throw new ApolloError(
-        `Last reservation must either be null, completed, cancelled, or lost. Last Reservation number. Last Reservation number, status: ${lastReservation.reservationNumber}, ${lastReservation.status}`
+        `Must have all items from last reservation included in the new reservation. Last Reservation number, status: ${lastReservation.reservationNumber}, ${lastReservation.status}`
       )
     }
   }
