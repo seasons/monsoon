@@ -16,6 +16,6 @@ export class CustomerMembershipFieldsResolver {
         creditBalance: true,
       },
     })
-    return membership.creditBalance
+    return membership.creditBalance || 0
   }
 }

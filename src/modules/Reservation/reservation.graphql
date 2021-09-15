@@ -225,7 +225,7 @@ type Reservation @cacheControl(maxAge: 0) {
   returnedPackage: Package
   feedback: ReservationFeedback
   lastLocation: Location
-  lineItems: [ReservationLineItem]
+  lineItems(filterBy: ReservationLineItemsFilter): [ReservationLineItem]
   products: [PhysicalProduct!]!
   newProducts: [PhysicalProduct!]!
   returnedProducts: [PhysicalProduct!]!

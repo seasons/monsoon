@@ -94,6 +94,7 @@ type Me @cacheControl(maxAge: 0, scope: PRIVATE) {
   savedItems: [BagItem!]
   reservationLineItems(
     filterBy: ReservationLineItemsFilter
+    shippingCode: String
   ): [ReservationLineItem!]
   notificationBar: NotificationBar
   nextFreeSwapDate: DateTime
