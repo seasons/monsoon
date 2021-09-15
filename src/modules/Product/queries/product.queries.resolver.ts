@@ -3,6 +3,7 @@ import { Application } from "@app/decorators/application.decorator"
 import { FindManyArgs } from "@app/decorators/findManyArgs.decorator"
 import { Select } from "@app/decorators/select.decorator"
 import { QueryUtilsService } from "@app/modules/Utils/services/queryUtils.service"
+import { PrismaService } from "@app/prisma/prisma.service"
 import { Logger } from "@nestjs/common"
 import { Args, Info, Query, Resolver } from "@nestjs/graphql"
 import { application } from "express"
@@ -15,7 +16,8 @@ export class ProductQueriesResolver {
 
   constructor(
     private readonly productService: ProductService,
-    private readonly queryUtils: QueryUtilsService
+    private readonly queryUtils: QueryUtilsService,
+    private readonly prisma: PrismaService
   ) {}
 
   @Query()
@@ -103,6 +105,19 @@ export class ProductQueriesResolver {
       { ...args, select },
       "ProductVariant"
     )
+  }
+
+  @Query()
+  async productVariants(
+    @FindManyArgs({
+      withFragment: `fragment EnsureId on ProductVariant { id }`,
+    })
+    { where, select }
+  ) {
+    return this.prisma.client.productVariant.findMany({
+      where,
+      select,
+    })
   }
 
   @Query()

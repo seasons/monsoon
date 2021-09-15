@@ -654,6 +654,7 @@ export class ReservationService {
       recoupment: true,
       wholesalePrice: true,
       rentalPriceOverride: true,
+      computedRentalPrice: true,
       category: {
         select: {
           id: true,
@@ -705,7 +706,7 @@ export class ReservationService {
 
         lines = reservationWithProducts[key].map(p => {
           const product = p.productVariant.product
-          const price = this.productUtils.calcRentalPrice(product) * 100
+          const price = p.computedRentalPrice
 
           return {
             name: product.name,
@@ -749,7 +750,7 @@ export class ReservationService {
 
         lines = bagItems.map(bagItem => {
           const product = bagItem?.productVariant?.product
-          const price = this.productUtils.calcRentalPrice(product) * 100
+          const price = product.computedRentalPrice
 
           return {
             name: product.name,
@@ -765,8 +766,10 @@ export class ReservationService {
       const nextFreeSwapDate = await this.customerUtils.nextFreeSwapDate(
         customer.id
       )
-      const hasFreeSwap = DateTime.fromISO(nextFreeSwapDate) <= DateTime.local()
-      const isBillingAddressInNY = customerWithUser.billingInfo.state === "NY"
+      const hasFreeSwap =
+        nextFreeSwapDate === null
+          ? true
+          : DateTime.fromISO(nextFreeSwapDate) <= DateTime.local()
 
       const processingFeeLines = await this.calculateProcessingFee({
         variantIDs,
@@ -779,12 +782,7 @@ export class ReservationService {
         return {
           amount: line.price,
           description: line.name,
-          ...(isBillingAddressInNY && {
-            taxable: true,
-            is_taxed: true,
-            avalara_tax_code:
-              line.recordType === "Fee" ? "FR020000" : "PC040000",
-          }),
+          taxable: line.recordType !== "Fee",
         }
       })
 
@@ -1205,7 +1203,7 @@ export class ReservationService {
       },
       {
         name: "Outbound shipping",
-        recordAType: "Fee",
+        recordType: "Fee",
         price: returnRate?.amount,
       },
     ].filter(a => a.price > 0)
