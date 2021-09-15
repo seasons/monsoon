@@ -706,7 +706,7 @@ export class ReservationService {
 
         lines = reservationWithProducts[key].map(p => {
           const product = p.productVariant.product
-          const price = p.computedRentalPrice
+          const price = p.computedRentalPrice * 100
 
           return {
             name: product.name,
@@ -750,7 +750,7 @@ export class ReservationService {
 
         lines = bagItems.map(bagItem => {
           const product = bagItem?.productVariant?.product
-          const price = product.computedRentalPrice
+          const price = product.computedRentalPrice * 100
 
           return {
             name: product.name,
