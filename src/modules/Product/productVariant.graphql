@@ -25,6 +25,15 @@ type Query {
   ): [BottomSize]! @cacheControl(maxAge: 0)
   productVariant(where: ProductVariantWhereUniqueInput!): ProductVariant
     @cacheControl(maxAge: 0)
+  productVariants(
+    where: ProductVariantWhereInput
+    orderBy: ProductVariantOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): [ProductVariant!]
   size(where: SizeWhereUniqueInput!): Size @cacheControl(maxAge: 0)
   sizes(
     where: SizeWhereInput
