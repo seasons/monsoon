@@ -5,9 +5,16 @@ import { PrismaService } from "../../prisma/prisma.service"
 const run = async () => {
   const ps = new PrismaService()
 
-  await ps.client.product.updateMany({
-    where: { rentalPriceOverride: { gt: 0 } },
-    data: { rentalPriceOverride: null },
+  const x = await ps.client.customer.findFirst({
+    where: { user: { email: "markchristopherz@gmail.com" } },
+    select: {
+      membership: {
+        select: {
+          pauseRequests: { select: { pauseType: true, createdAt: true } },
+        },
+      },
+    },
   })
+  console.log(x)
 }
 run()
