@@ -470,9 +470,9 @@ export class RentalService {
     const custWithExtraData = await this.prisma.client.customer.findFirst({
       where: { membership: { rentalInvoices: { some: { id: invoice.id } } } },
       select: {
+        user: { select: { createdAt: true } },
         membership: {
           select: {
-            subscription: { select: { startedAt: true } },
             rentalInvoices: { select: { id: true } },
           },
         },
@@ -488,9 +488,9 @@ export class RentalService {
     const launchDate = this.timeUtils.dateFromUTCTimestamp(
       process.env.LAUNCH_DATE_TIMESTAMP
     )
-    const subscribedBeforeLaunchDay = this.timeUtils.isLaterDate(
+    const createdBeforeLaunchDay = this.timeUtils.isLaterDate(
       launchDate,
-      custWithExtraData.membership.subscription.startedAt
+      custWithExtraData.user.createdAt
     )
     const isCustomersFirstRentalInvoice =
       custWithExtraData.membership.rentalInvoices.length === 1
@@ -515,7 +515,7 @@ export class RentalService {
           daysRented * roundedDailyRentalPrice * 100
         )
         const applyGrandfatheredPricing =
-          subscribedBeforeLaunchDay &&
+          createdBeforeLaunchDay &&
           isCustomersFirstRentalInvoice &&
           this.timeUtils.isLaterDate(launchDate, initialReservation.createdAt)
         let price = applyGrandfatheredPricing ? 0 : defaultPrice

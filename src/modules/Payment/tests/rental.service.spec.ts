@@ -1400,7 +1400,6 @@ const createTestCustomer = async ({
           create: {
             planID: "access-monthly",
             subscriptionId: chargebeeSubscriptionId,
-            startedAt: timeUtils.xDaysAgoISOString(1),
             currentTermStart: timeUtils.xDaysAgoISOString(1),
             currentTermEnd: timeUtils.xDaysFromNowISOString(1),
             nextBillingAt: timeUtils.xDaysFromNowISOString(1),
