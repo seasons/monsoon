@@ -746,6 +746,7 @@ model CustomerMembershipSubscriptionData {
   id               String              @id @default(cuid()) @db.VarChar(30)
   planID           String
   subscriptionId   String
+  startedAt        DateTime? // Make this mandatory after setting it
   currentTermStart DateTime
   currentTermEnd   DateTime
   nextBillingAt    DateTime?

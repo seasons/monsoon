@@ -450,6 +450,7 @@ export class RentalService {
       daysRented,
       rentalStartedAt,
       rentalEndedAt,
+      initialReservationId: initialReservation.id,
       comment,
     }
   }
@@ -466,28 +467,64 @@ export class RentalService {
       })[]
     }
   ) {
+    const custWithExtraData = await this.prisma.client.customer.findFirst({
+      where: { membership: { rentalInvoices: { some: { id: invoice.id } } } },
+      select: {
+        membership: {
+          select: {
+            subscription: { select: { startedAt: true } },
+            rentalInvoices: { select: { id: true } },
+          },
+        },
+      },
+    })
+
     const addLineItemBasics = input => ({
       ...input,
       rentalInvoice: { connect: { id: invoice.id } },
       currencyCode: "USD",
     })
 
+    const launchDate = this.timeUtils.dateFromUTCTimestamp(
+      process.env.LAUNCH_DATE_TIMESTAMP
+    )
+    const subscribedBeforeLaunchDay = this.timeUtils.isLaterDate(
+      launchDate,
+      custWithExtraData.membership.subscription.startedAt
+    )
+    const isCustomersFirstRentalInvoice =
+      custWithExtraData.membership.rentalInvoices.length === 1
+
     const lineItemsForPhysicalProductDatas = (await Promise.all(
       invoice.products.map(async physicalProduct => {
-        const { daysRented, ...daysRentedMetadata } = await this.calcDaysRented(
-          invoice,
-          physicalProduct
-        )
+        const {
+          daysRented,
+          initialReservationId,
+          ...daysRentedMetadata
+        } = await this.calcDaysRented(invoice, physicalProduct)
         const rawDailyRentalPrice =
           physicalProduct.productVariant.product.computedRentalPrice / 30
         const roundedDailyRentalPriceAsString = rawDailyRentalPrice.toFixed(2)
         const roundedDailyRentalPrice = +roundedDailyRentalPriceAsString
 
+        const initialReservation = await this.prisma.client.reservation.findUnique(
+          { where: { id: initialReservationId }, select: { createdAt: true } }
+        )
+
+        const defaultPrice = Math.round(
+          daysRented * roundedDailyRentalPrice * 100
+        )
+        const applyGrandfatheredPricing =
+          subscribedBeforeLaunchDay &&
+          isCustomersFirstRentalInvoice &&
+          this.timeUtils.isLaterDate(launchDate, initialReservation.createdAt)
+        let price = applyGrandfatheredPricing ? 0 : defaultPrice
+
         return addLineItemBasics({
           ...daysRentedMetadata,
           daysRented,
           physicalProduct: { connect: { id: physicalProduct.id } },
-          price: Math.round(daysRented * roundedDailyRentalPrice * 100),
+          price,
         }) as Prisma.RentalInvoiceLineItemCreateInput
       })
     )) as any
