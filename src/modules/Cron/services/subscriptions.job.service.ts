@@ -66,21 +66,16 @@ export class SubscriptionsScheduledJobs {
             subscription
           )
 
-          const membershipSubscriptionID =
-            customer?.membership?.subscription?.id
-          if (membershipSubscriptionID) {
-            await this.prisma.client.customerMembershipSubscriptionData.update({
-              where: { id: membershipSubscriptionID },
-              data,
-            })
-          } else {
-            await this.prisma.client.customerMembershipSubscriptionData.create({
-              data: {
-                ...data,
-                membership: { connect: { id: customer.membership.id } },
-              },
-            })
+          if (!customer.membership?.id) {
+            throw new Error(`Customer ${customer.id} has no membership`)
           }
+          await this.prisma.client.customerMembership.update({
+            where: { id: customer.membership.id },
+            data: {
+              subscription: { upsert: { create: data, update: data } },
+              plan: { connect: { planID: data.planID } },
+            },
+          })
         }
       }
     } catch (e) {
@@ -96,7 +91,7 @@ export class SubscriptionsScheduledJobs {
   // TODO: Turn on when we launch new plans
   // @Cron(CronExpression.EVERY_DAY_AT_4AM)
   async handleRentalInvoices() {
-    this.logger.log(`Start update subscriptions field job`)
+    this.logger.log(`Start handle rental invoices job`)
 
     let invoicesHandled = 0
     const invoicesToHandle = await this.prisma.client.rentalInvoice.findMany({
@@ -125,7 +120,7 @@ export class SubscriptionsScheduledJobs {
     }
 
     this.logger.log(
-      `End update subscriptions field job: ${invoicesHandled} invoices handled`
+      `End handle rental invoices job: ${invoicesHandled} invoices handled`
     )
   }
 }
