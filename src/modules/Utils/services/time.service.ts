@@ -83,4 +83,12 @@ export class TimeUtilsService {
     const multiplier = unit === "seconds" ? 1000 : 1
     return new Date(timestamp * multiplier)
   }
+
+  UTCTimestampFromDate(
+    date: Date,
+    unit: "seconds" | "milliseconds" = "seconds"
+  ) {
+    const divider = unit === "seconds" ? 1000 : 1
+    return date.getTime() / divider
+  }
 }
