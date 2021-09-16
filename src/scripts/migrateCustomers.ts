@@ -7,7 +7,15 @@ import { RentalService } from "../modules/Payment/services/rental.service"
 import { PaymentUtilsService } from "../modules/Utils/services/paymentUtils.service"
 import { TimeUtilsService } from "../modules/Utils/services/time.service"
 import { PrismaService } from "../prisma/prisma.service"
-import { Customer } from ".prisma/client"
+import {
+  Customer,
+  CustomerMembership,
+  CustomerMembershipSubscriptionData,
+  PauseReason,
+  PauseRequest,
+  Prisma,
+  User,
+} from ".prisma/client"
 
 const ps = new PrismaService()
 const timeUtils = new TimeUtilsService()
@@ -19,48 +27,87 @@ chargebee.configure({
   api_key: process.env.CHARGEBEE_API_KEY,
 })
 
-const migrateActiveCustomers = async () => {}
-const migratePausedWithoutItemsCustomers = async () => {}
-const migratePausedWithItemsCustomers = async () => {}
-
-const migrateMichaelDevoe = async () => {
-  /*
-  Do _not_ mark him as grandfathered. Because he has a delinquent invoice he doesn't qualify for promotional credits.
-  Update his subscription to be access-monthly starting today, first month free.
-  Create first rental invoice, because he'll be an active customer
-  */
-  const emailsToUpdate = ["michael_devoe6+1@yahoo.com"]
-  // const emailsToUpdate = ["fernando-hoeger@seasons.nyc"] testing emails
-
-  const customers = await ps.client.customer.findMany({
-    where: { user: { email: { in: emailsToUpdate } } },
+const customerSelect = Prisma.validator<Prisma.CustomerSelect>()({
+  id: true,
+  status: true,
+  bagItems: { select: { status: true } },
+  user: { select: { id: true } },
+  membership: {
     select: {
       id: true,
-      status: true,
-      bagItems: { select: { status: true } },
-      membership: {
+      plan: { select: { planID: true } },
+      subscription: {
         select: {
+          subscriptionId: true,
           id: true,
-          subscription: { select: { subscriptionId: true, id: true } },
+          planID: true,
+          status: true,
+          planPrice: true,
+          nextBillingAt: true,
         },
       },
-      reservations: {
-        // active reservations
-        where: { status: { notIn: ["Cancelled", "Completed", "Lost"] } },
-        select: { id: true },
+      pauseRequests: {
+        orderBy: { createdAt: "desc" },
+        select: { pauseType: true, pausePending: true },
       },
     },
+  },
+  reservations: {
+    // active reservations
+    where: { status: { notIn: ["Cancelled", "Completed", "Lost"] } },
+    select: { id: true },
+  },
+})
+
+const migrateAllCustomers = async () => {
+  const customers = await ps.client.customer.findMany({
+    where: { status: { in: ["Active", "PaymentFailed", "Paused"] } },
+    select: customerSelect,
   })
+
   for (const cust of customers) {
-    const { subscription } = await moveToAccessMonthlyImmediately(
-      cust.membership.subscription.subscriptionId
-    )
-    await updateCustomerSubscriptionData(
-      cust.membership.subscription.id,
-      subscription
-    )
-    await rentalService.initDraftRentalInvoice(cust.membership.id, "execute")
-    await markCustomersAsActiveUnlessPaymentFailed(cust)
+    try {
+      if (!!cust.membership?.subscription) {
+        const chargebeeSubscription = await getChargebeeSubscription(
+          cust.membership.subscription.id
+        )
+
+        // Change their plan first, since this impacts the billing dates for their rental invoice
+        const isSomeKindOfPaused = await isAnyFlavorOfPaused(
+          cust,
+          chargebeeSubscription
+        )
+        if (isSomeKindOfPaused) {
+          const { subscription } = await moveToAccessMonthlyImmediately(
+            cust.membership.subscription.subscriptionId
+          )
+          await updateCustomerSubscriptionData(
+            cust.membership.subscription.id,
+            subscription
+          )
+        } else {
+          if (chargebeeSubscription.status !== "active") {
+            throw new Error(
+              `Invalid logic. Trying to grandfather a customer with an inactive subscription. Cust: ${cust.id}`
+            )
+          }
+
+          await ps.client.customer.update({
+            where: { id: cust.id },
+            data: { membership: { update: { grandfathered: true } } },
+          })
+          await addInitialProratedPromotionalCredit(cust)
+        }
+
+        await rentalService.initDraftRentalInvoice(
+          cust.membership.id,
+          "execute"
+        )
+        await markCustomersAsActiveUnlessPaymentFailed(cust)
+      }
+    } catch (err) {
+      console.log(err)
+    }
   }
 }
 
@@ -75,15 +122,18 @@ const markCustomersAsActiveUnlessPaymentFailed = async (
   })
 }
 const updateCustomerSubscriptionData = async (
-  customerMembershipSubscriptionId,
+  customerMembershipId,
   chargebeeSubscription
 ) => {
   const data = await paymentUtils.getCustomerMembershipSubscriptionData(
     chargebeeSubscription
   )
-  await ps.client.customerMembershipSubscriptionData.update({
-    where: { id: customerMembershipSubscriptionId },
-    data,
+  await ps.client.customerMembership.update({
+    where: { id: customerMembershipId },
+    data: {
+      subscription: { upsert: { create: data, update: data } },
+      plan: { connect: { planID: data.planID } },
+    },
   })
 }
 const moveToAccessMonthlyImmediately = async subscriptionId => {
@@ -110,7 +160,96 @@ const handleChargebeeResult = (err, result) => {
     return result
   }
 }
-// migrateMichaelDevoe()
-// migrateActiveCustomers()
-// migratePausedWithoutItemsCustomers()
-// migratePausedWithItemsCustomers()
+
+const addInitialProratedPromotionalCredit = async (cust: {
+  user: Pick<User, "id">
+  membership: Pick<CustomerMembership, "id"> & {
+    subscription: Pick<
+      CustomerMembershipSubscriptionData,
+      "planPrice" | "planID" | "nextBillingAt"
+    >
+  }
+}) => {
+  const planID = cust.membership.subscription.planID
+  const planPrice = cust.membership.subscription.planPrice
+  const daysLeftInTerm = timeUtils.numDaysBetween(
+    new Date(),
+    cust.membership.subscription.nextBillingAt
+  )
+  const proratedAmount = Math.round(
+    cust.membership.subscription.planPrice * (daysLeftInTerm / 30) * 1.15
+  )
+  const description =
+    `Initial grandfathering promotional credit. Plan: ${planID}` +
+    ` at price ${planPrice} with ${daysLeftInTerm} days left in term.` // TODO: Replace 0
+  const addCreditsPayload = await chargebee.promotional_credit
+    .add({
+      customer_id: cust.user.id,
+      amount: proratedAmount,
+      description,
+    })
+    .request()
+  const totalPromotionalCredits = addCreditsPayload.customer.promotional_credits
+  await ps.client.customerMembership.update({
+    where: {
+      id: cust.membership.id,
+    },
+    data: {
+      creditBalance: totalPromotionalCredits,
+    },
+  })
+}
+
+const getChargebeeSubscription = async subscriptionId => {
+  const { subscription } = await chargebee.subscription
+    .retrieve(subscriptionId)
+    .request((err, result) => {
+      if (err) {
+        return err
+      }
+      if (result) {
+        return result
+      }
+    })
+  return subscription
+}
+
+const isAnyFlavorOfPaused = async (
+  cust: {
+    membership: {
+      pauseRequests: Pick<PauseRequest, "pausePending" | "pauseType">[]
+      subscription: Pick<
+        CustomerMembershipSubscriptionData,
+        "planID" | "status"
+      >
+    }
+  },
+  chargebeeSubscription
+) => {
+  const hasPendingPauseWithItemsRequest =
+    cust.membership.pauseRequests?.[0]?.pausePending &&
+    cust.membership.pauseRequests?.[0]?.pauseType === "WithItems"
+  const isFullyPausedWithItems = cust.membership.subscription.planID.includes(
+    "pause"
+  )
+  const isPausedWithoutItems = cust.membership.subscription.status === "paused"
+
+  // this variable covers subscriptions which were manually paused in chargebee
+  const pauseDateInFuture =
+    !!chargebeeSubscription.pause_date &&
+    timeUtils.isLaterDate(
+      timeUtils.dateFromUTCTimestamp(
+        chargebeeSubscription.pause_date,
+        "seconds"
+      ),
+      new Date()
+    )
+
+  return (
+    hasPendingPauseWithItemsRequest ||
+    isFullyPausedWithItems ||
+    isPausedWithoutItems ||
+    pauseDateInFuture
+  )
+}
+// migrateAllCustomers()

@@ -199,24 +199,25 @@ export class RentalService {
     membershipId,
     mode: "promise" | "execute" = "execute"
   ) {
-    let lastInvoiceReservationIds = []
+    let reservationWhereInputFromLastInvoice = {}
     const lastInvoice = await this.prisma.client.rentalInvoice.findFirst({
       where: { membershipId },
       orderBy: { createdAt: "desc" },
       select: { reservations: { select: { id: true } } },
     })
     if (!!lastInvoice) {
-      lastInvoiceReservationIds.push(...lastInvoice.reservations.map(a => a.id))
+      reservationWhereInputFromLastInvoice = {
+        id: { in: lastInvoice.reservations.map(a => a.id) },
+      }
     }
 
     const customer = await this.prisma.client.customer.findFirst({
       where: { membership: { id: membershipId } },
       select: {
         reservations: {
-          // TODO: Also check that it's on the last invoice
           where: {
             status: { notIn: ["Completed", "Cancelled", "Lost"] },
-            id: { in: lastInvoiceReservationIds },
+            ...reservationWhereInputFromLastInvoice,
           },
           select: { id: true },
         },
