@@ -1,15 +1,6 @@
 import "module-alias/register"
 
-import chargebee from "chargebee"
-
 import { PrismaService } from "../prisma/prisma.service"
-import {
-  Customer,
-  CustomerMembership,
-  CustomerMembershipSubscriptionData,
-  PauseRequest,
-  User,
-} from ".prisma/client"
 
 const ps = new PrismaService()
 
