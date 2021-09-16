@@ -75,7 +75,7 @@ export class BagItemFieldsResolver {
 
     const relevantReservation = head(possibleReservations)
     const isQueueOrHold = ["Queued", "Hold"].includes(
-      relevantReservation.status
+      relevantReservation?.status
     )
 
     return isQueueOrHold
