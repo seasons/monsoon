@@ -6,12 +6,13 @@ import { ProductModule } from "../Product/product.module"
 import { UserModule } from "../User/user.module"
 import { UtilsModule } from "../Utils/utils.module"
 import { FacebookSyncController } from "./controllers/facebook.sync.controller"
+import { ChargebeeSyncService } from "./services/sync.chargebee.service"
 import { PrismaSyncService } from "./services/sync.prisma.service"
 
 @Module({
   controllers: [FacebookSyncController],
   imports: [ImageModule, PrismaModule, ProductModule, UserModule, UtilsModule],
-  exports: [PrismaSyncService],
-  providers: [PrismaSyncService],
+  exports: [PrismaSyncService, ChargebeeSyncService],
+  providers: [PrismaSyncService, ChargebeeSyncService],
 })
 export class SyncModule {}

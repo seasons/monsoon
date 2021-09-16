@@ -3,6 +3,7 @@ import fs from "fs"
 import { DripSyncService } from "@app/modules/Drip/services/dripSync.service"
 import { IndexKey } from "@app/modules/Search/services/algolia.service"
 import { SearchService } from "@app/modules/Search/services/search.service"
+import { ChargebeeSyncService } from "@app/modules/Sync/services/sync.chargebee.service"
 import { PrismaSyncService } from "@modules/Sync/services/sync.prisma.service"
 import { Injectable, Logger } from "@nestjs/common"
 import { ModuleRef } from "@nestjs/core"
@@ -21,6 +22,7 @@ export class SyncCommands {
     private readonly dripSync: DripSyncService,
     private readonly scripts: ScriptsService,
     private readonly search: SearchService,
+    private readonly chargebeeSync: ChargebeeSyncService,
     private readonly moduleRef: ModuleRef
   ) {}
 
@@ -194,7 +196,7 @@ export class SyncCommands {
     })
 
     const shouldProceed = readlineSync.keyInYN(
-      `You are about index ${
+      `You are about to index ${
         table === "all" ? "all tables" : table
       } from \n- Prisma: ${
         process.env.PRISMA_ENDPOINT
@@ -239,5 +241,62 @@ export class SyncCommands {
     }
 
     this.logger.log(`Done indexing!`)
+  }
+
+  @Command({
+    command: "sync:chargebee <resource>",
+    describe: "Sync select data from chargebee production to test environment",
+    aliases: "sc",
+  })
+  async syncChargebee(
+    @Positional({
+      name: "resource",
+      type: "string",
+      describe: "Name of the chargebee resource to sync",
+      choices: ["all", "customers"],
+    })
+    resource
+  ) {
+    const shouldProceed = readlineSync.keyInYN(
+      `You are about to sync ${
+        resource === "all" ? "all supported resources" : resource
+      } from chargebee prod to staging\n` + `Proceed? (y/n)`
+    )
+    if (!shouldProceed) {
+      console.log("\nExited without running anything\n")
+      return
+    }
+
+    // Set chargebee to point to prod. Get the exports
+    await this.scripts.updateConnections({
+      chargebeeEnv: "production",
+      prismaEnv: "staging",
+      moduleRef: this.moduleRef,
+    })
+    switch (resource) {
+      case "all":
+        await this.chargebeeSync.exportAll()
+        break
+      case "customers":
+        await this.chargebeeSync.exportCustomers()
+        break
+    }
+
+    // Set chargebee to point to staging. Do the syncs
+    await this.scripts.updateConnections({
+      chargebeeEnv: "staging",
+      prismaEnv: "staging",
+      moduleRef: this.moduleRef,
+    })
+    switch (resource) {
+      case "all":
+        await this.chargebeeSync.syncAll()
+        break
+      case "customers":
+        await this.chargebeeSync.syncCustomers()
+        break
+    }
+
+    await this.chargebeeSync.deleteExports()
   }
 }

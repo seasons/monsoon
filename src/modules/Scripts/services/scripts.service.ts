@@ -88,11 +88,13 @@ export class ScriptsService {
   async updateConnections({
     dripEnv = "staging",
     prismaEnv = "local",
+    chargebeeEnv = "staging",
     moduleRef,
   }: UpdateConnectionsInputs) {
     await this.overrideEnvFromRemoteConfig({
       prismaEnv,
       dripEnv,
+      chargebeeEnv,
     })
     moduleRef.get(PrismaService, { strict: false }).updateConnection({
       secret: process.env.PRISMA_SECRET,
@@ -107,6 +109,7 @@ export class ScriptsService {
   private async overrideEnvFromRemoteConfig({
     prismaEnv = "local",
     dripEnv = "staging",
+    chargebeeEnv = "staging",
   }: UpdateEnvironmentInputs) {
     const envFilePath = await this.downloadFromS3(
       "/tmp/__monsoon__env.json",
@@ -129,8 +132,8 @@ export class ScriptsService {
 
       // chargebee
       chargebee.configure({
-        site: env.chargebee.staging.site,
-        api_key: env.chargebee.staging.apiKey,
+        site: env.chargebee[chargebeeEnv].site,
+        api_key: env.chargebee[chargebeeEnv].apiKey,
       })
     } catch (err) {
       throw err
