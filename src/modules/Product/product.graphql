@@ -422,7 +422,6 @@ input CustomProductUpdateInput {
   buyNewEnabled: Boolean
   buyUsedEnabled: Boolean
   buyUsedPrice: Int
-  manufacturerSizeType: SizeType
 }
 
 input UpsertSeasonInput {
