@@ -27,32 +27,42 @@ export class SubscriptionsScheduledJobs {
   async updateSubscriptionData() {
     this.logger.log(`Start update subscriptions field job`)
 
+    const allSubscriptions = []
+
+    let offset = "start"
+    while (true) {
+      let list
+      ;({ next_offset: offset, list } = await chargebee.subscription
+        .list({
+          limit: 100,
+          ...(offset === "start" ? {} : { offset }),
+        })
+        .request())
+      allSubscriptions.push(...list?.map(a => a.subscription))
+      if (!offset) {
+        break
+      }
+    }
+
     let subscription
     let customer
-    try {
-      const allSubscriptions = []
-
-      let offset = "start"
-      while (true) {
-        let list
-        ;({ next_offset: offset, list } = await chargebee.subscription
-          .list({
-            limit: 100,
-            ...(offset === "start" ? {} : { offset }),
-          })
-          .request())
-        allSubscriptions.push(...list?.map(a => a.subscription))
-        if (!offset) {
-          break
-        }
+    let i = 0
+    const total = allSubscriptions.length
+    for (subscription of allSubscriptions) {
+      i++
+      if (i % 5 === 0) {
+        console.log(`Syncing subscription ${i} of ${total}`)
       }
-
-      for (subscription of allSubscriptions) {
+      try {
         const userID = subscription.customer_id
-        const customer = await this.prisma.client.customer.findFirst({
+        if (!userID) {
+          throw "subscription missing customer id"
+        }
+        customer = await this.prisma.client.customer.findFirst({
           where: { user: { id: userID } },
           select: {
             id: true,
+            user: { select: { id: true, email: true } },
             membership: {
               select: { id: true, subscription: { select: { id: true } } },
             },
@@ -66,23 +76,27 @@ export class SubscriptionsScheduledJobs {
             subscription
           )
 
-          if (!customer.membership?.id) {
-            throw new Error(`Customer ${customer.id} has no membership`)
-          }
-          await this.prisma.client.customerMembership.update({
-            where: { id: customer.membership.id },
-            data: {
-              subscription: { upsert: { create: data, update: data } },
+          await this.prisma.client.customerMembership.upsert({
+            where: { id: customer.membership?.id || "" },
+            create: {
+              subscriptionId: data.subscriptionId,
+              customer: { connect: { id: customer.id } },
               plan: { connect: { planID: data.planID } },
+              subscription: { create: data },
+            },
+            update: {
+              subscriptionId: data.subscriptionId,
+              plan: { connect: { planID: data.planID } },
+              subscription: { upsert: { create: data, update: data } },
             },
           })
         }
+      } catch (e) {
+        console.log("e", e)
+        this.error.setExtraContext(subscription, "subscription")
+        this.error.setExtraContext(customer, "customer")
+        this.error.captureError(e)
       }
-    } catch (e) {
-      console.log("e", e)
-      this.error.setExtraContext(subscription, "subscription")
-      this.error.setExtraContext(customer, "customer")
-      this.error.captureError(e)
     }
 
     this.logger.log(`Finished update subscriptions field job`)

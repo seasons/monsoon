@@ -164,7 +164,6 @@ export class PaymentUtilsService {
     planPrice: subscription.plan_amount,
     subscriptionId: subscription.id,
     planID: subscription.plan_id.replace("-gift", ""),
-    startedAt: DateTime.fromSeconds(subscription.started_at).toISO(),
   })
 
   async getChargebeePaymentSource(userID: string) {
