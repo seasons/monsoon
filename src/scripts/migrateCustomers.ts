@@ -22,6 +22,31 @@ const timeUtils = new TimeUtilsService()
 const paymentUtils = new PaymentUtilsService(ps, timeUtils)
 const rentalService = new RentalService(ps, timeUtils, new ErrorService())
 
+// This is a handcut list of people who, even though they have a failed payment,
+// we are going to grandfather into the new system with all the benefits that assumes.
+// We made these decisions by looking at their accounts on an individual basis. The basic
+// heuristic was if they have been a good customer for some time but just happen to have a
+// failed payment, we grandfather them.
+const delinquentCustomersToGrandfather = [
+  "543arc@gmail.com",
+  "benjgordon95@gmail.com",
+  "congund@gmail.com",
+  "sfgray26@gmail.com",
+  "gregorysantos@bellsouth.net",
+  "bruceleeroy827@gmail.com",
+  "dustin.vutera@gmail.com",
+  "farren@farrenjeanandrea.com",
+  "craigbrown.gatech@gmail.com",
+  "slowbandemic@gmail.com",
+  "fanbuckeye26@gmail.com",
+  "jgoldstein40@gmail.com",
+  "fdilone30@gmail.com",
+  "mcmillendaniel@gmail.com",
+  "mcarthurjoseph@gmail.com",
+  "chris.kigar93@gmail.com",
+  "dpollis@gmail.com",
+]
+
 chargebee.configure({
   site: process.env.CHARGEBEE_SITE,
   api_key: process.env.CHARGEBEE_API_KEY,
@@ -31,7 +56,7 @@ const customerSelect = Prisma.validator<Prisma.CustomerSelect>()({
   id: true,
   status: true,
   bagItems: { select: { status: true } },
-  user: { select: { id: true } },
+  user: { select: { id: true, email: true } },
   membership: {
     select: {
       id: true,
@@ -77,7 +102,14 @@ const migrateAllCustomers = async () => {
           cust,
           chargebeeSubscription
         )
-        if (isSomeKindOfPaused) {
+
+        const isDelinquentCustomerGettingMovedToAccessMonthly =
+          cust.status === "PaymentFailed" &&
+          !delinquentCustomersToGrandfather.includes(cust.user.email)
+        if (
+          isSomeKindOfPaused ||
+          isDelinquentCustomerGettingMovedToAccessMonthly
+        ) {
           const { subscription } = await moveToAccessMonthlyImmediately(
             cust.membership.subscription.subscriptionId
           )
@@ -215,7 +247,7 @@ const getChargebeeSubscription = async subscriptionId => {
 }
 
 const isAnyFlavorOfPaused = async (
-  cust: {
+  cust: Pick<Customer, "status"> & {
     membership: {
       pauseRequests: Pick<PauseRequest, "pausePending" | "pauseType">[]
       subscription: Pick<
@@ -249,7 +281,8 @@ const isAnyFlavorOfPaused = async (
     hasPendingPauseWithItemsRequest ||
     isFullyPausedWithItems ||
     isPausedWithoutItems ||
-    pauseDateInFuture
+    pauseDateInFuture ||
+    cust.status === "Paused"
   )
 }
 // migrateAllCustomers()
