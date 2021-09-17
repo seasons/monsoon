@@ -6,6 +6,7 @@ import { Injectable, Logger } from "@nestjs/common"
 import chargebee from "chargebee"
 import csvsync from "csvsync"
 import download from "download"
+import { omit } from "lodash"
 
 const EXPORTS_DIR = "/tmp/chargebeeExports"
 
@@ -30,15 +31,22 @@ export class ChargebeeSyncService {
       returnObject: true,
     })
 
-    let numSuccesses = 0
-    let numErrors = 0
-
     const nullOrUTCTimestamp = dateString =>
       dateString.length > 5 // proxy for having a real value
         ? this.timeUtils.UTCTimestampFromDate(new Date(dateString), "seconds")
         : null
+
+    let i = 0
+    const total = subscriptionsToSync.length
+    const resultDict = { successes: [], errors: [] }
     for (const sub of subscriptionsToSync) {
-      if (limitTen && numSuccesses + numErrors >= 10) {
+      if (i++ % 5 === 0) {
+        this.logger.log(`Syncing subscription ${i - 1} of ${total}`)
+      }
+      if (
+        limitTen &&
+        resultDict.successes.length + resultDict.errors.length >= 10
+      ) {
         break
       }
       const status = sub["subscriptions.status"]
@@ -46,9 +54,10 @@ export class ChargebeeSyncService {
         id: sub["subscriptions.id"],
         plan_id: sub["subscriptions.plan_id"],
         status: sub["subscriptions.status"],
-        current_term_end: nullOrUTCTimestamp(
-          sub["subscriptions.current_term_end"]
-        ),
+        current_term_end:
+          status !== "Cancelled"
+            ? nullOrUTCTimestamp(sub["subscriptions.current_term_end"])
+            : null,
         current_term_start:
           status !== "Cancelled"
             ? nullOrUTCTimestamp(sub["subscriptions.current_term_start"])
@@ -60,20 +69,38 @@ export class ChargebeeSyncService {
       }
       try {
         // TODO: If the subscription already exists, update it instead
-        const result = await chargebee.subscription
-          .import_for_customer(sub["customers.id"], payload)
-          .request(this.handleChargebeeRequest)
-        numSuccesses++
+        let chargebeeSubscription
+        try {
+          const { subscription } = await chargebee.subscription
+            .retrieve(sub["subscriptions.id"])
+            .request(this.handleChargebeeRequest)
+          chargebeeSubscription = subscription
+        } catch (err) {
+          // noop
+        }
+
+        if (!chargebeeSubscription) {
+          await chargebee.subscription
+            .import_for_customer(sub["customers.id"], payload)
+            .request(this.handleChargebeeRequest)
+        } else {
+          await chargebee.subscription
+            .update(sub["subscriptions.id"], omit(payload, "id"))
+            .request()
+        }
+
+        resultDict.successes.push(sub["customers.email"])
       } catch (err) {
-        numErrors++
+        resultDict.errors.push(sub["customers.email"])
         console.log(err)
         console.log(sub)
       }
     }
 
     this.logger.log(
-      `Synced production chargebee subscriptions to staging. ${numSuccesses} successes and ${numErrors} errors`
+      `Synced production chargebee customers to staging. ${resultDict.successes.length} successes and ${resultDict.errors.length} errors`
     )
+    this.logger.log(resultDict)
   }
 
   async exportSubscriptions() {
@@ -84,10 +111,17 @@ export class ChargebeeSyncService {
     const exportFile = fs.readFileSync(`${EXPORTS_DIR}/Customers.csv`)
     const customersToSync = csvsync.parse(exportFile, { returnObject: true })
 
-    let numSuccesses = 0
-    let numErrors = 0
+    let resultDict = { successes: [], errors: [] }
+    let i = 0
+    const total = customersToSync.length
     for (const cust of customersToSync) {
-      if (limitTen && numSuccesses + numErrors >= 10) {
+      if (i++ % 5 === 0) {
+        this.logger.log(`Syncing customer ${i - 1} of ${total}`)
+      }
+      if (
+        limitTen &&
+        resultDict.successes.length + resultDict.errors.length >= 10
+      ) {
         break
       }
       try {
@@ -162,16 +196,17 @@ export class ChargebeeSyncService {
             replace_primary_payment_source: true,
           })
           .request(this.handleChargebeeRequest)
-        numSuccesses++
+        resultDict.successes.push(cust["Email"])
       } catch (err) {
-        numErrors++
+        resultDict.errors.push(cust["Email"])
         console.log(err)
         console.log(cust)
       }
     }
     this.logger.log(
-      `Synced production chargebee customers to staging. ${numSuccesses} successes and ${numErrors} errors`
+      `Synced production chargebee customers to staging. ${resultDict.successes.length} successes and ${resultDict.errors.length} errors`
     )
+    this.logger.log(resultDict)
   }
 
   async exportCustomers() {

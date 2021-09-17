@@ -274,49 +274,53 @@ export class SyncCommands {
       return
     }
 
-    this.logger.log(
-      `Exporting resources from chargebee. This may take a few minutes...`
-    )
+    try {
+      this.logger.log(
+        `Exporting resources from chargebee. This may take a few minutes...`
+      )
 
-    // Set chargebee to point to prod. Get the exports
-    await this.scripts.updateConnections({
-      chargebeeEnv: "production",
-      prismaEnv: "staging",
-      moduleRef: this.moduleRef,
-    })
-    switch (resource) {
-      case "all":
-        await this.chargebeeSync.exportAll()
-        break
-      case "customers":
-        await this.chargebeeSync.exportCustomers()
-        break
-      case "subscriptions":
-        await this.chargebeeSync.exportSubscriptions()
-        break
+      // Set chargebee to point to prod. Get the exports
+      await this.scripts.updateConnections({
+        chargebeeEnv: "production",
+        prismaEnv: "staging",
+        moduleRef: this.moduleRef,
+      })
+      switch (resource) {
+        case "all":
+          await this.chargebeeSync.exportAll()
+          break
+        case "customers":
+          await this.chargebeeSync.exportCustomers()
+          break
+        case "subscriptions":
+          await this.chargebeeSync.exportSubscriptions()
+          break
+      }
+
+      this.logger.log(
+        `Export done. Syncing to staging. This may also take a few minutes...`
+      )
+      // Set chargebee to point to staging. Do the syncs
+      await this.scripts.updateConnections({
+        chargebeeEnv: "staging",
+        prismaEnv: "staging",
+        moduleRef: this.moduleRef,
+      })
+      switch (resource) {
+        case "all":
+          await this.chargebeeSync.syncAll(limitTen)
+          break
+        case "customers":
+          await this.chargebeeSync.syncCustomers(limitTen)
+          break
+        case "subscriptions":
+          await this.chargebeeSync.syncSubscriptions(limitTen)
+          break
+      }
+    } catch (err) {
+      throw err // passthrough
+    } finally {
+      await this.chargebeeSync.deleteExports()
     }
-
-    this.logger.log(
-      `Export done. Syncing to staging. This may also take a few minutes...`
-    )
-    // Set chargebee to point to staging. Do the syncs
-    await this.scripts.updateConnections({
-      chargebeeEnv: "staging",
-      prismaEnv: "staging",
-      moduleRef: this.moduleRef,
-    })
-    switch (resource) {
-      case "all":
-        await this.chargebeeSync.syncAll(limitTen)
-        break
-      case "customers":
-        await this.chargebeeSync.syncCustomers(limitTen)
-        break
-      case "subscriptions":
-        await this.chargebeeSync.syncSubscriptions(limitTen)
-        break
-    }
-
-    await this.chargebeeSync.deleteExports()
   }
 }
