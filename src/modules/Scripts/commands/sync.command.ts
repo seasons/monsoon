@@ -262,7 +262,14 @@ export class SyncCommands {
       type: "boolean",
       default: "false",
     })
-    limitTen
+    limitTen,
+    @Option({
+      name: "startFrom",
+      describe: `Index to start from. Useful if restarting sync after catching an error.`,
+      type: "number",
+      default: 0,
+    })
+    startFrom
   ) {
     const shouldProceed = readlineSync.keyInYN(
       `You are about to sync ${
@@ -306,15 +313,16 @@ export class SyncCommands {
         prismaEnv: "staging",
         moduleRef: this.moduleRef,
       })
+      const options = { limitTen, startFrom }
       switch (resource) {
         case "all":
-          await this.chargebeeSync.syncAll(limitTen)
+          await this.chargebeeSync.syncAll(options)
           break
         case "customers":
-          await this.chargebeeSync.syncCustomers(limitTen)
+          await this.chargebeeSync.syncCustomers(options)
           break
         case "subscriptions":
-          await this.chargebeeSync.syncSubscriptions(limitTen)
+          await this.chargebeeSync.syncSubscriptions(options)
           break
       }
     } catch (err) {

@@ -6,42 +6,51 @@ import { Injectable, Logger } from "@nestjs/common"
 import chargebee from "chargebee"
 import csvsync from "csvsync"
 import download from "download"
-import { omit } from "lodash"
+import { omit, snakeCase, uniq } from "lodash"
 
 const EXPORTS_DIR = "/tmp/chargebeeExports"
 
+interface ChargebeeSyncOptions {
+  limitTen: boolean
+  startFrom: number
+}
 @Injectable()
 export class ChargebeeSyncService {
   private readonly logger = new Logger(`ChargebeeSyncService`)
 
   constructor(private readonly timeUtils: TimeUtilsService) {}
 
-  async syncAll(limitTen) {
-    await this.syncCustomers(limitTen)
-    await this.syncSubscriptions(limitTen)
+  async syncAll(options: ChargebeeSyncOptions) {
+    await this.syncCustomers(options)
+    await this.syncSubscriptions(options)
   }
 
   async exportAll() {
     await this.exportCustomers()
   }
 
-  async syncSubscriptions(limitTen) {
+  async syncSubscriptions({ limitTen, startFrom }: ChargebeeSyncOptions) {
     const exportFile = fs.readFileSync(`${EXPORTS_DIR}/Subscriptions.csv`)
     const subscriptionsToSync = csvsync.parse(exportFile, {
       returnObject: true,
     })
 
-    const nullOrUTCTimestamp = dateString =>
+    const undefinedOrUTCTimestamp = dateString =>
       dateString.length > 5 // proxy for having a real value
         ? this.timeUtils.UTCTimestampFromDate(new Date(dateString), "seconds")
-        : null
+        : undefined
 
     let i = 0
     const total = subscriptionsToSync.length
     const resultDict = { successes: [], errors: [] }
+    this.logger.log(`Starting Subscription sync from index: ${startFrom}`)
+    const subscriptionsToCreateLater = []
     for (const sub of subscriptionsToSync) {
-      if (i++ % 5 === 0) {
-        this.logger.log(`Syncing subscription ${i - 1} of ${total}`)
+      if (i++ < startFrom) {
+        continue
+      }
+      if (i % 5 === 0) {
+        this.logger.log(`Syncing subscription ${i} of ${total}`)
       }
       if (
         limitTen &&
@@ -49,54 +58,89 @@ export class ChargebeeSyncService {
       ) {
         break
       }
-      const status = sub["subscriptions.status"]
+      const status = snakeCase(sub["subscriptions.status"])
+      const subId = sub["subscriptions.id"]
       const payload = {
-        id: sub["subscriptions.id"],
+        id: subId,
         plan_id: sub["subscriptions.plan_id"],
-        status: sub["subscriptions.status"],
-        current_term_end:
-          status !== "Cancelled"
-            ? nullOrUTCTimestamp(sub["subscriptions.current_term_end"])
-            : null,
+        status,
+        current_term_end: !["cancelled", "paused"].includes(status)
+          ? undefinedOrUTCTimestamp(sub["subscriptions.current_term_end"])
+          : undefined,
         current_term_start:
-          status !== "Cancelled"
-            ? nullOrUTCTimestamp(sub["subscriptions.current_term_start"])
-            : null,
-        cancelled_at: nullOrUTCTimestamp(sub["subscriptions.cancelled_at"]),
-        started_at: nullOrUTCTimestamp(sub["subscriptions.started_at"]),
-        pause_date: nullOrUTCTimestamp(sub["subscriptions.pause_date"]),
-        resume_date: nullOrUTCTimestamp(sub["subscriptions.resume_date"]),
+          status !== "cancelled"
+            ? undefinedOrUTCTimestamp(sub["subscriptions.current_term_start"])
+            : undefined,
+        cancelled_at: !["non_renewing", "active"].includes(status)
+          ? undefinedOrUTCTimestamp(sub["subscriptions.cancelled_at"])
+          : undefined,
+        started_at: undefinedOrUTCTimestamp(sub["subscriptions.started_at"]),
+        pause_date: undefinedOrUTCTimestamp(sub["subscriptions.pause_date"]),
+        resume_date: undefinedOrUTCTimestamp(sub["subscriptions.resume_date"]),
       }
+
       try {
-        // TODO: If the subscription already exists, update it instead
         let chargebeeSubscription
         try {
           const { subscription } = await chargebee.subscription
-            .retrieve(sub["subscriptions.id"])
+            .retrieve(subId)
             .request(this.handleChargebeeRequest)
           chargebeeSubscription = subscription
         } catch (err) {
           // noop
         }
 
-        if (!chargebeeSubscription) {
+        if (!!chargebeeSubscription) {
+          await chargebee.subscription
+            .delete(subId)
+            .request(this.handleChargebeeRequest)
+          subscriptionsToCreateLater.push({
+            custId: sub["customers.id"],
+            payload,
+            created: false,
+          })
+        } else {
           await chargebee.subscription
             .import_for_customer(sub["customers.id"], payload)
             .request(this.handleChargebeeRequest)
-        } else {
-          await chargebee.subscription
-            .update(sub["subscriptions.id"], omit(payload, "id"))
-            .request()
-        }
 
-        resultDict.successes.push(sub["customers.email"])
+          resultDict.successes.push(sub["customers.email"])
+        }
       } catch (err) {
         resultDict.errors.push(sub["customers.email"])
         console.log(err)
         console.log(sub)
       }
+
+      this.logger.log(
+        `Waiting 2 minutes before re-creating subscriptions we had to delete`
+      )
+      await this.sleep(2000)
+
+      const numSubscriptionsLeftToImport = subscriptionsToCreateLater.filter(
+        a => !a.created
+      ).length
+      while (numSubscriptionsLeftToImport > 0) {
+        try {
+          const { subscription } = await chargebee.subscription
+            .retrieve(subId)
+            .request(this.handleChargebeeRequest)
+          if (!subscription) {
+            await chargebee.subscription
+              .import_for_customer(sub["customers.id"], payload)
+              .request(this.handleChargebeeRequest)
+
+            resultDict.successes.push(sub["customers.email"])
+          }
+        } catch (err) {
+          resultDict.errors.push(sub["customers.email"])
+          console.log(err)
+          console.log(sub)
+        }
+      }
     }
 
+    resultDict.errors = uniq(resultDict.errors)
     this.logger.log(
       `Synced production chargebee customers to staging. ${resultDict.successes.length} successes and ${resultDict.errors.length} errors`
     )
@@ -107,16 +151,22 @@ export class ChargebeeSyncService {
     await this.exportResource("subscriptions")
   }
 
-  async syncCustomers(limitTen) {
+  async syncCustomers({ limitTen, startFrom }: ChargebeeSyncOptions) {
     const exportFile = fs.readFileSync(`${EXPORTS_DIR}/Customers.csv`)
     const customersToSync = csvsync.parse(exportFile, { returnObject: true })
+
+    const getSafeValue = val => (val === '"' ? undefined : val)
 
     let resultDict = { successes: [], errors: [] }
     let i = 0
     const total = customersToSync.length
+    this.logger.log(`Starting Customer sync from index: ${startFrom}`)
     for (const cust of customersToSync) {
-      if (i++ % 5 === 0) {
-        this.logger.log(`Syncing customer ${i - 1} of ${total}`)
+      if (i++ < startFrom) {
+        continue
+      }
+      if (i % 5 === 0) {
+        this.logger.log(`Syncing customer ${i} of ${total}`)
       }
       if (
         limitTen &&
@@ -136,25 +186,31 @@ export class ChargebeeSyncService {
         }
 
         const commonPayload = {
-          first_name: cust["First Name"],
-          last_name: cust["Last Name"],
-          email: cust["Email"],
+          first_name: getSafeValue(cust["First Name"]),
+          last_name: getSafeValue(cust["Last Name"]),
+          email: getSafeValue(cust["Email"]),
         }
         const billingAddressPayload = {
-          first_name: cust["Billing Address First Name"],
-          last_name: cust["Billing Address Last Name"],
-          line1: cust["Billing Address Line1"],
-          city: cust["Billing Address City"],
-          state: cust["Billing Address State"],
-          zip: cust["Billing Address Zip"],
-          country: cust["Billing Address Country"],
+          first_name: getSafeValue(cust["Billing Address First Name"]),
+          last_name: getSafeValue(cust["Billing Address Last Name"]),
+          line1: getSafeValue(cust["Billing Address Line1"]),
+          city: getSafeValue(cust["Billing Address City"]),
+          state: getSafeValue(cust["Billing Address State"]),
+          zip: getSafeValue(cust["Billing Address Zip"]),
+          country: getSafeValue(cust["Billing Address Country"]),
         }
+        const billingAddressPayloadIsEmpty = Object.keys(
+          billingAddressPayload
+        ).every(a => billingAddressPayload[a] === undefined)
+
         if (!chargebeeCustomer) {
           await chargebee.customer
             .create({
               id: cust["Customer Id"],
               ...commonPayload,
-              billing_address: billingAddressPayload,
+              billing_address: billingAddressPayloadIsEmpty
+                ? undefined
+                : billingAddressPayload,
             })
             .request(this.handleChargebeeRequest)
         } else {
@@ -163,11 +219,13 @@ export class ChargebeeSyncService {
               ...commonPayload,
             })
             .request(this.handleChargebeeRequest)
-          await chargebee.customer
-            .update_billing_info(chargebeeCustomer.id, {
-              billing_address: billingAddressPayload,
-            })
-            .request(this.handleChargebeeRequest)
+          if (!billingAddressPayloadIsEmpty) {
+            await chargebee.customer
+              .update_billing_info(chargebeeCustomer.id, {
+                billing_address: billingAddressPayload,
+              })
+              .request(this.handleChargebeeRequest)
+          }
         }
 
         const cardStatus = cust["Card Status"]
@@ -225,11 +283,18 @@ export class ChargebeeSyncService {
     let status = resourceExport.status
     let i = 0
     let limit = 100
+    let waitInterval = 1000
 
     while (status !== "completed") {
       await this.sleep(1000)
       if (i++ > limit) {
         throw new Error(`Export not complete after ${limit} checks`)
+      }
+      if (i++ > 50) {
+        this.logger.log(
+          `Resource export not done after 50 seconds. Will try for another 2 minutes`
+        )
+        waitInterval = 2000
       }
       ;({ export: resourceExport } = await chargebee.export
         .retrieve(resourceExport.id)
