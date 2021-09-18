@@ -653,7 +653,7 @@ export class RentalService {
     }
   }
 
-  private handleChargebeeRequestResult(error, result) {
+  private handleChargebeeRequestResult = (error, result) => {
     if (error) {
       this.error.captureError(error)
       return error
@@ -704,6 +704,7 @@ export class RentalService {
                       recoupment: true,
                       wholesalePrice: true,
                       rentalPriceOverride: true,
+                      computedRentalPrice: true,
                     },
                   },
                 },
@@ -737,6 +738,9 @@ export class RentalService {
     } else {
       // access-monthly, and any other plan
       for (const lineItem of lineItemsWithData) {
+        if (lineItem.price === 0) {
+          continue
+        }
         const subscriptionId = lineItem.rentalInvoice.membership.subscriptionId
         const payload = this.prismaLineItemToChargebeeChargeInput(lineItem)
         const result = await chargebee.subscription
