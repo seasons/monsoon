@@ -1167,6 +1167,11 @@ describe("Rental Service", () => {
         cleanupFuncs.push(cleanupFunc)
         testCustomer = customer
 
+        const initialReservation = await addToBagAndReserveForCustomer(2)
+        await setReservationCreatedAt(initialReservation.id, 25)
+        await setPackageDeliveredAt(initialReservation.sentPackage.id, 23)
+        await setReservationStatus(initialReservation.id, "Delivered")
+
         const custWithData = (await getCustWithData()) as any
 
         rentalInvoiceToBeBilled = await prisma.client.rentalInvoice.findUnique({

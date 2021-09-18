@@ -149,10 +149,12 @@ export class RentalService {
         "chargeTabInputs"
       )
       this.error.captureError(err)
-      await this.prisma.client.rentalInvoice.update({
-        where: { id: invoice.id },
-        data: { status: "ChargeFailed" },
-      })
+      promises.push(
+        this.prisma.client.rentalInvoice.update({
+          where: { id: invoice.id },
+          data: { status: "ChargeFailed" },
+        })
+      )
     } finally {
       const newRentalInvoicePromise = ((await this.initDraftRentalInvoice(
         invoice.membership.id,
