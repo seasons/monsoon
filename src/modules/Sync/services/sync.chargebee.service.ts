@@ -44,7 +44,9 @@ export class ChargebeeSyncService {
     const total = subscriptionsToSync.length
     const resultDict = { successes: [], errors: [] }
     this.logger.log(`Starting Subscription sync from index: ${startFrom}`)
-    const subscriptionsToCreateLater = []
+
+    const subscriptionsToCreatePostDeletion = []
+
     for (const sub of subscriptionsToSync) {
       if (i++ < startFrom) {
         continue
@@ -60,23 +62,50 @@ export class ChargebeeSyncService {
       }
       const status = snakeCase(sub["subscriptions.status"])
       const subId = sub["subscriptions.id"]
+
+      // Chargebee has a bug in this function wherein if the subscription is paused,
+      // it wants a current_term_end that's in the past, even if that's not what the real data is...
+      const currentTermEnd =
+        status === "paused" &&
+        this.timeUtils.isLaterDate(
+          new Date(sub["subscriptions.current_term_end"]),
+          new Date()
+        )
+          ? undefinedOrUTCTimestamp(
+              this.timeUtils.xDaysBeforeDate(new Date(), 1)
+            )
+          : undefinedOrUTCTimestamp(sub["subscriptions.current_term_end"])
+
       const payload = {
         id: subId,
         plan_id: sub["subscriptions.plan_id"],
         status,
-        current_term_end: !["cancelled", "paused"].includes(status)
-          ? undefinedOrUTCTimestamp(sub["subscriptions.current_term_end"])
-          : undefined,
-        current_term_start:
-          status !== "cancelled"
-            ? undefinedOrUTCTimestamp(sub["subscriptions.current_term_start"])
-            : undefined,
-        cancelled_at: !["non_renewing", "active"].includes(status)
-          ? undefinedOrUTCTimestamp(sub["subscriptions.cancelled_at"])
-          : undefined,
         started_at: undefinedOrUTCTimestamp(sub["subscriptions.started_at"]),
-        pause_date: undefinedOrUTCTimestamp(sub["subscriptions.pause_date"]),
-        resume_date: undefinedOrUTCTimestamp(sub["subscriptions.resume_date"]),
+        ...(["cancelled"].includes(status)
+          ? {
+              cancelled_at: undefinedOrUTCTimestamp(
+                sub["subscriptions.cancelled_at"]
+              ),
+            }
+          : {}),
+        ...(!["cancelled"].includes(status)
+          ? {
+              current_term_start: undefinedOrUTCTimestamp(
+                sub["subscriptions.current_term_start"]
+              ),
+              current_term_end: currentTermEnd,
+            }
+          : {}),
+        ...(["paused"].includes(status)
+          ? {
+              pause_date: undefinedOrUTCTimestamp(
+                sub["subscriptions.pause_date"]
+              ),
+              // resume_date: undefinedOrUTCTimestamp(
+              //   sub["subscriptions.resume_date"]
+              // ),
+            }
+          : {}),
       }
 
       try {
@@ -91,14 +120,45 @@ export class ChargebeeSyncService {
         }
 
         if (!!chargebeeSubscription) {
-          await chargebee.subscription
-            .delete(subId)
+          // Mark a paused subscription as cancelled so we can then update it below.
+          // Chargebee doesn't let you update paused subscriptions...
+          if (chargebeeSubscription.status === "paused") {
+            await chargebee.subscription
+              .delete(subId)
+              .request(this.handleChargebeeRequest)
+            subscriptionsToCreatePostDeletion.push({
+              subId,
+              payload,
+              created: false,
+              sub,
+            })
+          } else {
+            await chargebee.subscription
+              .update(subId, payload)
+              .request(this.handleChargebeeRequest)
+            resultDict.successes.push(sub["customers.email"])
+          }
+        } else if (sub["subscriptions.plan_id"].includes("gift")) {
+          const giftPayload = {
+            gift_receiver: {
+              customer_id: sub["customers.id"],
+              first_name: sub["customers.first_name"],
+              last_name: sub["customers.last_name"],
+              email: sub["customers.email"],
+            },
+            subscription: {
+              plan_id: sub["subscriptions.plan_id"],
+            },
+            gifter: {
+              customer_id: sub["customers.id"],
+              signature: "SeasonsGifter",
+              // Spoof this to be the same person who's receiving it.
+            },
+          }
+          await chargebee.gift
+            .create(giftPayload)
             .request(this.handleChargebeeRequest)
-          subscriptionsToCreateLater.push({
-            custId: sub["customers.id"],
-            payload,
-            created: false,
-          })
+          resultDict.successes.push(sub["customers.email"])
         } else {
           await chargebee.subscription
             .import_for_customer(sub["customers.id"], payload)
@@ -111,36 +171,47 @@ export class ChargebeeSyncService {
         console.log(err)
         console.log(sub)
       }
-
-      this.logger.log(
-        `Waiting 2 minutes before re-creating subscriptions we had to delete`
-      )
-      await this.sleep(2000)
-
-      const numSubscriptionsLeftToImport = subscriptionsToCreateLater.filter(
-        a => !a.created
-      ).length
-      while (numSubscriptionsLeftToImport > 0) {
-        try {
-          const { subscription } = await chargebee.subscription
-            .retrieve(subId)
-            .request(this.handleChargebeeRequest)
-          if (!subscription) {
-            await chargebee.subscription
-              .import_for_customer(sub["customers.id"], payload)
-              .request(this.handleChargebeeRequest)
-
-            resultDict.successes.push(sub["customers.email"])
-          }
-        } catch (err) {
-          resultDict.errors.push(sub["customers.email"])
-          console.log(err)
-          console.log(sub)
-        }
-      }
     }
 
-    resultDict.errors = uniq(resultDict.errors)
+    this.logger.log(`Recreating deleted subscriptions`)
+
+    let recreateAttemptIndex = 0
+    let recreateLimit = 5
+    while (subscriptionsToCreatePostDeletion.some(a => !a.created)) {
+      if (recreateAttemptIndex++ > recreateLimit) {
+        const failedSubs = subscriptionsToCreatePostDeletion.filter(
+          a => !a.created
+        )
+        resultDict.errors.push(...failedSubs.map(a => a.sub["customers.email"]))
+        break
+      }
+
+      const numSuccessesSoFar = subscriptionsToCreatePostDeletion.filter(
+        a => a.created
+      ).length
+      this.logger.log(
+        `Recreate attempt ${recreateAttemptIndex} of ${recreateLimit}. ${numSuccessesSoFar} successes so far. ${
+          subscriptionsToCreatePostDeletion.length - numSuccessesSoFar
+        } left\nWaiting 30 seconds to allow other deletions to finish...`
+      )
+      await this.sleep(30000)
+      for (const {
+        subId,
+        payload,
+        created,
+        sub,
+      } of subscriptionsToCreatePostDeletion) {
+        try {
+          await chargebee.subscription
+            .import_for_customer(subId, payload)
+            .request(this.handleChargebeeRequest)
+          resultDict.successes.push(sub["customers.email"])
+          subscriptionsToCreatePostDeletion.find(
+            a => a.subId === subId
+          ).created = true
+        } catch (err) {}
+      }
+    }
     this.logger.log(
       `Synced production chargebee customers to staging. ${resultDict.successes.length} successes and ${resultDict.errors.length} errors`
     )
