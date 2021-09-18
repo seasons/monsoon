@@ -1,6 +1,7 @@
 import "module-alias/register"
 
 import chargebee from "chargebee"
+import open from "open"
 
 import { ErrorService } from "../modules/Error/services/error.service"
 import { RentalService } from "../modules/Payment/services/rental.service"
@@ -55,6 +56,7 @@ chargebee.configure({
 const customerSelect = Prisma.validator<Prisma.CustomerSelect>()({
   id: true,
   status: true,
+  hasBeenMigrated: true,
   bagItems: { select: { status: true } },
   user: { select: { id: true, email: true } },
   membership: {
@@ -86,16 +88,35 @@ const customerSelect = Prisma.validator<Prisma.CustomerSelect>()({
 
 const migrateAllCustomers = async () => {
   const customers = await ps.client.customer.findMany({
+    orderBy: { createdAt: "desc" },
     where: { status: { in: ["Active", "PaymentFailed", "Paused"] } },
     select: customerSelect,
   })
 
+  const ignoreOnTest = ["chpiti99@gmail.com"]
   let i = 0
   for (const cust of customers) {
     console.log(`cust ${i++} of ${customers.length}`)
+    if (
+      process.env.NODE_ENV !== "production" &&
+      ignoreOnTest.includes(cust.user.email)
+    ) {
+      console.log(
+        `--> Skipping. Known issue on test environment: ${cust.user.email}`
+      )
+      continue
+    }
+    if (cust.hasBeenMigrated) {
+      console.log(`--> Skipping. Already migrated ${cust.user.email}`)
+      continue
+    }
     let chargebeeSubscription
     try {
       if (!!cust.membership?.subscription) {
+        // console.log(`--> http://admin.seasons.nyc/members/${cust.id}/account`)
+        console.log(
+          `--> https://seasons-test.chargebee.com/customers?view_code=all&Customers.search=${cust.user.email}`
+        )
         chargebeeSubscription = await getChargebeeSubscription(
           cust.membership.subscription.subscriptionId
         )
@@ -116,10 +137,7 @@ const migrateAllCustomers = async () => {
           const { subscription } = await moveToAccessMonthlyImmediately(
             cust.membership.subscription.subscriptionId
           )
-          await updateCustomerSubscriptionData(
-            cust.membership.subscription.id,
-            subscription
-          )
+          await updateCustomerSubscriptionData(cust.membership.id, subscription)
         } else {
           if (chargebeeSubscription.status !== "active") {
             throw new Error(
@@ -139,6 +157,7 @@ const migrateAllCustomers = async () => {
           "execute"
         )
         await markCustomersAsActiveUnlessPaymentFailed(cust)
+        await markCustomerAsMigrated(cust)
       }
     } catch (err) {
       console.log(err)
@@ -156,6 +175,15 @@ const markCustomersAsActiveUnlessPaymentFailed = async (
     },
   })
 }
+
+const markCustomerAsMigrated = async (customer: Pick<Customer, "id">) => {
+  await ps.client.customer.update({
+    where: { id: customer.id },
+    data: {
+      hasBeenMigrated: true,
+    },
+  })
+}
 const updateCustomerSubscriptionData = async (
   customerMembershipId,
   chargebeeSubscription
@@ -166,6 +194,7 @@ const updateCustomerSubscriptionData = async (
   await ps.client.customerMembership.update({
     where: { id: customerMembershipId },
     data: {
+      subscriptionId: data.subscriptionId,
       subscription: { upsert: { create: data, update: data } },
       plan: { connect: { planID: data.planID } },
     },
@@ -178,6 +207,7 @@ const moveToAccessMonthlyImmediately = async subscriptionId => {
   return await chargebee.subscription
     .update(subscriptionId, {
       plan_id: "access-monthly",
+      status: "active",
       end_of_term: false,
       force_term_reset: true,
       coupon_ids: ["FIRST_MONTH_FREE"],
@@ -191,7 +221,7 @@ const handleChargebeeResult = (err, result) => {
     return err
   }
   if (result) {
-    console.dir(result, { depth: null })
+    // console.dir(result, { depth: null })
     return result
   }
 }
@@ -286,7 +316,8 @@ const isAnyFlavorOfPaused = async (
     isFullyPausedWithItems ||
     isPausedWithoutItems ||
     pauseDateInFuture ||
-    cust.status === "Paused"
+    cust.status === "Paused" ||
+    isPausedOnChargebee
   )
 }
 migrateAllCustomers()
