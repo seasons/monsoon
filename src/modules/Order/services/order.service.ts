@@ -8,7 +8,9 @@ import { ShippingService } from "@modules/Shipping/services/shipping.service"
 import { Injectable } from "@nestjs/common"
 import {
   BagItem,
+  OrderPaymentStatus,
   OrderStatus,
+  OrderType,
   PhysicalProduct,
   PhysicalProductPrice,
 } from "@prisma/client"
@@ -26,6 +28,7 @@ import {
 } from "@prisma/client"
 import { PrismaService } from "@prisma1/prisma.service"
 import chargebee from "chargebee"
+import cuid from "cuid"
 import { merge, pick } from "lodash"
 
 type InvoiceCharge = {
@@ -151,9 +154,11 @@ export class OrderService {
         status === "Reserved" && productVariantId === productVariant.id
     )
     // Shipping is included only if user does not already have the product.
-    const shipping = await (isProductVariantReserved
+    const packages = await (isProductVariantReserved
       ? Promise.resolve(null)
       : this.shipping.getBuyUsedShippingRate(productVariant.id, customer))
+
+    const shipping = packages?.sentRate
 
     const physicalProduct = productVariant?.physicalProducts.find(
       physicalProduct =>
@@ -194,10 +199,9 @@ export class OrderService {
       },
       !isProductVariantReserved
         ? {
-            recordID:
-              shipping?.shipment.substring(0, 24) || "137" + Math.random() * 10,
+            recordID: cuid(),
             recordType: "Package",
-            price: shipping?.amount,
+            price: shipping.amount,
             currencyCode: "USD",
             needShipping: false,
           }
@@ -649,23 +653,25 @@ export class OrderService {
       })
       .request()
 
-    return (await this.prisma.client.order.create({
-      data: {
-        customer: { connect: { id: customer.id } },
-        orderNumber: `O-${Math.floor(Math.random() * 900000000) + 100000000}`,
-        type: "Used",
-        status: "Drafted",
-        subTotal: invoice_estimate.sub_total,
-        total: invoice_estimate.total,
-        lineItems: {
-          create: orderLineItems.map((orderLineItem, idx) => ({
-            ...orderLineItem,
-            taxRate: invoice_estimate?.line_items?.[idx]?.tax_rate || 0,
-            taxPrice: invoice_estimate?.line_items?.[idx]?.tax_amount || 0,
-          })),
-        },
-        paymentStatus: "Complete",
+    const createData = {
+      customer: { connect: { id: customer.id } },
+      orderNumber: `O-${Math.floor(Math.random() * 900000000) + 100000000}`,
+      type: "Used" as OrderType,
+      status: "Drafted" as OrderStatus,
+      subTotal: invoice_estimate.sub_total,
+      total: invoice_estimate.total,
+      lineItems: {
+        create: orderLineItems.map((orderLineItem, idx) => ({
+          ...orderLineItem,
+          taxRate: invoice_estimate?.line_items?.[idx]?.tax_rate || 0,
+          taxPrice: invoice_estimate?.line_items?.[idx]?.tax_amount || 0,
+        })),
       },
+      paymentStatus: "Complete" as OrderPaymentStatus,
+    }
+
+    return (await this.prisma.client.order.create({
+      data: createData,
       select,
     })) as Order
   }
