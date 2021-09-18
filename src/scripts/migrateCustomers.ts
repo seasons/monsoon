@@ -90,9 +90,6 @@ const migrateAllCustomers = async () => {
     select: customerSelect,
   })
 
-  const grandfatherCustomers = []
-  const accessMonthlyCustomers = []
-  const doNothingCustomers = []
   let i = 0
   for (const cust of customers) {
     console.log(`cust ${i++} of ${customers.length}`)
@@ -116,52 +113,36 @@ const migrateAllCustomers = async () => {
           isSomeKindOfPaused ||
           isDelinquentCustomerGettingMovedToAccessMonthly
         ) {
-          accessMonthlyCustomers.push(cust.user.email)
-          // const { subscription } = await moveToAccessMonthlyImmediately(
-          //   cust.membership.subscription.subscriptionId
-          // )
-          // await updateCustomerSubscriptionData(
-          //   cust.membership.subscription.id,
-          //   subscription
-          // )
+          const { subscription } = await moveToAccessMonthlyImmediately(
+            cust.membership.subscription.subscriptionId
+          )
+          await updateCustomerSubscriptionData(
+            cust.membership.subscription.id,
+            subscription
+          )
         } else {
           if (chargebeeSubscription.status !== "active") {
             throw new Error(
               `Invalid logic. Trying to grandfather a customer with an inactive subscription. Cust: ${cust.id}`
             )
           }
-          grandfatherCustomers.push(cust.user.email)
 
-          // await ps.client.customer.update({
-          //   where: { id: cust.id },
-          //   data: { membership: { update: { grandfathered: true } } },
-          // })
-          // await addInitialProratedPromotionalCredit(cust)
+          await ps.client.customer.update({
+            where: { id: cust.id },
+            data: { membership: { update: { grandfathered: true } } },
+          })
+          await addInitialProratedPromotionalCredit(cust)
         }
 
-        // await rentalService.initDraftRentalInvoice(
-        //   cust.membership.id,
-        //   "execute"
-        // )
-        // await markCustomersAsActiveUnlessPaymentFailed(cust)
-      } else {
-        doNothingCustomers.push(cust.user.email)
+        await rentalService.initDraftRentalInvoice(
+          cust.membership.id,
+          "execute"
+        )
+        await markCustomersAsActiveUnlessPaymentFailed(cust)
       }
     } catch (err) {
       console.log(err)
     }
-  }
-  console.log(`Grandfather customers`)
-  for (const email of grandfatherCustomers) {
-    console.log(email)
-  }
-  console.log(`Access Monthly customers`)
-  for (const email of accessMonthlyCustomers) {
-    console.log(email)
-  }
-  console.log(`Do Nothing Customers`)
-  for (const email of doNothingCustomers) {
-    console.log(email)
   }
 }
 
