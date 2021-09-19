@@ -24,8 +24,8 @@ const run = async () => {
   })
 
   const app = await NestFactory.createApplicationContext(AppModule)
-  const productJobs = app.get(ProductScheduledJobs)
-  await productJobs.cacheRentalPrices()
+  const subscriptionJobs = app.get(SubscriptionsScheduledJobs)
+  await subscriptionJobs.handleRentalInvoices()
 }
 
 run()

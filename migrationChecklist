@@ -1,0 +1,23 @@
+
+
+Migration Checklist
+
+- Every Active, PaymentFailed or Paused customer 
+    1. EITHER
+        -> Is on an active access-monthly plan OR
+        -> Is marked as grandfathered with >0 amount of promotional credits
+    2. Has a single rental invoice in state Draft 
+    3. Is Active or PaymentFailed status 
+    4. Has hasBeenMigrated set to true
+
+- A Grandfathered customer is not charged for items reserved before launch day -- CHECK 
+- An all access customer is not charged for items reserved before launch day -- ??
+- A complicated RentalInvoice with items reserved before launch day and 
+after launch day is billed properly 
+
+
+
+
+
+What are the range of billingEndDates?
+    -> Check Postico.   

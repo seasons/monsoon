@@ -10,11 +10,16 @@ const run = async () => {
   const ps = new PrismaService()
   const timeUtils = new TimeUtilsService()
 
-  const userEmail = "chloe-graham@seasons.nyc"
+  const userEmail = "langston.williams24@gmail.com"
   const custWithData = (await ps.client.customer.findFirst({
     where: { user: { email: userEmail } },
     select: {
-      reservations: { take: 1, select: { id: true } },
+      reservations: {
+        take: 1,
+        select: { id: true },
+        orderBy: { createdAt: "desc" },
+        where: { status: { notIn: ["Completed", "Cancelled", "Lost"] } },
+      },
       membership: {
         select: { rentalInvoices: { take: 1, select: { id: true } } },
       },
@@ -26,7 +31,8 @@ const run = async () => {
     where: { id: custWithData.reservations[0].id },
     data: {
       status: "Delivered",
-      createdAt: timeUtils.xDaysBeforeDate(new Date(), 25),
+      phase: "BusinessToCustomer",
+      createdAt: timeUtils.xDaysBeforeDate(new Date(), 6),
     },
   })
 
@@ -34,7 +40,7 @@ const run = async () => {
   await ps.client.rentalInvoice.update({
     where: { id: custWithData.membership.rentalInvoices[0].id },
     data: {
-      billingStartAt: timeUtils.xDaysBeforeDate(new Date(), 30),
+      billingStartAt: timeUtils.xDaysBeforeDate(new Date(), 6),
       billingEndAt: new Date(),
     },
   })

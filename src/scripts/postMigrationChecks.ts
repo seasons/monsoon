@@ -79,7 +79,7 @@ const checks = async () => {
 
     if (
       (isOnAccessMonthly && !isGrandfathered) ||
-      (!isOnAccessMonthly && isGrandfathered) ||
+      (!isOnAccessMonthly && isGrandfathered)
     ) {
       resultDict.planUpdates.numSuccesses =
         resultDict.planUpdates.numSuccesses + 1
@@ -155,4 +155,3 @@ function handleChargebeeResult(err, res) {
   if (err) return err
   if (res) return res
 }
-
