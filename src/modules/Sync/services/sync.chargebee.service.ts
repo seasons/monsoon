@@ -27,6 +27,7 @@ export class ChargebeeSyncService {
 
   async exportAll() {
     await this.exportCustomers()
+    await this.exportSubscriptions()
   }
 
   async syncSubscriptions({ limitTen, startFrom }: ChargebeeSyncOptions) {
