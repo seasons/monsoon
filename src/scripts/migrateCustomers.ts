@@ -93,19 +93,27 @@ const migrateAllCustomers = async () => {
     select: customerSelect,
   })
 
-  const ignoreOnTest = ["chpiti99@gmail.com"]
   let i = 0
+  let resultDict = { noSub: 0, numSuccesses: 0, errors: [] }
+
+  const allSubscriptionIds = customers.map(
+    a => a.membership.subscription.subscriptionId
+  )
+  const allSubscriptionsForCustomers = await getAllSubscriptionsForCustomers(
+    allSubscriptionIds
+  )
   for (const cust of customers) {
     console.log(`cust ${i++} of ${customers.length}`)
-    if (
-      process.env.NODE_ENV !== "production" &&
-      ignoreOnTest.includes(cust.user.email)
-    ) {
-      console.log(
-        `--> Skipping. Known issue on test environment: ${cust.user.email}`
-      )
-      continue
-    }
+    await sleep(1000) // wait a second to avoid API limits
+    // if (
+    //   process.env.NODE_ENV !== "production" &&
+    //   ignoreOnTest.includes(cust.user.email)
+    // ) {
+    //   console.log(
+    //     `--> Skipping. Known issue on test environment: ${cust.user.email}`
+    //   )
+    //   continue
+    // }
     if (cust.hasBeenMigrated) {
       console.log(`--> Skipping. Already migrated ${cust.user.email}`)
       continue
@@ -117,9 +125,14 @@ const migrateAllCustomers = async () => {
         console.log(
           `--> https://seasons-test.chargebee.com/customers?view_code=all&Customers.search=${cust.user.email}`
         )
-        chargebeeSubscription = await getChargebeeSubscription(
-          cust.membership.subscription.subscriptionId
+        chargebeeSubscription = allSubscriptionsForCustomers.find(
+          a => a.id === cust.membership.subscription.subscriptionId
         )
+        if (!chargebeeSubscription) {
+          throw new Error(
+            `Chargebee subscription not found. ${cust.user.email}. Subid: ${cust.membership.subscription.subscriptionId}`
+          )
+        }
 
         // Change their plan first, since this impacts the billing dates for their rental invoice
         const isSomeKindOfPaused = await isAnyFlavorOfPaused(
@@ -158,11 +171,17 @@ const migrateAllCustomers = async () => {
         )
         await markCustomersAsActiveUnlessPaymentFailed(cust)
         await markCustomerAsMigrated(cust)
+        resultDict.numSuccesses = resultDict.numSuccesses + 1
       }
+      resultDict.noSub = resultDict.noSub + 1
     } catch (err) {
+      resultDict.errors.push({ email: cust.user.email, error: err })
       console.log(err)
     }
   }
+
+  console.dir(resultDict, { depth: null })
+  console.log("done")
 }
 
 const markCustomersAsActiveUnlessPaymentFailed = async (
@@ -207,7 +226,6 @@ const moveToAccessMonthlyImmediately = async subscriptionId => {
   return await chargebee.subscription
     .update(subscriptionId, {
       plan_id: "access-monthly",
-      status: "active",
       end_of_term: false,
       force_term_reset: true,
       coupon_ids: ["FIRST_MONTH_FREE"],
@@ -279,6 +297,26 @@ const getChargebeeSubscription = async subscriptionId => {
   return subscription
 }
 
+const getAllSubscriptionsForCustomers = async subscriptionIds => {
+  const allSubscriptions = []
+  let offset = "start"
+  while (true) {
+    let list
+    ;({ next_offset: offset, list } = await chargebee.subscription
+      .list({
+        limit: 100,
+        ...(offset === "start" ? {} : { offset }),
+        "id[in]": subscriptionIds,
+      })
+      .request())
+    allSubscriptions.push(...list?.map(a => a.subscription))
+    if (!offset) {
+      break
+    }
+  }
+
+  return allSubscriptions
+}
 const isAnyFlavorOfPaused = async (
   cust: Pick<Customer, "status"> & {
     membership: {
@@ -319,5 +357,9 @@ const isAnyFlavorOfPaused = async (
     cust.status === "Paused" ||
     isPausedOnChargebee
   )
+}
+
+async function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms))
 }
 migrateAllCustomers()
