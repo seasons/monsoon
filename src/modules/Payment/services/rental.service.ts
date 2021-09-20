@@ -235,14 +235,17 @@ export class RentalService {
     const now = new Date()
     const billingEndAt = await this.getRentalInvoiceBillingEndAt(
       membershipId,
-      now
+      now,
+      !lastInvoice
     )
     const data = {
       membership: {
         connect: { id: membershipId },
       },
       billingStartAt: now,
-      billingEndAt,
+      // during initial launch, billingEndAt could have been 1 day before now if the customer's next_billing_at was the same as launch day.
+      // To clean that up a bit, we get the max of now and the calcualted billingEndAt
+      billingEndAt: this.timeUtils.getLaterDate(now, billingEndAt),
       status: "Draft" as RentalInvoiceStatus,
       reservations: {
         connect: reservationIds.map(a => ({
@@ -270,8 +273,9 @@ export class RentalService {
 
   async getRentalInvoiceBillingEndAt(
     customerMembershipId: string,
-    billingStartAt: Date
-  ) {
+    billingStartAt: Date,
+    initial = false
+  ): Promise<Date> {
     const membershipWithData = await this.prisma.client.customerMembership.findUnique(
       {
         where: { id: customerMembershipId },
@@ -280,18 +284,15 @@ export class RentalService {
     )
 
     let billingEndAt
-    switch (membershipWithData.plan.planID) {
-      case "access-yearly":
-        billingEndAt = await this.getRentalInvoiceBillingEndAtAccessAnnual(
-          customerMembershipId,
-          billingStartAt
-        )
-        break
-      default:
-        billingEndAt = await this.getChargebeeNextBillingAt(
-          membershipWithData.subscriptionId
-        )
-        break
+    if (initial && membershipWithData.plan.planID !== "access-yearly") {
+      billingEndAt = await this.getBillingEndDateFromNextBillingAt(
+        membershipWithData.subscriptionId
+      )
+    } else {
+      billingEndAt = await this.calculateBillingEndDateFromStartDate(
+        customerMembershipId,
+        billingStartAt
+      )
     }
 
     return billingEndAt
@@ -584,10 +585,10 @@ export class RentalService {
     return lineItems
   }
 
-  private async getRentalInvoiceBillingEndAtAccessAnnual(
+  private async calculateBillingEndDateFromStartDate(
     subscriptionId: string,
     billingStartAt: Date
-  ) {
+  ): Promise<Date> {
     // TODO: If next month is their plan billing month, use next_billing_at from
     // their chargebee data.
 
@@ -628,7 +629,7 @@ export class RentalService {
     return billingEndAtDate
   }
 
-  private async getChargebeeNextBillingAt(subscriptionId) {
+  private async getBillingEndDateFromNextBillingAt(subscriptionId) {
     const result = await chargebee.subscription
       .retrieve(subscriptionId)
       .request(this.handleChargebeeRequestResult)
@@ -636,7 +637,7 @@ export class RentalService {
     const nextBillingAtDate = this.timeUtils.dateFromUTCTimestamp(
       nextBillingAtTimestamp
     )
-    return this.timeUtils.xDaysBeforeDate(nextBillingAtDate, 1)
+    return this.timeUtils.xDaysBeforeDate(nextBillingAtDate, 1, "date")
   }
   private prismaLineItemToChargebeeChargeInput = prismaLineItem => {
     return {

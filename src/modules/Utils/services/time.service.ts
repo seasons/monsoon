@@ -20,13 +20,19 @@ export class TimeUtilsService {
   xDaysBeforeDate(
     date: Date,
     x: number,
-    returnType: "isoString" | "timestamp" = "isoString"
+    returnType: "isoString" | "timestamp" | "date" = "isoString"
   ) {
     const returnDate = moment(date.toISOString()).subtract(x, "days")
-    if (returnType === "isoString") {
-      return returnDate.format()
-    } else {
-      return returnDate.utc().format("X")
+
+    switch (returnType) {
+      case "isoString":
+        return returnDate.format()
+      case "timestamp":
+        return returnDate.utc().format("X")
+      case "date":
+        return returnDate.toDate()
+      default:
+        throw `Invalid return type: ${returnType}`
     }
   }
 

@@ -1239,6 +1239,20 @@ describe("Rental Service", () => {
     */
   })
 
+  /*
+  TODO: Update this test suite for the following cases:
+
+  If we're creating the customer's initial rental invoice
+    AND they are access-monthly:
+      -> query chargebee, get next billing at, and return 1 day before that
+    AND they are access-yearly,
+      -> do 30 days from the start date, adjusted for month length
+  If we're creating the customer's 2nd or later rental invoice:
+    AND they are access-monthly:
+      -> do 30 days from the start date, adjusted for month length
+    AND they are access-yearly:
+      -> do 30 days from the start date, adjusted for month length
+  */
   describe("GetRentalInvoiceBillingEndAt", () => {
     let rentalInvoiceBillingEndAt: Date
     let custWithData
