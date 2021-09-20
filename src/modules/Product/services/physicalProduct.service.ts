@@ -1,3 +1,5 @@
+import { Console } from "console"
+
 import { PushNotificationService } from "@app/modules/PushNotification/services/pushNotification.service"
 import { StatementsService } from "@app/modules/Utils/services/statements.service"
 import { UtilsService } from "@app/modules/Utils/services/utils.service"
@@ -205,6 +207,34 @@ export class PhysicalProductService {
     const results = await this.prisma.client.$transaction(cleanPromises)
     await notifyUsersIfNeeded() // only run this if the transaction succeeded
     return results.pop()
+  }
+
+  async stowItems({
+    ids,
+    warehouseLocationBarcode,
+  }: {
+    ids: string[]
+    warehouseLocationBarcode: string
+  }) {
+    const warehouseLocation = await this.prisma.client.warehouseLocation.findFirst(
+      {
+        where: {
+          barcode: warehouseLocationBarcode,
+        },
+      }
+    )
+
+    const stowedProducts = await this.prisma.client.physicalProduct.updateMany({
+      where: {
+        id: {
+          in: ids,
+        },
+      },
+      data: {
+        warehouseLocationId: warehouseLocation.id,
+      },
+    })
+    return stowedProducts.count > 0
   }
 
   async activeReservationWithPhysicalProduct(id: string) {
