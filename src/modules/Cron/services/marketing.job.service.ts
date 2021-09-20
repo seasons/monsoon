@@ -97,7 +97,9 @@ export class MarketingScheduledJobs {
     })
   }
 
-  @Cron(CronExpression.EVERY_DAY_AT_6PM)
+  // TODO: Turn this back on once migration is done and we've
+  // retooled this email.
+  // @Cron(CronExpression.EVERY_DAY_AT_6PM)
   async admissableBimonthlyNurture() {
     // Make sure we're doing it every 15 days only
     const todayDate = new Date().getDate()

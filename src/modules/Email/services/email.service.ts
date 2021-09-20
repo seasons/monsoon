@@ -59,31 +59,6 @@ export class EmailService {
     })
   }
 
-  async sendAuthorizedDaySevenFollowup(
-    user: EmailUser,
-    availableStyles: ProductWithEmailData[]
-  ) {
-    await this.sendEmailWithReservableStyles({
-      user,
-      availableStyles,
-      renderEmailFunc: "authorizedDaySevenFollowup",
-      emailId: "DaySevenAuthorizationFollowup",
-    })
-  }
-  async sendAuthorizedDayThreeFollowup(
-    user: EmailUser,
-    availableStyles: ProductWithEmailData[],
-    status: string = "Authorized"
-  ) {
-    await this.sendEmailWithReservableStyles({
-      user,
-      availableStyles,
-      renderEmailFunc: "authorizedDayThreeFollowup",
-      emailId: "DayThreeAuthorizationFollowup",
-      renderData: { status },
-    })
-  }
-
   async sendAuthorizedDayTwoFollowup(user: EmailUser, status = "Authorized") {
     const payload = await RenderEmail.authorizedDayTwoFollowup({
       status,
@@ -93,18 +68,6 @@ export class EmailService {
       user: user,
       payload,
       emailId: "DayTwoAuthorizationFollowup",
-    })
-  }
-
-  async sendRewaitlistedEmail(
-    user: EmailUser,
-    availableStyles: ProductWithEmailData[]
-  ) {
-    await this.sendEmailWithReservableStyles({
-      user,
-      availableStyles,
-      renderEmailFunc: "rewaitlisted",
-      emailId: "Rewaitlisted",
     })
   }
 
@@ -258,62 +221,6 @@ export class EmailService {
       user,
       payload,
       emailId: "WelcomeToSeasons",
-    })
-  }
-
-  async sendPausedEmail(customer, isExtension: boolean) {
-    const latestPauseRequest = this.utils.getLatestPauseRequest(customer)
-    const latestReservation = await this.utils.getLatestReservation(customer.id)
-    const withItems = latestPauseRequest.pauseType === "WithItems"
-    let pausedWithItemsPrice
-
-    if (withItems) {
-      const planID = this.utils.getPauseWithItemsPlanId(customer.membership)
-      pausedWithItemsPrice = (
-        await this.prisma.client.paymentPlan.findFirst({
-          where: { planID },
-          select: {
-            id: true,
-            price: true,
-          },
-        })
-      ).price
-    }
-
-    const data = {
-      name: customer.user.firstName,
-      resumeDate: latestPauseRequest.resumeDate.toISOString(),
-      startDate: latestPauseRequest.pauseDate.toISOString(),
-      hasOpenReservation:
-        !!latestReservation &&
-        !["Completed", "Cancelled"].includes(latestReservation.status),
-      withItems,
-      pausedWithItemsPrice,
-      isExtension,
-    }
-    const payload = await RenderEmail.paused(data)
-
-    await this.sendPreRenderedTransactionalEmail({
-      user: customer.user,
-      payload,
-      emailId: "Paused",
-    })
-  }
-
-  async sendResumeReminderEmail(user: EmailUser, resumeDate: DateTime) {
-    await this.sendEmailWithLatestProducts({
-      user,
-      renderEmailFunc: "resumeReminder",
-      emailId: "ResumeReminder",
-      renderData: { resumeDate },
-    })
-  }
-
-  async sendResumeConfirmationEmail(user: EmailUser) {
-    await this.sendEmailWithLatestProducts({
-      user,
-      renderEmailFunc: "resumeConfirmation",
-      emailId: "ResumeConfirmation",
     })
   }
 
