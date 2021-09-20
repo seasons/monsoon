@@ -613,8 +613,8 @@ export class ReservationService {
     shippingCode = ShippingCode.UPSGround,
   }: {
     reservation?: Reservation
-    customer: Customer
-    filterBy: ReservationLineItemsFilter
+    customer: Pick<Customer, "id">
+    filterBy?: ReservationLineItemsFilter
     shippingCode?: ShippingCode
   }) {
     const customerWithUser = await this.prisma.client.customer.findUnique({
@@ -745,6 +745,7 @@ export class ReservationService {
                 },
               },
             },
+            status: true,
           },
         })
 
@@ -757,6 +758,7 @@ export class ReservationService {
             recordType: "ProductVariant",
             recordID: bagItem.productVariant.id,
             price,
+            status: bagItem.status === "Added" ? "Current" : "Previous",
           }
         })
 
@@ -771,7 +773,7 @@ export class ReservationService {
           ? true
           : DateTime.fromISO(nextFreeSwapDate) <= DateTime.local()
 
-      const processingFeeLines = await this.calculateProcessingFee({
+      const processingFeeLines = await this.calculateProcessingFees({
         variantIDs,
         customer: customerWithUser,
         hasFreeSwap,
@@ -856,8 +858,8 @@ export class ReservationService {
 
   private createDraftLineItem = values => ({
     id: cuid(),
-    createdAt: Date.now(),
-    updatedAt: Date.now(),
+    createdAt: new Date(),
+    updatedAt: new Date(),
     currencyCode: "USD",
     ...values,
   })
@@ -1166,7 +1168,7 @@ export class ReservationService {
     ]
   }
 
-  private async calculateProcessingFee({
+  private async calculateProcessingFees({
     variantIDs,
     customer,
     hasFreeSwap,
@@ -1189,6 +1191,9 @@ export class ReservationService {
           ? UPSServiceLevel.Ground
           : UPSServiceLevel.Select,
     })
+
+    console.log("Sent rate", sentRate)
+    console.log("Return rate", returnRate)
 
     return [
       {
@@ -1343,11 +1348,12 @@ export class ReservationService {
     shipmentWeight: number,
     physicalProductsBeingReserved: PhysicalProduct[],
     heldPhysicalProducts: PhysicalProduct[],
-    shippingCode: ShippingCode | null
+    shippingCode: ShippingCode | null = "UPSGround"
   ) {
     const customerWithData = await this.prisma.client.customer.findUnique({
       where: { id: customer.id },
       select: {
+        id: true,
         user: { select: { id: true } },
         detail: {
           select: {
@@ -1408,6 +1414,12 @@ export class ReservationService {
     const customerShippingAddressRecordID =
       customerWithData.detail.shippingAddress.id
     const uniqueReservationNumber = await this.utils.getUniqueReservationNumber()
+
+    const lineItemsData = await this.draftReservationLineItems({
+      customer: customerWithData,
+      shippingCode,
+    })
+
     let createData = Prisma.validator<Prisma.ReservationCreateInput>()({
       id: cuid(),
       products: {
@@ -1424,6 +1436,11 @@ export class ReservationService {
       user: {
         connect: {
           id: customerWithData.user.id,
+        },
+      },
+      lineItems: {
+        createMany: {
+          data: lineItemsData,
         },
       },
       phase: "BusinessToCustomer",

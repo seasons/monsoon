@@ -108,10 +108,13 @@ export class CustomerService {
     })
   }
 
-  async addCustomerLocationShippingOptions(
-    destinationState,
-    shippingAddressID
-  ) {
+  async addCustomerLocationShippingOptions({
+    customer,
+    shippingAddressID,
+  }: {
+    customer: Pick<Customer, "id">
+    shippingAddressID: string
+  }) {
     const shippingMethods = await this.prisma.client.shippingMethod.findMany()
     const warehouseLocation = await this.prisma.client.location.findUnique({
       where: {
@@ -121,43 +124,31 @@ export class CustomerService {
       },
     })
 
-    const originState = warehouseLocation.state
     const shippingOptions = []
-    const abbreviatedDestState = this.utils.abbreviateState(destinationState)
+
+    const [sentPackage] = await this.shipping.createShippoShipments({
+      customer,
+      shipmentWeight: 10,
+      insuranceAmount: 0,
+    })
 
     for (const method of shippingMethods) {
-      const stateData =
-        shippingOptionsData[method.code].from[originState].to[
-          abbreviatedDestState
-        ]
+      const { rate } = await this.shipping.getShippingRate({
+        shipment: sentPackage,
+        servicelevel_token: method.code,
+      })
 
-      const existingShippingOptions = await this.prisma.client.shippingOption.findMany(
-        {
-          where: {
-            originId: warehouseLocation.id,
-            destinationId: shippingAddressID,
-            shippingMethodId: method.id,
-          },
-        }
-      )
+      const shippingOption = await this.prisma.client.shippingOption.create({
+        data: {
+          origin: { connect: { id: warehouseLocation.id } },
+          destination: { connect: { id: shippingAddressID } },
+          shippingMethod: { connect: { id: method.id } },
+          externalCost: rate.amount,
+          averageDuration: 5, // TODO: update duration
+        },
+      })
 
-      const existingShippingOption = head(existingShippingOptions)
-
-      if (existingShippingOption) {
-        shippingOptions.push(existingShippingOption)
-      } else {
-        const shippingOption = await this.prisma.client.shippingOption.create({
-          data: {
-            origin: { connect: { id: warehouseLocation.id } },
-            destination: { connect: { id: shippingAddressID } },
-            shippingMethod: { connect: { id: method.id } },
-            externalCost: stateData.price,
-            averageDuration: stateData.averageDuration,
-          },
-        })
-
-        shippingOptions.push(shippingOption)
-      }
+      shippingOptions.push(shippingOption)
     }
 
     return await this.prisma.client.location.update({
@@ -244,7 +235,10 @@ export class CustomerService {
         throw new Error("State missing in shipping address update")
       }
 
-      this.addCustomerLocationShippingOptions(state, detail.shippingAddress.id)
+      await this.addCustomerLocationShippingOptions({
+        customer,
+        shippingAddressID: detail.shippingAddress.id,
+      })
     }
 
     // If a status was passed, update the customer status in prisma

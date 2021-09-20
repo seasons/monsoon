@@ -150,6 +150,16 @@ export class ReservationFieldsResolver {
 
   @ResolveField()
   async lineItems(@Parent() reservation, @Customer() customer, @Args() args) {
+    if (reservation?.lineItems && reservation?.lineItems.length > 0) {
+      const data = reservation.lineItems.filter(a =>
+        args?.filterBy === "New"
+          ? a.status === "Current"
+          : a.status === "Previous"
+      )
+
+      return data
+    }
+
     return this.reservationService.draftReservationLineItems({
       reservation,
       customer,

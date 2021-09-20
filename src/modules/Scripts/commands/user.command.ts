@@ -332,10 +332,10 @@ export class UserCommands {
             detail: { select: { shippingAddress: { select: { id: true } } } },
           },
         })
-        await this.customer.addCustomerLocationShippingOptions(
-          "NY",
-          cust.detail.shippingAddress.id
-        )
+        await this.customer.addCustomerLocationShippingOptions({
+          customer,
+          shippingAddressID: cust.detail.shippingAddress.id,
+        })
 
         await this.prisma.client.billingInfo.create({
           data: {

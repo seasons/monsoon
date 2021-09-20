@@ -238,7 +238,7 @@ export class ShippingService {
     return products.reduce((acc, prod) => acc + prod.retailPrice, 0)
   }
 
-  private async createShippoShipments({
+  async createShippoShipments({
     customer,
     shipmentWeight,
     insuranceAmount,
@@ -325,10 +325,10 @@ export class ShippingService {
       extra: { is_return: true },
     }
 
-    return [sentPackage, returnPackage]
+    return [sentPackage, returnPackage] as ShippoShipment[]
   }
 
-  private async getShippingRate({
+  async getShippingRate({
     shipment: shipmentInput,
     servicelevel_token,
   }: Omit<ShippoLabelInputs, "carrier_account">): Promise<{

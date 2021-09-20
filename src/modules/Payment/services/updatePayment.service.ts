@@ -399,16 +399,17 @@ export class UpdatePaymentService {
       {
         where: { id: customer.id },
         select: {
+          id: true,
           detail: { select: { shippingAddress: { select: { id: true } } } },
         },
       }
     )
 
     if (!!customerWithLocationId?.detail?.shippingAddress?.id) {
-      await this.customerService.addCustomerLocationShippingOptions(
-        shippingState,
-        customerWithLocationId.detail.shippingAddress.id
-      )
+      await this.customerService.addCustomerLocationShippingOptions({
+        customer,
+        shippingAddressID: customerWithLocationId.detail.shippingAddress.id,
+      })
     }
 
     return null
