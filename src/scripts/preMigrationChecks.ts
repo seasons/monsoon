@@ -48,6 +48,13 @@ const checkPaymentFailureCustomers = async () => {
     a => a.due_invoices_count > 0
   )
 
+  // They had failed payments on prior invoices, but their most recent one is valid
+  const knownExceptions = [
+    "mcarthurjoseph@gmail.com",
+    "ross.r.michaels@gmail.com",
+    "calebesevero10@gmail.com",
+  ]
+
   let numCorrect = 0
   let problematicCustomers = []
   for (const sub of subsWithDelinquentInvoices) {
@@ -72,8 +79,7 @@ const checkPaymentFailureCustomers = async () => {
 
     if (
       internalSubData.membership.customer.status === "PaymentFailed" ||
-      internalSubData.membership.customer.user.email ===
-        "ross.r.michaels@gmail.com" // known exception
+      knownExceptions.includes(internalSubData.membership.customer.user.email)
     ) {
       numCorrect++
     } else {
@@ -185,5 +191,5 @@ const checkCancelledSubscriptions = async () => {
   }
 }
 
-// checkPaymentFailureCustomers()
-checkCancelledSubscriptions()
+checkPaymentFailureCustomers()
+// checkCancelledSubscriptions()
