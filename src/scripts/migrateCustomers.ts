@@ -70,7 +70,7 @@ const customerSelect = Prisma.validator<Prisma.CustomerSelect>()({
           planID: true,
           status: true,
           planPrice: true,
-          nextBillingAt: true,
+          currentTermEnd: true,
         },
       },
       pauseRequests: {
@@ -96,9 +96,9 @@ const migrateAllCustomers = async () => {
   let i = 0
   let resultDict = { noSub: 0, numSuccesses: 0, errors: [] }
 
-  const allSubscriptionIds = customers.map(
-    a => a.membership.subscription.subscriptionId
-  )
+  const allSubscriptionIds = customers
+    .filter(a => !!a.membership?.subscription)
+    .map(a => a.membership.subscription.subscriptionId)
   const allSubscriptionsForCustomers = await getAllSubscriptionsForCustomers(
     allSubscriptionIds
   )
@@ -120,67 +120,73 @@ const migrateAllCustomers = async () => {
     }
     let chargebeeSubscription
     try {
-      if (!!cust.membership?.subscription) {
-        // console.log(`--> http://admin.seasons.nyc/members/${cust.id}/account`)
-        console.log(
-          `--> https://seasons-test.chargebee.com/customers?view_code=all&Customers.search=${cust.user.email}`
-        )
-        chargebeeSubscription = allSubscriptionsForCustomers.find(
-          a => a.id === cust.membership.subscription.subscriptionId
-        )
-        if (!chargebeeSubscription) {
-          throw new Error(
-            `Chargebee subscription not found. ${cust.user.email}. Subid: ${cust.membership.subscription.subscriptionId}`
-          )
-        }
-
-        // Change their plan first, since this impacts the billing dates for their rental invoice
-        const isSomeKindOfPaused = await isAnyFlavorOfPaused(
-          cust,
-          chargebeeSubscription
-        )
-
-        const isDelinquentCustomerGettingMovedToAccessMonthly =
-          cust.status === "PaymentFailed" &&
-          !delinquentCustomersToGrandfather.includes(cust.user.email)
-        if (
-          isSomeKindOfPaused ||
-          isDelinquentCustomerGettingMovedToAccessMonthly
-        ) {
-          const { subscription } = await moveToAccessMonthlyImmediately(
-            cust.membership.subscription.subscriptionId
-          )
-          await updateCustomerSubscriptionData(cust.membership.id, subscription)
-        } else {
-          if (chargebeeSubscription.status !== "active") {
-            throw new Error(
-              `Invalid logic. Trying to grandfather a customer with an inactive subscription. Cust: ${cust.id}`
-            )
-          }
-
-          await ps.client.customer.update({
-            where: { id: cust.id },
-            data: { membership: { update: { grandfathered: true } } },
-          })
-          await addInitialProratedPromotionalCredit(cust)
-        }
-
-        await rentalService.initDraftRentalInvoice(
-          cust.membership.id,
-          "execute"
-        )
-        await markCustomersAsActiveUnlessPaymentFailed(cust)
-        await markCustomerAsMigrated(cust)
-        resultDict.numSuccesses = resultDict.numSuccesses + 1
+      if (!cust.membership?.subscription) {
+        resultDict.noSub = resultDict.noSub + 1
+        continue
       }
-      resultDict.noSub = resultDict.noSub + 1
+
+      // Else...
+      // console.log(`--> http://admin.seasons.nyc/members/${cust.id}/account`)
+      console.log(
+        `--> https://seasons-test.chargebee.com/customers?view_code=all&Customers.search=${cust.user.email}`
+      )
+      chargebeeSubscription = allSubscriptionsForCustomers.find(
+        a => a.id === cust.membership.subscription.subscriptionId
+      )
+      if (!chargebeeSubscription) {
+        throw new Error(
+          `Chargebee subscription not found. ${cust.user.email}. Subid: ${cust.membership.subscription.subscriptionId}`
+        )
+      }
+
+      // Change their plan first, since this impacts the billing dates for their rental invoice
+      const isSomeKindOfPaused = await isAnyFlavorOfPaused(
+        cust,
+        chargebeeSubscription
+      )
+
+      const isDelinquentCustomerGettingMovedToAccessMonthly =
+        cust.status === "PaymentFailed" &&
+        !delinquentCustomersToGrandfather.includes(cust.user.email)
+      if (
+        isSomeKindOfPaused ||
+        isDelinquentCustomerGettingMovedToAccessMonthly
+      ) {
+        const { subscription } = await moveToAccessMonthlyImmediately(
+          cust.membership.subscription.subscriptionId
+        )
+        await updateCustomerSubscriptionData(cust.membership.id, subscription)
+      } else {
+        if (chargebeeSubscription.status !== "active") {
+          throw new Error(
+            `Invalid logic. Trying to grandfather a customer with an inactive subscription. Cust: ${cust.id}`
+          )
+        }
+
+        await ps.client.customer.update({
+          where: { id: cust.id },
+          data: { membership: { update: { grandfathered: true } } },
+        })
+        await addInitialProratedPromotionalCredit(cust)
+      }
+
+      await rentalService.initDraftRentalInvoice(cust.membership.id, "execute")
+      await markCustomersAsActiveUnlessPaymentFailed(cust)
+      await markCustomerAsMigrated(cust)
+      resultDict.numSuccesses = resultDict.numSuccesses + 1
     } catch (err) {
       resultDict.errors.push({ email: cust.user.email, error: err })
       console.log(err)
     }
   }
 
-  console.dir(resultDict, { depth: null })
+  console.log(`--> Report`)
+  console.log("no subs: ", resultDict.noSub)
+  console.log("successes: ", resultDict.numSuccesses)
+  console.log("errors:")
+  for (const prob of resultDict.errors) {
+    console.dir(prob, { depth: null })
+  }
   console.log("done")
 }
 
@@ -235,11 +241,9 @@ const moveToAccessMonthlyImmediately = async subscriptionId => {
 
 const handleChargebeeResult = (err, result) => {
   if (err) {
-    console.dir(err, { depth: null })
     return err
   }
   if (result) {
-    // console.dir(result, { depth: null })
     return result
   }
 }
@@ -249,7 +253,7 @@ const addInitialProratedPromotionalCredit = async (cust: {
   membership: Pick<CustomerMembership, "id"> & {
     subscription: Pick<
       CustomerMembershipSubscriptionData,
-      "planPrice" | "planID" | "nextBillingAt"
+      "planPrice" | "planID" | "currentTermEnd"
     >
   }
 }) => {
@@ -257,7 +261,7 @@ const addInitialProratedPromotionalCredit = async (cust: {
   const planPrice = cust.membership.subscription.planPrice
   const daysLeftInTerm = timeUtils.numDaysBetween(
     new Date(),
-    cust.membership.subscription.nextBillingAt
+    cust.membership.subscription.currentTermEnd
   )
   const proratedAmount = Math.round(
     cust.membership.subscription.planPrice * (daysLeftInTerm / 30) * 1.15
@@ -306,7 +310,7 @@ const getAllSubscriptionsForCustomers = async subscriptionIds => {
       .list({
         limit: 100,
         ...(offset === "start" ? {} : { offset }),
-        "id[in]": subscriptionIds,
+        "id[in]": `[${subscriptionIds}]`,
       })
       .request())
     allSubscriptions.push(...list?.map(a => a.subscription))
