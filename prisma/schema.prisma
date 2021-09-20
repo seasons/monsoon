@@ -445,6 +445,11 @@ enum OrderPaymentStatus {
   Complete
 }
 
+enum OrderLineItemStatus {
+  Previous
+  Current
+}
+
 enum AdminAction {
   Insert
   Delete
@@ -919,6 +924,7 @@ model OrderLineItem {
   name          String?
   reservationId String?                 @map("reservation") @db.VarChar(30)
   reservation   Reservation?            @relation(fields: [reservationId], references: [id])
+  status        OrderLineItemStatus     @default(Current)
   Order         Order[]
 }
 
