@@ -77,6 +77,26 @@ export class ChargebeeSyncService {
             )
           : undefinedOrUTCTimestamp(sub["subscriptions.current_term_end"])
 
+      // Only include pause_date if the sub is paused or scheduled to be paused
+      let pauseDatePayload = {}
+      const pauseDateTimestamp = undefinedOrUTCTimestamp(
+        sub["subscriptions.pause_date"]
+      )
+      if (!!pauseDateTimestamp) {
+        const pauseDateAsDate = this.timeUtils.dateFromUTCTimestamp(
+          pauseDateTimestamp
+        )
+
+        // TODO: Include resume_date if the sub is paused and there is a resume date
+        const pauseScheduled =
+          status === "active" &&
+          this.timeUtils.isLaterDate(pauseDateAsDate, new Date())
+        const subIsPaused = status === "active"
+        if (pauseScheduled || subIsPaused) {
+          pauseDatePayload["pause_date"] = pauseDateTimestamp
+        }
+      }
+
       const payload = {
         id: subId,
         plan_id: sub["subscriptions.plan_id"],
@@ -97,16 +117,7 @@ export class ChargebeeSyncService {
               current_term_end: currentTermEnd,
             }
           : {}),
-        ...(["paused"].includes(status)
-          ? {
-              pause_date: undefinedOrUTCTimestamp(
-                sub["subscriptions.pause_date"]
-              ),
-              // resume_date: undefinedOrUTCTimestamp(
-              //   sub["subscriptions.resume_date"]
-              // ),
-            }
-          : {}),
+        ...pauseDatePayload,
       }
 
       try {
