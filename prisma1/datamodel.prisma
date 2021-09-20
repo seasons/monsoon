@@ -1104,6 +1104,11 @@ enum OrderPaymentStatus {
   NotPaid
 }
 
+enum OrderLineItemStatus {
+  Previous
+  Current
+}
+
 type OrderLineItem {
   id: ID! @id
   recordID: ID!
@@ -1112,11 +1117,13 @@ type OrderLineItem {
   taxRate: Float
   taxName: String
   name: String
-  reservation: Reservation @relation(link: INLINE, name: "ReservationToOrderLineItem")
+  reservation: Reservation
+    @relation(link: INLINE, name: "ReservationToOrderLineItem")
   taxPercentage: Float
   taxPrice: Int
   price: Int!
   currencyCode: String!
+  status: OrderLineItemStatus
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
 }
