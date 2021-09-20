@@ -102,8 +102,7 @@ export class SubscriptionsScheduledJobs {
     this.logger.log(`Finished update subscriptions field job`)
   }
 
-  // TODO: Turn on when we launch new plans
-  // @Cron(CronExpression.EVERY_HOUR)
+  @Cron(CronExpression.EVERY_HOUR)
   async handleRentalInvoices() {
     this.logger.log(`Start handle rental invoices job`)
 
@@ -132,7 +131,10 @@ export class SubscriptionsScheduledJobs {
         await this.rental.chargeTab(planID, invoice, lineItems)
         resultDict.successes.push(invoice.membership.customer.user.email)
       } catch (err) {
-        resultDict.successes.push(invoice.membership.customer.user.email)
+        resultDict.errors.push({
+          email: invoice.membership.customer.user.email,
+          err,
+        })
         console.log(err)
         this.error.setExtraContext(invoice)
         this.error.captureError(err)
