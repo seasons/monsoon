@@ -207,6 +207,34 @@ export class PhysicalProductService {
     return results.pop()
   }
 
+  async stowItems({
+    ids,
+    warehouseLocationBarcode,
+  }: {
+    ids: string[]
+    warehouseLocationBarcode: string
+  }) {
+    const warehouseLocation = await this.prisma.client.warehouseLocation.findFirst(
+      {
+        where: {
+          barcode: warehouseLocationBarcode,
+        },
+      }
+    )
+
+    const stowedProducts = await this.prisma.client.physicalProduct.updateMany({
+      where: {
+        id: {
+          in: ids,
+        },
+      },
+      data: {
+        warehouseLocationId: warehouseLocation.id,
+      },
+    })
+    return stowedProducts.count > 0
+  }
+
   async activeReservationWithPhysicalProduct(id: string) {
     return await this.prisma.client.reservation.findFirst({
       where: {
