@@ -120,6 +120,7 @@ const checkCancelledSubscriptions = async () => {
   }
 
   let numCorrect = 0
+  let numDeactivated = 0
   let problematicCustomers = []
 
   for (const sub of cancelledSubscriptions) {
@@ -134,6 +135,7 @@ const checkCancelledSubscriptions = async () => {
                   status: true,
                   id: true,
                   user: { select: { email: true } },
+                  bagItems: { where: { status: "Reserved" } },
                 },
               },
             },
@@ -147,11 +149,24 @@ const checkCancelledSubscriptions = async () => {
     }
 
     if (
-      ["Suspended", "Deactivated", "Paused"].includes(
+      ["Suspended", "Deactivated"].includes(
         internalSubData.membership.customer.status
       )
     ) {
       numCorrect++
+    } else if (
+      internalSubData.membership.customer.status === "Paused" &&
+      sub.status === "cancelled" &&
+      internalSubData.membership.customer.bagItems.length === 0
+    ) {
+      await ps.client.customer.update({
+        where: { id: internalSubData.membership.customer.id },
+        data: { status: "Deactivated" },
+      })
+      console.log(
+        `Deactivated customer: ${internalSubData.membership.customer.user.email}`
+      )
+      numDeactivated++
     } else {
       problematicCustomers.push({
         customer: internalSubData.membership.customer,
@@ -162,7 +177,7 @@ const checkCancelledSubscriptions = async () => {
 
   console.log(`Cancelled Subscriptions Report ---`)
   console.log(
-    `Num Correct: ${numCorrect}. Num problems: ${problematicCustomers.length}`
+    `Num Correct: ${numCorrect}. Num deactivated: ${numDeactivated}. Num problems: ${problematicCustomers.length}`
   )
   if (problematicCustomers.length > 0) {
     console.log(`Details on problems:`)
@@ -170,5 +185,5 @@ const checkCancelledSubscriptions = async () => {
   }
 }
 
-checkPaymentFailureCustomers()
+// checkPaymentFailureCustomers()
 checkCancelledSubscriptions()
