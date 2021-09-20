@@ -77,25 +77,20 @@ export class ChargebeeSyncService {
             )
           : undefinedOrUTCTimestamp(sub["subscriptions.current_term_end"])
 
-      // Only include pause_date if the sub is paused or scheduled to be paused
-      let pauseDatePayload = {}
-      const pauseDateTimestamp = undefinedOrUTCTimestamp(
-        sub["subscriptions.pause_date"]
-      )
-      if (!!pauseDateTimestamp) {
-        const pauseDateAsDate = this.timeUtils.dateFromUTCTimestamp(
-          pauseDateTimestamp
-        )
-
-        // TODO: Include resume_date if the sub is paused and there is a resume date
-        const pauseScheduled =
-          status === "active" &&
-          this.timeUtils.isLaterDate(pauseDateAsDate, new Date())
-        const subIsPaused = status === "active"
-        if (pauseScheduled || subIsPaused) {
-          pauseDatePayload["pause_date"] = pauseDateTimestamp
-        }
-      }
+      // Only include pause_date if the sub is paused
+      // TODO: This logic doesn't properly sync subscriptions that are scheduled to pause
+      // in the future. To support this in the future, we'd need to add another call
+      // after the import that pauses the subscription with a pause date set to the
+      // pause_date on the sub. The API docs seem to indicate we could just pass
+      // pause_date on an active sub and let it be, but that throws an error when you try it.
+      let pauseDatePayload =
+        status === "paused"
+          ? {
+              pause_date: undefinedOrUTCTimestamp(
+                sub["subscriptions.pause_date"]
+              ),
+            }
+          : {}
 
       const payload = {
         id: subId,
