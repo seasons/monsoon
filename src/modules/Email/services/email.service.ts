@@ -61,7 +61,6 @@ export class EmailService {
 
   async sendAuthorizedDayTwoFollowup(user: EmailUser, status = "Authorized") {
     const payload = await RenderEmail.authorizedDayTwoFollowup({
-      status,
       id: user.id,
     })
     await this.sendPreRenderedTransactionalEmail({
@@ -289,7 +288,9 @@ export class EmailService {
   }
 
   async sendYouCanNowReserveAgainEmail(user: EmailUser) {
-    const payload = await RenderEmail.freeToReserve()
+    const payload = await RenderEmail.freeToReserve({
+      products: [],
+    })
     return await this.sendPreRenderedTransactionalEmail({
       user,
       payload,
