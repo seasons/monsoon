@@ -1,5 +1,3 @@
-import { Console } from "console"
-
 import { PushNotificationService } from "@app/modules/PushNotification/services/pushNotification.service"
 import { StatementsService } from "@app/modules/Utils/services/statements.service"
 import { UtilsService } from "@app/modules/Utils/services/utils.service"
