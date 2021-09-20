@@ -15,12 +15,8 @@ export class SubscriptionMutationsResolver {
   }
 
   @Mutation()
-  async resumeSubscription(
-    @Args() { subscriptionID, date },
-    @Customer() customer
-  ) {
-    await this.subscription.resumeSubscription(subscriptionID, date, customer)
-    return true
+  async resumeSubscription() {
+    throw new Error("Resume subscription deprecated")
   }
 
   @Mutation()
