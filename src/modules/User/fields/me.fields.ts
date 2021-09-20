@@ -128,6 +128,9 @@ export class MeFieldsResolver {
       select: merge(select, {
         status: true,
       }),
+      orderBy: {
+        createdAt: "asc",
+      },
     })
 
     const sortValues = {
