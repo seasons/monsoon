@@ -38,6 +38,7 @@ export class UserFieldsResolver {
           )}"],"selectedFieldName":"last_event_time","comparisonType":"Between"}]`
         ) +
         `&isAndOperator=true&page=1`,
+      chargebee: `https://seasons.chargebee.com/customers?view_code=all&Customers.search=${user.email}`,
     }
   }
 

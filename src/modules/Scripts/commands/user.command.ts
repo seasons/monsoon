@@ -155,14 +155,6 @@ export class UserCommands {
     })
     status,
     @Option({
-      name: "allAccessEnabled",
-      alias: "aa",
-      describe: "Whether or not the customer should have all access enabled",
-      type: "boolean",
-      default: "true",
-    })
-    allAccessEnabled,
-    @Option({
       name: "phone number",
       describe: `Phone Number for the user`,
       type: "string",
@@ -371,7 +363,7 @@ export class UserCommands {
           data: {
             admissions: {
               create: {
-                allAccessEnabled,
+                allAccessEnabled: false,
                 admissable: true,
                 authorizationsCount,
                 inServiceableZipcode: true,

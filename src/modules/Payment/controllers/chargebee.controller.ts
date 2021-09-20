@@ -20,6 +20,7 @@ export type ChargebeeEvent = {
 // For a full list of webhook types, see https://apidocs.chargebee.com/docs/api/events#event_types
 const CHARGEBEE_CUSTOMER_CHANGED = "customer_changed"
 const CHARGEBEE_SUBSCRIPTION_CREATED = "subscription_created"
+const CHARGEBEE_SUBSCRIPTION_CANCELLED = "subscription_cancelled"
 const CHARGEBEE_PAYMENT_SUCCEEDED = "payment_succeeded"
 const CHARGEBEE_PAYMENT_FAILED = "payment_failed"
 const CHARGEBEE_PROMOTIONAL_CREDITS_DEDUCTED = "promotional_credits_deducted"
@@ -44,6 +45,9 @@ export class ChargebeeController {
     switch (body.event_type) {
       case CHARGEBEE_SUBSCRIPTION_CREATED:
         await this.chargebeeSubscriptionCreated(body.content)
+        break
+      case CHARGEBEE_SUBSCRIPTION_CANCELLED:
+        await this.chargebeeSubscriptionCancelled(body.content)
         break
       case CHARGEBEE_CUSTOMER_CHANGED:
         await this.chargebeeCustomerChanged(body.content)
@@ -222,12 +226,18 @@ export class ChargebeeController {
   }
 
   private async chargebeePaymentFailed(content: any) {
-    const { customer, subscription } = content
+    const { customer, invoice, subscription } = content
 
-    const isFailureForSubscription = !!subscription
-    if (!isFailureForSubscription) {
+    const isFailureForBuyUsed = invoice?.notes?.find(a =>
+      a.note?.includes("Purchase Used")
+    )
+    const isFailureForBuyNew = invoice?.notes?.find(a =>
+      a.note?.includes("Purchase New")
+    )
+    if (isFailureForBuyUsed || isFailureForBuyNew) {
       return
     }
+    // Else, it's a failure for a subscription charge, or a custom charge.
 
     const userId = customer?.id
     const cust = await this.prisma.client.customer.findFirst({
@@ -240,11 +250,15 @@ export class ChargebeeController {
     })
     if (!!cust) {
       if (this.statements.isPayingCustomer(cust)) {
+        const isFailureForSubscription = !!subscription
         await this.prisma.client.customer.update({
           where: { id: cust.id },
           data: { status: "PaymentFailed" },
         })
-        await this.email.sendUnpaidMembershipEmail(cust.user)
+        if (isFailureForSubscription) {
+          await this.email.sendUnpaidMembershipEmail(cust.user)
+        }
+        // TODO: Send email for other kinds of failures
       }
     } else {
       this.error.setExtraContext({ payload: content }, "chargebeePayload")
@@ -264,6 +278,18 @@ export class ChargebeeController {
     await this.rental.initFirstRentalInvoice(prismaCustomer.id)
   }
 
+  private async chargebeeSubscriptionCancelled(content: any) {
+    const { customer } = content
+    const prismaCustomer = await this.prisma.client.customer.findFirst({
+      where: { user: { id: customer.id } },
+      orderBy: { createdAt: "desc" },
+      select: { id: true },
+    })
+    await this.prisma.client.customer.update({
+      where: { id: prismaCustomer.id },
+      data: { status: "Deactivated" },
+    })
+  }
   private async chargebeeCustomerChanged(content: any) {
     const {
       customer: { id },

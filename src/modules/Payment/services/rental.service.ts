@@ -149,10 +149,12 @@ export class RentalService {
         "chargeTabInputs"
       )
       this.error.captureError(err)
-      await this.prisma.client.rentalInvoice.update({
-        where: { id: invoice.id },
-        data: { status: "ChargeFailed" },
-      })
+      promises.push(
+        this.prisma.client.rentalInvoice.update({
+          where: { id: invoice.id },
+          data: { status: "ChargeFailed" },
+        })
+      )
     } finally {
       const newRentalInvoicePromise = ((await this.initDraftRentalInvoice(
         invoice.membership.id,
@@ -199,24 +201,25 @@ export class RentalService {
     membershipId,
     mode: "promise" | "execute" = "execute"
   ) {
-    let lastInvoiceReservationIds = []
+    let reservationWhereInputFromLastInvoice = {}
     const lastInvoice = await this.prisma.client.rentalInvoice.findFirst({
       where: { membershipId },
       orderBy: { createdAt: "desc" },
       select: { reservations: { select: { id: true } } },
     })
     if (!!lastInvoice) {
-      lastInvoiceReservationIds.push(...lastInvoice.reservations.map(a => a.id))
+      reservationWhereInputFromLastInvoice = {
+        id: { in: lastInvoice.reservations.map(a => a.id) },
+      }
     }
 
     const customer = await this.prisma.client.customer.findFirst({
       where: { membership: { id: membershipId } },
       select: {
         reservations: {
-          // TODO: Also check that it's on the last invoice
           where: {
             status: { notIn: ["Completed", "Cancelled", "Lost"] },
-            id: { in: lastInvoiceReservationIds },
+            ...reservationWhereInputFromLastInvoice,
           },
           select: { id: true },
         },
@@ -232,14 +235,17 @@ export class RentalService {
     const now = new Date()
     const billingEndAt = await this.getRentalInvoiceBillingEndAt(
       membershipId,
-      now
+      now,
+      !lastInvoice
     )
     const data = {
       membership: {
         connect: { id: membershipId },
       },
       billingStartAt: now,
-      billingEndAt,
+      // during initial launch, billingEndAt could have been 1 day before now if the customer's next_billing_at was the same as launch day.
+      // To clean that up a bit, we get the max of now and the calcualted billingEndAt
+      billingEndAt: this.timeUtils.getLaterDate(now, billingEndAt),
       status: "Draft" as RentalInvoiceStatus,
       reservations: {
         connect: reservationIds.map(a => ({
@@ -267,8 +273,9 @@ export class RentalService {
 
   async getRentalInvoiceBillingEndAt(
     customerMembershipId: string,
-    billingStartAt: Date
-  ) {
+    billingStartAt: Date,
+    initial = false
+  ): Promise<Date> {
     const membershipWithData = await this.prisma.client.customerMembership.findUnique(
       {
         where: { id: customerMembershipId },
@@ -277,20 +284,15 @@ export class RentalService {
     )
 
     let billingEndAt
-    switch (membershipWithData.plan.planID as AccessPlanID) {
-      case "access-monthly":
-        billingEndAt = await this.getChargebeeNextBillingAt(
-          membershipWithData.subscriptionId
-        )
-        break
-      case "access-yearly":
-        billingEndAt = await this.getRentalInvoiceBillingEndAtAccessAnnual(
-          customerMembershipId,
-          billingStartAt
-        )
-        break
-      default:
-        throw `Unrecognized planID: ${membershipWithData.plan.planID}`
+    if (initial && membershipWithData.plan.planID !== "access-yearly") {
+      billingEndAt = await this.getBillingEndDateFromNextBillingAt(
+        membershipWithData.subscriptionId
+      )
+    } else {
+      billingEndAt = await this.calculateBillingEndDateFromStartDate(
+        customerMembershipId,
+        billingStartAt
+      )
     }
 
     return billingEndAt
@@ -451,6 +453,7 @@ export class RentalService {
       daysRented,
       rentalStartedAt,
       rentalEndedAt,
+      initialReservationId: initialReservation.id,
       comment,
     }
   }
@@ -467,28 +470,64 @@ export class RentalService {
       })[]
     }
   ) {
+    const custWithExtraData = await this.prisma.client.customer.findFirst({
+      where: { membership: { rentalInvoices: { some: { id: invoice.id } } } },
+      select: {
+        user: { select: { createdAt: true } },
+        membership: {
+          select: {
+            rentalInvoices: { select: { id: true } },
+          },
+        },
+      },
+    })
+
     const addLineItemBasics = input => ({
       ...input,
       rentalInvoice: { connect: { id: invoice.id } },
       currencyCode: "USD",
     })
 
+    const launchDate = this.timeUtils.dateFromUTCTimestamp(
+      process.env.LAUNCH_DATE_TIMESTAMP
+    )
+    const createdBeforeLaunchDay = this.timeUtils.isLaterDate(
+      launchDate,
+      custWithExtraData.user.createdAt
+    )
+    const isCustomersFirstRentalInvoice =
+      custWithExtraData.membership.rentalInvoices.length === 1
+
     const lineItemsForPhysicalProductDatas = (await Promise.all(
       invoice.products.map(async physicalProduct => {
-        const { daysRented, ...daysRentedMetadata } = await this.calcDaysRented(
-          invoice,
-          physicalProduct
-        )
+        const {
+          daysRented,
+          initialReservationId,
+          ...daysRentedMetadata
+        } = await this.calcDaysRented(invoice, physicalProduct)
         const rawDailyRentalPrice =
           physicalProduct.productVariant.product.computedRentalPrice / 30
         const roundedDailyRentalPriceAsString = rawDailyRentalPrice.toFixed(2)
         const roundedDailyRentalPrice = +roundedDailyRentalPriceAsString
 
+        const initialReservation = await this.prisma.client.reservation.findUnique(
+          { where: { id: initialReservationId }, select: { createdAt: true } }
+        )
+
+        const defaultPrice = Math.round(
+          daysRented * roundedDailyRentalPrice * 100
+        )
+        const applyGrandfatheredPricing =
+          createdBeforeLaunchDay &&
+          isCustomersFirstRentalInvoice &&
+          this.timeUtils.isLaterDate(launchDate, initialReservation.createdAt)
+        let price = applyGrandfatheredPricing ? 0 : defaultPrice
+
         return addLineItemBasics({
           ...daysRentedMetadata,
           daysRented,
           physicalProduct: { connect: { id: physicalProduct.id } },
-          price: Math.round(daysRented * roundedDailyRentalPrice * 100),
+          price,
         }) as Prisma.RentalInvoiceLineItemCreateInput
       })
     )) as any
@@ -546,10 +585,10 @@ export class RentalService {
     return lineItems
   }
 
-  private async getRentalInvoiceBillingEndAtAccessAnnual(
+  private async calculateBillingEndDateFromStartDate(
     subscriptionId: string,
     billingStartAt: Date
-  ) {
+  ): Promise<Date> {
     // TODO: If next month is their plan billing month, use next_billing_at from
     // their chargebee data.
 
@@ -590,7 +629,7 @@ export class RentalService {
     return billingEndAtDate
   }
 
-  private async getChargebeeNextBillingAt(subscriptionId) {
+  private async getBillingEndDateFromNextBillingAt(subscriptionId) {
     const result = await chargebee.subscription
       .retrieve(subscriptionId)
       .request(this.handleChargebeeRequestResult)
@@ -598,7 +637,7 @@ export class RentalService {
     const nextBillingAtDate = this.timeUtils.dateFromUTCTimestamp(
       nextBillingAtTimestamp
     )
-    return this.timeUtils.xDaysBeforeDate(nextBillingAtDate, 1)
+    return this.timeUtils.xDaysBeforeDate(nextBillingAtDate, 1, "date")
   }
   private prismaLineItemToChargebeeChargeInput = prismaLineItem => {
     return {
@@ -617,7 +656,7 @@ export class RentalService {
     }
   }
 
-  private handleChargebeeRequestResult(error, result) {
+  private handleChargebeeRequestResult = (error, result) => {
     if (error) {
       this.error.captureError(error)
       return error
@@ -668,6 +707,7 @@ export class RentalService {
                       recoupment: true,
                       wholesalePrice: true,
                       rentalPriceOverride: true,
+                      computedRentalPrice: true,
                     },
                   },
                 },
@@ -677,23 +717,7 @@ export class RentalService {
         },
       }
     )
-    if (planID === "access-monthly") {
-      for (const lineItem of lineItemsWithData) {
-        const subscriptionId = lineItem.rentalInvoice.membership.subscriptionId
-        const payload = this.prismaLineItemToChargebeeChargeInput(lineItem)
-        const result = await chargebee.subscription
-          .add_charge_at_term_end(subscriptionId, payload)
-          .request(this.handleChargebeeRequestResult)
-        const chargebeeLineItems =
-          result?.estimate?.invoice_estimate?.line_items
-        const taxPromise = this.getLineItemTaxUpdatePromise(
-          lineItem,
-          chargebeeLineItems
-        )
-        promises.push(taxPromise)
-        invoicesCreated.push(result)
-      }
-    } else {
+    if (planID === "access-yearly") {
       const prismaUserId =
         lineItemsWithData[0].rentalInvoice.membership.customer.user.id
       const result = await chargebee.invoice
@@ -714,6 +738,26 @@ export class RentalService {
         promises.push(taxPromise)
       }
       invoicesCreated.push(result)
+    } else {
+      // access-monthly, and any other plan
+      for (const lineItem of lineItemsWithData) {
+        if (lineItem.price === 0) {
+          continue
+        }
+        const subscriptionId = lineItem.rentalInvoice.membership.subscriptionId
+        const payload = this.prismaLineItemToChargebeeChargeInput(lineItem)
+        const result = await chargebee.subscription
+          .add_charge_at_term_end(subscriptionId, payload)
+          .request(this.handleChargebeeRequestResult)
+        const chargebeeLineItems =
+          result?.estimate?.invoice_estimate?.line_items
+        const taxPromise = this.getLineItemTaxUpdatePromise(
+          lineItem,
+          chargebeeLineItems
+        )
+        promises.push(taxPromise)
+        invoicesCreated.push(result)
+      }
     }
 
     return [promises, invoicesCreated]

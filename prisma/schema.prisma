@@ -675,6 +675,7 @@ model Customer {
   reservations            Reservation[]
   impactSyncTimings       SyncTiming[]
   emailedProducts         Product[]                        @relation("CustomerToEmailedProducts")
+  hasBeenMigrated         Boolean                          @default(false)
 }
 
 model CustomerAdmissionsData {

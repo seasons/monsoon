@@ -9,29 +9,32 @@ chargebee.configure({
   api_key: process.env.CHARGEBEE_API_KEY,
 })
 
+const handle = (err, result) => {
+  if (err) {
+    return err
+  }
+  if (result) {
+    return result
+  }
+}
+
 const run = async () => {
   const ps = new PrismaService()
 
-  const prismaUserId = "ckt3y8o150000zzuv7d7iuesr"
+  console.log("func complete")
+}
+/*
+  Create an export request
+  Keep retrieving it until its done
+  Download the csvs from the url
+  Create a payload of just customer ids and emails
+  Sync it to chargebee (first 2 for now)
+  */
 
-  const lineItemsWithData = [
-    { amount: 8900, description: "Hello", avalara_tax_code: "OD020000" },
-  ]
-  const result = await chargebee.invoice
-    .create({
-      customer_id: prismaUserId,
-      currency_code: "USD",
-      charges: lineItemsWithData,
-    })
-    .request((err, result) => {
-      if (err) {
-        console.log(err)
-        return err
-      }
-      console.log(result)
-      return result
-    })
-  console.dir(result, { depth: null })
+// console.dir(data, { depth: null })
+
+async function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms))
 }
 
 run()

@@ -40,14 +40,11 @@ export class MarketingScheduledJobs {
     this.logger.log(`Drip Unsubscribe job unsubscribed ${count} users`)
   }
 
+  // TODO: Update in lieue of deprecation of 7 day auth window
   @Cron(CronExpression.EVERY_6_HOURS)
   async authWindowFollowups() {
     this.logger.log("Run auth window followups job")
-    const daySevenFollowupsSent = []
-    const dayFiveFollowupsSent = []
-    const dayThreeFollowupsSent = []
     const dayTwoFollowupsSent = []
-    const windowsClosed = []
     const customers = await this.prisma.client.customer.findMany({
       where: {
         AND: [
@@ -80,129 +77,11 @@ export class MarketingScheduledJobs {
       const dayTwoStarted = moment(cust.authorizedAt)
         .add(1, "d")
         .isSameOrBefore(now)
-      const dayThreeStarted = moment(cust.authorizedAt)
-        .add(2, "d")
-        .isSameOrBefore(now)
-      const dayFourStarted = moment(cust.authorizedAt)
-        .add(3, "d")
-        .isSameOrBefore(now)
-      const dayFiveStarted = moment(cust.authorizedAt)
-        .add(4, "d")
-        .isSameOrBefore(now)
-      const daySixStarted = moment(cust.authorizedAt)
-        .add(5, "d")
-        .isSameOrBefore(now)
-      const daySevenStarted = moment(cust.authorizedAt)
-        .add(6, "d")
-        .isSameOrBefore(now)
-      const windowClosed = moment(now).isAfter(
-        cust.admissions?.authorizationWindowClosesAt
-      )
       const receivedEmails = cust.user.emails.map(a => a.emailId)
-      const receivedSMSs = cust.user.smsReceipts.map(a => a.smsId)
       const dayTwoFollowupSent = receivedEmails.includes(
         "DayTwoAuthorizationFollowup"
       )
-      const dayThreeFollowupSent = receivedEmails.includes(
-        "DayThreeAuthorizationFollowup"
-      )
-      const dayFourFollowupSent = receivedEmails.includes(
-        "DayFourAuthorizationFollowup"
-      )
-      const dayFiveFollowupSent =
-        receivedEmails.includes("DayFiveAuthorizationFollowup") ||
-        receivedSMSs.includes("SeventyTwoHoursLeftAuthorizationFollowup")
-      const daySixFollowupSent = receivedEmails.includes(
-        "DaySixAuthorizationFollowup"
-      )
-      const daySevenFollowupSent =
-        receivedEmails.includes("DaySevenAuthorizationFollowup") ||
-        // previous, deprecated email id. Maintain for backwards compatibility.
-        receivedEmails.includes("TwentyFourHourAuthorizationFollowup") ||
-        receivedSMSs.includes("TwentyFourHourLeftAuthorizationFollowup")
-      const rewaitlisted =
-        receivedEmails.includes("Rewaitlisted") ||
-        receivedSMSs.includes("Rewaitlisted")
-      // Send rewaitlist email as needed
-      if (windowClosed) {
-        if (!rewaitlisted) {
-          const availableStyles = await this.admissions.getAvailableStyles({
-            id: cust.id,
-          })
-          await this.email.sendRewaitlistedEmail(cust.user, availableStyles)
-          await this.sms.sendSMSById({
-            to: { id: cust.user.id },
-            renderData: { name: cust.user.firstName },
-            smsId: "Rewaitlisted",
-          })
-          await this.prisma.client.customer.update({
-            where: { id: cust.id },
-            data: { status: "Waitlisted" },
-          })
-          windowsClosed.push(cust.user.email)
-        }
-        continue
-      }
-      // Send day 7 email as needed
-      if (daySevenStarted) {
-        if (!daySevenFollowupSent) {
-          const availableStyles = await this.admissions.getAvailableStyles({
-            id: cust.id,
-          })
-          await this.email.sendAuthorizedDaySevenFollowup(
-            cust.user,
-            availableStyles
-          )
-          await this.sms.sendSMSById({
-            to: { id: cust.user.id },
-            renderData: { name: cust.user.firstName },
-            smsId: "TwentyFourHourLeftAuthorizationFollowup",
-          })
-          daySevenFollowupsSent.push(cust.user.email)
-        }
-        continue
-      }
-      // Send day 6 email as needed
-      if (daySixStarted) {
-        if (!daySixFollowupSent) {
-          // TODO: Send email
-        }
-        continue
-      }
-      // Send day 5 email if needed
-      if (dayFiveStarted) {
-        // TODO: Send email
-        if (!dayFiveFollowupSent) {
-          await this.sms.sendSMSById({
-            to: { id: cust.user.id },
-            renderData: { name: cust.user.firstName },
-            smsId: "SeventyTwoHoursLeftAuthorizationFollowup",
-          })
-          dayFiveFollowupsSent.push(cust.user.email)
-        }
-        continue
-      }
-      // Send day 4 email if needed
-      if (dayFourStarted) {
-        // TODO: Send email
-        if (!dayFourFollowupSent) {
-        }
-        continue
-      }
-      // Send day 3 email if needed
-      if (dayThreeStarted) {
-        if (!dayThreeFollowupSent) {
-          const availableStyles = await this.admissions.getAvailableStyles({
-            id: cust.id,
-          })
-          await this.email.sendAuthorizedDayThreeFollowup(
-            cust.user,
-            availableStyles
-          )
-          dayThreeFollowupsSent.push(cust.user.email)
-        }
-        continue
-      }
+
       // Send day 2 email if needed
       if (dayTwoStarted) {
         if (!dayTwoFollowupSent) {
@@ -214,14 +93,13 @@ export class MarketingScheduledJobs {
     }
     this.logger.log("Auth window followups job finished")
     this.logger.log({
-      dayThreeFollowupsSent,
-      dayFiveFollowupsSent,
-      daySevenFollowupsSent,
-      windowsClosed,
+      dayTwoFollowupsSent,
     })
   }
 
-  @Cron(CronExpression.EVERY_DAY_AT_6PM)
+  // TODO: Turn this back on once migration is done and we've
+  // retooled this email.
+  // @Cron(CronExpression.EVERY_DAY_AT_6PM)
   async admissableBimonthlyNurture() {
     // Make sure we're doing it every 15 days only
     const todayDate = new Date().getDate()

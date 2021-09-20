@@ -27,32 +27,42 @@ export class SubscriptionsScheduledJobs {
   async updateSubscriptionData() {
     this.logger.log(`Start update subscriptions field job`)
 
+    const allSubscriptions = []
+
+    let offset = "start"
+    while (true) {
+      let list
+      ;({ next_offset: offset, list } = await chargebee.subscription
+        .list({
+          limit: 100,
+          ...(offset === "start" ? {} : { offset }),
+        })
+        .request())
+      allSubscriptions.push(...list?.map(a => a.subscription))
+      if (!offset) {
+        break
+      }
+    }
+
     let subscription
     let customer
-    try {
-      const allSubscriptions = []
-
-      let offset = "start"
-      while (true) {
-        let list
-        ;({ next_offset: offset, list } = await chargebee.subscription
-          .list({
-            limit: 100,
-            ...(offset === "start" ? {} : { offset }),
-          })
-          .request())
-        allSubscriptions.push(...list?.map(a => a.subscription))
-        if (!offset) {
-          break
-        }
+    let i = 0
+    const total = allSubscriptions.length
+    for (subscription of allSubscriptions) {
+      i++
+      if (i % 5 === 0) {
+        console.log(`Syncing subscription ${i} of ${total}`)
       }
-
-      for (subscription of allSubscriptions) {
+      try {
         const userID = subscription.customer_id
-        const customer = await this.prisma.client.customer.findFirst({
+        if (!userID) {
+          throw "subscription missing customer id"
+        }
+        customer = await this.prisma.client.customer.findFirst({
           where: { user: { id: userID } },
           select: {
             id: true,
+            user: { select: { id: true, email: true } },
             membership: {
               select: { id: true, subscription: { select: { id: true } } },
             },
@@ -66,42 +76,43 @@ export class SubscriptionsScheduledJobs {
             subscription
           )
 
-          const membershipSubscriptionID =
-            customer?.membership?.subscription?.id
-          if (membershipSubscriptionID) {
-            await this.prisma.client.customerMembershipSubscriptionData.update({
-              where: { id: membershipSubscriptionID },
-              data,
-            })
-          } else {
-            await this.prisma.client.customerMembershipSubscriptionData.create({
-              data: {
-                ...data,
-                membership: { connect: { id: customer.membership.id } },
-              },
-            })
-          }
+          await this.prisma.client.customerMembership.upsert({
+            where: { id: customer.membership?.id || "" },
+            create: {
+              subscriptionId: data.subscriptionId,
+              customer: { connect: { id: customer.id } },
+              plan: { connect: { planID: data.planID } },
+              subscription: { create: data },
+            },
+            update: {
+              subscriptionId: data.subscriptionId,
+              plan: { connect: { planID: data.planID } },
+              subscription: { upsert: { create: data, update: data } },
+            },
+          })
         }
+      } catch (e) {
+        console.log("e", e)
+        this.error.setExtraContext(subscription, "subscription")
+        this.error.setExtraContext(customer, "customer")
+        this.error.captureError(e)
       }
-    } catch (e) {
-      console.log("e", e)
-      this.error.setExtraContext(subscription, "subscription")
-      this.error.setExtraContext(customer, "customer")
-      this.error.captureError(e)
     }
 
     this.logger.log(`Finished update subscriptions field job`)
   }
 
   // TODO: Turn on when we launch new plans
-  // @Cron(CronExpression.EVERY_DAY_AT_4AM)
+  // @Cron(CronExpression.EVERY_HOUR)
   async handleRentalInvoices() {
-    this.logger.log(`Start update subscriptions field job`)
+    this.logger.log(`Start handle rental invoices job`)
 
     let invoicesHandled = 0
     const invoicesToHandle = await this.prisma.client.rentalInvoice.findMany({
       where: {
-        membership: { plan: { tier: "Access" } },
+        membership: {
+          plan: { tier: "Access" },
+        },
         billingEndAt: {
           lte: new Date(),
         },
@@ -110,6 +121,7 @@ export class SubscriptionsScheduledJobs {
       select: CREATE_RENTAL_INVOICE_LINE_ITEMS_INVOICE_SELECT,
     })
 
+    let resultDict = { successes: [], errors: [] }
     for (const invoice of invoicesToHandle) {
       invoicesHandled++
       try {
@@ -118,14 +130,18 @@ export class SubscriptionsScheduledJobs {
           invoice
         )
         await this.rental.chargeTab(planID, invoice, lineItems)
+        resultDict.successes.push(invoice.membership.customer.user.email)
       } catch (err) {
+        resultDict.successes.push(invoice.membership.customer.user.email)
+        console.log(err)
         this.error.setExtraContext(invoice)
         this.error.captureError(err)
       }
     }
 
     this.logger.log(
-      `End update subscriptions field job: ${invoicesHandled} invoices handled`
+      `End handle rental invoices job: ${invoicesHandled} invoices handled`
     )
+    this.logger.log(resultDict)
   }
 }
