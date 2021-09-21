@@ -29,7 +29,7 @@ const CHARGEBEE_INVOICE_GENERATED = "invoice_generated"
 
 @Controller("chargebee_events")
 export class ChargebeeController {
-  private readonly logger = new Logger(`Cron: ${ChargebeeController.name}`)
+  private readonly logger = new Logger(ChargebeeController.name)
 
   constructor(
     private readonly payment: PaymentService,
