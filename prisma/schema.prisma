@@ -929,6 +929,7 @@ enum RentalInvoiceStatus {
   Draft
   Billed
   ChargeFailed
+  Cancelled
 }
 
 model RentalInvoice {
