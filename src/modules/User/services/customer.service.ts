@@ -414,15 +414,6 @@ export class CustomerService {
       data.status === "Authorized"
     ) {
       const {
-        pass: haveSufficientInventory,
-        detail: { availableBottomStyles, availableTopStyles },
-      } = await this.admissions.haveSufficientInventoryToServiceCustomer(where)
-
-      if (!haveSufficientInventory) {
-        throw new Error("Can not authorize user. Insufficient inventory")
-      }
-
-      const {
         pass: inServiceableZipcode,
         detail: { allAccessEnabled },
       } = this.admissions.zipcodeAllowed(
@@ -551,11 +542,6 @@ export class CustomerService {
         func: async () =>
           this.admissions.belowWeeklyNewActiveUsersOpsThreshold(),
         waitlistReason: "OpsThresholdExceeded",
-      },
-      {
-        func: async () =>
-          this.admissions.haveSufficientInventoryToServiceCustomer(where),
-        waitlistReason: "InsufficientInventory",
       },
     ] as {
       func: () => Promise<TriageFuncResult>
