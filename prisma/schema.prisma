@@ -697,6 +697,8 @@ model CustomerDetail {
   phoneNumber        String?
   birthday           DateTime?
   height             Int?
+  shoeSize           Int?
+  pantLength         Int?
   bodyType           String?
   averageTopSize     String?
   averageWaistSize   String?
