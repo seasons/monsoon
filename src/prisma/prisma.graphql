@@ -4153,6 +4153,8 @@ type CustomerDetail {
   phoneNumber: String
   birthday: DateTime
   height: Int
+  shoeSize: Int
+  pantLength: Int
   weight: [Int!]!
   bodyType: String
   averageTopSize: String
@@ -4191,6 +4193,8 @@ input CustomerDetailCreateInput {
   phoneNumber: String
   birthday: DateTime
   height: Int
+  shoeSize: Int
+  pantLength: Int
   weight: CustomerDetailCreateweightInput
   bodyType: String
   averageTopSize: String
