@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common"
-import { Order } from "@prisma/client"
+import { Order, ProductVariant } from "@prisma/client"
 import RenderEmail from "@seasons/wind"
 import sgMail from "@sendgrid/mail"
 import nodemailer from "nodemailer"
@@ -255,15 +255,17 @@ export class EmailService {
 
   async sendReservationConfirmationEmail(
     user: EmailUser,
-    products: Product[],
+    productsVariantIDs: string[],
     reservation: { reservationNumber: number },
     trackingNumber?: string,
     trackingUrl?: string
   ) {
-    const formattedProducts = await this.emailUtils.createGridPayload(products)
+    const gridPayload = await this.emailUtils.createGridPayloadWithProductVariants(
+      productsVariantIDs
+    )
 
     const payload = await RenderEmail.reservationConfirmation({
-      products: formattedProducts,
+      products: gridPayload,
       orderNumber: `${reservation.reservationNumber}`,
       trackingNumber,
       trackingURL: trackingUrl,

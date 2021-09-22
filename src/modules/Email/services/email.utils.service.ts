@@ -62,6 +62,20 @@ export class EmailUtilsService {
     return Promise.all(productsWithData.map(this.productToGridPayload))
   }
 
+  async createGridPayloadWithProductVariants(variantIDs: string[]) {
+    const variantsWithData = await this.prisma.client.productVariant.findMany({
+      where: { id: { in: variantIDs } },
+      select: {
+        id: true,
+        displayShort: true,
+        product: {
+          select: this.productSelectForGridData,
+        },
+      },
+    })
+    return Promise.all(variantsWithData.map(this.variantToGridPayload))
+  }
+
   async getXLatestProducts(
     numProducts: number
   ): Promise<MonsoonProductGridItem[]> {
@@ -186,6 +200,19 @@ export class EmailUtilsService {
     return formattedLineItems
   }
 
+  variantToGridPayload = async (
+    variant: any
+  ): Promise<MonsoonProductGridItem> => {
+    const product = variant.product
+    const productPayload = await this.productToGridPayload(product)
+
+    const payload = {
+      ...productPayload,
+      variantSize: variant.displayShort,
+    }
+    return payload
+  }
+
   productToGridPayload = async (
     product: any
   ): Promise<MonsoonProductGridItem> => {
@@ -216,6 +243,7 @@ export class EmailUtilsService {
       // @ts-ignore
       smallImageSrc,
       bigImageSrc,
+      variantSize: "",
       brand: product.brand?.name || "",
     }
     return payload

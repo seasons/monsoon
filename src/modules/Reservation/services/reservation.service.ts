@@ -250,7 +250,7 @@ export class ReservationService {
     // Send confirmation email
     await this.emails.sendReservationConfirmationEmail(
       customerWithData.user,
-      productsBeingReserved,
+      newProductVariantsBeingReserved,
       reservation,
       seasonsToCustomerTransaction.tracking_number,
       seasonsToCustomerTransaction.tracking_url_provider
