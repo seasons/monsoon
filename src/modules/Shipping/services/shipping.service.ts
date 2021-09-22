@@ -344,11 +344,16 @@ export class ShippingService {
       return rate.servicelevel.token === servicelevel_token
     })
 
+    // We'll want to pull that number dynamically from the Shippo API once it's fixed
+    const discountPercentage = 0.58
+
     return {
       rate: {
         ...rate,
         amount:
-          parseFloat(((rate?.amount as unknown) as string) || "0.00") * 100,
+          parseFloat(((rate?.amount as unknown) as string) || "0.00") *
+          100 *
+          discountPercentage,
       },
       shipmentId: shipment.object_id,
     }
