@@ -243,7 +243,6 @@ export class EmailUtilsService {
       // @ts-ignore
       smallImageSrc,
       bigImageSrc,
-      variantSize: "",
       brand: product.brand?.name || "",
     }
     return payload
