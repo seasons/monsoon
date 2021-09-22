@@ -45,6 +45,7 @@
         { "label": "Throwing Fits", "value": "throwingFits" },
         { "label": "Lean Luxe", "value": "leanLuxe" },
         { "label": "Threadability", "value": "threadability" },
+        { "label": "Twitter", "value": "twitter" },
         { "label": "One Dapper Street", "value": "onedapperstreet" },
         { "label": "Other", "value": "other" }
       ]
