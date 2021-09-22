@@ -51,6 +51,8 @@ type Mutation {
   ): ProductVariantFeedback! @hasRole(roles: [Customer])
   processReservation(data: ReservationProcessReturnInput!): ReservationReceipt
     @hasRole(roles: [Admin, Partner])
+  earlyReturn(data: [String], reservationID: String): Reservation
+    @hasRole(roles: Admin)
   updateReservation(
     data: ReservationUpdateInput!
     where: ReservationWhereUniqueInput!
@@ -200,6 +202,21 @@ input ReservationWhereInput {
   q: String
 }
 
+enum ReservationStatus {
+  Queued
+  Picked
+  Packed
+  Shipped
+  Delivered
+  Completed
+  Cancelled
+  Hold
+  Blocked
+  Unknown
+  Lost
+  Received
+  EarlyReturn
+}
 input ReservationProcessReturnInput {
   reservationNumber: Int!
   productStates: [ProductStateInput!]!

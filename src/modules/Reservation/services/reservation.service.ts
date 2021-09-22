@@ -854,6 +854,59 @@ export class ReservationService {
     }
   }
 
+  async earlyReturn(data: [string], reservationID: string) {
+    const currentReservation = await this.prisma.client.reservation.findUnique({
+      where: {
+        id: reservationID,
+      },
+      select: {
+        status: true,
+        customer: {
+          select: {
+            id: true,
+          },
+        },
+      },
+    })
+    console.log(currentReservation)
+    if (!["Delivered", "Recieved"].includes(currentReservation.status)) {
+      throw Error(
+        "Only reservations with status Delivered can have items returned early"
+      )
+    }
+
+    const promises = []
+
+    promises.push(
+      this.prisma.client.bagItem.deleteMany({
+        where: {
+          customerId: currentReservation.customer.id,
+          id: {
+            in: data,
+          },
+        },
+      })
+    )
+
+    promises.push(
+      this.prisma.client.reservation.update({
+        where: {
+          id: reservationID,
+        },
+        data: {
+          returnedProducts: {
+            connect: data.map(a => ({ id: a })),
+          },
+          status: "EarlyReturn",
+        },
+      })
+    )
+
+    const results = await this.prisma.client.$transaction(promises)
+    const earlyReturnedReservation = results.pop()
+    return earlyReturnedReservation
+  }
+
   private createDraftLineItem = values => ({
     id: cuid(),
     createdAt: Date.now(),

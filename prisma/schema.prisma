@@ -124,6 +124,7 @@ enum ReservationStatus {
   Unknown
   Lost
   Received
+  EarlyReturn
 }
 
 enum BagItemStatus {
