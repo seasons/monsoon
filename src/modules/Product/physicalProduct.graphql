@@ -50,7 +50,7 @@ type Mutation {
     data: PhysicalProductUpdateManyMutationInput!
     where: PhysicalProductWhereInput
   ): BatchPayload! @hasRole(roles: [Admin])
-  stowItems(ids: [String], warehouseLocationBarcode: String!): Boolean
+  stowItems(ids: [ID], warehouseLocationBarcode: String!): Boolean
     @hasRole(roles: [Admin])
   createPhysicalProductQualityReport(
     data: PhysicalProductQualityReportCreateInput!
