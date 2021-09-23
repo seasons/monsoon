@@ -4,7 +4,7 @@ import { ErrorService } from "@app/modules/Error/services/error.service"
 import { StatementsService } from "@app/modules/Utils/services/statements.service"
 import { UtilsService } from "@app/modules/Utils/services/utils.service"
 import { PrismaService } from "@app/prisma/prisma.service"
-import { Body, Controller, Post } from "@nestjs/common"
+import { Body, Controller, Logger, Post } from "@nestjs/common"
 import { CustomerStatus } from "@prisma/client"
 import chargebee from "chargebee"
 import { pick } from "lodash"
@@ -29,6 +29,8 @@ const CHARGEBEE_INVOICE_GENERATED = "invoice_generated"
 
 @Controller("chargebee_events")
 export class ChargebeeController {
+  private readonly logger = new Logger(ChargebeeController.name)
+
   constructor(
     private readonly payment: PaymentService,
     private readonly segment: SegmentService,
@@ -42,6 +44,8 @@ export class ChargebeeController {
 
   @Post()
   async handlePost(@Body() body: ChargebeeEvent) {
+    this.logger.log("Chargebee event", (body as unknown) as string)
+
     switch (body.event_type) {
       case CHARGEBEE_SUBSCRIPTION_CREATED:
         await this.chargebeeSubscriptionCreated(body.content)
