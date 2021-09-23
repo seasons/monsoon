@@ -346,14 +346,16 @@ export class ShippingService {
 
     // We'll want to pull that number dynamically from the Shippo API once it's fixed
     const discountPercentage = 0.58
+    const amount = Math.floor(
+      parseFloat(((rate?.amount as unknown) as string) || "0.00") *
+        100 *
+        discountPercentage
+    )
 
     return {
       rate: {
         ...rate,
-        amount:
-          parseFloat(((rate?.amount as unknown) as string) || "0.00") *
-          100 *
-          discountPercentage,
+        amount,
       },
       shipmentId: shipment.object_id,
     }
