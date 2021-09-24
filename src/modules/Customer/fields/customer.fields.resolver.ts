@@ -1,7 +1,7 @@
 import { Customer, User } from "@app/decorators"
-import { FindManyArgs } from "@app/decorators/findManyArgs.decorator"
 import { PrismaGenerateParams } from "@app/modules/DataLoader/dataloader.types.d"
 import { TransactionsForCustomersLoader } from "@app/modules/Payment/loaders/transactionsForCustomers.loader"
+import { CustomerUtilsService } from "@app/modules/User/services/customer.utils.service"
 import { UtilsService } from "@app/modules/Utils/services/utils.service"
 import { PrismaDataLoader } from "@app/prisma/prisma.loader"
 import { Loader } from "@modules/DataLoader/decorators/dataloader.decorator"
@@ -28,7 +28,8 @@ export class CustomerFieldsResolver {
   constructor(
     private readonly prisma: PrismaService,
     private readonly paymentService: PaymentService,
-    private readonly utils: UtilsService
+    private readonly utils: UtilsService,
+    private readonly customerUtils: CustomerUtilsService
   ) {}
 
   /*
@@ -333,5 +334,13 @@ export class CustomerFieldsResolver {
     }
 
     return steps
+  }
+
+  @ResolveField()
+  async nextFreeSwapDateAt(@Parent() customer) {
+    const nextFreeSwapDate = await this.customerUtils.nextFreeSwapDate(
+      customer.id
+    )
+    return nextFreeSwapDate
   }
 }

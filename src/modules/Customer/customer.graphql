@@ -148,6 +148,7 @@ type Customer {
   onboardingSteps: [OnboardingStep!]!
   admissions: CustomerAdmissionsData
   utm: UTMData
+  nextFreeSwapDateAt: DateTime
   authorizedAt: DateTime
   createdAt: DateTime!
   updatedAt: DateTime!
