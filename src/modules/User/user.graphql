@@ -156,6 +156,7 @@ type UserLinks {
   mixpanel: String!
   sendgrid: String!
   intercom: String!
+  chargebee: String!
 }
 
 type User {
