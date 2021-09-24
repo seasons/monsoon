@@ -50,19 +50,11 @@ export class CustomerUtilsService {
       },
     })
     const latestReservation = head(customer.reservations)
-    const customerPlan = customer?.membership?.plan
-    const customerPlanTier = customerPlan?.tier
     const latestReservationCreatedAt = latestReservation?.createdAt?.toISOString()
     const currentTermEnd = customer?.membership?.subscription?.currentTermEnd?.toISOString()
     const currentTermStart = customer?.membership?.subscription?.currentTermStart?.toISOString()
-    const customerOnEssentialPlan = customerPlanTier === "Essential"
 
-    if (
-      !currentTermEnd ||
-      !currentTermStart ||
-      !latestReservationCreatedAt ||
-      !customerOnEssentialPlan
-    ) {
+    if (!currentTermEnd || !currentTermStart || !latestReservationCreatedAt) {
       return null
     }
 
