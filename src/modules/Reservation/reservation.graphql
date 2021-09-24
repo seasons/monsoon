@@ -51,7 +51,7 @@ type Mutation {
   ): ProductVariantFeedback! @hasRole(roles: [Customer])
   processReservation(data: ReservationProcessReturnInput!): ReservationReceipt
     @hasRole(roles: [Admin, Partner])
-  earlyReturn(data: [String], reservationID: String): Reservation
+  earlyReturn(physcalProductID: [ID], reservationID: String): Reservation
     @hasRole(roles: Admin)
   updateReservation(
     data: ReservationUpdateInput!

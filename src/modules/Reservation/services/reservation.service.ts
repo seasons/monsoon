@@ -854,7 +854,7 @@ export class ReservationService {
     }
   }
 
-  async earlyReturn(data: [string], reservationID: string) {
+  async earlyReturn(physicalProductID: [string], reservationID: string) {
     const currentReservation = await this.prisma.client.reservation.findUnique({
       where: {
         id: reservationID,
@@ -868,8 +868,12 @@ export class ReservationService {
         },
       },
     })
-    console.log(currentReservation)
-    if (!["Delivered", "Recieved"].includes(currentReservation.status)) {
+
+    if (
+      !["Delivered", "Recieved", "EarlyReturn"].includes(
+        currentReservation.status
+      )
+    ) {
       throw Error(
         "Only reservations with status Delivered can have items returned early"
       )
@@ -877,12 +881,37 @@ export class ReservationService {
 
     const promises = []
 
+    const bagItemIDs = await this.prisma.client.bagItem.findMany({
+      where: {
+        physicalProductId: {
+          in: physicalProductID,
+        },
+      },
+      select: {
+        id: true,
+      },
+    })
+
+    promises.push(
+      this.prisma.client.customer.update({
+        where: {
+          id: currentReservation?.customer?.id,
+        },
+        data: {
+          bagItems: {
+            disconnect: bagItemIDs.map(a => a),
+          },
+        },
+      })
+    )
+
     promises.push(
       this.prisma.client.bagItem.deleteMany({
         where: {
-          customerId: currentReservation.customer.id,
+          customer: { id: currentReservation?.customer?.id },
+          saved: false,
           id: {
-            in: data,
+            in: bagItemIDs.map(a => a.id),
           },
         },
       })
@@ -894,15 +923,23 @@ export class ReservationService {
           id: reservationID,
         },
         data: {
+          products: {
+            update: {
+              where: physicalProductID.map(a => ({ id: a })),
+              data: {
+                status: "In-Transit",
+              },
+            },
+          },
           returnedProducts: {
-            connect: data.map(a => ({ id: a })),
+            connect: physicalProductID.map(a => ({ id: a })),
           },
           status: "EarlyReturn",
         },
       })
     )
 
-    const results = await this.prisma.client.$transaction(promises)
+    const results = await this.prisma.client.$transaction(promises.flat())
     const earlyReturnedReservation = results.pop()
     return earlyReturnedReservation
   }
