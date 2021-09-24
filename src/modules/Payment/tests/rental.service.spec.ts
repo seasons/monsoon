@@ -1,3 +1,5 @@
+import { time } from "console"
+
 import { APP_MODULE_DEF } from "@app/app.module"
 import { ReservationService } from "@app/modules/Reservation"
 import { TimeUtilsService } from "@app/modules/Utils/services/time.service"
@@ -8,6 +10,7 @@ import {
   PhysicalProduct,
   Prisma,
   RentalInvoiceLineItem,
+  ReservationPhase,
   ReservationStatus,
   ShippingCode,
   ShippingOption,
@@ -501,36 +504,107 @@ describe("Rental Service", () => {
         })
       })
 
-      it("Shipped, on the way there", async () => {
-        let initialReservation = (await addToBagAndReserveForCustomer(1)) as any
-        let custWithData = await getCustWithData()
-        setReservationStatus(initialReservation.id, "Shipped")
+      describe("Reservation in Shipped state", () => {
+        let initialReservation: any
+        let custWithData: any
 
-        const {
-          daysRented,
-          comment,
-          rentalEndedAt,
-          rentalStartedAt,
-        } = await rentalService.calcDaysRented(
-          custWithData.membership.rentalInvoices[0],
-          initialReservation.products[0]
-        )
+        beforeEach(async () => {
+          initialReservation = (await addToBagAndReserveForCustomer(1)) as any
+          custWithData = await getCustWithData()
+        })
 
-        expect(daysRented).toBe(0)
-        expect(rentalStartedAt).toBe(undefined)
-        expect(rentalEndedAt).toBe(undefined)
+        it("Shipped, on the way there", async () => {
+          setReservationStatus(initialReservation.id, "Shipped")
 
-        expectInitialReservationComment(
-          comment,
-          initialReservation.reservationNumber,
-          "shipped"
-        )
-        expectCommentToInclude(comment, "item status: en route to customer")
-      })
+          const {
+            daysRented,
+            comment,
+            rentalEndedAt,
+            rentalStartedAt,
+          } = await rentalService.calcDaysRented(
+            custWithData.membership.rentalInvoices[0],
+            initialReservation.products[0]
+          )
 
-      it("Shipped, on the way back", async () => {
-        // Shipped, on the way back: rentalEndedAt function of whether or not package in system.
-        expect(0).toBe(1)
+          expect(daysRented).toBe(0)
+          expect(rentalStartedAt).toBe(undefined)
+          expect(rentalEndedAt).toBe(undefined)
+
+          expectInitialReservationComment(
+            comment,
+            initialReservation.reservationNumber,
+            "shipped"
+          )
+          expectCommentToInclude(comment, "item status: en route to customer")
+        })
+
+        it("Shipped, on the way back, return flow filled", async () => {
+          const oneDayAgo = timeUtils.xDaysBeforeDate(new Date(), 1)
+
+          await setPackageDeliveredAt(initialReservation.sentPackage.id, 23)
+          await setReservationStatus(initialReservation.id, "Delivered")
+
+          setReservationStatus(initialReservation.id, "Shipped")
+          setReservationPhase(initialReservation.id, "CustomerToBusiness")
+          await reservationService.returnItems(
+            initialReservation.newProducts[0],
+            custWithData
+          )
+
+          setPackageEnteredSystemAt(
+            initialReservation.returnPackages[0].id,
+            oneDayAgo
+          )
+
+          const {
+            daysRented,
+            comment,
+            rentalEndedAt,
+            rentalStartedAt,
+          } = await rentalService.calcDaysRented(
+            custWithData.membership.rentalInvoices[0],
+            initialReservation.products[0]
+          )
+
+          expect(daysRented).toBe(22)
+          expect(rentalStartedAt).toBe(
+            timeUtils.xDaysBeforeDate(new Date(), 23)
+          )
+          expect(rentalEndedAt).toBe(oneDayAgo)
+          expectCommentToInclude(comment, "TODO")
+        })
+
+        it("Shipped, on the way back, return flow not filled", async () => {
+          const today = new Date()
+
+          await setPackageDeliveredAt(initialReservation.sentPackage.id, 23)
+          await setReservationStatus(initialReservation.id, "Delivered")
+
+          setReservationStatus(initialReservation.id, "Shipped")
+          setReservationPhase(initialReservation.id, "CustomerToBusiness")
+
+          setPackageEnteredSystemAt(
+            initialReservation.returnPackages[0].id,
+            timeUtils.xDaysBeforeDate(new Date(), 1)
+          )
+
+          const {
+            daysRented,
+            comment,
+            rentalEndedAt,
+            rentalStartedAt,
+          } = await rentalService.calcDaysRented(
+            custWithData.membership.rentalInvoices[0],
+            initialReservation.products[0]
+          )
+
+          expect(daysRented).toBe(23)
+          expect(rentalStartedAt).toBe(
+            timeUtils.xDaysBeforeDate(new Date(), 23)
+          )
+          expect(rentalEndedAt).toBe(today)
+          expectCommentToInclude(comment, "TODO")
+        })
       })
 
       it("lost on the way there", async () => {
@@ -643,7 +717,6 @@ describe("Rental Service", () => {
         )
         expectCommentToInclude(comment, "Item status: with customer")
       })
-
       // TODO: flesh out
     })
 
@@ -1552,6 +1625,14 @@ const setReservationStatus = async (
     data: { status },
   })
 }
+
+const setReservationPhase = async (reservationId, phase: ReservationPhase) => {
+  await prisma.client.reservation.update({
+    where: { id: reservationId },
+    data: { phase },
+  })
+}
+
 const setReservationCreatedAt = async (reservationId, numDaysAgo) => {
   const date = timeUtils.xDaysAgoISOString(numDaysAgo)
   await prisma.client.reservation.update({

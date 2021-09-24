@@ -376,6 +376,8 @@ export class RentalService {
           rentalStartedAt = undefined
           addComment(itemStatusComments["enRoute"])
         } else {
+          const returnPackage = (initialReservation.returnPackages.rentalEndedAt = this.getSafeReturnPackageEntryDate())
+
           throw "unimplemented"
           /* 
           Simplest case: Customer has one reservation. This item was sent on that reservation, and is now being returned with the label provided on that item.
@@ -819,47 +821,52 @@ export class RentalService {
 }
 
 /*
-        Find the package on which it was sent to the customer. Call this RR
-        define f getDeliveryDate(RR) => RR.sentPackage.deliveredAt || RR.createdAt + X (3-5)
+ 
 
-        If RR is still Queued, Picked, Packed, Hold, Blocked, Unknown OR
-           RR is shipped, in BusinessToCustomerPhase:
-           daysRented = 0
+Shipped, Customer To Business
 
-        TODO: Is it possible for it be "Delivered" in "CustomerToBusiness" phase? Address if so
-        If RR is Delivered and its in BusinessToCustomer phase:
-          endDate = today
-w
-          deliveryDate = getDeliveryDate(RR)
-          startDate = max(deliveryDate, invoice.startBillingAt)
+CASE:
+It's a customers first reservation. They have only 1 item. They return it. At billing time, it's Shipped, CustomerToBusiness
 
-          daysRented = endDate - startDate + 1
 
-        If RR is Completed:
-          deliveryDate = getDeliveryDate(RR)
-          startDate = max(deliveryDate, invoice.startBillingAt)
+If the resevation status is Shipped, then the package corresponding to the reservation's phase will have an enteredDeliverySystemAt. 
+So if a reservation is marked as Shipped and the phase is CustomerToBusiness, the relevant return package will have an enteredDeliverySystemAt. 
 
-          If item in reservation.returnedProducts:  
-            endDate = returnedPackage.enteredDeliverySystemAt || reservation.completedAt - Z (data loss cushion. 3 days)
-          Else:
-            // It should be in his bag, with status Reserved or Received. Confirm this is so.
-            endDate = today
+So that aspect is handled. 
 
-          daysRented = endDate - startDate + 1
-        
-        If RR is Cancelled:
-          daysRented = 0
+The question though, is do we know what's in the package? 
 
-        If RR is Lost:
-          If the sentPackage got lost, daysRented = 0
-          If the returnedPackage got lost,
-            deliveryDate = getDeliveryDate(RR)
-            startDate = max(deliveryDate, invoice.startBillingAt)
-            endDate = returnedPackage.lostAt
-            daysRented = endDate - startDate + 1 - Y (lostCushion, call it 1-3)
+IF the customer has filled out the return flow, then yes. If not, then no. 
 
-        If RR is Received:
-          // TODO: Only 2 reservations with this status. See if we can deprecate it
+So here are the cases:
 
+Reservation status SHIPPED. Reservation phase CustomerToBusiness. Customer has filled out return flow. THEN
+    -> If item is in the returnedProducts array, set rentalEndedAt to safeReturnDate.
+    -> If item is not in the returnedProductsArray, assume its still with the customer. Set rentalEndedAt to billingEndAt
+Reservation status SHIPPED. Reservation phase CustomerToBusiness. Customer has not filled out return flow. 
+    -> Set rentalEndedAt to billingEndAt
+
+
+So basic logic:
+    -> If item is in the returnedProductsArray, set rentalEndedAt to safeReturnDate
+    -> If item is not in the returnedProductsArray, set rentalEndedAt to billingEndAt
+Assumes some trust that the customer filled out the return flow honestly.
+
+
+Code updates:
+    -> if rentalEndedAt is before rentalStartedAt, let daysRented be 0
+    -> Update safePackageDate function
+    -> Logic for Shipped, CustomerToBusiness case
+Test cases:
+    -> reserved and shipped on same reservation 
+
+
+
+
+
+safeReturnDate logic:
+    - if enteredDeliverySystemAt is set, then retun that.
+    - Else if reservation.completedAt, then return that minus the cushion. 
+    - Else return invoice billingEndAt date minus the cushion. 
 
         */
