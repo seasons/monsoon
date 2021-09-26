@@ -48,6 +48,7 @@ export class CustomerMembershipFieldsResolver {
         orderBy: {
           createdAt: "desc",
         },
+        keyToDataRelationship: "OneToOne",
       },
     })
     rentalInvoiceLoader: PrismaDataLoader
