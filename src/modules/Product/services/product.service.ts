@@ -1155,14 +1155,40 @@ export class ProductService {
   }
 
   async signupPersonalDetailsProducts(select): Promise<[Product]> {
-    const data = (await this.prisma.client.product.findMany({
+    const brands = (await this.prisma.client.brand.findMany({
       where: {
-        AND: [{ status: "Available" }],
+        slug: {
+          in: [
+            "jacquemus",
+            "auralee",
+            "craig-green",
+            "casablanca",
+            "marni",
+            "martine-rose",
+            "bode",
+            "our-legacy",
+            "erl",
+            "deveaux",
+            "keenkee",
+            "rhude",
+            "nanushka",
+            "judy-turner",
+            "phipps",
+          ],
+        },
       },
-      select,
-      take: 15,
-    })) as [Product]
-    return data
+      select: {
+        id: true,
+        products: {
+          orderBy: { publishedAt: "desc" },
+          take: 1,
+          where: { status: "Available" },
+          select,
+        },
+      },
+    })) as any
+
+    return brands.flatMap(brand => brand.products)
   }
 
   private validateCreateProductInput(input) {
