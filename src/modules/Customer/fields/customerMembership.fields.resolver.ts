@@ -3,6 +3,7 @@ import { PrismaDataLoader, PrismaLoader } from "@app/prisma/prisma.loader"
 import { PrismaService } from "@app/prisma/prisma.service"
 import { Parent, ResolveField, Resolver } from "@nestjs/graphql"
 import { CustomerMembership, Prisma } from "@prisma/client"
+import { head } from "lodash"
 
 @Resolver("CustomerMembership")
 export class CustomerMembershipFieldsResolver {
@@ -48,11 +49,12 @@ export class CustomerMembershipFieldsResolver {
         orderBy: {
           createdAt: "desc",
         },
-        keyToDataRelationship: "OneToOne",
+        keyToDataRelationship: "OneToMany",
       },
     })
     rentalInvoiceLoader: PrismaDataLoader
   ) {
-    return await rentalInvoiceLoader.load(parent.id)
+    const rentalInvoices = await rentalInvoiceLoader.load(parent.id)
+    return head(rentalInvoices)
   }
 }
