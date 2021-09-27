@@ -4153,6 +4153,9 @@ type CustomerDetail {
   phoneNumber: String
   birthday: DateTime
   height: Int
+  ageRange: String
+  signupReasons: [String]
+  signupLikedProducts: [Product!]
   shoeSize: Int
   pantLength: Int
   weight: [Int!]!
@@ -4190,6 +4193,7 @@ type CustomerDetailConnection {
 
 input CustomerDetailCreateInput {
   id: ID
+  ageRange: String
   phoneNumber: String
   birthday: DateTime
   height: Int
@@ -4213,6 +4217,8 @@ input CustomerDetailCreateInput {
   commuteStyle: String
   stylePreferences: StylePreferencesCreateOneInput
   shippingAddress: LocationCreateOneInput
+  signupReasons: CustomerDetailCreatesignupReasonsInput
+  signupLikedProducts: CustomerDetailCreatesignupLikedProductsInput
   phoneOS: String
   insureShipment: Boolean
   instagramHandle: String
@@ -4231,6 +4237,14 @@ input CustomerDetailCreatestylesInput {
 
 input CustomerDetailCreatetopSizesInput {
   set: [String!]
+}
+
+input CustomerDetailCreatesignupReasonsInput {
+  set: [String!]
+}
+
+input CustomerDetailCreatesignupLikedProductsInput {
+  connect: [ProductWhereUniqueInput!]
 }
 
 input CustomerDetailCreatewaistSizesInput {

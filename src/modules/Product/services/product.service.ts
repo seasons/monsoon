@@ -1154,6 +1154,17 @@ export class ProductService {
     return data
   }
 
+  async signupPersonalDetailsProducts(select): Promise<[Product]> {
+    const data = (await this.prisma.client.product.findMany({
+      where: {
+        AND: [{ status: "Available" }],
+      },
+      select,
+      take: 15,
+    })) as [Product]
+    return data
+  }
+
   private validateCreateProductInput(input) {
     // Bottom size name validation
     if (input.type === "Bottom") {
