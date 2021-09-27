@@ -32,6 +32,7 @@ export class PhysicalProductUtilsService {
         inventoryStatus: true,
         productStatus: true,
         productVariant: true,
+        warehouseLocation: true,
       },
     })
   }

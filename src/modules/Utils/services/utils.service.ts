@@ -420,6 +420,7 @@ export class UtilsService {
               inventoryStatus: true,
               productStatus: true,
               productVariant: { select: { id: true } },
+              warehouseLocation: { select: { id: true } },
             },
           },
           receivedAt: true,

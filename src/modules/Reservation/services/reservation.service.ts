@@ -23,6 +23,7 @@ import {
   ReservationFeedback,
   ReservationStatus,
   ShippingCode,
+  WarehouseLocation,
 } from "@prisma/client"
 import { PrismaService } from "@prisma1/prisma.service"
 import { ApolloError } from "apollo-server"
@@ -54,6 +55,13 @@ export interface ReservationWithProductVariantData {
   status: ReservationStatus
   reservationNumber: number
   products: PhysicalProductWithProductVariant[]
+}
+
+type ReserveItemsPhysicalProduct = Pick<
+  PhysicalProduct,
+  "seasonsUID" | "id"
+> & {
+  warehouseLocation: Pick<WarehouseLocation, "id">
 }
 
 @Injectable()
@@ -250,7 +258,7 @@ export class ReservationService {
     // Send confirmation email
     await this.emails.sendReservationConfirmationEmail(
       customerWithData.user,
-      productsBeingReserved,
+      newProductVariantsBeingReserved,
       reservation,
       seasonsToCustomerTransaction.tracking_number,
       seasonsToCustomerTransaction.tracking_url_provider
@@ -1406,7 +1414,7 @@ export class ReservationService {
   private async getHeldPhysicalProducts(
     customer: Pick<Customer, "id">,
     lastCompletedReservation
-  ): Promise<PhysicalProduct[]> {
+  ): Promise<ReserveItemsPhysicalProduct[]> {
     if (lastCompletedReservation == null) return []
 
     const reservedBagItems = await this.productUtils.getReservedBagItems(
@@ -1431,8 +1439,8 @@ export class ReservationService {
     },
     customer: Pick<Customer, "id">,
     shipmentWeight: number,
-    physicalProductsBeingReserved: PhysicalProduct[],
-    heldPhysicalProducts: PhysicalProduct[],
+    physicalProductsBeingReserved: ReserveItemsPhysicalProduct[],
+    heldPhysicalProducts: ReserveItemsPhysicalProduct[],
     shippingCode: ShippingCode | null
   ) {
     const customerWithData = await this.prisma.client.customer.findUnique({
@@ -1464,9 +1472,9 @@ export class ReservationService {
     const physicalProductSUIDs = allPhysicalProductsInReservation.map(p => ({
       seasonsUID: p.seasonsUID,
     }))
-    const newPhysicalProductSUIDs = physicalProductsBeingReserved.map(p => ({
-      seasonsUID: p.seasonsUID,
-    }))
+    const newPhysicalProductSUIDs = allPhysicalProductsInReservation
+      .filter(a => !!a.warehouseLocation?.id)
+      .map(a => ({ seasonsUID: a.seasonsUID }))
 
     const returnPackagesToCarryOver =
       lastReservation?.returnPackages?.filter(a => a.events.length === 0) || []

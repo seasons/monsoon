@@ -76,6 +76,10 @@ export class SubscriptionsScheduledJobs {
             subscription
           )
 
+          let grandfatheredPayload = data?.planID?.includes("access")
+            ? { grandfathered: false }
+            : {}
+
           await this.prisma.client.customerMembership.upsert({
             where: { id: customer.membership?.id || "" },
             create: {
@@ -83,11 +87,13 @@ export class SubscriptionsScheduledJobs {
               customer: { connect: { id: customer.id } },
               plan: { connect: { planID: data.planID } },
               subscription: { create: data },
+              ...grandfatheredPayload,
             },
             update: {
               subscriptionId: data.subscriptionId,
               plan: { connect: { planID: data.planID } },
               subscription: { upsert: { create: data, update: data } },
+              ...grandfatheredPayload,
             },
           })
         }
