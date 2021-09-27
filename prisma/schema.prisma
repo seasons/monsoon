@@ -73,6 +73,7 @@ enum InventoryStatus {
   Reserved
   Stored
   Offloaded
+  EarlyReturned
 }
 
 enum PhysicalProductStatus {
