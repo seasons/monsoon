@@ -1142,7 +1142,7 @@ model Product {
   materialCategoryId          String?                  @map("materialCategory") @db.VarChar(30)
   modelId                     String?                  @map("model") @db.VarChar(30)
   brand                       Brand?                   @relation(fields: [brandId], references: [id])
-  customerDetails             CustomerDetail?          @relation(fields: [customerDetailId], references: [id])
+  customerDetails             CustomerDetail[]         @relation(fields: [customerDetailId], references: [id])
   category                    Category?                @relation(fields: [categoryId], references: [id])
   color                       Color?                   @relation("ColorToProduct_color", fields: [colorId], references: [id])
   materialCategory            ProductMaterialCategory? @relation(fields: [materialCategoryId], references: [id])
