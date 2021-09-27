@@ -33,8 +33,11 @@ export class ReservationMutationsResolver {
   }
 
   @Mutation()
-  async earlyReturn(@Args() { data, reservationID }) {
-    const result = await this.reservation.earlyReturn(data, reservationID)
+  async earlyReturn(@Args() { physicalProductIDs, reservationID }) {
+    const result = await this.reservation.earlyReturn(
+      physicalProductIDs,
+      reservationID
+    )
     return result
   }
 

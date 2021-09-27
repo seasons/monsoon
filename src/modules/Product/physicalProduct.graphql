@@ -145,3 +145,12 @@ input PhysicalProductSeasonsUIDSizes {
   manufacturerSize: String!
   count: Int!
 }
+
+enum InventoryStatus {
+  NonReservable
+  Reservable
+  Reserved
+  Stored
+  Offloaded
+  EarlyReturned
+}

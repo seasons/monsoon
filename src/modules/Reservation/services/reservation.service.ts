@@ -862,7 +862,7 @@ export class ReservationService {
     }
   }
 
-  async earlyReturn(physicalProductID: [string], reservationID: string) {
+  async earlyReturn(physicalProductIDs: string[], reservationID: string) {
     const currentReservation = await this.prisma.client.reservation.findUnique({
       where: {
         id: reservationID,
@@ -892,7 +892,7 @@ export class ReservationService {
     const bagItemIDs = await this.prisma.client.bagItem.findMany({
       where: {
         physicalProductId: {
-          in: physicalProductID,
+          in: physicalProductIDs,
         },
       },
       select: {
@@ -932,15 +932,13 @@ export class ReservationService {
         },
         data: {
           products: {
-            update: {
-              where: physicalProductID.map(a => ({ id: a })),
-              data: {
-                status: "In-Transit",
-              },
-            },
+            updateMany: physicalProductIDs.map(a => ({
+              where: { id: a },
+              data: { inventoryStatus: "EarlyReturned" },
+            })),
           },
           returnedProducts: {
-            connect: physicalProductID.map(a => ({ id: a })),
+            connect: physicalProductIDs.map(a => ({ id: a })),
           },
           status: "EarlyReturn",
         },
