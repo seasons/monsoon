@@ -142,7 +142,7 @@ export class ChargebeeController {
 
       if (isPlanPayment) {
         // Add promotional credits if this is a plan payment
-        const credits = prismaCustomer.membership.plan.price * 1.15
+        const credits = Math.round(prismaCustomer.membership.plan.price * 1.15)
         const addCreditsPayload = await chargebee.promotional_credit
           .add({
             customer_id: chargebeeCustomerID,
