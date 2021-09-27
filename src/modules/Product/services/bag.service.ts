@@ -119,12 +119,27 @@ export class BagService {
                 },
               },
             },
+            bagItems: {
+              select: {
+                id: true,
+                physicalProductId: true,
+              },
+            },
           },
         },
       },
     })
+
+    let newPhysicalProduct = await this.prisma.client.physicalProduct.findUnique(
+      {
+        where: physicalProductWhere,
+      }
+    )
     const promises = []
     const customerID = oldBagItem?.customer?.id
+    const newItemAlreadyInBag = oldBagItem?.customer?.bagItems
+      .map(a => a?.physicalProductId)
+      .includes(newPhysicalProduct?.id)
     const planTier = oldBagItem?.customer?.membership?.plan?.tier
     const productVariant = oldBagItem?.productVariant
     const lastReservation = (await this.utils.getLatestReservation(
@@ -140,6 +155,24 @@ export class BagService {
 
     if (oldBagItem.status !== "Reserved") {
       throw Error("Only Reserved bag items can be swapped")
+    }
+
+    if (newItemAlreadyInBag) {
+      const bagItemToDelete = oldBagItem?.customer?.bagItems?.filter(
+        a => a.physicalProductId === newPhysicalProduct.id
+      )[0].id
+
+      await this.prisma.client.bagItem.delete({
+        where: { id: bagItemToDelete },
+      })
+
+      newPhysicalProduct = await this.prisma.client.physicalProduct.findUnique({
+        where: physicalProductWhere,
+      })
+    }
+
+    if (newPhysicalProduct.inventoryStatus !== "Reservable") {
+      throw new Error("This item is not reservable")
     }
 
     const oldPhysicalProduct = oldBagItem.physicalProduct
@@ -201,11 +234,6 @@ export class BagService {
 
     promises.push(
       this.prisma.client.bagItem.delete({ where: { id: oldBagItemID } })
-    )
-    const newPhysicalProduct = await this.prisma.client.physicalProduct.findUnique(
-      {
-        where: physicalProductWhere,
-      }
     )
     const newProductVariantID = newPhysicalProduct.productVariantId
     const [
