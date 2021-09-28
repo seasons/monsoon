@@ -80,7 +80,7 @@ export class BagService {
   // Mutation for admins to swap a bagItem
   async swapBagItem(
     oldBagItemID,
-    physicalProductWhere: Prisma.PhysicalProductWhereUniqueInput,
+    seasonsUID: string,
     select: Prisma.BagItemSelect
   ) {
     const oldBagItem = await this.prisma.client.bagItem.findUnique({
@@ -119,12 +119,34 @@ export class BagService {
                 },
               },
             },
+            bagItems: {
+              select: {
+                id: true,
+                physicalProductId: true,
+                physicalProduct: {
+                  select: {
+                    warehouseLocation: true,
+                    inventoryStatus: true,
+                  },
+                },
+                productVariant: true,
+              },
+            },
           },
         },
       },
     })
+
+    let newPhysicalProduct = await this.prisma.client.physicalProduct.findUnique(
+      {
+        where: { seasonsUID: seasonsUID },
+      }
+    )
     const promises = []
     const customerID = oldBagItem?.customer?.id
+    const newItemAlreadyInBag = oldBagItem?.customer?.bagItems
+      .map(a => a?.physicalProductId)
+      .includes(newPhysicalProduct?.id)
     const planTier = oldBagItem?.customer?.membership?.plan?.tier
     const productVariant = oldBagItem?.productVariant
     const lastReservation = (await this.utils.getLatestReservation(
@@ -140,6 +162,49 @@ export class BagService {
 
     if (oldBagItem.status !== "Reserved") {
       throw Error("Only Reserved bag items can be swapped")
+    }
+
+    if (newItemAlreadyInBag) {
+      const itemInBag = oldBagItem?.customer?.bagItems?.filter(
+        a => a.physicalProductId === newPhysicalProduct.id
+      )[0]
+
+      const itemInBagNewInventoryStatus = !!itemInBag?.physicalProduct
+        ?.warehouseLocation
+        ? "Reservable"
+        : "NonReservable"
+
+      const itemInBagData = this.productVariantService.getCountsForStatusChange(
+        {
+          productVariant: itemInBag?.productVariant,
+          oldInventoryStatus: itemInBag?.physicalProduct?.inventoryStatus,
+          newInventoryStatus: itemInBagNewInventoryStatus,
+        }
+      )
+
+      await this.prisma.client.physicalProduct.update({
+        where: { id: itemInBag.physicalProductId },
+        data: {
+          inventoryStatus: itemInBagNewInventoryStatus,
+          productVariant: {
+            update: {
+              ...itemInBagData,
+            },
+          },
+        },
+      })
+
+      await this.prisma.client.bagItem.delete({
+        where: { id: itemInBag?.id },
+      })
+
+      newPhysicalProduct = await this.prisma.client.physicalProduct.findUnique({
+        where: { seasonsUID: seasonsUID },
+      })
+    }
+
+    if (newPhysicalProduct.inventoryStatus !== "Reservable") {
+      throw new Error("This item is not reservable")
     }
 
     const oldPhysicalProduct = oldBagItem.physicalProduct
@@ -201,11 +266,6 @@ export class BagService {
 
     promises.push(
       this.prisma.client.bagItem.delete({ where: { id: oldBagItemID } })
-    )
-    const newPhysicalProduct = await this.prisma.client.physicalProduct.findUnique(
-      {
-        where: physicalProductWhere,
-      }
     )
     const newProductVariantID = newPhysicalProduct.productVariantId
     const [
