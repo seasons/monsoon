@@ -44,7 +44,7 @@ export class ProductMutationsResolver {
 
   @Mutation()
   async swapBagItem(
-    @Args() { oldItemID, physicalProductWhere },
+    @Args() { oldItemID, seasonsUID },
     @Application() application,
     @Select() select
   ) {
@@ -52,11 +52,7 @@ export class ProductMutationsResolver {
       throw new Error("Can only swap bag items from Admin")
     }
 
-    return await this.bagService.swapBagItem(
-      oldItemID,
-      physicalProductWhere,
-      select
-    )
+    return await this.bagService.swapBagItem(oldItemID, seasonsUID, select)
   }
 
   @Mutation()

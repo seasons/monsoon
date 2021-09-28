@@ -80,7 +80,7 @@ export class BagService {
   // Mutation for admins to swap a bagItem
   async swapBagItem(
     oldBagItemID,
-    physicalProductWhere: Prisma.PhysicalProductWhereUniqueInput,
+    seasonsUID: Prisma.PhysicalProductWhereUniqueInput,
     select: Prisma.BagItemSelect
   ) {
     const oldBagItem = await this.prisma.client.bagItem.findUnique({
@@ -123,6 +123,13 @@ export class BagService {
               select: {
                 id: true,
                 physicalProductId: true,
+                physicalProduct: {
+                  select: {
+                    warehouseLocation: true,
+                    inventoryStatus: true,
+                  },
+                },
+                productVariant: true,
               },
             },
           },
@@ -132,7 +139,7 @@ export class BagService {
 
     let newPhysicalProduct = await this.prisma.client.physicalProduct.findUnique(
       {
-        where: physicalProductWhere,
+        where: seasonsUID,
       }
     )
     const promises = []
@@ -158,16 +165,41 @@ export class BagService {
     }
 
     if (newItemAlreadyInBag) {
-      const bagItemToDelete = oldBagItem?.customer?.bagItems?.filter(
+      const itemInBag = oldBagItem?.customer?.bagItems?.filter(
         a => a.physicalProductId === newPhysicalProduct.id
-      )[0].id
+      )[0]
+
+      const itemInBagNewInventoryStatus = !!itemInBag?.physicalProduct
+        ?.warehouseLocation
+        ? "Reservable"
+        : "NonReservable"
+
+      const itemInBagData = this.productVariantService.getCountsForStatusChange(
+        {
+          productVariant: itemInBag?.productVariant,
+          oldInventoryStatus: itemInBag?.physicalProduct?.inventoryStatus,
+          newInventoryStatus: itemInBagNewInventoryStatus,
+        }
+      )
+
+      await this.prisma.client.physicalProduct.update({
+        where: { id: itemInBag.physicalProductId },
+        data: {
+          inventoryStatus: itemInBagNewInventoryStatus,
+          productVariant: {
+            update: {
+              ...itemInBagData,
+            },
+          },
+        },
+      })
 
       await this.prisma.client.bagItem.delete({
-        where: { id: bagItemToDelete },
+        where: { id: itemInBag?.id },
       })
 
       newPhysicalProduct = await this.prisma.client.physicalProduct.findUnique({
-        where: physicalProductWhere,
+        where: seasonsUID,
       })
     }
 

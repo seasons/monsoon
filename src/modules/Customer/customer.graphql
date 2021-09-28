@@ -43,7 +43,7 @@ enum DeleteBagItemType {
 type Mutation {
   swapBagItem(
     oldItemID: ID!
-    physicalProductWhere: PhysicalProductWhereUniqueInput!
+    seasonsUID: PhysicalProductWhereUniqueInput!
   ): BagItem! @hasRole(roles: [Admin])
   addToBag(
     item: ID!
