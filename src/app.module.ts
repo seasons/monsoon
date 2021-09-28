@@ -49,12 +49,13 @@ import { HealthModule } from "./modules/Health/health.module"
 import { TwilioModule } from "./modules/Twilio/twilio.module"
 import { UtilsModule } from "./modules/Utils/utils.module"
 
-// make the call to chargebee
+// Set auth for ChargeBee
 chargebee.configure({
   site: process.env.CHARGEBEE_SITE,
   api_key: process.env.CHARGEBEE_API_KEY,
 })
 
+// Set auth for Sendgrid
 sgMail.setApiKey(process.env.SENDGRID_API_KEY)
 
 const dataModel = new PrismaSelect(null).dataModel

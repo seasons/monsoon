@@ -93,6 +93,7 @@ type PhysicalProduct @cacheControl(maxAge: 0) {
   adminLogs: [AdminActionLog!]! @hasRole(roles: [Admin])
   createdAt: DateTime!
   updatedAt: DateTime!
+  amountRecouped: Int
 }
 
 input WarehouseLocationConnectWhereUniqueInput {

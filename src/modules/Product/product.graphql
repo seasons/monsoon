@@ -401,7 +401,7 @@ input CustomProductUpdateInput {
   retailPrice: Int
   rentalPriceOverride: Int
   wholesalePrice: Int
-  recoupment: Int
+  recoupment: Float
   season: UpsertSeasonInput
   secondaryColor: ColorUpdateOneInput
   slug: String

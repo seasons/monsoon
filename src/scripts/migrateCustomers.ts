@@ -1,7 +1,6 @@
 import "module-alias/register"
 
 import chargebee from "chargebee"
-import open from "open"
 
 import { ErrorService } from "../modules/Error/services/error.service"
 import { RentalService } from "../modules/Payment/services/rental.service"
@@ -12,7 +11,6 @@ import {
   Customer,
   CustomerMembership,
   CustomerMembershipSubscriptionData,
-  PauseReason,
   PauseRequest,
   Prisma,
   User,

@@ -4640,6 +4640,14 @@ charenc@0.0.2, "charenc@>= 0.0.1":
   resolved "https://registry.yarnpkg.com/charenc/-/charenc-0.0.2.tgz#c0a1d2f3a7092e03774bfa83f14c0fc5790a8667"
   integrity sha1-wKHS86cJLgN3S/qD8UwPxXkKhmc=
 
+chargebee-typescript@>=2:
+  version "2.2.0"
+  resolved "https://registry.yarnpkg.com/chargebee-typescript/-/chargebee-typescript-2.2.0.tgz#3d29f5713b00fab10944e69ad4c9160cc5f2ee63"
+  integrity sha512-VSD+27tqAQc6tz92p3mu+OloJ0AxhTOpwNdMn+/t4j6fmo0PnHYfxRvg1D1y6Mjvlvfebx6/3FmEt3MwlOgLug==
+  dependencies:
+    q ">=1.0.1"
+    typescript "^3.9.3"
+
 "chargebee@>=2 <3":
   version "2.6.5"
   resolved "https://registry.yarnpkg.com/chargebee/-/chargebee-2.6.5.tgz#2d500d9e9dad9d2b37bd0ceb0dd4d50fedae8267"
@@ -15139,7 +15147,7 @@ typescript@4.3.5:
   resolved "https://registry.yarnpkg.com/typescript/-/typescript-4.3.5.tgz#4d1c37cc16e893973c45a06886b7113234f119f4"
   integrity sha512-DqQgihaQ9cUrskJo9kIyW/+g0Vxsk8cDtZ52a3NGh0YNTfpUSArXSohyUGnvbPazEPLu398C0UxmKSOrPumUzA==
 
-typescript@^3.2.4:
+typescript@^3.2.4, typescript@^3.9.3:
   version "3.9.10"
   resolved "https://registry.yarnpkg.com/typescript/-/typescript-3.9.10.tgz#70f3910ac7a51ed6bef79da7800690b19bf778b8"
   integrity sha512-w6fIxVE/H1PkLKcCPsFqKE7Kv7QUwhU8qQY2MueZXWx5cPZdwFupLgKK3vntcK98BtNHZtAF4LA/yl2a7k8R6Q==
