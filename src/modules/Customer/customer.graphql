@@ -167,7 +167,7 @@ type CustomerMembership {
   plan: PaymentPlan
   creditBalance: Int
   adjustedCreditBalance: Int
-  currentRentalInvoice: RentalInvoice!
+  currentRentalInvoice: RentalInvoice
   rentalInvoices: [RentalInvoice!]
   pauseRequests(
     where: PauseRequestWhereInput
