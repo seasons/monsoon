@@ -810,12 +810,14 @@ model Image {
   id        String   @id @default(cuid()) @db.VarChar(30)
   caption   String?
   title     String?
+  slug      String?  @unique
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   url       String   @unique
   height    Int?
   width     Int?
   alt       String?
+  position  Int?
 
   // Don't those fields for now
   BlogPost              BlogPost[]

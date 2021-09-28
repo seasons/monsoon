@@ -283,12 +283,19 @@ export class ImageService {
    * @param title: a title for the image, usually the record's slug
    * @param getPromises: if true, will return array of prisma promises to be awaited by parent function
    */
-  async upsertImages(
-    images: any[],
-    imageNames: string[],
-    title: string,
-    getPromises = false
-  ): Promise<
+  async upsertImages({
+    images,
+    imageNames,
+    imageSlugs,
+    title,
+    getPromises = false,
+  }: {
+    images: any[]
+    imageNames: string[]
+    imageSlugs: string[]
+    title: string
+    getPromises
+  }): Promise<
     { id: string }[] | { promise: PrismaPromise<Image>; url: string }[]
   > {
     const imageDatas = await Promise.all(
@@ -302,9 +309,10 @@ export class ImageService {
           // Thus, we need to convert it to s3 format and strip any query params as needed.
           const s3BaseURL = S3_BASE.replace(/\/$/, "") // Remove trailing slash
           const s3ImageURL = `${s3BaseURL}${url.parse(data).pathname}`
+          const slug = imageSlugs[index]
           const prismaImagePromise = this.prisma.client.image.upsert({
-            create: { url: s3ImageURL, title },
-            update: { url: s3ImageURL, title },
+            create: { url: s3ImageURL, slug, title },
+            update: { url: s3ImageURL, slug, title },
             where: { url: s3ImageURL },
           })
           return getPromises

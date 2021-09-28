@@ -683,21 +683,24 @@ export class ProductService {
     let imageUrls = []
     if (images) {
       // Form appropriate image names
-      const imageNames = images.map((_image, index) => {
-        return this.productUtils.getProductImageName(
+      const timestamp = Date.now()
+      const imageSlugsAndURLs = images.map((_image, index) =>
+        this.productUtils.getProductImageURLAndSlug(
           product.brand.brandCode,
           product.name,
           product.color.name,
-          index + 1
+          index + 1,
+          timestamp
         )
-      })
+      )
 
-      const imageDatas = (await this.imageService.upsertImages(
+      const imageDatas = (await this.imageService.upsertImages({
         images,
-        imageNames,
-        product.slug,
-        true
-      )) as { promise: PrismaPromise<Image>; url: string }[]
+        imageNames: imageSlugsAndURLs.map(a => a.url),
+        imageSlugs: imageSlugsAndURLs.map(a => a.slug),
+        title: product.slug,
+        getPromises: true,
+      })) as { promise: PrismaPromise<Image>; url: string }[]
       imagePromises = imageDatas.map(a => a.promise)
       imageUrls = imageDatas.map(a => a.url)
     }

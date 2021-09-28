@@ -1,78 +1,85 @@
 import "module-alias/register"
 
+import { NestFactory } from "@nestjs/core"
+
+import { AppModule } from "../app.module"
+import { ProductVariantService } from "../modules/Product/services/productVariant.service"
 import { PrismaService } from "../prisma/prisma.service"
 
 const run = async () => {
-  const ps = new PrismaService()
+  const app = await NestFactory.createApplicationContext(AppModule)
 
-  const customers = await ps.client.customer.findMany({
-    where: { status: { in: ["Active", "PaymentFailed", "Paused"] } },
+  const ps = new PrismaService()
+  const productVariantService = app.get(ProductVariantService)
+
+  const physicalProducts = await ps.client.physicalProduct.findMany({
+    where: {
+      inventoryStatus: "NonReservable",
+      warehouseLocationId: {
+        not: null,
+      },
+    },
     select: {
-      reservations: {
+      id: true,
+      inventoryStatus: true,
+      warehouseLocationId: true,
+      warehouseLocation: {
         select: {
-          returnedPackage: {
-            select: {
-              id: true,
-              events: { select: { id: true } },
-              items: { select: { id: true } },
-            },
-          },
           id: true,
+          itemCode: true,
+          locationCode: true,
+          barcode: true,
         },
-        orderBy: { createdAt: "desc" },
+      },
+      productVariant: {
+        select: {
+          id: true,
+          offloaded: true,
+          reservable: true,
+          reserved: true,
+          nonReservable: true,
+          stored: true,
+          total: true,
+          product: true,
+        },
       },
     },
   })
-  const customersToHandle = customers.filter(a => a.reservations.length > 0)
-  const numCustomers = customersToHandle.length
-  let i = 0
-  for (const cust of customersToHandle) {
-    console.log(`${i++} of ${numCustomers}`)
-    try {
-      const latestReservation = cust.reservations[0]
-      const previousReservations = cust.reservations.slice(
-        1,
-        cust.reservations.length
-      )
-      const previousReservationsWithUnusedReturnPackages = previousReservations.filter(
-        a =>
-          a.returnedPackage?.events.length === 0 &&
-          a.returnedPackage?.items?.length === 0
-      )
-      const returnPackagesConnectArray = previousReservationsWithUnusedReturnPackages.map(
-        a => ({
-          id: a.returnedPackage.id,
-        })
-      )
 
-      const finalCorrectArray = !!latestReservation.returnedPackage?.id
-        ? [
-            ...returnPackagesConnectArray,
-            { id: latestReservation.returnedPackage.id },
-          ]
-        : returnPackagesConnectArray
-      await ps.client.reservation.update({
-        where: { id: latestReservation.id },
+  const promises = []
+
+  for (const physicalProduct of physicalProducts) {
+    promises.push(
+      ps.client.physicalProduct.update({
+        where: {
+          id: physicalProduct.id,
+        },
         data: {
-          returnPackages: {
-            connect: finalCorrectArray,
-          },
+          inventoryStatus: "Reservable",
+          productStatus: "Clean",
         },
       })
-      for (const resy of previousReservations) {
-        if (!!resy.returnedPackage?.id) {
-          await ps.client.reservation.update({
-            where: { id: resy.id },
-            data: {
-              returnPackages: { connect: { id: resy.returnedPackage?.id } },
-            },
-          })
-        }
-      }
-    } catch (err) {
-      console.log(err)
-    }
+    )
+    const counts = productVariantService.getCountsForStatusChange({
+      productVariant: physicalProduct.productVariant,
+      oldInventoryStatus: physicalProduct.inventoryStatus,
+      newInventoryStatus: "Reservable",
+    })
+
+    promises.push(
+      ps.client.productVariant.update({
+        where: {
+          id: physicalProduct.productVariant.id,
+        },
+        data: {
+          ...counts,
+        },
+      })
+    )
   }
-  console.log("done")
+
+  const result = await ps.client.$transaction(promises)
+
+  console.log(physicalProducts)
 }
 run()

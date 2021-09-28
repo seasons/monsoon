@@ -442,14 +442,20 @@ export class ProductUtilsService {
       : data
   }
 
-  getProductImageName(
+  getProductImageURLAndSlug(
     brandCode: string,
     name: string,
     colorName: string,
-    index: number
+    index: number,
+    timestamp?: number
   ) {
     const slug = slugify(name + " " + colorName).toLowerCase()
-    return `${brandCode}/${slug}/${slug}-${index}.png`.toLowerCase()
+    const timestampString = timestamp ? `-${timestamp}` : ""
+
+    return {
+      url: `${brandCode}/${slug}/${slug}-${index}${timestampString}.png`.toLowerCase(),
+      slug: `${slug}-${index}`,
+    }
   }
 
   async getImageIDs(imageDatas: ImageData[], slug: string) {
