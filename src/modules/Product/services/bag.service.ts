@@ -80,7 +80,7 @@ export class BagService {
   // Mutation for admins to swap a bagItem
   async swapBagItem(
     oldBagItemID,
-    seasonsUID: Prisma.PhysicalProductWhereUniqueInput,
+    seasonsUID: string,
     select: Prisma.BagItemSelect
   ) {
     const oldBagItem = await this.prisma.client.bagItem.findUnique({
@@ -139,7 +139,7 @@ export class BagService {
 
     let newPhysicalProduct = await this.prisma.client.physicalProduct.findUnique(
       {
-        where: seasonsUID,
+        where: { seasonsUID: seasonsUID },
       }
     )
     const promises = []
@@ -199,7 +199,7 @@ export class BagService {
       })
 
       newPhysicalProduct = await this.prisma.client.physicalProduct.findUnique({
-        where: seasonsUID,
+        where: { seasonsUID: seasonsUID },
       })
     }
 
