@@ -213,7 +213,6 @@ export class CustomerService {
       }
     }
 
-    console.log("?????", details?.signupLikedProducts?.connect)
     if (details?.signupLikedProducts?.connect?.length > 0) {
       const productIDs = details?.signupLikedProducts?.connect.map(p => p.id)
       await this.addLikedSignUpProductsToBagItems(productIDs, customer)
