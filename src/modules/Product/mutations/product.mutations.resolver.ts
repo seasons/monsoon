@@ -52,6 +52,16 @@ export class ProductMutationsResolver {
       throw new Error("Can only swap bag items from Admin")
     }
 
+    const physicalProductForSwap = await this.prisma.client.physicalProduct.findUnique(
+      {
+        where: { seasonsUID: seasonsUID },
+        select: { id: true, inventoryStatus: true, seasonsUID: true },
+      }
+    )
+    if (physicalProductForSwap.inventoryStatus !== "Reservable") {
+      throw new Error("This item is not reservable")
+    }
+
     return await this.bagService.swapBagItem(oldItemID, seasonsUID, select)
   }
 
