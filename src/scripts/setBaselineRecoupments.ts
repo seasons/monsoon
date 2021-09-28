@@ -14,11 +14,11 @@ const handleChargebeeResult = (err, result) => {
 
   const output: typeof chargebee.invoice[] = []
 
-  for (var i = 0; i < result.list.length; i++) {
-    var entry = result.list[i]
+  for (let i = 0; i < result.list.length; i++) {
+    const entry = result.list[i]
     console.log(`${entry}`)
-    var invoice: typeof chargebee.invoice = entry.invoice
 
+    const invoice: typeof chargebee.invoice = entry.invoice
     output.push(invoice)
   }
 
@@ -30,32 +30,27 @@ const fetchAllPaidInvoices = async () => {
   return await chargebee.invoice
     .list({
       limit: 1,
+      offset: '["1632133384000","160404340"]',
       status: { in: ["paid"] },
       "sort_by[asc]": "date",
     })
     .request(handleChargebeeResult)
 }
 
-const run = async () => {
+const getInvoices = async () => {
   await fetchAllPaidInvoices()
 }
-run()
+
+getInvoices()
 
 // 2. Correlate with reservation history
+// ****************************************************************
+// Invoice > via customer_id >> Reservation >> PhysicalProduct
+// ****************************************************************
 
-// 3. Calculate recoupment for physicalProduct
+// 3. Calculate recoupment for PhysicalProduct
+// ****************************************************************
+// RECOUPMENT = SUM(ALL_PAYMENTS_TO_DATE) / PRODUCT_WHOLESALE_PRICE
+// ****************************************************************
 
 // 4. Update recoupment in DB
-// import { PrismaService } from "../prisma/prisma.service"
-
-// const run = async () => {
-//   const ps = new PrismaService()
-
-//   await ps.client.product.updateMany({
-//     where: { recoupment: 4 },
-//     data: {
-//       recoupment: null,
-//     },
-//   })
-// }
-// run()
