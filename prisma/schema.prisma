@@ -1375,6 +1375,70 @@ model Reservation {
   purchasedProducts PhysicalProduct[]     @relation("ReservationToPurchasedProducts")
 }
 
+enum ReservationDropOffAgent {
+  Customer
+  UPS
+}
+
+model ReservationPhysicalProduct {
+  id                      String
+  isNew                   Boolean
+
+  isPurchased             Boolean
+  purchasedAt             DateTime?
+
+  # customer or UPS
+  droppedOffBy             ReservationDropOffAgent?
+  droppedOffAt            DateTime?
+
+  # item has been returned and processed by associate
+  hasReturnProcessed      Boolean
+  returnProcessedAt       DateTime?
+
+  # admin marked item as returned early, it's still on its way
+  isResetEarlyByAdmin     Boolean
+  resetEarlyByAdminAt     DateTime?
+
+  # denotes customer filling out the return flow
+  hasCustomerReturnIntent  Boolean
+  customerReturnIntentAt   DateTime?
+
+  isLost                 Boolean
+  lostAt                 DateTime?
+  lostInPhase            ReservationPhase?
+
+  isDeliveredToCustomer  Boolean
+  deliveredToCustomerAt  DateTime?
+
+  isDeliveredToBusiness  Boolean
+  deliveredToBusinessAt  DateTime?
+
+  # when UPS first gets the package into
+  scannedOnReturnAt      DateTime?
+  hasBeenScannedOnReturn Boolean
+
+  scannedOnSendAt       DateTime?
+  hasBeenScannedOnSend  Boolean
+
+  lineItemId             String?
+  lineItem               OrderLineItem? @relation(fields: [lineItemId], references: [id])
+
+  sentPackageId          String?
+  sentPackage            Package? @relation(fields: [sentPackageId], references: [id])
+
+  returnPackageId        String?
+  returnPackage          Package? @relation(fields: [returnPackageId], references: [id])
+
+  physicalProductId      String? @map("physicalProduct") @db.VarChar(30)
+  physicalProduct PhysicalProduct? @relation(fields: [physicalProductId], references: [id])
+  
+  reservationId          String? @map("reservation") @db.VarChar(30)
+  reservation            Reservation? @relation(fields: [id], references: [id])
+
+  createdAt              DateTime @default(now())
+  updatedAt              DateTime @updatedAt
+}
+
 model ReservationFeedback {
   id            String                   @id @default(cuid()) @db.VarChar(30)
   comment       String?
