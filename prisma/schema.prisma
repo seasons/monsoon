@@ -1380,6 +1380,21 @@ enum ReservationDropOffAgent {
   UPS
 }
 
+enum ReservationPhysicalProductStatus {
+  Queued
+  Picked
+  Packed
+  ShippedToCustomer
+  ShippedToBusiness
+  DeliveredToCustomer
+  DeliveredToBusiness
+  ReturnProcessed
+  ResetEarly
+  Hold
+  Returned
+  Lost
+}
+
 model ReservationPhysicalProduct {
   id                      String
   isNew                   Boolean
