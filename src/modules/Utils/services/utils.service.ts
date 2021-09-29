@@ -60,6 +60,10 @@ export class UtilsService {
   })
 
   abbreviateState(state: string) {
+    if (!state) {
+      return ""
+    }
+
     if (state.length === 2) {
       return state
     }
