@@ -20044,7 +20044,7 @@ enum ReservationStatus {
   Blocked
   Unknown
   Lost
-  Received
+  ReturnPending
 }
 
 type ReservationSubscriptionPayload {

@@ -1238,6 +1238,10 @@ export class ReservationService {
 
   private async updateLastReservation(lastReservation) {
     const promises = []
+    if (!lastReservation) {
+      return promises
+    }
+
     switch (lastReservation.status) {
       case "Queued":
       case "Picked":
@@ -1525,7 +1529,7 @@ export class ReservationService {
         : {}),
       shipped: false,
       status: "Queued",
-      previousReservationWasPacked: lastReservation.status === "Packed",
+      previousReservationWasPacked: lastReservation?.status === "Packed",
     })
 
     return createData

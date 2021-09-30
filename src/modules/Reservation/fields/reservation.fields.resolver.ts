@@ -32,6 +32,7 @@ export class ReservationFieldsResolver {
           previousReservationWasPacked: true,
           status: true,
           customer: { select: { id: true } },
+          reservationNumber: true,
         },
       }
     )
@@ -40,7 +41,8 @@ export class ReservationFieldsResolver {
         customer: { id: reservationWithData.customer.id },
         createdAt: { lt: reservationWithData.createdAt },
       },
-      select: { status: true },
+      orderBy: { createdAt: "desc" },
+      select: { status: true, reservationNumber: true },
     })
 
     const reservationInProcessing = [
@@ -53,7 +55,10 @@ export class ReservationFieldsResolver {
       return "PreviousReservationOnHold"
     }
 
-    if (reservationWithData.previousReservationWasPacked) {
+    if (
+      reservationInProcessing &&
+      reservationWithData.previousReservationWasPacked
+    ) {
       return "PartiallyPacked"
     }
 
