@@ -1,5 +1,7 @@
 import { ChargeBee, _invoice } from "chargebee-typescript"
 
+const allPaidInvoices: typeof chargebee.invoice[] = []
+
 // 1. Get invoices from Chargebee
 const chargebee = new ChargeBee()
 chargebee.configure({
@@ -7,38 +9,48 @@ chargebee.configure({
   api_key: process.env.CHARGEBEE_API_KEY,
 })
 
-const handleChargebeeResult = (err, result) => {
-  if (err) {
+const handleChargebeeResult = (error: Error, result: any) => {
+  if (error) {
+    console.error(error)
     process.exit(1)
   }
-
-  const output: typeof chargebee.invoice[] = []
-
-  for (let i = 0; i < result.list.length; i++) {
-    const entry = result.list[i]
-    console.log(`${entry}`)
-
-    const invoice: typeof chargebee.invoice = entry.invoice
-    output.push(invoice)
-  }
-
-  return output
+  return result
 }
 
-// TODO: limit to 100, offset, iterate to get all 5,866 invoices
-const fetchAllPaidInvoices = async () => {
-  return await chargebee.invoice
+// Since we need to paginate to get all invoices, this is a recursive function
+const fetchAllPaidInvoices = async (offset: string) => {
+  const result = await chargebee.invoice
     .list({
-      limit: 1,
-      offset: '["1632133384000","160404340"]',
+      limit: 100,
+      offset,
       status: { in: ["paid"] },
       "sort_by[asc]": "date",
     })
     .request(handleChargebeeResult)
+
+  for (let i = 0; i < result?.list?.length; i++) {
+    const entry = result?.list[i]
+
+    const invoice: typeof chargebee.invoice = entry?.invoice
+    allPaidInvoices.push(invoice)
+  }
+
+  if (result.next_offset && result.next_offset !== "") {
+    await fetchAllPaidInvoices(result.next_offset)
+  }
+}
+
+const getResyHistoryForInvoices = async () => {
+  console.log(4)
+  console.log("\n\nTOTAL INVOICES: ", allPaidInvoices.length)
+
+  return
 }
 
 const getInvoices = async () => {
-  await fetchAllPaidInvoices()
+  await fetchAllPaidInvoices("")
+
+  await getResyHistoryForInvoices()
 }
 
 getInvoices()
