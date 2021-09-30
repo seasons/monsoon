@@ -64,7 +64,6 @@ export class ChargebeeController {
   }
 
   private async addGrandfatheredPromotionalCredits(content: any) {
-    console.log("1")
     const chargebeeCustomerID = content.customer.id
     const prismaCustomer = await this.prisma.client.customer.findFirst({
       where: { user: { id: chargebeeCustomerID } },
@@ -86,29 +85,29 @@ export class ChargebeeController {
       },
     })
 
-    // if (prismaCustomer?.membership?.grandfathered) {
-    const plan = prismaCustomer.membership.plan
-    const isPlanPayment = content.invoice.line_items.some(
-      li => li.entity_id === plan.planID
-    )
-    console.log("2", isPlanPayment)
+    if (prismaCustomer?.membership?.grandfathered) {
+      const plan = prismaCustomer.membership.plan
+      const isPlanPayment = content.invoice.line_items.some(
+        li => li.entity_id === plan.planID
+      )
 
-    if (isPlanPayment) {
-      const existingCredits = prismaCustomer.membership.creditBalance ?? 0
-      const newCredits = Math.round(prismaCustomer.membership.plan.price * 1.15)
-      const totalPromotionalCredits = existingCredits + newCredits
-      console.log("3", totalPromotionalCredits)
+      if (isPlanPayment) {
+        const existingCredits = prismaCustomer.membership.creditBalance ?? 0
+        const newCredits = Math.round(
+          prismaCustomer.membership.plan.price * 1.15
+        )
+        const totalPromotionalCredits = existingCredits + newCredits
 
-      await this.prisma.client.customerMembership.update({
-        where: {
-          id: prismaCustomer.membership.id,
-        },
-        data: {
-          creditBalance: totalPromotionalCredits,
-        },
-      })
+        await this.prisma.client.customerMembership.update({
+          where: {
+            id: prismaCustomer.membership.id,
+          },
+          data: {
+            creditBalance: totalPromotionalCredits,
+          },
+        })
+      }
     }
-    // }
   }
 
   private async chargebeePaymentSucceeded(content: any) {
