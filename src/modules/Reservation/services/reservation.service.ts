@@ -1229,7 +1229,7 @@ export class ReservationService {
       return
     }
 
-    if (items.length < lastReservation.products.length) {
+    if (items.length <= lastReservation.products.length) {
       throw new ApolloError(
         `Must have all items from last reservation included in the new reservation. Last Reservation number, status: ${lastReservation.reservationNumber}, ${lastReservation.status}`
       )
