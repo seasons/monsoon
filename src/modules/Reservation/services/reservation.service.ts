@@ -1275,7 +1275,7 @@ export class ReservationService {
     }
 
     try {
-      if (lastReservation.status === "Packed") {
+      if (["Queued", "Picked", "Packed"].includes(lastReservation.status)) {
         await this.shippingService.voidLabel(lastReservation.sentPackage)
       }
     } catch (err) {
