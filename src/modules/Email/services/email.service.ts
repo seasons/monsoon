@@ -289,6 +289,19 @@ export class EmailService {
     })
   }
 
+  async sendRestockNotificationEmails(emails: string[], product) {
+    // const payload = await RenderEmail.restockNotification({
+    //   product,
+    // })
+    // for (const email of emails) {
+    //   return await this.sendPreRenderedTransactionalEmail({
+    //     user,
+    //     payload,
+    //     emailId: "RestockNotification",
+    //   })
+    // }
+  }
+
   async sendYouCanNowReserveAgainEmail(user: EmailUser) {
     const payload = await RenderEmail.freeToReserve({
       products: [],
