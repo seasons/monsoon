@@ -15,7 +15,7 @@ import {
 import { Prisma } from "@prisma/client"
 import { PrismaService } from "@prisma1/prisma.service"
 import chargebee from "chargebee"
-import { orderBy } from "lodash"
+import { head, orderBy } from "lodash"
 
 import { RESERVATION_PROCESSING_FEE } from "../constants"
 import { AccessPlanID } from "../payment.types"
@@ -686,6 +686,7 @@ export class RentalService {
           daysRented: true,
           rentalInvoice: {
             select: {
+              id: true,
               membership: {
                 select: {
                   subscriptionId: true,
@@ -717,9 +718,21 @@ export class RentalService {
         },
       }
     )
+
+    const totalInvoiceCharges = lineItemsWithData.reduce(
+      (acc, curval) => acc + curval.price,
+      0
+    )
+    const prismaUserId =
+      lineItemsWithData[0].rentalInvoice.membership.customer.user.id
+
+    await this.addPromotionalCredits(
+      prismaUserId,
+      totalInvoiceCharges,
+      lineItemsWithData[0].rentalInvoice.id
+    )
+
     if (planID === "access-yearly") {
-      const prismaUserId =
-        lineItemsWithData[0].rentalInvoice.membership.customer.user.id
       const result = await chargebee.invoice
         .create({
           customer_id: prismaUserId,
@@ -761,6 +774,65 @@ export class RentalService {
     }
 
     return [promises, invoicesCreated]
+  }
+
+  private async addPromotionalCredits(
+    prismaUserId,
+    totalInvoiceCharges,
+    invoiceId
+  ) {
+    if (!totalInvoiceCharges) {
+      return
+    }
+
+    const prismaCustomers = await this.prisma.client.customer.findMany({
+      where: { user: { id: prismaUserId } },
+      select: {
+        membership: {
+          select: {
+            id: true,
+            creditBalance: true,
+            plan: {
+              select: {
+                planID: true,
+              },
+            },
+          },
+        },
+      },
+    })
+
+    const prismaCustomer = head(prismaCustomers)
+    const existingCreditBalance = prismaCustomer.membership.creditBalance
+    let totalCreditsApplied
+
+    if (totalInvoiceCharges > existingCreditBalance) {
+      totalCreditsApplied = existingCreditBalance
+    } else {
+      totalCreditsApplied = totalInvoiceCharges
+    }
+
+    await chargebee.promotional_credit
+      .add({
+        customer_id: prismaUserId,
+        amount: totalCreditsApplied,
+        description: `Grandfathered ${prismaCustomer.membership.plan.planID} credits`,
+      })
+      .request()
+
+    await this.prisma.client.customerMembership.update({
+      where: { id: prismaCustomer.membership.id },
+      data: {
+        creditBalance: existingCreditBalance - totalCreditsApplied,
+      },
+    })
+
+    await this.prisma.client.rentalInvoice.update({
+      where: { id: invoiceId },
+      data: {
+        creditsApplied: totalCreditsApplied,
+      },
+    })
   }
 
   private getLineItemTaxUpdatePromise(
