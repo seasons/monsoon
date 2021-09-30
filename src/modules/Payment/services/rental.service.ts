@@ -399,6 +399,7 @@ export class RentalService {
         }
         break
 
+      case "ReturnPending":
       case "Completed":
         const possibleReturnReservations = [
           initialReservation,

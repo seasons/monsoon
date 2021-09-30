@@ -145,6 +145,7 @@ export class ReservationService {
         returnPackages: {
           select: { id: true, events: { select: { id: true } } },
         },
+        sentPackage: { select: { id: true, transactionID: true } },
       }
     )
     await this.validateLastReservation(lastReservation, items)
@@ -224,6 +225,11 @@ export class ReservationService {
       heldPhysicalProducts,
       shippingCode
     )
+
+    const lastReservationPromises = await this.updateLastReservation(
+      lastReservation
+    )
+    promises.push(...lastReservationPromises)
 
     const reservationPromise = this.prisma.client.reservation.create({
       data: reservationData,
@@ -1217,34 +1223,66 @@ export class ReservationService {
     ].filter(a => a.price > 0)
   }
 
+  // TODO: We can rip this out when we move to a world where we don't carry items over from reservations
   private async validateLastReservation(lastReservation, items) {
     if (!lastReservation) {
       return
     }
-    const lastReservationHasLessItems =
-      lastReservation?.products?.length < items?.length
-    if (
-      !!lastReservation &&
-      lastReservationHasLessItems &&
-      this.statements.reservationIsActive(lastReservation)
-    ) {
-      // Update last reservation to completed since the customer is creating a new reservation while having one active
-      await this.prisma.client.reservation.update({
-        where: {
-          id: lastReservation.id,
-        },
-        data: {
-          status: "Completed",
-        },
-      })
-    } else if (
-      !!lastReservation &&
-      this.statements.reservationIsActive(lastReservation)
-    ) {
+
+    if (items.length <= lastReservation.products.length) {
       throw new ApolloError(
         `Must have all items from last reservation included in the new reservation. Last Reservation number, status: ${lastReservation.reservationNumber}, ${lastReservation.status}`
       )
     }
+  }
+
+  private async updateLastReservation(lastReservation) {
+    const promises = []
+    if (!lastReservation) {
+      return promises
+    }
+
+    switch (lastReservation.status) {
+      case "Queued":
+      case "Picked":
+      case "Packed":
+        promises.push(
+          this.prisma.client.reservation.update({
+            where: {
+              id: lastReservation.id,
+            },
+            data: {
+              status: "Completed",
+            },
+          })
+        )
+        break
+      case "Shipped":
+      case "Delivered":
+        promises.push(
+          this.prisma.client.reservation.update({
+            where: {
+              id: lastReservation.id,
+            },
+            data: {
+              status: "ReturnPending",
+            },
+          })
+        )
+        break
+      default:
+      // noop
+    }
+
+    try {
+      if (["Queued", "Picked", "Packed"].includes(lastReservation.status)) {
+        await this.shippingService.voidLabel(lastReservation.sentPackage)
+      }
+    } catch (err) {
+      this.error.captureError(err)
+    }
+
+    return promises
   }
 
   private async updateBagItemsForReservation({
@@ -1344,7 +1382,7 @@ export class ReservationService {
   private async createReservationData(
     seasonsToCustomerTransaction,
     customerToSeasonsTransaction,
-    lastReservation: {
+    lastReservation: Pick<Reservation, "status"> & {
       returnPackages: Array<Pick<Package, "id"> & { events: { id: string }[] }>
     },
     customer: Pick<Customer, "id">,
@@ -1491,6 +1529,7 @@ export class ReservationService {
         : {}),
       shipped: false,
       status: "Queued",
+      previousReservationWasPacked: lastReservation?.status === "Packed",
     })
 
     return createData
