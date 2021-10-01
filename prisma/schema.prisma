@@ -943,6 +943,7 @@ model RentalInvoice {
   membership     CustomerMembership      @relation(fields: [membershipId], references: [id])
   billingStartAt DateTime
   billingEndAt   DateTime
+  creditsApplied Int?
   status         RentalInvoiceStatus     @default(Draft)
   reservations   Reservation[]           @relation("RentalInvoiceToReservations")
   products       PhysicalProduct[]       @relation("RentalInvoiceToProducts")
