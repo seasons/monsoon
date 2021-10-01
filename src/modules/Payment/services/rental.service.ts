@@ -785,7 +785,19 @@ export class RentalService {
       return
     }
 
-    const prismaCustomers = await this.prisma.client.customer.findMany({
+    const rentalInvoice = await this.prisma.client.rentalInvoice.findUnique({
+      where: { id: invoiceId },
+      select: {
+        creditsApplied: true,
+      },
+    })
+
+    if (rentalInvoice.creditsApplied) {
+      // If we've already applied credits to this invoice, early return
+      return
+    }
+
+    const prismaCustomer = await this.prisma.client.customer.findFirst({
       where: { user: { id: prismaUserId } },
       select: {
         membership: {
@@ -802,8 +814,11 @@ export class RentalService {
       },
     })
 
-    const prismaCustomer = head(prismaCustomers)
     const existingCreditBalance = prismaCustomer.membership.creditBalance
+    if (existingCreditBalance === 0) {
+      return
+    }
+
     let totalCreditsApplied
 
     if (totalInvoiceCharges > existingCreditBalance) {
