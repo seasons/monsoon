@@ -22,6 +22,50 @@ export class ReservationFieldsResolver {
   ) {}
 
   @ResolveField()
+  async adminMessage(@Parent() parent) {
+    // No dataloader needed since this field should only ever be called on a single reservation at a time
+    const reservationWithData = await this.prisma.client.reservation.findUnique(
+      {
+        where: { id: parent.id },
+        select: {
+          createdAt: true,
+          previousReservationWasPacked: true,
+          status: true,
+          customer: { select: { id: true } },
+          reservationNumber: true,
+        },
+      }
+    )
+    const previousReservation = await this.prisma.client.reservation.findFirst({
+      where: {
+        customer: { id: reservationWithData.customer.id },
+        createdAt: { lt: reservationWithData.createdAt },
+      },
+      orderBy: { createdAt: "desc" },
+      select: { status: true, reservationNumber: true },
+    })
+
+    const reservationInProcessing = [
+      "Queued",
+      "Picked",
+      "Packed",
+      "Hold",
+    ].includes(reservationWithData.status)
+    if (previousReservation?.status === "Hold" && reservationInProcessing) {
+      return "PreviousReservationOnHold"
+    }
+
+    if (
+      reservationInProcessing &&
+      reservationWithData.previousReservationWasPacked
+    ) {
+      return "PartiallyPacked"
+    }
+
+    return "None"
+  }
+
+  @ResolveField()
   async returnAt(
     @Parent() parent,
     @Loader({

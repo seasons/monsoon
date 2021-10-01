@@ -220,6 +220,13 @@ export class ProductQueriesResolver {
   }
 
   @Query()
+  async signupPersonalDetailsProducts(@Select() select) {
+    const products = this.productService.signupPersonalDetailsProducts(select)
+
+    return products
+  }
+
+  @Query()
   async newestBrandProducts(@Args() args, @Select() select) {
     // Returns products from the most recent brand to be added
     return this.productService.newestBrandProducts(args, select)

@@ -44,16 +44,17 @@ export class ProductMutationsResolver {
 
   @Mutation()
   async swapBagItem(
-    @Args() { oldItemID, physicalProductWhere },
+    @Args() { oldItemID, seasonsUID },
     @Application() application,
     @Select() select
   ) {
     if (application !== "spring") {
       throw new Error("Can only swap bag items from Admin")
     }
+
     const physicalProductForSwap = await this.prisma.client.physicalProduct.findUnique(
       {
-        where: physicalProductWhere,
+        where: { seasonsUID: seasonsUID },
         select: { id: true, inventoryStatus: true, seasonsUID: true },
       }
     )
@@ -61,11 +62,7 @@ export class ProductMutationsResolver {
       throw new Error("This item is not reservable")
     }
 
-    return await this.bagService.swapBagItem(
-      oldItemID,
-      physicalProductWhere,
-      select
-    )
+    return await this.bagService.swapBagItem(oldItemID, seasonsUID, select)
   }
 
   @Mutation()

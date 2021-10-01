@@ -213,6 +213,11 @@ export class CustomerService {
       }
     }
 
+    if (details?.signupLikedProducts?.connect?.length > 0) {
+      const productIDs = details?.signupLikedProducts?.connect.map(p => p.id)
+      await this.addLikedSignUpProductsToBagItems(productIDs, customer)
+    }
+
     const detail = await this.prisma.client.customerDetail.findFirst({
       where: {
         customer: {
@@ -766,6 +771,79 @@ export class CustomerService {
       })
       this.segment.identify(customer.user.id, admissionsUpsertData)
     }
+  }
+
+  private async addLikedSignUpProductsToBagItems(productIDs, customer) {
+    const createManyData = []
+
+    const customerDetails = await this.prisma.client.customerDetail.findMany({
+      where: { customer: { id: customer.id } },
+      select: {
+        topSizes: true,
+        waistSizes: true,
+      },
+    })
+
+    const customerDetail = head(customerDetails)
+
+    const productsWithPhysicalProductData = await this.prisma.client.product.findMany(
+      {
+        where: {
+          id: { in: productIDs },
+        },
+        select: {
+          id: true,
+          type: true,
+          variants: {
+            select: {
+              id: true,
+              displayShort: true,
+              reservable: true,
+              physicalProducts: {
+                select: {
+                  id: true,
+                  inventoryStatus: true,
+                },
+              },
+            },
+          },
+        },
+      }
+    )
+
+    for (const p of productsWithPhysicalProductData) {
+      let fittingVariant
+      const waistSizesToString = customerDetail.waistSizes.map(size =>
+        size.toString()
+      )
+      if (p.type === "Top") {
+        fittingVariant = p.variants.find(v =>
+          customerDetail.topSizes.includes(v.displayShort)
+        )
+      } else if (p.type === "Bottom") {
+        fittingVariant = p.variants.find(v =>
+          waistSizesToString.includes(v.displayShort)
+        )
+      }
+      const variant = fittingVariant ?? p.variants[0]
+      const availablePhysicalProduct = variant.physicalProducts.find(
+        pp => pp.inventoryStatus === "Reservable"
+      )
+      const physicalProduct =
+        availablePhysicalProduct ?? variant.physicalProducts[0]
+
+      createManyData.push({
+        customerId: customer.id,
+        productVariantId: variant.id,
+        physicalProductId: physicalProduct.id,
+        status: "Added",
+        saved: true,
+      })
+    }
+
+    await this.prisma.client.bagItem.createMany({
+      data: createManyData,
+    })
   }
 
   private shouldUpdateCustomerAdmissionsData(

@@ -234,6 +234,12 @@ input ReserveItemsOptions {
   dryRun: Boolean
 }
 
+enum ReservationAdminMessage {
+  PreviousReservationOnHold
+  PartiallyPacked
+  None
+}
+
 type Reservation @cacheControl(maxAge: 0) {
   id: ID!
   user: User!
@@ -270,6 +276,7 @@ type Reservation @cacheControl(maxAge: 0) {
   updatedAt: DateTime!
   adminLogs: [AdminActionLog!]! @hasRole(roles: [Admin])
   shippingOption: ShippingOption
+  adminMessage: ReservationAdminMessage! @hasRole(roles: [Admin])
 }
 
 type AdminActionLog {
