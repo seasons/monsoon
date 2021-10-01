@@ -146,6 +146,7 @@ export class ReservationService {
           select: { id: true, events: { select: { id: true } } },
         },
         sentPackage: { select: { id: true, transactionID: true } },
+        returnedProducts: { select: { id: true } },
       }
     )
     await this.validateLastReservation(lastReservation, items)
@@ -1229,9 +1230,12 @@ export class ReservationService {
       return
     }
 
-    if (items.length <= lastReservation.products.length) {
+    if (
+      items.length <=
+      lastReservation.products.length - lastReservation.returnedProducts.length
+    ) {
       throw new ApolloError(
-        `Must have all items from last reservation included in the new reservation. Last Reservation number, status: ${lastReservation.reservationNumber}, ${lastReservation.status}`
+        `Must have all unreturned items from last reservation included in the new reservation. Last Reservation number, status: ${lastReservation.reservationNumber}, ${lastReservation.status}`
       )
     }
   }
