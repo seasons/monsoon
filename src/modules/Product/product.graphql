@@ -148,6 +148,7 @@ type Query {
     first: Int
     last: Int
   ): [ProductRequest]! @cacheControl(maxAge: 0)
+  signupPersonalDetailsProducts: [Product!] @cacheControl(maxAge: 120)
   tags(
     where: TagWhereInput
     orderBy: TagOrderByInput
@@ -157,6 +158,14 @@ type Query {
     first: Int
     last: Int
   ): [Tag]! @cacheControl(maxAge: 0)
+}
+
+enum ProductStatus {
+  Available
+  NotAvailable
+  Stored
+  Offloaded
+  Upcoming
 }
 
 type Mutation {
@@ -195,6 +204,18 @@ type AccessorySize {
   bridge: Float
   length: Float
   width: Float
+}
+
+type BagItem {
+  id: ID!
+  customer: Customer!
+  isSwappable: Boolean!
+  productVariant: ProductVariant!
+  position: Int
+  saved: Boolean
+  status: BagItemStatus!
+  createdAt: DateTime!
+  updatedAt: DateTime!
 }
 
 type PublishProductsResponse {

@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common"
-import { Order } from "@prisma/client"
+import { Order, ProductVariant } from "@prisma/client"
 import RenderEmail from "@seasons/wind"
 import sgMail from "@sendgrid/mail"
 import nodemailer from "nodemailer"
@@ -59,34 +59,8 @@ export class EmailService {
     })
   }
 
-  async sendAuthorizedDaySevenFollowup(
-    user: EmailUser,
-    availableStyles: ProductWithEmailData[]
-  ) {
-    await this.sendEmailWithReservableStyles({
-      user,
-      availableStyles,
-      renderEmailFunc: "authorizedDaySevenFollowup",
-      emailId: "DaySevenAuthorizationFollowup",
-    })
-  }
-  async sendAuthorizedDayThreeFollowup(
-    user: EmailUser,
-    availableStyles: ProductWithEmailData[],
-    status: string = "Authorized"
-  ) {
-    await this.sendEmailWithReservableStyles({
-      user,
-      availableStyles,
-      renderEmailFunc: "authorizedDayThreeFollowup",
-      emailId: "DayThreeAuthorizationFollowup",
-      renderData: { status },
-    })
-  }
-
   async sendAuthorizedDayTwoFollowup(user: EmailUser, status = "Authorized") {
     const payload = await RenderEmail.authorizedDayTwoFollowup({
-      status,
       id: user.id,
     })
     await this.sendPreRenderedTransactionalEmail({
@@ -96,19 +70,10 @@ export class EmailService {
     })
   }
 
-  async sendRewaitlistedEmail(
+  async sendBuyUsedOrderConfirmationEmail(
     user: EmailUser,
-    availableStyles: ProductWithEmailData[]
+    order: Pick<Order, "id" | "orderNumber">
   ) {
-    await this.sendEmailWithReservableStyles({
-      user,
-      availableStyles,
-      renderEmailFunc: "rewaitlisted",
-      emailId: "Rewaitlisted",
-    })
-  }
-
-  async sendBuyUsedOrderConfirmationEmail(user: EmailUser, order: Order) {
     // Gather the appropriate product info
     const orderWithLineItems = await this.prisma.client.order.findUnique({
       where: { id: order.id },
@@ -258,62 +223,6 @@ export class EmailService {
     })
   }
 
-  async sendPausedEmail(customer, isExtension: boolean) {
-    const latestPauseRequest = this.utils.getLatestPauseRequest(customer)
-    const latestReservation = await this.utils.getLatestReservation(customer.id)
-    const withItems = latestPauseRequest.pauseType === "WithItems"
-    let pausedWithItemsPrice
-
-    if (withItems) {
-      const planID = this.utils.getPauseWithItemsPlanId(customer.membership)
-      pausedWithItemsPrice = (
-        await this.prisma.client.paymentPlan.findFirst({
-          where: { planID },
-          select: {
-            id: true,
-            price: true,
-          },
-        })
-      ).price
-    }
-
-    const data = {
-      name: customer.user.firstName,
-      resumeDate: latestPauseRequest.resumeDate.toISOString(),
-      startDate: latestPauseRequest.pauseDate.toISOString(),
-      hasOpenReservation:
-        !!latestReservation &&
-        !["Completed", "Cancelled"].includes(latestReservation.status),
-      withItems,
-      pausedWithItemsPrice,
-      isExtension,
-    }
-    const payload = await RenderEmail.paused(data)
-
-    await this.sendPreRenderedTransactionalEmail({
-      user: customer.user,
-      payload,
-      emailId: "Paused",
-    })
-  }
-
-  async sendResumeReminderEmail(user: EmailUser, resumeDate: DateTime) {
-    await this.sendEmailWithLatestProducts({
-      user,
-      renderEmailFunc: "resumeReminder",
-      emailId: "ResumeReminder",
-      renderData: { resumeDate },
-    })
-  }
-
-  async sendResumeConfirmationEmail(user: EmailUser) {
-    await this.sendEmailWithLatestProducts({
-      user,
-      renderEmailFunc: "resumeConfirmation",
-      emailId: "ResumeConfirmation",
-    })
-  }
-
   async sendAdminConfirmationEmail(
     user: EmailUser,
     returnedPhysicalProducts: { seasonsUID: string }[],
@@ -346,15 +255,17 @@ export class EmailService {
 
   async sendReservationConfirmationEmail(
     user: EmailUser,
-    products: Product[],
+    productsVariantIDs: string[],
     reservation: { reservationNumber: number },
     trackingNumber?: string,
     trackingUrl?: string
   ) {
-    const formattedProducts = await this.emailUtils.createGridPayload(products)
+    const gridPayload = await this.emailUtils.createGridPayloadWithProductVariants(
+      productsVariantIDs
+    )
 
     const payload = await RenderEmail.reservationConfirmation({
-      products: formattedProducts,
+      products: gridPayload,
       orderNumber: `${reservation.reservationNumber}`,
       trackingNumber,
       trackingURL: trackingUrl,
@@ -379,7 +290,9 @@ export class EmailService {
   }
 
   async sendYouCanNowReserveAgainEmail(user: EmailUser) {
-    const payload = await RenderEmail.freeToReserve()
+    const payload = await RenderEmail.freeToReserve({
+      products: [],
+    })
     return await this.sendPreRenderedTransactionalEmail({
       user,
       payload,

@@ -2,6 +2,7 @@ import { ShippingService } from "@app/modules/Shipping/services/shipping.service
 import { PrismaService } from "@app/prisma/prisma.service"
 import { Injectable } from "@nestjs/common"
 import { Package, PrismaPromise, Reservation } from "@prisma/client"
+import { head } from "lodash"
 
 import { ReservationWithProductVariantData } from "./reservation.service"
 
@@ -22,7 +23,8 @@ export class ReservationUtilsService {
 
   async updateReturnPackageOnCompletedReservation(
     prismaReservation: any,
-    returnedPhysicalProducts: any[] // fields specified in getPrismaReservationWithNeededFields
+    returnedPhysicalProducts: any[], // fields specified in getPrismaReservationWithNeededFields
+    trackingNumber: string
   ): Promise<[PrismaPromise<Package> | PrismaPromise<Reservation>]> {
     const returnedPhysicalProductIDs: {
       id: string
@@ -36,64 +38,22 @@ export class ReservationUtilsService {
       returnedProductVariantIDs
     )
 
-    if (prismaReservation.returnedPackage != null) {
-      return [
-        this.prisma.client.package.update({
-          data: {
-            items: { connect: returnedPhysicalProductIDs },
-            weight,
-          },
-          where: { id: prismaReservation.returnedPackage.id },
-        }),
-      ]
-    } else {
-      return [
-        (this.prisma.client.reservation.update({
-          data: {
-            returnedPackage: {
-              update: {
-                items: { connect: returnedPhysicalProductIDs },
-                weight,
-                shippingLabel: {
-                  create: {},
-                },
-                fromAddress: {
-                  connect: {
-                    slug:
-                      prismaReservation.customer.detail.shippingAddress.slug,
-                  },
-                },
-                toAddress: {
-                  connect: {
-                    slug: process.env.SEASONS_CLEANER_LOCATION_SLUG,
-                  },
-                },
-              },
-            },
-          },
-          where: {
-            id: prismaReservation.id,
-          },
-        }) as unknown) as PrismaPromise<Reservation>,
-      ]
-    }
-  }
-
-  async getUniqueReservationNumber(): Promise<number> {
-    let reservationNumber: number
-    let foundUnique = false
-    while (!foundUnique) {
-      reservationNumber = Math.floor(Math.random() * 900000000) + 100000000
-      const reservationWithThatNumber = await this.prisma.client.reservation.findUnique(
-        {
-          where: {
-            reservationNumber,
-          },
-        }
+    let packageToUpdate = prismaReservation.returnPackages.find(
+      a => a.shippingLabel.trackingNumber === trackingNumber
+    )
+    if (!packageToUpdate) {
+      throw new Error(
+        `No return package found with tracking number: ${trackingNumber}`
       )
-      foundUnique = !reservationWithThatNumber
     }
-
-    return reservationNumber
+    return [
+      this.prisma.client.package.update({
+        data: {
+          items: { connect: returnedPhysicalProductIDs },
+          weight,
+        },
+        where: { id: packageToUpdate.id },
+      }),
+    ]
   }
 }

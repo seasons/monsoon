@@ -4,14 +4,13 @@ import { ErrorService } from "@app/modules/Error/services/error.service"
 import { StatementsService } from "@app/modules/Utils/services/statements.service"
 import { UtilsService } from "@app/modules/Utils/services/utils.service"
 import { PrismaService } from "@app/prisma/prisma.service"
-import { Body, Controller, Post } from "@nestjs/common"
+import { Body, Controller, Logger, Post } from "@nestjs/common"
 import { CustomerStatus } from "@prisma/client"
-import * as Sentry from "@sentry/node"
 import chargebee from "chargebee"
 import { pick } from "lodash"
 
 import { PaymentService } from "../services/payment.service"
-import { SubscriptionService } from "../services/subscription.service"
+import { RentalService } from "../services/rental.service"
 
 export type ChargebeeEvent = {
   content: any
@@ -21,11 +20,14 @@ export type ChargebeeEvent = {
 // For a full list of webhook types, see https://apidocs.chargebee.com/docs/api/events#event_types
 const CHARGEBEE_CUSTOMER_CHANGED = "customer_changed"
 const CHARGEBEE_SUBSCRIPTION_CREATED = "subscription_created"
+const CHARGEBEE_SUBSCRIPTION_CANCELLED = "subscription_cancelled"
 const CHARGEBEE_PAYMENT_SUCCEEDED = "payment_succeeded"
 const CHARGEBEE_PAYMENT_FAILED = "payment_failed"
 
 @Controller("chargebee_events")
 export class ChargebeeController {
+  private readonly logger = new Logger(ChargebeeController.name)
+
   constructor(
     private readonly payment: PaymentService,
     private readonly segment: SegmentService,
@@ -34,24 +36,77 @@ export class ChargebeeController {
     private readonly email: EmailService,
     private readonly utils: UtilsService,
     private readonly statements: StatementsService,
-    private readonly subscription: SubscriptionService
+    private readonly rental: RentalService
   ) {}
 
   @Post()
   async handlePost(@Body() body: ChargebeeEvent) {
+    this.logger.log("Chargebee event", (body as unknown) as string)
+
     switch (body.event_type) {
       case CHARGEBEE_SUBSCRIPTION_CREATED:
         await this.chargebeeSubscriptionCreated(body.content)
+        break
+      case CHARGEBEE_SUBSCRIPTION_CANCELLED:
+        await this.chargebeeSubscriptionCancelled(body.content)
         break
       case CHARGEBEE_CUSTOMER_CHANGED:
         await this.chargebeeCustomerChanged(body.content)
         break
       case CHARGEBEE_PAYMENT_SUCCEEDED:
         await this.chargebeePaymentSucceeded(body.content)
+        await this.addGrandfatheredPromotionalCredits(body.content)
         break
       case CHARGEBEE_PAYMENT_FAILED:
         await this.chargebeePaymentFailed(body.content)
         break
+    }
+  }
+
+  private async addGrandfatheredPromotionalCredits(content: any) {
+    const chargebeeCustomerID = content.customer.id
+    const prismaCustomer = await this.prisma.client.customer.findFirst({
+      where: { user: { id: chargebeeCustomerID } },
+      select: {
+        id: true,
+        membership: {
+          select: {
+            id: true,
+            grandfathered: true,
+            creditBalance: true,
+            plan: {
+              select: {
+                planID: true,
+                price: true,
+              },
+            },
+          },
+        },
+      },
+    })
+
+    if (prismaCustomer?.membership?.grandfathered) {
+      const plan = prismaCustomer.membership.plan
+      const isPlanPayment = content.invoice.line_items.some(
+        li => li.entity_id === plan.planID
+      )
+
+      if (isPlanPayment) {
+        const existingCredits = prismaCustomer.membership.creditBalance ?? 0
+        const newCredits = Math.round(
+          prismaCustomer.membership.plan.price * 1.15
+        )
+        const totalPromotionalCredits = existingCredits + newCredits
+
+        await this.prisma.client.customerMembership.update({
+          where: {
+            id: prismaCustomer.membership.id,
+          },
+          data: {
+            creditBalance: totalPromotionalCredits,
+          },
+        })
+      }
     }
   }
 
@@ -115,12 +170,18 @@ export class ChargebeeController {
   }
 
   private async chargebeePaymentFailed(content: any) {
-    const { customer, subscription } = content
+    const { customer, invoice, subscription } = content
 
-    const isFailureForSubscription = !!subscription
-    if (!isFailureForSubscription) {
+    const isFailureForBuyUsed = invoice?.notes?.find(a =>
+      a.note?.includes("Purchase Used")
+    )
+    const isFailureForBuyNew = invoice?.notes?.find(a =>
+      a.note?.includes("Purchase New")
+    )
+    if (isFailureForBuyUsed || isFailureForBuyNew) {
       return
     }
+    // Else, it's a failure for a subscription charge, or a custom charge.
 
     const userId = customer?.id
     const cust = await this.prisma.client.customer.findFirst({
@@ -133,11 +194,15 @@ export class ChargebeeController {
     })
     if (!!cust) {
       if (this.statements.isPayingCustomer(cust)) {
+        const isFailureForSubscription = !!subscription
         await this.prisma.client.customer.update({
           where: { id: cust.id },
           data: { status: "PaymentFailed" },
         })
-        await this.email.sendUnpaidMembershipEmail(cust.user)
+        if (isFailureForSubscription) {
+          await this.email.sendUnpaidMembershipEmail(cust.user)
+        }
+        // TODO: Send email for other kinds of failures
       }
     } else {
       this.error.setExtraContext({ payload: content }, "chargebeePayload")
@@ -146,90 +211,29 @@ export class ChargebeeController {
   }
 
   private async chargebeeSubscriptionCreated(content: any) {
-    const {
-      subscription,
-      customer,
-      card,
-      invoice: { total },
-    } = content
+    const { customer } = content
 
-    const { customer_id, plan_id } = subscription
+    const prismaCustomer = await this.prisma.client.customer.findFirst({
+      where: { user: { id: customer.id } },
+      orderBy: { createdAt: "desc" },
+      select: { id: true },
+    })
 
-    const customerWithBillingAndUserData = await this.prisma.client.customer.findUnique(
-      {
-        where: { id: customer.id },
-        select: {
-          id: true,
-          billingInfo: { select: { id: true } },
-          detail: {
-            select: { id: true, impactId: true, discoveryReference: true },
-          },
-          utm: true,
-          user: {
-            select: { id: true, firstName: true, lastName: true, email: true },
-          },
-          referrer: {
-            select: {
-              id: true,
-              user: { select: { id: true, email: true, firstName: true } },
-              membership: { select: { subscriptionId: true } },
-            },
-          },
-        },
-      }
-    )
-
-    try {
-      // If they don't have a billing info this means they've created their account
-      // using the deprecated ChargebeeHostedCheckout
-      if (!customerWithBillingAndUserData?.billingInfo?.id) {
-        const user = customerWithBillingAndUserData.user
-        this.segment.trackSubscribed(customer_id, {
-          tier: this.payment.getPaymentPlanTier(plan_id),
-          planID: plan_id,
-          method: "ChargebeeHostedCheckout",
-          firstName: user?.firstName || "",
-          lastName: user?.lastName || "",
-          email: user?.email || "",
-          impactId: customerWithBillingAndUserData.detail?.impactId,
-          application: "flare", // must be flare since its ChargebeeHostedCheckout
-          total,
-          discoveryReference:
-            customerWithBillingAndUserData.detail?.discoveryReference,
-          ...this.utils.formatUTMForSegment(customerWithBillingAndUserData.utm),
-        })
-        // Only create the billing info and send welcome email if user used chargebee checkout
-        await this.subscription.createPrismaSubscription(
-          customer_id,
-          customer,
-          card,
-          subscription
-        )
-
-        // Handle if it was a referral
-        if (customerWithBillingAndUserData?.referrer?.id) {
-          // Give the referrer a discount
-          await chargebee.subscription
-            .update(
-              customerWithBillingAndUserData?.referrer?.membership
-                ?.subscriptionId,
-              {
-                coupon_ids: [process.env.REFERRAL_COUPON_ID],
-              }
-            )
-            .request()
-          // Email the referrer
-          await this.email.sendReferralConfirmationEmail({
-            referrer: customerWithBillingAndUserData.referrer.user,
-            referee: customerWithBillingAndUserData.user,
-          })
-        }
-      }
-    } catch (err) {
-      Sentry.captureException(err)
-    }
+    await this.rental.initFirstRentalInvoice(prismaCustomer.id)
   }
 
+  private async chargebeeSubscriptionCancelled(content: any) {
+    const { customer } = content
+    const prismaCustomer = await this.prisma.client.customer.findFirst({
+      where: { user: { id: customer.id } },
+      orderBy: { createdAt: "desc" },
+      select: { id: true },
+    })
+    await this.prisma.client.customer.update({
+      where: { id: prismaCustomer.id },
+      data: { status: "Deactivated" },
+    })
+  }
   private async chargebeeCustomerChanged(content: any) {
     const {
       customer: { id },

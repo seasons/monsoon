@@ -28,6 +28,16 @@ type Query {
   ): OrderConnection! @cacheControl(maxAge: 0)
 }
 
+enum OrderLineItemRecordType {
+  PhysicalProduct
+  ProductVariant
+  ExternalProduct
+  Package
+  EarlySwap
+  Fee
+  Total
+}
+
 type Order {
   id: ID!
   customer: Customer!
@@ -56,9 +66,15 @@ type Order {
   salesTaxTotal: Int!
 }
 
-type OrderLineItem {
+interface LineItemInterface {
   id: ID!
-  recordID: ID!
+  name: String
+  price: Int!
+}
+
+type OrderLineItem implements LineItemInterface {
+  id: ID!
+  recordID: ID
   recordType: OrderLineItemRecordType!
   needShipping: Boolean
   taxRate: Float
@@ -72,6 +88,7 @@ type OrderLineItem {
   updatedAt: DateTime!
   # Computed fields
   productVariant: ProductVariant
+  physicalProduct: PhysicalProduct
 }
 
 input CreateDraftedOrderInput {

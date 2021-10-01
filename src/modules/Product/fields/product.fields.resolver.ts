@@ -1,11 +1,11 @@
 import { Customer } from "@app/decorators"
 import { Select } from "@app/decorators/select.decorator"
 import { Loader } from "@app/modules/DataLoader/decorators/dataloader.decorator"
+import { ProductUtilsService } from "@app/modules/Utils/services/product.utils.service"
 import { PrismaDataLoader } from "@app/prisma/prisma.loader"
 import { PrismaService } from "@app/prisma/prisma.service"
 import { ImageOptions, ImageSize } from "@modules/Image/image.types"
 import { ImageService } from "@modules/Image/services/image.service"
-import { ProductUtilsService } from "@modules/Product/services/product.utils.service"
 import { Args, Parent, ResolveField, Resolver } from "@nestjs/graphql"
 import {
   Brand,
@@ -34,27 +34,14 @@ export class ProductFieldsResolver {
         model: "Product",
         select: Prisma.validator<Prisma.ProductSelect>()({
           id: true,
-          wholesalePrice: true,
-          recoupment: true,
-          rentalPriceOverride: true,
+          computedRentalPrice: true,
         }),
       },
     })
-    productLoader: PrismaDataLoader<{
-      id: string
-      wholesalePrice: number
-      recoupment: number
-      rentalPriceOverride: number
-    }>
+    productLoader: PrismaDataLoader<Pick<Product, "id" | "computedRentalPrice">>
   ) {
     const product = await productLoader.load(parent.id)
-
-    if (product.rentalPriceOverride) {
-      return product.rentalPriceOverride
-    } else {
-      const rate = product.wholesalePrice / product.recoupment
-      return Math.ceil(rate / 5) * 5
-    }
+    return product.computedRentalPrice
   }
 
   @ResolveField()

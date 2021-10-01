@@ -33,6 +33,10 @@ type Mutation {
     options: ReserveItemsOptions
     shippingCode: ShippingCode
   ): Reservation @hasRole(roles: [Customer])
+  reserveItemsForCustomer(
+    customerID: ID!
+    shippingCode: ShippingCode
+  ): Reservation @hasRole(roles: [Admin])
   draftReservationLineItems(hasFreeSwap: Boolean): [OrderLineItem!]
   checkItemsAvailability(items: [ID!]!): Boolean! @hasRole(roles: [Customer])
   updateReservationFeedback(
@@ -77,6 +81,22 @@ type ReservationFeedback {
   respondedAt: DateTime
 }
 
+enum ReservationLineItemRecordType {
+  Credit
+  ProductVariant
+  Reservation
+  Fee
+  Total
+}
+
+type ReservationLineItem implements LineItemInterface {
+  id: ID!
+  name: String
+  price: Int!
+  recordType: ReservationLineItemRecordType!
+  taxPrice: Int
+}
+
 input ReservationWhereInput {
   id: ID
   id_not: ID
@@ -96,6 +116,9 @@ input ReservationWhereInput {
   customer: CustomerWhereInput
   sentPackage: PackageWhereInput
   returnedPackage: PackageWhereInput
+  returnPackages_some: PackageWhereInput
+  returnPackages_every: PackageWhereInput
+  returnPackages_none: PackageWhereInput
   products_every: PhysicalProductWhereInput
   products_some: PhysicalProductWhereInput
   products_none: PhysicalProductWhereInput
@@ -180,6 +203,7 @@ input ReservationWhereInput {
 input ReservationProcessReturnInput {
   reservationNumber: Int!
   productStates: [ProductStateInput!]!
+  trackingNumber: String
 }
 
 input ProductStateInput {
@@ -193,6 +217,12 @@ input ReserveItemsOptions {
   dryRun: Boolean
 }
 
+enum ReservationAdminMessage {
+  PreviousReservationOnHold
+  PartiallyPacked
+  None
+}
+
 type Reservation @cacheControl(maxAge: 0) {
   id: ID!
   user: User!
@@ -201,7 +231,7 @@ type Reservation @cacheControl(maxAge: 0) {
   returnedPackage: Package
   feedback: ReservationFeedback
   lastLocation: Location
-  lineItems: [OrderLineItem]
+  lineItems(filterBy: ReservationLineItemsFilter): [ReservationLineItem]
   products: [PhysicalProduct!]!
   newProducts: [PhysicalProduct!]!
   returnedProducts: [PhysicalProduct!]!
@@ -229,6 +259,7 @@ type Reservation @cacheControl(maxAge: 0) {
   updatedAt: DateTime!
   adminLogs: [AdminActionLog!]! @hasRole(roles: [Admin])
   shippingOption: ShippingOption
+  adminMessage: ReservationAdminMessage! @hasRole(roles: [Admin])
 }
 
 type AdminActionLog {

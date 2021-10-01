@@ -74,7 +74,7 @@ xdescribe("Customer Service", () => {
     const queryUtilsService = moduleRef.get<QueryUtilsService>(
       QueryUtilsService
     )
-    testUtils = new TestUtilsService(prisma, utilsService, queryUtilsService)
+    testUtils = new TestUtilsService(prisma, utilsService)
     smsService = moduleRef.get<SMSService>(SMSService)
     emailService = moduleRef.get<EmailService>(EmailService)
     pushNotificationsService = moduleRef.get<PushNotificationService>(

@@ -1,9 +1,9 @@
+import { ProductUtilsService } from "@app/modules/Utils/services/product.utils.service"
 import { PrismaService } from "@app/prisma/prisma.service"
 import { Test } from "@nestjs/testing"
 import { intersection } from "lodash"
 
 import { ProductModuleDef } from "../product.module"
-import { ProductUtilsService } from "../services/product.utils.service"
 
 const ONE_MIN = 60000
 

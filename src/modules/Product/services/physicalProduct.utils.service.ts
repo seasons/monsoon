@@ -1,9 +1,8 @@
+import { ProductUtilsService } from "@app/modules/Utils/services/product.utils.service"
 import { Injectable } from "@nestjs/common"
 import { Category, PhysicalProduct, ProductVariant } from "@prisma/client"
 import { PrismaService } from "@prisma1/prisma.service"
 import { head, uniqBy } from "lodash"
-
-import { ProductUtilsService } from "./product.utils.service"
 
 export interface PhysicalProductWithReservationSpecificData
   extends PhysicalProduct {
@@ -33,6 +32,7 @@ export class PhysicalProductUtilsService {
         inventoryStatus: true,
         productStatus: true,
         productVariant: true,
+        warehouseLocation: true,
       },
     })
   }

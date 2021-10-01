@@ -38,34 +38,6 @@ export class PaymentService {
     private readonly paymentUtils: PaymentUtilsService
   ) {}
 
-  async addEarlySwapCharge(customerID: string) {
-    const customer = await this.prisma.client.customer.findUnique({
-      where: {
-        id: customerID,
-      },
-      select: {
-        id: true,
-        membership: true,
-      },
-    })
-
-    const subscriptionID = customer.membership.subscriptionId
-
-    try {
-      return await chargebee.invoice
-        .charge_addon({
-          subscription_id: subscriptionID,
-          addon_id: "early-swap",
-          addon_quantity: 1,
-        })
-        .request()
-    } catch (e) {
-      this.error.setExtraContext(customer, "customer")
-      this.error.captureError(e)
-      throw e
-    }
-  }
-
   async addShippingCharge(customer, shippingCode) {
     try {
       const customerWithShippingData = await this.prisma.client.customer.findUnique(
@@ -200,10 +172,12 @@ export class PaymentService {
       country: "US", // assume its US for now, because we need it for taxes.
     }
 
+    const start_date = this.paymentUtils.getSubscriptionStartDate()
     const subscriptionOptions = {
       plan_id: planID,
       billing_address: billingAddress,
       coupon_ids: !!couponID ? [couponID] : [],
+      start_date,
       customer: {
         id: customerWithUserData.user.id,
         first_name: user.firstName || "",
@@ -579,25 +553,32 @@ export class PaymentService {
   /**
    * Define as arrow func to preserve `this` binding
    */
-  private formatInvoice = (invoice: Invoice) => ({
-    ...invoice,
-    status: upperFirst(camelCase(invoice.status)),
-    amount: invoice.total,
-    closingDate: this.utils.secondsSinceEpochToISOString(invoice.date),
-    dueDate: this.utils.secondsSinceEpochToISOString(invoice.dueDate, true),
-    creditNotes: invoice.issuedCreditNotes.map(a => ({
-      ...a,
-      reasonCode: upperFirst(camelCase(a.reasonCode)),
-      status: upperFirst(camelCase(a.status)),
-      date: this.utils.secondsSinceEpochToISOString(a.date),
-    })),
-    lineItems: invoice.lineItems.map(a => ({
-      ...a,
-      entityType: upperFirst(camelCase(a.entityType)),
-      dateFrom: this.utils.secondsSinceEpochToISOString(a.dateFrom),
-      dateTo: this.utils.secondsSinceEpochToISOString(a.dateTo),
-    })),
-  })
+  private formatInvoice = (invoice: Invoice) => {
+    return {
+      ...invoice,
+      status: upperFirst(camelCase(invoice.status)),
+      price: invoice.total,
+      amount: invoice.total,
+      closingDate: this.utils.secondsSinceEpochToISOString(invoice.date),
+      dueDate: this.utils.secondsSinceEpochToISOString(invoice.dueDate, true),
+      creditNotes: invoice.issuedCreditNotes.map(a => ({
+        ...a,
+        reasonCode: upperFirst(camelCase(a.reasonCode)),
+        status: upperFirst(camelCase(a.status)),
+        date: this.utils.secondsSinceEpochToISOString(a.date),
+      })),
+      lineItems: invoice.lineItems.map(a => ({
+        ...a,
+        entityType: upperFirst(camelCase(a.entityType)),
+        price: a.amount,
+        name: upperFirst(a.description),
+        recordID: a.entityId,
+        recordType: upperFirst(camelCase(a.entityType)),
+        dateFrom: this.utils.secondsSinceEpochToISOString(a.dateFrom),
+        dateTo: this.utils.secondsSinceEpochToISOString(a.dateTo),
+      })),
+    }
+  }
 
   /**
    * Define as arrow func to preserve `this` binding

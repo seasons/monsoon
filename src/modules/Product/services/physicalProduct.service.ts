@@ -207,6 +207,34 @@ export class PhysicalProductService {
     return results.pop()
   }
 
+  async stowItems({
+    ids,
+    warehouseLocationBarcode,
+  }: {
+    ids: string[]
+    warehouseLocationBarcode: string
+  }) {
+    const warehouseLocation = await this.prisma.client.warehouseLocation.findFirst(
+      {
+        where: {
+          barcode: warehouseLocationBarcode,
+        },
+      }
+    )
+
+    const stowedProducts = await this.prisma.client.physicalProduct.updateMany({
+      where: {
+        id: {
+          in: ids,
+        },
+      },
+      data: {
+        warehouseLocationId: warehouseLocation.id,
+      },
+    })
+    return stowedProducts.count > 0
+  }
+
   async activeReservationWithPhysicalProduct(id: string) {
     return await this.prisma.client.reservation.findFirst({
       where: {
@@ -380,15 +408,10 @@ export class PhysicalProductService {
             "Rail Warehouse Locations barcodes must begin with 'SR'"
           )
         }
-        if (
-          !(await this.prisma.client.brand.findUnique({
-            where: {
-              brandCode: itemCode,
-            },
-          }))
-        ) {
+        const value = parseInt(itemCode.substring(1))
+        if (value < 100 || value > 990) {
           throw new Error(
-            `Invalid itemcode. No brand exists with code ${itemCode}`
+            `Invalid itemcode. Should be a value between A100 and A990`
           )
         }
         break

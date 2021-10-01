@@ -1,11 +1,13 @@
-import { SegmentService } from "@app/modules/Analytics/services/segment.service"
 import { Injectable } from "@nestjs/common"
+import { Prisma, RentalInvoiceStatus } from "@prisma/client"
 import { PrismaService } from "@prisma1/prisma.service"
 import * as Sentry from "@sentry/node"
 import chargebee from "chargebee"
 import { get } from "lodash"
 import { DateTime } from "luxon"
 import Stripe from "stripe"
+
+import { TimeUtilsService } from "./time.service"
 
 export const stripe = new Stripe(process.env.STRIPE_API_KEY, {
   apiVersion: "2020-08-27",
@@ -15,7 +17,7 @@ export const stripe = new Stripe(process.env.STRIPE_API_KEY, {
 export class PaymentUtilsService {
   constructor(
     private readonly prisma: PrismaService,
-    private readonly segment: SegmentService
+    private readonly timeUtils: TimeUtilsService
   ) {}
 
   createBillingAddresses(user, token, billing) {
@@ -73,6 +75,17 @@ export class PaymentUtilsService {
     }
 
     return { prismaBillingAddress, chargebeeBillingAddress }
+  }
+
+  getSubscriptionStartDate() {
+    // Meant to be used when creating a chargebee subscription
+    // If we're in a dev/staging environment, backdate their subscription by 29 days
+    // so we can test billing code easily.
+    const start_date =
+      process.env.NODE_ENV !== "production"
+        ? this.timeUtils.xDaysBeforeDate(new Date(), 29, "timestamp")
+        : undefined
+    return start_date
   }
 
   async createPaymentIntent(paymentMethodID, amountDue) {

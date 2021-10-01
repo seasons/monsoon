@@ -24,7 +24,7 @@ import {
 import { PrismaService } from "@prisma1/prisma.service"
 import * as Sentry from "@sentry/node"
 import { ApolloError } from "apollo-server"
-import { defaultsDeep, pick } from "lodash"
+import { defaultsDeep, head, pick } from "lodash"
 import { DateTime } from "luxon"
 
 import { AdmissionsService, TriageFuncResult } from "./admissions.service"
@@ -131,17 +131,33 @@ export class CustomerService {
           abbreviatedDestState
         ]
 
-      const shippingOption = await this.prisma.client.shippingOption.create({
-        data: {
-          origin: { connect: { id: warehouseLocation.id } },
-          destination: { connect: { id: shippingAddressID } },
-          shippingMethod: { connect: { id: method.id } },
-          externalCost: stateData.price,
-          averageDuration: stateData.averageDuration,
-        },
-      })
+      const existingShippingOptions = await this.prisma.client.shippingOption.findMany(
+        {
+          where: {
+            originId: warehouseLocation.id,
+            destinationId: shippingAddressID,
+            shippingMethodId: method.id,
+          },
+        }
+      )
 
-      shippingOptions.push(shippingOption)
+      const existingShippingOption = head(existingShippingOptions)
+
+      if (existingShippingOption) {
+        shippingOptions.push(existingShippingOption)
+      } else {
+        const shippingOption = await this.prisma.client.shippingOption.create({
+          data: {
+            origin: { connect: { id: warehouseLocation.id } },
+            destination: { connect: { id: shippingAddressID } },
+            shippingMethod: { connect: { id: method.id } },
+            externalCost: stateData.price,
+            averageDuration: stateData.averageDuration,
+          },
+        })
+
+        shippingOptions.push(shippingOption)
+      }
     }
 
     return await this.prisma.client.location.update({
@@ -195,6 +211,11 @@ export class CustomerService {
           throw new Error("Shipping address state is invalid")
         }
       }
+    }
+
+    if (details?.signupLikedProducts?.connect?.length > 0) {
+      const productIDs = details?.signupLikedProducts?.connect.map(p => p.id)
+      await this.addLikedSignUpProductsToBagItems(productIDs, customer)
     }
 
     const detail = await this.prisma.client.customerDetail.findFirst({
@@ -750,6 +771,79 @@ export class CustomerService {
       })
       this.segment.identify(customer.user.id, admissionsUpsertData)
     }
+  }
+
+  private async addLikedSignUpProductsToBagItems(productIDs, customer) {
+    const createManyData = []
+
+    const customerDetails = await this.prisma.client.customerDetail.findMany({
+      where: { customer: { id: customer.id } },
+      select: {
+        topSizes: true,
+        waistSizes: true,
+      },
+    })
+
+    const customerDetail = head(customerDetails)
+
+    const productsWithPhysicalProductData = await this.prisma.client.product.findMany(
+      {
+        where: {
+          id: { in: productIDs },
+        },
+        select: {
+          id: true,
+          type: true,
+          variants: {
+            select: {
+              id: true,
+              displayShort: true,
+              reservable: true,
+              physicalProducts: {
+                select: {
+                  id: true,
+                  inventoryStatus: true,
+                },
+              },
+            },
+          },
+        },
+      }
+    )
+
+    for (const p of productsWithPhysicalProductData) {
+      let fittingVariant
+      const waistSizesToString = customerDetail.waistSizes.map(size =>
+        size.toString()
+      )
+      if (p.type === "Top") {
+        fittingVariant = p.variants.find(v =>
+          customerDetail.topSizes.includes(v.displayShort)
+        )
+      } else if (p.type === "Bottom") {
+        fittingVariant = p.variants.find(v =>
+          waistSizesToString.includes(v.displayShort)
+        )
+      }
+      const variant = fittingVariant ?? p.variants[0]
+      const availablePhysicalProduct = variant.physicalProducts.find(
+        pp => pp.inventoryStatus === "Reservable"
+      )
+      const physicalProduct =
+        availablePhysicalProduct ?? variant.physicalProducts[0]
+
+      createManyData.push({
+        customerId: customer.id,
+        productVariantId: variant.id,
+        physicalProductId: physicalProduct.id,
+        status: "Added",
+        saved: true,
+      })
+    }
+
+    await this.prisma.client.bagItem.createMany({
+      data: createManyData,
+    })
   }
 
   private shouldUpdateCustomerAdmissionsData(

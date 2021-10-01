@@ -1,9 +1,7 @@
 import { PrismaService } from "@app/prisma/prisma.service"
 import { UtilsService } from "@modules/Utils/services/utils.service"
 import { Injectable } from "@nestjs/common"
-import { Customer, ShippingCode, User } from "@prisma/client"
-import { ApolloError } from "apollo-server-errors"
-import { pick } from "lodash"
+import { Customer, Package, ShippingCode, User } from "@prisma/client"
 import shippo from "shippo"
 
 import {
@@ -12,6 +10,11 @@ import {
   ShippoShipment,
   ShippoTransaction,
 } from "../shipping.types.d"
+
+export enum UPSServiceLevel {
+  Ground = "ups_ground",
+  Select = "ups_3_day_select",
+}
 
 interface ShippoLabelInputs {
   shipment: ShippoShipment
@@ -28,32 +31,58 @@ export class ShippingService {
     private readonly utilsService: UtilsService
   ) {}
 
-  async getBuyUsedShippingRate(
-    productVariantId: string,
-    user: User,
-    customer: Customer
-  ): Promise<ShippoRate> {
+  async getBuyUsedShippingRate(productVariantId: string, customer: Customer) {
+    return this.getShippingRateForVariantIDs([productVariantId], { customer })
+  }
+
+  async getShippingRateForVariantIDs(
+    ids: string[],
+    options: {
+      customer: Pick<Customer, "id">
+      serviceLevel?: UPSServiceLevel
+      includeSentPackage?: boolean
+      includeReturnPackage?: boolean
+    }
+  ): Promise<{ sentRate: ShippoRate | null; returnRate: ShippoRate | null }> {
+    const {
+      customer,
+      serviceLevel = UPSServiceLevel.Ground,
+      includeSentPackage = true,
+      includeReturnPackage = true,
+    } = options
+
     // TODO: do these values change, as we're not shipping in seasons bags?
-    const shipmentWeight = await this.calcShipmentWeightFromProductVariantIDs([
-      productVariantId,
-    ] as string[])
+    const shipmentWeight = await this.calcShipmentWeightFromProductVariantIDs(
+      ids
+    )
     const insuranceAmount = await this.calcTotalRetailPriceFromProductVariantIDs(
-      [productVariantId] as string[]
+      ids
     )
 
-    const [seasonsToShippoShipment] = await this.createShippoShipment(
-      user,
+    const [sentPackage, returnPackage] = await this.createShippoShipments({
       customer,
       shipmentWeight,
-      insuranceAmount
-    )
-
-    const shipping = await this.getShippingRate({
-      shipment: seasonsToShippoShipment,
-      servicelevel_token: "ups_ground",
+      insuranceAmount,
     })
 
-    return shipping.rate
+    const { rate: sentRate } = includeSentPackage
+      ? await this.getShippingRate({
+          shipment: sentPackage,
+          servicelevel_token: serviceLevel,
+        })
+      : { rate: null }
+
+    const { rate: returnRate } = includeReturnPackage
+      ? await this.getShippingRate({
+          shipment: returnPackage,
+          servicelevel_token: serviceLevel,
+        })
+      : { rate: null }
+
+    return {
+      sentRate,
+      returnRate,
+    }
   }
 
   async createBuyUsedShippingLabel(
@@ -68,12 +97,11 @@ export class ShippingService {
       [productVariantId] as string[]
     )
 
-    const [seasonsToShippoShipment] = await this.createShippoShipment(
-      user,
+    const [seasonsToShippoShipment] = await this.createShippoShipments({
       customer,
       shipmentWeight,
-      insuranceAmount
-    )
+      insuranceAmount,
+    })
 
     const seasonsToCustomerTransaction = await this.createShippingLabel({
       shipment: seasonsToShippoShipment,
@@ -86,8 +114,7 @@ export class ShippingService {
 
   async createReservationShippingLabels(
     newProductVariantsBeingReserved: string[],
-    user: User,
-    customer: Customer,
+    customer: Pick<Customer, "id">,
     shippingCode: ShippingCode
   ): Promise<ShippoTransaction[]> {
     const shipmentWeight = await this.calcShipmentWeightFromProductVariantIDs(
@@ -100,12 +127,11 @@ export class ShippingService {
     const [
       seasonsToShippoShipment,
       customerToSeasonsShipment,
-    ] = await this.createShippoShipment(
-      user,
+    ] = await this.createShippoShipments({
       customer,
       shipmentWeight,
-      insuranceAmount
-    )
+      insuranceAmount,
+    })
 
     let serviceLevelToken = "ups_ground"
     if (!!shippingCode && shippingCode === "UPSSelect") {
@@ -137,6 +163,12 @@ export class ShippingService {
     return productVariants.reduce((acc, curProdVar) => {
       return acc + curProdVar.weight
     }, shippingBagWeight)
+  }
+
+  async voidLabel(shipment: Pick<Package, "transactionID">) {
+    return await this.shippo.refund.create({
+      transaction: shipment.transactionID,
+    })
   }
 
   async shippoValidateAddress(address: CoreShippoAddressFields) {
@@ -364,12 +396,15 @@ export class ShippingService {
     return products.reduce((acc, prod) => acc + prod.retailPrice, 0)
   }
 
-  private async createShippoShipment(
-    user: User,
-    customer: Customer,
-    shipmentWeight: number,
+  private async createShippoShipments({
+    customer,
+    shipmentWeight,
+    insuranceAmount,
+  }: {
+    customer: Pick<Customer, "id">
+    shipmentWeight: number
     insuranceAmount: number
-  ): Promise<ShippoShipment[]> {
+  }): Promise<ShippoShipment[]> {
     // Create Next Cleaners Address object
     const nextCleanersAddressPrisma = await this.utilsService.getPrismaLocationFromSlug(
       process.env.SEASONS_CLEANER_LOCATION_SLUG || "seasons-cleaners-official"
@@ -380,11 +415,17 @@ export class ShippingService {
     }
 
     // Create customer address object
-
     const customerData = await this.prisma.client.customer.findUnique({
       where: { id: customer.id },
       select: {
         id: true,
+        user: {
+          select: {
+            firstName: true,
+            lastName: true,
+            email: true,
+          },
+        },
         detail: {
           select: {
             shippingAddress: true,
@@ -395,6 +436,8 @@ export class ShippingService {
         },
       },
     })
+
+    const user = customerData.user
     const customerShippingAddressPrisma = customerData.detail.shippingAddress
     const insureShipmentForCustomer = customerData.detail.insureShipment
 
@@ -422,23 +465,25 @@ export class ShippingService {
       address_to: customerAddressShippo,
       parcels: [parcel],
     }
-    return [
-      {
-        ...shipmentBase,
-        ...(insureShipmentForCustomer && {
-          extra: {
-            insurance: {
-              amount: insuranceAmount.toString(),
-              currency: "USD",
-            },
+
+    const sentPackage = {
+      ...shipmentBase,
+      ...(insureShipmentForCustomer && {
+        extra: {
+          insurance: {
+            amount: insuranceAmount.toString(),
+            currency: "USD",
           },
-        }),
-      },
-      {
-        ...shipmentBase,
-        extra: { is_return: true },
-      },
-    ]
+        },
+      }),
+    }
+
+    const returnPackage = {
+      ...shipmentBase,
+      extra: { is_return: true },
+    }
+
+    return [sentPackage, returnPackage]
   }
 
   private async getShippingRate({
@@ -457,7 +502,21 @@ export class ShippingService {
       return rate.servicelevel.token === servicelevel_token
     })
 
-    return { rate, shipmentId: shipment.object_id }
+    // We'll want to pull that number dynamically from the Shippo API once it's fixed
+    const discountPercentage = 0.58
+    const amount = Math.floor(
+      parseFloat(((rate?.amount as unknown) as string) || "0.00") *
+        100 *
+        discountPercentage
+    )
+
+    return {
+      rate: {
+        ...rate,
+        amount,
+      },
+      shipmentId: shipment.object_id,
+    }
   }
 
   private async createShippingLabel(

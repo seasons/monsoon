@@ -1,20 +1,20 @@
 import { EmailService } from "@app/modules/Email/services/email.service"
 import { ErrorService } from "@app/modules/Error/services/error.service"
-import {
-  ProductUtilsService,
-  ProductVariantService,
-} from "@app/modules/Product"
 import { BagService } from "@app/modules/Product/services/bag.service"
+import { ProductVariantService } from "@app/modules/Product/services/productVariant.service"
 import { ShopifyService } from "@app/modules/Shopify/services/shopify.service"
+import { ProductUtilsService } from "@app/modules/Utils/services/product.utils.service"
+import { UtilsService } from "@app/modules/Utils/services/utils.service"
 import { ShippingService } from "@modules/Shipping/services/shipping.service"
 import { Injectable } from "@nestjs/common"
 import {
   BagItem,
+  OrderPaymentStatus,
   OrderStatus,
+  OrderType,
   PhysicalProduct,
   PhysicalProductPrice,
 } from "@prisma/client"
-import { OrderLineItemRecordType } from "@prisma/client"
 import {
   BillingInfo,
   Category,
@@ -22,13 +22,15 @@ import {
   Location,
   Order,
   OrderLineItem,
+  OrderLineItemRecordType,
   Prisma,
   ProductVariant,
   User,
 } from "@prisma/client"
 import { PrismaService } from "@prisma1/prisma.service"
 import chargebee from "chargebee"
-import { pick } from "lodash"
+import cuid from "cuid"
+import { merge, pick } from "lodash"
 
 type InvoiceCharge = {
   amount: number
@@ -67,7 +69,8 @@ export class OrderService {
     private readonly error: ErrorService,
     private readonly bag: BagService,
     private readonly productUtils: ProductUtilsService,
-    private readonly productVariant: ProductVariantService
+    private readonly productVariant: ProductVariantService,
+    private readonly utils: UtilsService
   ) {
     this.outerwearCategories = this.productUtils.getCategoryAndAllChildren(
       { slug: "outerwear" },
@@ -153,9 +156,11 @@ export class OrderService {
         status === "Reserved" && productVariantId === productVariant.id
     )
     // Shipping is included only if user does not already have the product.
-    const shipping = await (isProductVariantReserved
+    const packages = await (isProductVariantReserved
       ? Promise.resolve(null)
-      : this.shipping.getBuyUsedShippingRate(productVariant.id, user, customer))
+      : this.shipping.getBuyUsedShippingRate(productVariant.id, customer))
+
+    const shipping = packages?.sentRate
 
     const physicalProduct = productVariant?.physicalProducts.find(
       physicalProduct =>
@@ -196,10 +201,9 @@ export class OrderService {
       },
       !isProductVariantReserved
         ? {
-            recordID:
-              shipping?.shipment.substring(0, 24) || "137" + Math.random() * 10,
+            recordID: cuid(),
             recordType: "Package",
-            price: parseFloat(shipping?.amount || "0.00") * 100,
+            price: shipping.amount,
             currencyCode: "USD",
             needShipping: false,
           }
@@ -211,6 +215,8 @@ export class OrderService {
       orderLineItems,
       invoice: {
         customer_id: user.id,
+        // We used "Purchase Used" to ID a buy used invoice in chargebee webhooks. Change
+        // with caution.
         invoice_note: `Purchase Used ${productName}`,
         shipping_address: this.getChargebeeShippingAddress({
           location: shippingAddress,
@@ -440,6 +446,7 @@ export class OrderService {
               user,
               location: shippingAddress,
             }),
+            invoice_note: `Purchase New ${productName}`,
             charges: orderWithLineItems.lineItems
               .map(orderLineItem =>
                 this.getChargebeeChargeForOrderLineItem({
@@ -648,23 +655,25 @@ export class OrderService {
       })
       .request()
 
-    return (await this.prisma.client.order.create({
-      data: {
-        customer: { connect: { id: customer.id } },
-        orderNumber: `O-${Math.floor(Math.random() * 900000000) + 100000000}`,
-        type: "Used",
-        status: "Drafted",
-        subTotal: invoice_estimate.sub_total,
-        total: invoice_estimate.total,
-        lineItems: {
-          create: orderLineItems.map((orderLineItem, idx) => ({
-            ...orderLineItem,
-            taxRate: invoice_estimate?.line_items?.[idx]?.tax_rate || 0,
-            taxPrice: invoice_estimate?.line_items?.[idx]?.tax_amount || 0,
-          })),
-        },
-        paymentStatus: "Complete",
+    const createData = {
+      customer: { connect: { id: customer.id } },
+      orderNumber: `O-${Math.floor(Math.random() * 900000000) + 100000000}`,
+      type: "Used" as OrderType,
+      status: "Drafted" as OrderStatus,
+      subTotal: invoice_estimate.sub_total,
+      total: invoice_estimate.total,
+      lineItems: {
+        create: orderLineItems.map((orderLineItem, idx) => ({
+          ...orderLineItem,
+          taxRate: invoice_estimate?.line_items?.[idx]?.tax_rate || 0,
+          taxPrice: invoice_estimate?.line_items?.[idx]?.tax_amount || 0,
+        })),
       },
+      paymentStatus: "Complete" as OrderPaymentStatus,
+    }
+
+    return (await this.prisma.client.order.create({
+      data: createData,
       select,
     })) as Order
   }
@@ -680,9 +689,12 @@ export class OrderService {
     user: User
     select: Prisma.OrderSelect
   }): Promise<Order> {
+    let promises = []
+
     const orderWithData = await this.prisma.client.order.findUnique({
       where: { id: order.id },
       select: {
+        id: true,
         orderNumber: true,
         lineItems: {
           select: { recordType: true, recordID: true, needShipping: true },
@@ -808,50 +820,97 @@ export class OrderService {
         newInventoryStatus: "Offloaded",
       })
     } else {
-      // Item is with the customer
+      // Item is with the customer.
+      // - Delete the bag item.
+      // - If this is the last item in their bag, mark the reservation as Completed
       updateProductVariantData = this.productVariant.getCountsForStatusChange({
         productVariant,
         oldInventoryStatus: "Reserved",
         newInventoryStatus: "Offloaded",
       })
+
+      const reservedBagItems = await this.prisma.client.bagItem.findMany({
+        where: {
+          customer: { id: customer.id },
+          status: { in: ["Received", "Reserved"] },
+        },
+        select: { id: true, productVariant: { select: { id: true } } },
+      })
+      const bagItemToDelete = reservedBagItems.find(
+        a => a.productVariant.id === productVariant.id
+      )
+      promises.push(
+        this.prisma.client.bagItem.delete({ where: { id: bagItemToDelete.id } })
+      )
+
+      const reservationToUpdate = await this.prisma.client.reservation.findFirst(
+        {
+          where: {
+            products: { some: { productVariant: { id: productVariant.id } } },
+            customer: { id: customer.id },
+          },
+          orderBy: { createdAt: "desc" },
+          select: { id: true, status: true },
+        }
+      )
+      const shouldCompleteReservation =
+        reservedBagItems.length === 1 && !!bagItemToDelete
+      promises.push(
+        this.prisma.client.reservation.update({
+          where: { id: reservationToUpdate.id },
+          data: {
+            purchasedProducts: { connect: { id: physicalProductId } },
+            status: shouldCompleteReservation
+              ? "Completed"
+              : reservationToUpdate.status,
+          },
+        })
+      )
     }
 
-    const [updatedOrder] = await this.prisma.client.$transaction([
-      this.prisma.client.order.update({
-        where: { id: order.id },
-        data: {
-          status: orderNeedsShipping ? "Submitted" : "Fulfilled",
-          paymentStatus:
-            chargebeeInvoice.status === "paid" ? "Paid" : "NotPaid",
-          ...orderShippingUpdate,
-        },
-      }),
-      this.prisma.client.physicalProduct.update({
-        where: { id: physicalProductId },
-        data: {
-          inventoryStatus: "Offloaded",
-          offloadMethod: "SoldToUser",
-          offloadNotes: `Order Number: ${orderWithData.orderNumber}`,
-        },
-      }),
-      this.prisma.client.productVariant.update({
-        where: { id: productVariant.id },
-        data: updateProductVariantData,
-      }),
-    ])
+    promises.push(
+      ...[
+        this.prisma.client.physicalProduct.update({
+          where: { id: physicalProductId },
+          data: {
+            inventoryStatus: "Offloaded",
+            offloadMethod: "SoldToUser",
+            offloadNotes: `Order Number: ${orderWithData.orderNumber}`,
+          },
+        }),
+        this.prisma.client.productVariant.update({
+          where: { id: productVariant.id },
+          data: updateProductVariantData,
+        }),
+        this.prisma.client.order.update({
+          where: { id: order.id },
+          data: {
+            status: orderNeedsShipping ? "Submitted" : "Fulfilled",
+            paymentStatus:
+              chargebeeInvoice.status === "paid" ? "Paid" : "NotPaid",
+            ...orderShippingUpdate,
+          },
+          select: merge(
+            select,
+            Prisma.validator<Prisma.OrderSelect>()({
+              id: true,
+              orderNumber: true,
+            })
+          ),
+        }),
+      ]
+    )
+    const results = await this.prisma.client.$transaction(promises)
+    const updatedOrder = results.pop()
 
-    await this.email.sendBuyUsedOrderConfirmationEmail(user, updatedOrder)
+    await this.email.sendBuyUsedOrderConfirmationEmail(user, orderWithData)
 
-    return (await this.prisma.client.order.findUnique({
-      where: { id: updatedOrder.id },
-      select,
-    })) as Order
+    return updatedOrder
   }
 
   async updateOrderStatus({
     orderID,
     status,
-
     select,
   }: {
     orderID: string
@@ -950,7 +1009,7 @@ export class OrderService {
       line1: location?.address1,
       line2: location?.address2,
       city: location?.city,
-      state_code: location?.state,
+      state_code: this.utils.abbreviateState(location?.state),
       zip: location?.zipCode,
       country: location?.country || "US",
     }

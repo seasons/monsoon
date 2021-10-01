@@ -2,6 +2,7 @@ import { Customer, User } from "@app/decorators"
 import { Application } from "@app/decorators/application.decorator"
 import { Select } from "@app/decorators/select.decorator"
 import { Args, Info, Mutation, Resolver } from "@nestjs/graphql"
+import { BagItemStatus } from "@prisma/client"
 import { PrismaService } from "@prisma1/prisma.service"
 import slugify from "slugify"
 
@@ -36,37 +37,41 @@ export class ProductMutationsResolver {
   }
 
   @Mutation()
-  async deleteBagItem(@Args() { itemID, type }, @Application() application) {
-    if (application === "spring") {
-      await this.bagService.deleteBagItemFromAdmin(itemID, type)
-    } else {
-      await this.prisma.client.bagItem.delete({ where: { id: itemID } })
-    }
+  async deleteBagItem(@Args() { itemID, type }) {
+    await this.prisma.client.bagItem.delete({ where: { id: itemID } })
     return true
   }
 
   @Mutation()
-  async addToBag(
-    @Args() args,
-    @Customer() customer,
-    @Select() select,
-    @Application() application
+  async swapBagItem(
+    @Args() { oldItemID, seasonsUID },
+    @Application() application,
+    @Select() select
   ) {
-    if (application === "spring") {
-      const { customerID, item, status, saved } = args
-      return await this.bagService.addBagItemFromAdmin(
-        customerID,
-        item,
-        status,
-        saved
-      )
-    } else {
-      if (!customer) {
-        throw new Error(`Can not add to bag without a logged in customer`)
-      }
-      const { item } = args
-      return await this.bagService.addToBag(item, customer, select)
+    if (application !== "spring") {
+      throw new Error("Can only swap bag items from Admin")
     }
+
+    const physicalProductForSwap = await this.prisma.client.physicalProduct.findUnique(
+      {
+        where: { seasonsUID: seasonsUID },
+        select: { id: true, inventoryStatus: true, seasonsUID: true },
+      }
+    )
+    if (physicalProductForSwap.inventoryStatus !== "Reservable") {
+      throw new Error("This item is not reservable")
+    }
+
+    return await this.bagService.swapBagItem(oldItemID, seasonsUID, select)
+  }
+
+  @Mutation()
+  async addToBag(@Args() args, @Customer() customer, @Select() select) {
+    if (!customer) {
+      throw new Error(`Can not add to bag without a logged in customer`)
+    }
+    const { item } = args
+    return await this.bagService.addToBag(item, customer, select)
   }
 
   @Mutation()

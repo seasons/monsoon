@@ -39,6 +39,14 @@ export class PhysicalProductMutationsResolver {
   }
 
   @Mutation()
+  async stowItems(@Args() { ids, warehouseLocationBarcode }) {
+    return this.physicalProductService.stowItems({
+      ids: ids,
+      warehouseLocationBarcode: warehouseLocationBarcode,
+    })
+  }
+
+  @Mutation()
   async createPhysicalProductQualityReport(@Args() { data }, @Select() select) {
     const prisma2Data = this.queryUtils.prismaOneToPrismaTwoMutateData(
       data,

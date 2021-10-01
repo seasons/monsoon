@@ -1,5 +1,6 @@
 import { SearchService } from "@app/modules/Search"
 import { SearchResultType } from "@app/modules/Search/services/search.service"
+import { ProductUtilsService } from "@app/modules/Utils/services/product.utils.service"
 import { QueryUtilsService } from "@app/modules/Utils/services/queryUtils.service"
 import { SizeType } from "@app/prisma/prisma.binding"
 import { ImageData } from "@modules/Image/image.types.d"
@@ -32,7 +33,6 @@ import { UtilsService } from "../../Utils/services/utils.service"
 import { bottomSizeRegex } from "../constants"
 import { ProductWithPhysicalProducts } from "../product.types.d"
 import { PhysicalProductUtilsService } from "./physicalProduct.utils.service"
-import { ProductUtilsService } from "./product.utils.service"
 import { ProductVariantService } from "./productVariant.service"
 
 @Injectable()
@@ -644,9 +644,15 @@ export class ProductService {
         brand: { select: { id: true, brandCode: true } },
         color: { select: { id: true, name: true } },
         season: { select: { id: true } },
-        category: { select: { id: true } },
+        category: {
+          select: { id: true, dryCleaningFee: true, recoupment: true },
+        },
         functions: { select: { name: true } },
         tags: { select: { name: true } },
+        recoupment: true,
+        wholesalePrice: true,
+        rentalPriceOverride: true,
+        computedRentalPrice: true,
       },
     })
 
@@ -710,6 +716,30 @@ export class ProductService {
       product.category,
       updateData.retailPrice
     )
+
+    // Note: Technically, we should also take the category into account here. But that is complicated
+    // logic, so we instead allow that case to fallback to the cron job which caches rental prices at 4AM everyday
+    let updatedRentalPrice = product.computedRentalPrice
+    if (
+      updateData.recoupment !== product.recoupment ||
+      updateData.wholesalePrice !== product.wholesalePrice ||
+      updateData.rentalPriceOverride !== product.rentalPriceOverride
+    ) {
+      updatedRentalPrice = this.productUtils.calcRentalPrice(
+        {
+          recoupment: updateData.recoupment || product.recoupment,
+          wholesalePrice: updateData.wholesalePrice || product.wholesalePrice,
+          rentalPriceOverride:
+            updateData.rentalPriceOverride || product.rentalPriceOverride,
+          category: {
+            dryCleaningFee: product.category.dryCleaningFee,
+            recoupment: product.category.recoupment,
+          },
+        },
+        { ignoreOverride: false }
+      )
+    }
+
     const updateInput = {
       ...prismaTwoUpdateData,
       tier: { connect: { id: tier.id } },
@@ -756,6 +786,7 @@ export class ProductService {
       },
       status,
       photographyStatus,
+      computedRentalPrice: updatedRentalPrice,
     }
 
     const productUpdatePromise = this.prisma.client.product.update({
@@ -1121,6 +1152,43 @@ export class ProductService {
       take,
     })) as [Product]
     return data
+  }
+
+  async signupPersonalDetailsProducts(select): Promise<[Product]> {
+    const brands = (await this.prisma.client.brand.findMany({
+      where: {
+        slug: {
+          in: [
+            "jacquemus",
+            "auralee",
+            "craig-green",
+            "casablanca",
+            "marni",
+            "martine-rose",
+            "bode",
+            "our-legacy",
+            "erl",
+            "deveaux",
+            "keenkee",
+            "rhude",
+            "nanushka",
+            "judy-turner",
+            "phipps",
+          ],
+        },
+      },
+      select: {
+        id: true,
+        products: {
+          orderBy: { publishedAt: "desc" },
+          take: 1,
+          where: { status: "Available" },
+          select,
+        },
+      },
+    })) as any
+
+    return brands.flatMap(brand => brand.products)
   }
 
   private validateCreateProductInput(input) {

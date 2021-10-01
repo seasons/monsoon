@@ -1,9 +1,11 @@
 import { BillingAddress, Card } from "@app/modules/Payment/payment.types"
+import { RentalService } from "@app/modules/Payment/services/rental.service"
 import { SubscriptionService } from "@app/modules/Payment/services/subscription.service"
+import { CustomerService } from "@app/modules/User/services/customer.service"
 import { PaymentUtilsService } from "@app/modules/Utils/services/paymentUtils.service"
 import { UtilsService } from "@app/modules/Utils/services/utils.service"
 import { AuthService } from "@modules/User/services/auth.service"
-import { Injectable, Logger } from "@nestjs/common"
+import { Inject, Injectable, Logger, forwardRef } from "@nestjs/common"
 import { ModuleRef } from "@nestjs/core"
 import { PrismaService } from "@prisma1/prisma.service"
 import sgMail from "@sendgrid/mail"
@@ -32,8 +34,11 @@ export class UserCommands {
     private readonly prisma: PrismaService,
     private readonly utils: UtilsService,
     private readonly paymentUtils: PaymentUtilsService,
+    @Inject(forwardRef(() => RentalService))
+    private readonly rental: RentalService,
     private moduleRef: ModuleRef,
-    private readonly subscription: SubscriptionService
+    private readonly subscription: SubscriptionService,
+    private readonly customer: CustomerService
   ) {}
 
   @Command({
@@ -108,7 +113,7 @@ export class UserCommands {
       name: "planID",
       describe: "Subscription plan of the user",
       type: "string",
-      default: "essential-2",
+      default: "access-monthly",
       choices: [
         "all-access",
         "essential",
@@ -116,6 +121,8 @@ export class UserCommands {
         "essential-1",
         "all-access-2",
         "essential-2",
+        "access-monthly",
+        "access-yearly",
       ],
     })
     planID,
@@ -147,14 +154,6 @@ export class UserCommands {
       ],
     })
     status,
-    @Option({
-      name: "allAccessEnabled",
-      alias: "aa",
-      describe: "Whether or not the customer should have all access enabled",
-      type: "boolean",
-      default: "true",
-    })
-    allAccessEnabled,
     @Option({
       name: "phone number",
       describe: `Phone Number for the user`,
@@ -287,7 +286,7 @@ export class UserCommands {
           this.utils.snakeCaseify(card)
         )
 
-        await this.prisma.client.customer.update({
+        const cust = await this.prisma.client.customer.update({
           data: {
             membership: {
               create: {
@@ -321,7 +320,14 @@ export class UserCommands {
           },
 
           where: { id: customer.id },
+          select: {
+            detail: { select: { shippingAddress: { select: { id: true } } } },
+          },
         })
+        await this.customer.addCustomerLocationShippingOptions(
+          "NY",
+          cust.detail.shippingAddress.id
+        )
 
         await this.prisma.client.billingInfo.create({
           data: {
@@ -337,6 +343,10 @@ export class UserCommands {
             },
           },
         })
+
+        if (["access-monthly", "access-yearly"].includes(planID)) {
+          await this.rental.initFirstRentalInvoice(customer.id)
+        }
       }
 
       // Give them a valid admissions record if appropriate
@@ -353,7 +363,7 @@ export class UserCommands {
           data: {
             admissions: {
               create: {
-                allAccessEnabled,
+                allAccessEnabled: false,
                 admissable: true,
                 authorizationsCount,
                 inServiceableZipcode: true,

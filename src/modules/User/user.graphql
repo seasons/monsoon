@@ -80,13 +80,22 @@ type ResetPasswordPayload {
   message: String!
 }
 
+enum ReservationLineItemsFilter {
+  AllItems
+  NewItems
+}
+
 type Me @cacheControl(maxAge: 0, scope: PRIVATE) {
   id: ID
   user: User
   customer: Customer
   activeReservation: Reservation
-  bag: [BagItem!]
+  bag(status: BagItemStatus): [BagItem!]
   savedItems: [BagItem!]
+  reservationLineItems(
+    filterBy: ReservationLineItemsFilter
+    shippingCode: String
+  ): [ReservationLineItem!]
   notificationBar: NotificationBar
   nextFreeSwapDate: DateTime
 }
@@ -147,6 +156,7 @@ type UserLinks {
   mixpanel: String!
   sendgrid: String!
   intercom: String!
+  chargebee: String!
 }
 
 type User {

@@ -1,3 +1,4 @@
+import { ProductUtilsService } from "@app/modules/Utils/services/product.utils.service"
 import { QueryUtilsService } from "@app/modules/Utils/services/queryUtils.service"
 import { TestUtilsService } from "@app/modules/Utils/services/test.service"
 import { UtilsService } from "@app/modules/Utils/services/utils.service"
@@ -8,7 +9,6 @@ import { InventoryStatus } from "@prisma/client"
 import { ProductModuleDef } from "../product.module"
 import { ProductWithPhysicalProducts } from "../product.types.d"
 import { ProductService } from "../services/product.service"
-import { ProductUtilsService } from "../services/product.utils.service"
 
 const ONE_MIN = 60000
 
@@ -44,11 +44,7 @@ xdescribe("Store Product", () => {
     )
     utilsService = moduleRef.get<UtilsService>(UtilsService)
     queryUtilsService = moduleRef.get<QueryUtilsService>(QueryUtilsService)
-    testUtilsService = new TestUtilsService(
-      prismaService,
-      utilsService,
-      queryUtilsService
-    )
+    testUtilsService = new TestUtilsService(prismaService, utilsService)
     done()
   })
 

@@ -1,9 +1,8 @@
 import { LoaderParams } from "@app/modules/DataLoader/dataloader.types.d"
 import { Loader } from "@app/modules/DataLoader/decorators/dataloader.decorator"
+import { ProductUtilsService } from "@app/modules/Utils/services/product.utils.service"
 import { Parent, ResolveField, Resolver } from "@nestjs/graphql"
 import { Prisma } from "@prisma/client"
-
-import { ProductUtilsService } from "../services/product.utils.service"
 
 const measurementLoader = {
   params: {

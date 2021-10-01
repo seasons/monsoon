@@ -5,8 +5,10 @@ import { DateTime } from "@app/prisma/prisma.binding"
 import { Injectable } from "@nestjs/common"
 import {
   AdminActionLog,
+  Category,
   PauseRequest,
   Prisma,
+  Product,
   SyncTimingType,
 } from "@prisma/client"
 import { Location } from "@prisma/client"
@@ -43,16 +45,11 @@ enum ProductSize {
   Universal = "Universal",
 }
 
-// TODO: As needed, support other types. We just need to update the code
-// that filters out computed fields
 type InfoStringPath = "user" | "customer"
 
 @Injectable()
 export class UtilsService {
-  constructor(
-    private readonly prisma: PrismaService,
-    private readonly queryUtils: QueryUtilsService
-  ) {}
+  constructor(private readonly prisma: PrismaService) {}
 
   formatUTMForSegment = (utm: UTMData) => ({
     utm_source: utm?.source,
@@ -63,6 +60,10 @@ export class UtilsService {
   })
 
   abbreviateState(state: string) {
+    if (!state) {
+      return ""
+    }
+
     if (state.length === 2) {
       return state
     }
@@ -79,15 +80,6 @@ export class UtilsService {
     }
 
     return abbr
-  }
-
-  // Returns an ISO string for a date that's X days ago
-  xDaysAgoISOString(x: number) {
-    return moment().subtract(x, "days").format()
-  }
-
-  xDaysFromNowISOString(x: number) {
-    return moment().add(x, "days").format()
   }
 
   randomString() {
@@ -432,6 +424,7 @@ export class UtilsService {
               inventoryStatus: true,
               productStatus: true,
               productVariant: { select: { id: true } },
+              warehouseLocation: { select: { id: true } },
             },
           },
           receivedAt: true,
@@ -500,5 +493,23 @@ export class UtilsService {
     }
 
     return syncTiming
+  }
+
+  async getUniqueReservationNumber(): Promise<number> {
+    let reservationNumber: number
+    let foundUnique = false
+    while (!foundUnique) {
+      reservationNumber = Math.floor(Math.random() * 900000000) + 100000000
+      const reservationWithThatNumber = await this.prisma.client.reservation.findUnique(
+        {
+          where: {
+            reservationNumber,
+          },
+        }
+      )
+      foundUnique = !reservationWithThatNumber
+    }
+
+    return reservationNumber
   }
 }

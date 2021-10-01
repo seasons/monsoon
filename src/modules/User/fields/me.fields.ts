@@ -1,13 +1,14 @@
 import { Customer, User } from "@app/decorators"
 import { Select } from "@app/decorators/select.decorator"
+import { ReservationService } from "@app/modules/Reservation/services/reservation.service"
 import { CustomerService } from "@app/modules/User/services/customer.service"
 import { CustomerUtilsService } from "@app/modules/User/services/customer.utils.service"
 import { StatementsService } from "@app/modules/Utils/services/statements.service"
-import { Info, ResolveField, Resolver } from "@nestjs/graphql"
+import { Args, ResolveField, Resolver } from "@nestjs/graphql"
+import { BagItemStatus } from "@prisma/client"
 import { PrismaService } from "@prisma1/prisma.service"
-import { head } from "lodash"
+import { merge } from "lodash"
 
-// estimate on customer --> membership --> plan requires planID to be on the plan
 const EnsureFieldsForDownstreamFieldResolvers = `fragment EnsureFieldsForDownstreamFieldResolvers on Customer {
   id
   membership {
@@ -22,7 +23,8 @@ export class MeFieldsResolver {
     private readonly prisma: PrismaService,
     private readonly customerService: CustomerService,
     private readonly statements: StatementsService,
-    private readonly customerUtils: CustomerUtilsService
+    private readonly customerUtils: CustomerUtilsService,
+    private readonly reservation: ReservationService
   ) {}
 
   @ResolveField()
@@ -107,7 +109,11 @@ export class MeFieldsResolver {
   }
 
   @ResolveField()
-  async bag(@Customer() customer, @Select() select) {
+  async bag(
+    @Args() { status }: { status?: BagItemStatus },
+    @Customer() customer,
+    @Select() select
+  ) {
     if (!customer) {
       return null
     }
@@ -117,10 +123,20 @@ export class MeFieldsResolver {
           id: customer.id,
         },
         saved: false,
+        status,
       },
-      select,
+      select: merge(select, {
+        status: true,
+      }),
     })
-    return bagItems
+
+    const sortValues = {
+      Reserved: 0,
+      Received: 1,
+      Added: 2,
+    }
+
+    return bagItems.sort((a, b) => sortValues[a.status] - sortValues[b.status])
   }
 
   @ResolveField()
@@ -141,6 +157,19 @@ export class MeFieldsResolver {
       select,
     })
     return savedItems
+  }
+
+  @ResolveField()
+  async reservationLineItems(@Args() args, @Customer() customer) {
+    const { filterBy, shippingCode } = args
+
+    const result = await this.reservation.draftReservationLineItems({
+      customer,
+      filterBy,
+      shippingCode,
+    })
+
+    return result
   }
 
   @ResolveField()

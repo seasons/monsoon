@@ -74,7 +74,7 @@ xdescribe("Payment Service", () => {
     const queryUtilsService = moduleRef.get<QueryUtilsService>(
       QueryUtilsService
     )
-    testUtils = new TestUtilsService(prisma, utilsService, queryUtilsService)
+    testUtils = new TestUtilsService(prisma, utilsService)
     paymentService = moduleRef.get<PaymentService>(PaymentService)
   })
 

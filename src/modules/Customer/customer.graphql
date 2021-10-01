@@ -41,6 +41,8 @@ enum DeleteBagItemType {
 }
 
 type Mutation {
+  swapBagItem(oldItemID: ID!, seasonsUID: String!): BagItem!
+    @hasRole(roles: [Admin])
   addToBag(
     item: ID!
     customerID: ID
@@ -101,6 +103,7 @@ enum OnboardingStep {
   SetShippingAddress
 }
 
+# isSwapped nowhere in sight
 type Customer {
   id: ID!
   user: User!
@@ -143,6 +146,7 @@ type Customer {
   onboardingSteps: [OnboardingStep!]!
   admissions: CustomerAdmissionsData
   utm: UTMData
+  nextFreeSwapDateAt: DateTime
   authorizedAt: DateTime
   createdAt: DateTime!
   updatedAt: DateTime!
@@ -154,10 +158,15 @@ input NotificationBarReceiptUpdateInput {
   viewCount: Int
   clickCount: Int
 }
+
 type CustomerMembership {
   id: ID!
   subscriptionId: String!
   plan: PaymentPlan
+  creditBalance: Int
+  adjustedCreditBalance: Int
+  currentRentalInvoice: RentalInvoice
+  rentalInvoices: [RentalInvoice!]
   pauseRequests(
     where: PauseRequestWhereInput
     orderBy: PauseRequestOrderByInput

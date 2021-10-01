@@ -14,11 +14,6 @@ const run = async () => {
   const app = await NestFactory.createApplicationContext(AppModule)
   const auth = app.get(AuthService)
   const customers = await ps.client.customer.findMany({
-    where: {
-      referralLink: {
-        equals: null,
-      },
-    },
     select: {
       id: true,
       referralLink: true,
@@ -39,11 +34,10 @@ const run = async () => {
       await new Promise(r => setTimeout(r, 1000))
       await auth.updateCustomerWithReferrerData(c.user, c, null)
       //   console.log("c", c)
-      console.log(count)
     }
   }
 
-  console.log("count fixed: ", count)
+  console.log("count", count)
 }
 
 const test = async () => {
