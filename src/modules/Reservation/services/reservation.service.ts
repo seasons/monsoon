@@ -1197,7 +1197,7 @@ export class ReservationService {
     } = await this.shippingService.getShippingRateForVariantIDs(variantIDs, {
       customer,
       includeSentPackage: !hasFreeSwap,
-      includeReturnPackage: true,
+      includeReturnPackage: !hasFreeSwap,
       serviceLevel:
         shippingCode === "UPSGround"
           ? UPSServiceLevel.Ground
