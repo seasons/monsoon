@@ -1,4 +1,5 @@
 import { Customer, User } from "@app/decorators"
+import { MaxIOSVersion } from "@app/decorators/maxIOSVersion.decorator"
 import { PrismaGenerateParams } from "@app/modules/DataLoader/dataloader.types.d"
 import { TransactionsForCustomersLoader } from "@app/modules/Payment/loaders/transactionsForCustomers.loader"
 import { CustomerUtilsService } from "@app/modules/User/services/customer.utils.service"
@@ -32,13 +33,61 @@ export class CustomerFieldsResolver {
     private readonly customerUtils: CustomerUtilsService
   ) {}
 
+  @ResolveField()
+  async iOSAppStatus(
+    @Parent() customer,
+    @MaxIOSVersion() maxIOSVersion,
+    @Loader({
+      params: {
+        model: "Customer",
+        select: Prisma.validator<Prisma.CustomerSelect>()({
+          id: true,
+          user: {
+            select: {
+              deviceData: {
+                select: {
+                  iOSVersion: true,
+                  iOSMajorVersion: true,
+                  iOSMinorVersion: true,
+                  iOSPatch: true,
+                },
+              },
+            },
+          },
+        }),
+      },
+    })
+    customerLoader: PrismaDataLoader<any>
+  ) {
+    const custWithData = await customerLoader.load(customer.id)
+    if (!custWithData.user.deviceData) {
+      return "NoRecord"
+    }
+
+    const sameMajorVersion =
+      custWithData.user.deviceData.iOSMajorVersion ===
+      maxIOSVersion.iOSMajorVersion
+    const sameMinorVersion =
+      custWithData.user.deviceData.iOSMinorVersion ===
+      maxIOSVersion.iOSMinorVersion
+    const samePatch =
+      custWithData.user.deviceData.iOSPatch === maxIOSVersion.iOSPatch
+    const upToDate = sameMajorVersion && sameMinorVersion && samePatch
+
+    if (upToDate) {
+      return "UpToDate"
+    }
+
+    return "Outdated"
+  }
+
   /*
    * While we transition to new plan types some customers will be
    * grandfathered in with the original plan, i.e. essential and all-access
    */
   @ResolveField()
   async grandfathered(
-    @Customer() _customer,
+    @Parent() _customer,
     @Loader({
       params: {
         model: "Customer",
@@ -211,7 +260,7 @@ export class CustomerFieldsResolver {
   }
 
   @ResolveField()
-  async shouldPayForNextReservation(@Customer() customer) {
+  async shouldPayForNextReservation(@Parent() customer) {
     // TODO: add loader
     const lastReservation = await this.utils.getLatestReservation(customer.id)
 
