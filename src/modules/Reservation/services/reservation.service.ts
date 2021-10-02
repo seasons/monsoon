@@ -123,7 +123,7 @@ export class ReservationService {
       throw new Error(`Only Active customers can place a reservation`)
     }
 
-    // Validate address and
+    // Validate address and provide suggested one if needed
     const {
       isValid: shippingAddressIsValid,
     } = await this.shippingService.shippoValidateAddress({
