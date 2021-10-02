@@ -2,6 +2,8 @@ import { PrismaService } from "@app/prisma/prisma.service"
 import { UtilsService } from "@modules/Utils/services/utils.service"
 import { Injectable } from "@nestjs/common"
 import { Customer, Package, ShippingCode, User } from "@prisma/client"
+import { ApolloError } from "apollo-server"
+import { pick, startCase, toLower } from "lodash"
 import shippo from "shippo"
 
 import {
@@ -186,142 +188,13 @@ export class ShippingService {
 
     const isValid = result.validation_results.is_valid
 
-    // Shippo is very particular about how it formats street1 and street2
-    // This function tries to do a "fuzzy match" between the street1/stret2
-    // pair given and the pair returned in the result. It does that by
-    // checking for various permutations of "fuzzy equality".
     const streetFuzzyMatches = (original, result) => {
-      const performCommonShippoTranslations = x => {
-        let translatedValue = !!x ? `${x}`.toLowerCase() : ""
-
-        const replaceCommonWord = (longForm: string, shortForm: string) => {
-          const lcLongForm = longForm.toLowerCase()
-          const lcShortForm = shortForm.toLowerCase()
-          const regex = new RegExp(` ${lcLongForm}\s?`) // space|word|optionalSpace
-
-          const longFormMatch = translatedValue.match(regex)
-          if (!!longFormMatch) {
-            const spaceAfterMatch = longFormMatch[0].endsWith(" ")
-            if (spaceAfterMatch) {
-              translatedValue = translatedValue.replace(
-                ` ${lcLongForm} `,
-                ` ${lcShortForm} `
-              )
-            } else {
-              translatedValue = translatedValue.replace(
-                ` ${lcLongForm}`,
-                ` ${lcShortForm}`
-              )
-            }
-          }
-        }
-        replaceCommonWord("street", "st")
-        replaceCommonWord("drive", "dr")
-        replaceCommonWord("place", "pl")
-        replaceCommonWord("avenue", "ave")
-        replaceCommonWord("apt.", "apt")
-        replaceCommonWord("west", "w")
-        replaceCommonWord("east", "e")
-        replaceCommonWord("north", "n")
-        replaceCommonWord("south", "s")
-        replaceCommonWord("point", "pt")
-        replaceCommonWord("road", "rd")
-        replaceCommonWord("st.", "st")
-        replaceCommonWord("dr.", "dr")
-        replaceCommonWord("pl.", "pl")
-        replaceCommonWord("pt.", "pt")
-        replaceCommonWord("rd.", "rd")
-        replaceCommonWord("cove", "cv")
-        replaceCommonWord("cv.", "cv")
-        replaceCommonWord("trail", "trl")
-        replaceCommonWord("trl.", "trl")
-        replaceCommonWord("lane", "ln")
-        replaceCommonWord("ln.", "ln")
-        replaceCommonWord("terrace", "ter")
-        replaceCommonWord("ter.", "ter")
-
-        return translatedValue
-      }
-
-      const fuzzyStreetEquals = (addressStreet, resultStreet) => {
-        const equalWithoutTranslations = fuzzyEquals(
-          addressStreet,
-          resultStreet
-        )
-        const equalWithTranslations = fuzzyEquals(
-          performCommonShippoTranslations(addressStreet),
-          resultStreet
-        )
-
-        return equalWithTranslations || equalWithoutTranslations
-      }
-
-      const basicallyEqual = fuzzyStreetEquals(address.street1, result.street1)
-
-      const equalOnceStreetsCombined = fuzzyStreetEquals(
-        `${address.street1} ${address.street2}`,
+      const basicallyEqual = fuzzyEquals(original.street1, result.street1)
+      const equalOnceStreetsCombined = fuzzyEquals(
+        `${original.street1} ${original.street2}`,
         result.street1
       )
-
-      const equalExceptForAnApartmentQualifier =
-        // No apartment qualifer in original address
-        fuzzyStreetEquals(
-          `${address.street1} Apt ${address.street2}`,
-          result.street1
-        ) ||
-        fuzzyStreetEquals(
-          `${address.street1} # ${address.street2}`,
-          result.street1
-        ) ||
-        fuzzyStreetEquals(
-          `${address.street1} Unit ${address.street2}`,
-          result.street1
-        ) ||
-        // original address had something like #4b
-        fuzzyStreetEquals(
-          `${address.street1} ${address.street2}`
-            .toLowerCase()
-            .replace(" #", " unit "),
-          result.street1
-        ) ||
-        fuzzyStreetEquals(
-          `${address.street1} ${address.street2}`
-            .toLowerCase()
-            .replace(" #", " apt "),
-          result.street1
-        ) ||
-        fuzzyStreetEquals(
-          `${address.street1} ${address.street2}`
-            .toLowerCase()
-            .replace(" #", " # "),
-          result.street1
-        ) ||
-        // original address had apt. shippo wants unit
-        fuzzyStreetEquals(
-          `${address.street1} ${address.street2}`
-            .toLowerCase()
-            .replace(" apt ", " unit "),
-          result.street1
-        ) ||
-        // original address had unit. shippo wants apt
-        fuzzyStreetEquals(
-          `${address.street1} ${address.street2}`
-            .toLowerCase()
-            .replace(" unit ", " apt "),
-          result.street1
-        )
-
-      // In some cases, the address is so edge casey that we can just let it
-      // slide through shippo validation, and catch any errors at label creation
-      // time. e.g if the street 2 is an entire floor "4th floor"
-      const streetException = address.street2?.toLowerCase()?.endsWith("floor")
-
-      return (
-        basicallyEqual ||
-        equalOnceStreetsCombined ||
-        equalExceptForAnApartmentQualifier ||
-        streetException
-      )
+      return basicallyEqual || equalOnceStreetsCombined
     }
 
     const streetMatches = streetFuzzyMatches(address, result)
@@ -340,15 +213,18 @@ export class ShippingService {
     if (isValid && needToSuggestAddress) {
       // Clients rely on exact copy of error message to power
       // suggested address flow
-      throw new ApolloError("Need to Suggest Address", "400", {
-        suggestedAddress: pick(result, [
+      const suggestedAddress = {
+        ...pick(result, [
           "city",
           "country",
           "state",
-          "street1",
           "street2",
           "zip",
+          "street1",
         ]),
+      }
+      throw new ApolloError("Need to Suggest Address", "400", {
+        suggestedAddress,
         failureMode: !streetMatches
           ? "Street mismatch"
           : !cityMatches
