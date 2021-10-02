@@ -119,6 +119,10 @@ export class ReservationService {
       },
     })
 
+    if (customerWithData.status !== "Active") {
+      throw new Error(`Only Active customers can place a reservation`)
+    }
+
     // Validate address and
     const {
       isValid: shippingAddressIsValid,
@@ -131,10 +135,6 @@ export class ReservationService {
     })
     if (!shippingAddressIsValid) {
       throw new Error("Shipping address is invalid")
-    }
-
-    if (customerWithData.status !== "Active") {
-      throw new Error(`Only Active customers can place a reservation`)
     }
 
     const promises = []
