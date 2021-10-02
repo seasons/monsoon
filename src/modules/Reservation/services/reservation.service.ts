@@ -91,6 +91,19 @@ export class ReservationService {
       select: {
         id: true,
         status: true,
+        detail: {
+          select: {
+            shippingAddress: {
+              select: {
+                state: true,
+                address1: true,
+                address2: true,
+                city: true,
+                zipCode: true,
+              },
+            },
+          },
+        },
         membership: {
           select: {
             plan: { select: { itemCount: true, tier: true } },
@@ -105,6 +118,20 @@ export class ReservationService {
         },
       },
     })
+
+    // Validate address and
+    const {
+      isValid: shippingAddressIsValid,
+    } = await this.shippingService.shippoValidateAddress({
+      street1: customerWithData.detail.shippingAddress.address1,
+      street2: customerWithData.detail.shippingAddress.address2,
+      city: customerWithData.detail.shippingAddress.city,
+      state: customerWithData.detail.shippingAddress.state,
+      zip: customerWithData.detail.shippingAddress.zipCode,
+    })
+    if (!shippingAddressIsValid) {
+      throw new Error("Shipping address is invalid")
+    }
 
     if (customerWithData.status !== "Active") {
       throw new Error(`Only Active customers can place a reservation`)
