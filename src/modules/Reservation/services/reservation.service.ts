@@ -1210,7 +1210,7 @@ export class ReservationService {
 
     return [
       {
-        name: "Base Fee",
+        name: "Processing",
         recordType: "Fee",
         price: 550,
       },
