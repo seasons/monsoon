@@ -895,7 +895,7 @@ export class ReservationService {
 
     const promises = []
 
-    const bagItemIDs = await this.prisma.client.bagItem.findMany({
+    const bagItems = await this.prisma.client.bagItem.findMany({
       where: {
         physicalProductId: {
           in: physicalProductIDs,
@@ -903,6 +903,8 @@ export class ReservationService {
       },
       select: {
         id: true,
+        productVariant: true,
+        physicalProduct: true,
       },
     })
 
@@ -912,11 +914,62 @@ export class ReservationService {
           customer: { id: currentReservation?.customer?.id },
           saved: false,
           id: {
-            in: bagItemIDs.map(a => a.id),
+            in: bagItems.map(a => a.id),
           },
         },
       })
     )
+
+    for (let bagItem of bagItems) {
+      const physicalProduct = bagItem.physicalProduct
+      const productVariant = bagItem.productVariant as any
+      const product = productVariant.product
+
+      const inventoryStatus: InventoryStatus = "EarlyReturned"
+
+      const updateData = {
+        productStatus: "Dirty" as PhysicalProductStatus,
+        inventoryStatus,
+      }
+
+      const productVariantData = this.productVariantService.getCountsForStatusChange(
+        {
+          productVariant,
+          oldInventoryStatus: physicalProduct.inventoryStatus as InventoryStatus,
+          newInventoryStatus: updateData.inventoryStatus as InventoryStatus,
+        }
+      )
+
+      promises.push(
+        this.prisma.client.product.update({
+          where: {
+            id: product.id,
+          },
+          data: {
+            variants: {
+              update: {
+                where: {
+                  id: productVariant.id,
+                },
+                data: {
+                  ...productVariantData,
+                  physicalProducts: {
+                    update: {
+                      where: {
+                        id: physicalProduct.id,
+                      },
+                      data: {
+                        ...updateData,
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        })
+      )
+    }
 
     promises.push(
       this.prisma.client.reservation.update({
@@ -924,12 +977,6 @@ export class ReservationService {
           id: reservationID,
         },
         data: {
-          products: {
-            updateMany: physicalProductIDs.map(a => ({
-              where: { id: a },
-              data: { inventoryStatus: "EarlyReturned" },
-            })),
-          },
           returnedProducts: {
             connect: physicalProductIDs.map(a => ({ id: a })),
           },
