@@ -124,7 +124,6 @@ enum ReservationStatus {
   Blocked
   Unknown
   Lost
-  Received
   EarlyReturned
   ReturnPending
 }
