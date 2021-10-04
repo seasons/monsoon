@@ -158,7 +158,6 @@ export class ReservationService {
           "Packed",
           "Shipped",
           "Delivered",
-          "Received",
           "Completed",
         ].includes(lastReservation.status)
         ? lastReservation
@@ -884,12 +883,12 @@ export class ReservationService {
     })
 
     if (
-      !["Delivered", "Recieved", "EarlyReturn"].includes(
+      !["Delivered", "Shipped", "EarlyReturned"].includes(
         currentReservation.status
       )
     ) {
       throw Error(
-        "Only reservations with status Delivered can have items returned early"
+        "Only reservations with status Delivered, Shipped, or EarlyReturned can have items returned early"
       )
     }
 
@@ -905,19 +904,6 @@ export class ReservationService {
         id: true,
       },
     })
-
-    promises.push(
-      this.prisma.client.customer.update({
-        where: {
-          id: currentReservation?.customer?.id,
-        },
-        data: {
-          bagItems: {
-            disconnect: bagItemIDs.map(a => a),
-          },
-        },
-      })
-    )
 
     promises.push(
       this.prisma.client.bagItem.deleteMany({
@@ -946,7 +932,7 @@ export class ReservationService {
           returnedProducts: {
             connect: physicalProductIDs.map(a => ({ id: a })),
           },
-          status: "EarlyReturn",
+          status: "EarlyReturned",
         },
       })
     )

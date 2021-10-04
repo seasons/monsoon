@@ -202,21 +202,6 @@ input ReservationWhereInput {
   q: String
 }
 
-enum ReservationStatus {
-  Queued
-  Picked
-  Packed
-  Shipped
-  Delivered
-  Completed
-  Cancelled
-  Hold
-  Blocked
-  Unknown
-  Lost
-  Received
-  EarlyReturn
-}
 input ReservationProcessReturnInput {
   reservationNumber: Int!
   productStates: [ProductStateInput!]!
