@@ -1,7 +1,7 @@
 import { PrismaService } from "@app/prisma/prisma.service"
 import { UtilsService } from "@modules/Utils/services/utils.service"
 import { Injectable } from "@nestjs/common"
-import { Customer, ShippingCode, User } from "@prisma/client"
+import { Customer, Package, ShippingCode, User } from "@prisma/client"
 import shippo from "shippo"
 
 import {
@@ -163,6 +163,12 @@ export class ShippingService {
     return productVariants.reduce((acc, curProdVar) => {
       return acc + curProdVar.weight
     }, shippingBagWeight)
+  }
+
+  async voidLabel(shipment: Pick<Package, "transactionID">) {
+    return await this.shippo.refund.create({
+      transaction: shipment.transactionID,
+    })
   }
 
   async shippoValidateAddress(address: CoreShippoAddressFields) {
