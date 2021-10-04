@@ -926,6 +926,7 @@ model OrderLineItem {
   reservationId String?                 @map("reservation") @db.VarChar(30)
   reservation   Reservation?            @relation(fields: [reservationId], references: [id])
   Order         Order[]
+  reservationPhysicalProduct ReservationPhysicalProduct[]
 }
 
 enum RentalInvoiceStatus {
@@ -996,6 +997,8 @@ model Package {
   reservationOnSentPackage     Reservation?          @relation("PackageToReservation_sentPackage")
   reservationOnReturnPackages  Reservation[]         @relation("PackageToReservationReturnPackages")
   items                        PhysicalProduct[]
+  sentReservationPhysicalproduct   ReservationPhysicalProduct[] @relation("SentPackage")
+  returnedReservationPhysicalProduct ReservationPhysicalProduct[] @relation("ReturnedPackage")
 }
 
 model PackageTransitEvent {
@@ -1085,6 +1088,7 @@ model PhysicalProduct {
   purchasedOnReservationId     String?                        @map("purchasedOnReservation") @db.VarChar(30)
   purchasedOnReservation       Reservation?                   @relation("ReservationToPurchasedProducts", fields: [purchasedOnReservationId], references: [id])
   bagItems                     BagItem[]
+  reservationPhysicalProduct   ReservationPhysicalProduct[]
 }
 
 model PhysicalProductPrice {
@@ -1375,6 +1379,7 @@ model Reservation {
   returnedProducts             PhysicalProduct[]     @relation("ReservationToReturnedProducts")
   rentalInvoice                RentalInvoice[]       @relation("RentalInvoiceToReservations")
   purchasedProducts            PhysicalProduct[]     @relation("ReservationToPurchasedProducts")
+  reservationPhysicalProduct   ReservationPhysicalProduct[]
 }
 
 enum ReservationDropOffAgent {
@@ -1398,53 +1403,48 @@ enum ReservationPhysicalProductStatus {
 }
 
 model ReservationPhysicalProduct {
-  id                      String
+  id                      String  @id @default(cuid()) @db.VarChar(30)
   isNew                   Boolean
 
   isPurchased             Boolean
   purchasedAt             DateTime?
 
-  # customer or UPS
   droppedOffBy             ReservationDropOffAgent?
   droppedOffAt            DateTime?
 
-  # item has been returned and processed by associate
   hasReturnProcessed      Boolean
   returnProcessedAt       DateTime?
 
-  # admin marked item as returned early, it's still on its way
   isResetEarlyByAdmin     Boolean
   resetEarlyByAdminAt     DateTime?
 
-  # denotes customer filling out the return flow
-  hasCustomerReturnIntent  Boolean
-  customerReturnIntentAt   DateTime?
+  hasCustomerReturnIntent Boolean
+  customerReturnIntentAt  DateTime?
 
   isLost                 Boolean
   lostAt                 DateTime?
-  lostInPhase            ReservationPhase?
+  lostInPhase ReservationPhase?
 
   isDeliveredToCustomer  Boolean
   deliveredToCustomerAt  DateTime?
 
-  isDeliveredToBusiness  Boolean
-  deliveredToBusinessAt  DateTime?
+  isDeliveredToBusiness Boolean
+  deliveredToBusinessAt DateTime?
 
-  # when UPS first gets the package into
   scannedOnReturnAt      DateTime?
   hasBeenScannedOnReturn Boolean
 
   scannedOnSendAt       DateTime?
   hasBeenScannedOnSend  Boolean
 
-  lineItemId             String?
-  lineItem               OrderLineItem? @relation(fields: [lineItemId], references: [id])
+  lineItemId      String?        @default(cuid()) @db.VarChar(30)
+  lineItem        OrderLineItem? @relation(fields: [lineItemId], references: [id])
 
-  sentPackageId          String?
-  sentPackage            Package? @relation(fields: [sentPackageId], references: [id])
+  sentPackageId          String?  @default(cuid()) @db.VarChar(30)
+  sentPackage            Package? @relation(name: "SentPackage", fields: [sentPackageId], references: [id])
 
-  returnPackageId        String?
-  returnPackage          Package? @relation(fields: [returnPackageId], references: [id])
+  returnPackageId        String?  @default(cuid()) @db.VarChar(30)
+  returnPackage          Package? @relation(name: "ReturnedPackage", fields: [returnPackageId], references: [id])
 
   physicalProductId      String? @map("physicalProduct") @db.VarChar(30)
   physicalProduct PhysicalProduct? @relation(fields: [physicalProductId], references: [id])
