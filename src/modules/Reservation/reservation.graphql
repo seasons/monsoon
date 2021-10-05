@@ -57,6 +57,11 @@ type Mutation {
   ): Reservation @hasRole(roles: [Admin])
   returnItems(items: [ID!]!): Reservation @hasRole(roles: [Customer])
   cancelReturn: Reservation @hasRole(roles: [Customer])
+  returnMultiItems(
+    trackingNumber: String
+    productStates: ProductStateInput
+    droppedOfBy: ReservationDropOffAgent
+  ): Boolean @hasRole(roles: [Admin])
 }
 
 type ReservationFeedback {
@@ -210,6 +215,11 @@ input ReservationProcessReturnInput {
   reservationNumber: Int!
   productStates: [ProductStateInput!]!
   trackingNumber: String
+}
+
+input ReservationDropOffAgent {
+  Customer: String
+  UPS: String
 }
 
 input ProductStateInput {
