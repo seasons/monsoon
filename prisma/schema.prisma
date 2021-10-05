@@ -1388,12 +1388,28 @@ enum ReservationDropOffAgent {
   UPS
 }
 
+enum ReservationPhysicalProductStatus {
+	Queued
+	Picked
+	Packed
+	ShippedToCustomer
+	ShippedToBusiness
+	DeliveredToCustomer
+	DeliveredToBusiness
+	ReturnProcessed
+	ResetEarly
+	Hold
+	Lost
+}
+
 model ReservationPhysicalProduct {
   id    String  @id @default(cuid()) @db.VarChar(30)
   isNew Boolean
 
   isPurchased Boolean
   purchasedAt DateTime?
+
+  status ReservationPhysicalProductStatus @default(value: Queued)
 
   // customer or UPS
   droppedOffBy ReservationDropOffAgent?
