@@ -827,12 +827,16 @@ export class ReservationService {
       const linesWithTotal = [
         ...lines,
         ...processingFeeLines,
-        {
-          name: "Taxes",
-          recordType: "Fee",
-          recordID: customer.id,
-          price: taxTotal,
-        },
+        ...(taxTotal > 0
+          ? [
+              {
+                name: "Taxes",
+                recordType: "Fee",
+                recordID: customer.id,
+                price: taxTotal,
+              },
+            ]
+          : []),
         ...(creditBalance > 0
           ? [
               {
