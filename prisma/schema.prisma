@@ -938,18 +938,19 @@ enum RentalInvoiceStatus {
 }
 
 model RentalInvoice {
-  id             String                  @id @default(cuid()) @db.VarChar(30)
-  createdAt      DateTime                @default(now())
-  updatedAt      DateTime                @updatedAt
-  membershipId   String                  @map("membership") @db.VarChar(30)
-  membership     CustomerMembership      @relation(fields: [membershipId], references: [id])
-  billingStartAt DateTime
-  billingEndAt   DateTime
-  creditsApplied Int?
-  status         RentalInvoiceStatus     @default(Draft)
-  reservations   Reservation[]           @relation("RentalInvoiceToReservations")
-  products       PhysicalProduct[]       @relation("RentalInvoiceToProducts")
-  lineItems      RentalInvoiceLineItem[]
+  id                          String                       @id @default(cuid()) @db.VarChar(30)
+  createdAt                   DateTime                     @default(now())
+  updatedAt                   DateTime                     @updatedAt
+  membershipId                String                       @map("membership") @db.VarChar(30)
+  membership                  CustomerMembership           @relation(fields: [membershipId], references: [id])
+  billingStartAt              DateTime
+  billingEndAt                DateTime
+  creditsApplied              Int?
+  status                      RentalInvoiceStatus          @default(Draft)
+  reservations                Reservation[]                @relation("RentalInvoiceToReservations")
+  products                    PhysicalProduct[]            @relation("RentalInvoiceToProducts")
+  reservationPhysicalProducts ReservationPhysicalProduct[] @relation("RentalInvoiceToReservationPhysicalProducts")
+  lineItems                   RentalInvoiceLineItem[]
 }
 
 model RentalInvoiceLineItem {
@@ -999,7 +1000,7 @@ model Package {
   reservationOnReturnPackages                  Reservation[]                @relation("PackageToReservationReturnPackages")
   items                                        PhysicalProduct[]
   reservationPhysicalProductsOnOutboundPackage ReservationPhysicalProduct[] @relation("ReservationPhysicalProductToOutboundPackage")
-  reservationPhysicalProducstOnInboundPackage  ReservationPhysicalProduct[] @relation("ReservationPhysicalProductToInboundPackage")
+  reservationPhysicalProductsOnInboundPackage  ReservationPhysicalProduct[] @relation("ReservationPhysicalProductToInboundPackage")
 }
 
 model PackageTransitEvent {
@@ -1389,24 +1390,24 @@ enum ReservationDropOffAgent {
 }
 
 enum ReservationPhysicalProductStatus {
-	Queued
-	Picked
-	Packed
-	ShippedToCustomer
-	ShippedToBusiness
-	DeliveredToCustomer
-	DeliveredToBusiness
-	ReturnProcessed
-	ResetEarly
-	Hold
-	Lost
+  Queued
+  Picked
+  Packed
+  ShippedToCustomer
+  ShippedToBusiness
+  DeliveredToCustomer
+  DeliveredToBusiness
+  ReturnProcessed
+  ResetEarly
+  Hold
+  Lost
 }
 
 model ReservationPhysicalProduct {
   id    String  @id @default(cuid()) @db.VarChar(30)
-  isNew Boolean
+  isNew Boolean @default(false)
 
-  isPurchased Boolean
+  isPurchased Boolean   @default(false)
   purchasedAt DateTime?
 
   status ReservationPhysicalProductStatus @default(value: Queued)
@@ -1416,33 +1417,33 @@ model ReservationPhysicalProduct {
   droppedOffAt DateTime?
 
   // item has been returned and processed by associate
-  hasReturnProcessed Boolean
+  hasReturnProcessed Boolean   @default(false)
   returnProcessedAt  DateTime?
 
   // admin marked item as returned early, it's still on its way
-  isResetEarlyByAdmin Boolean
+  isResetEarlyByAdmin Boolean   @default(false)
   resetEarlyByAdminAt DateTime?
 
   // denotes customer filling out the return flow
-  hasCustomerReturnIntent Boolean
+  hasCustomerReturnIntent Boolean   @default(false)
   customerReturnIntentAt  DateTime?
 
-  isLost      Boolean
+  isLost      Boolean           @default(false)
   lostAt      DateTime?
   lostInPhase ReservationPhase?
 
-  isDeliveredToCustomer Boolean
+  isDeliveredToCustomer Boolean   @default(false)
   deliveredToCustomerAt DateTime?
 
-  isDeliveredToBusiness Boolean
+  isDeliveredToBusiness Boolean   @default(false)
   deliveredToBusinessAt DateTime?
 
   // when UPS first gets the package into
   scannedOnInboundAt      DateTime?
-  hasBeenScannedOnInbound Boolean
+  hasBeenScannedOnInbound Boolean   @default(false)
 
   scannedOnOutboundAt      DateTime?
-  hasBeenScannedOnOutbound Boolean
+  hasBeenScannedOnOutbound Boolean   @default(false)
 
   lineItemId String?        @db.VarChar(30)
   lineItem   OrderLineItem? @relation(fields: [lineItemId], references: [id])
@@ -1458,6 +1459,8 @@ model ReservationPhysicalProduct {
 
   reservationId String?      @map("reservation") @db.VarChar(30)
   reservation   Reservation? @relation(fields: [id], references: [id])
+
+  rentalInvoices RentalInvoice[] @relation("RentalInvoiceToReservationPhysicalProducts")
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
