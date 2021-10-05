@@ -1389,18 +1389,17 @@ enum ReservationDropOffAgent {
 }
 
 enum ReservationPhysicalProductStatus {
-  Queued
-  Picked
-  Packed
-  ShippedToCustomer
-  ShippedToBusiness
-  DeliveredToCustomer
-  DeliveredToBusiness
-  ReturnProcessed
-  ResetEarly
-  Hold
-  Returned
-  Lost
+	Queued
+	Picked
+	Packed
+	ShippedToCustomer
+	ShippedToBusiness
+	DeliveredToCustomer
+	DeliveredToBusiness
+	ReturnProcessed
+	ResetEarly
+	Hold
+	Lost
 }
 
 model ReservationPhysicalProduct {
@@ -1409,6 +1408,8 @@ model ReservationPhysicalProduct {
 
   isPurchased Boolean
   purchasedAt DateTime?
+
+  status ReservationPhysicalProductStatus @default(value: Queued)
 
   // customer or UPS
   droppedOffBy ReservationDropOffAgent?
