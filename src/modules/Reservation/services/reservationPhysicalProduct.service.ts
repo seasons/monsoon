@@ -83,7 +83,7 @@ export class ReservationPhysicalProductService {
 
     const reservations = await this.prisma.client.reservation.findMany({
       where: {
-        reservationPhysicalProduct: {
+        reservationPhysicalProducts: {
           every: {
             physicalProduct: {
               seasonsUID: {
@@ -97,7 +97,7 @@ export class ReservationPhysicalProductService {
       },
       select: {
         id: true,
-        reservationPhysicalProduct: {
+        reservationPhysicalProducts: {
           select: {
             hasReturnProcessed: true,
           },
