@@ -644,6 +644,11 @@ export class ReservationService {
             state: true,
           },
         },
+        membership: {
+          select: {
+            creditBalance: true,
+          },
+        },
         detail: {
           select: {
             id: true,
@@ -786,6 +791,8 @@ export class ReservationService {
           ? true
           : DateTime.fromISO(nextFreeSwapDate) <= DateTime.local()
 
+      const creditBalance = customerWithUser.membership.creditBalance
+
       const processingFeeLines = await this.calculateProcessingFee({
         variantIDs,
         customer: customerWithUser,
@@ -812,10 +819,6 @@ export class ReservationService {
         })
         .request()
 
-      const processingTotal = processingFeeLines.reduce(
-        (acc, curr) => acc + curr.price,
-        0
-      )
       const taxTotal = invoice_estimate.taxes.reduce(
         (acc, curr) => acc + curr.amount,
         0
@@ -823,13 +826,18 @@ export class ReservationService {
 
       const linesWithTotal = [
         ...lines,
-        {
-          name: "Processing + Tax",
-          recordType: "Fee",
-          recordID: customer.id,
-          price: processingTotal + taxTotal,
-        },
-        ...(invoice_estimate?.discounts?.length > 0
+        ...processingFeeLines,
+        ...(taxTotal > 0
+          ? [
+              {
+                name: "Taxes",
+                recordType: "Fee",
+                recordID: customer.id,
+                price: taxTotal,
+              },
+            ]
+          : []),
+        ...(creditBalance > 0
           ? [
               {
                 name: "Sub-total",
@@ -841,13 +849,13 @@ export class ReservationService {
                 name: "Credits applied",
                 recordType: "Credit",
                 recordID: customer.id,
-                price: -invoice_estimate.discounts[0].amount,
+                price: -creditBalance,
               },
               {
                 name: "Total",
                 recordType: "Total",
                 recordID: customer.id,
-                price: invoice_estimate.total,
+                price: Math.max(0, invoice_estimate.sub_total - creditBalance),
               },
             ]
           : [
@@ -1194,11 +1202,10 @@ export class ReservationService {
   }) {
     const {
       sentRate,
-      returnRate,
     } = await this.shippingService.getShippingRateForVariantIDs(variantIDs, {
       customer,
       includeSentPackage: !hasFreeSwap,
-      includeReturnPackage: !hasFreeSwap,
+      includeReturnPackage: false,
       serviceLevel:
         shippingCode === "UPSGround"
           ? UPSServiceLevel.Ground
@@ -1207,19 +1214,14 @@ export class ReservationService {
 
     return [
       {
-        name: "Base Fee",
+        name: "Processing",
         recordType: "Fee",
         price: 550,
       },
       {
-        name: "Inbound shipping",
+        name: "Shipping",
         recordType: "Fee",
         price: sentRate?.amount,
-      },
-      {
-        name: "Outbound shipping",
-        recordType: "Fee",
-        price: returnRate?.amount,
       },
     ].filter(a => a.price > 0)
   }
