@@ -24,6 +24,7 @@ import {
   PrismaPromise,
   Reservation,
   ReservationFeedback,
+  ReservationPhysicalProduct,
   ReservationStatus,
   ShippingCode,
   WarehouseLocation,
@@ -262,39 +263,39 @@ export class ReservationService {
     })
     promises.push(...bagItemPromises)
 
+    const lastReservationPromises = await this.updateLastReservation(
+      lastReservation
+    )
+    promises.push(...lastReservationPromises)
+
     // Create reservation records in prisma
-    const reservationData = await this.createReservationData(
+    const shipmentWeight = await this.shippingService.calcShipmentWeightFromProductVariantIDs(
+      newProductVariantsBeingReserved as string[]
+    )
+    const {
+      promises: reservationCreatePromises,
+      datas: { reservationId, reservationPhysicalProductIds },
+    } = await this.createReservation(
       seasonsToCustomerTransaction,
       customerToSeasonsTransaction,
       lastReservation as any,
       customer,
-      await this.shippingService.calcShipmentWeightFromProductVariantIDs(
-        newProductVariantsBeingReserved as string[]
-      ),
+      shipmentWeight,
       physicalProductsBeingReserved,
       heldPhysicalProducts,
       shippingCode,
       pickupTime
     )
 
-    const lastReservationPromises = await this.updateLastReservation(
-      lastReservation
-    )
-    promises.push(...lastReservationPromises)
-
-    const reservationPromise = this.prisma.client.reservation.create({
-      data: reservationData,
-    })
-
-    promises.push(reservationPromise)
+    promises.push(...reservationCreatePromises)
 
     if (customerPlanType === "Access") {
       const rentalInvoicePromise = this.prisma.client.rentalInvoice.update({
         where: { id: activeRentalInvoice.id },
         data: {
-          reservations: { connect: { id: reservationData.id } },
-          products: {
-            connect: reservationData.products.connect,
+          reservations: { connect: { id: reservationId } },
+          reservationPhysicalProducts: {
+            connect: reservationPhysicalProductIds.map(id => ({ id })),
           },
         },
       })
@@ -304,7 +305,7 @@ export class ReservationService {
     await this.prisma.client.$transaction(promises.flat())
 
     const reservation = (await this.prisma.client.reservation.findUnique({
-      where: { id: reservationData.id },
+      where: { id: reservationId },
       select: merge(select, {
         id: true,
         reservationNumber: true,
@@ -1440,7 +1441,7 @@ export class ReservationService {
       )
   }
 
-  private async createReservationData(
+  private async createReservation(
     seasonsToCustomerTransaction,
     customerToSeasonsTransaction,
     lastReservation: Pick<Reservation, "status"> & {
@@ -1450,12 +1451,13 @@ export class ReservationService {
     shipmentWeight: number,
     physicalProductsBeingReserved: ReserveItemsPhysicalProduct[],
     heldPhysicalProducts: ReserveItemsPhysicalProduct[],
-    shippingCode: ShippingCode | null,
-    pickupTime?: {
-      timeWindowID?: string
-      date: string
-    }
-  ) {
+    shippingCode: ShippingCode | null
+  ): Promise<{
+    promises: PrismaPromise<Reservation | ReservationPhysicalProduct[]>[]
+    datas: { reservationId: string; reservationPhysicalProductIds: string[] }
+  }> {
+    const promises = []
+
     const customerWithData = await this.prisma.client.customer.findUnique({
       where: { id: customer.id },
       select: {
@@ -1476,12 +1478,12 @@ export class ReservationService {
       ...heldPhysicalProducts,
     ]
 
-    const physicalProductSUIDs = allPhysicalProductsInReservation.map(p => ({
-      seasonsUID: p.seasonsUID,
-    }))
+    // const physicalProductSUIDs = allPhysicalProductsInReservation.map(
+    //   p => p.seasonsUID
+    // )
     const newPhysicalProductSUIDs = allPhysicalProductsInReservation
       .filter(a => !!a.warehouseLocation?.id)
-      .map(a => ({ seasonsUID: a.seasonsUID }))
+      .map(a => a.seasonsUID)
 
     const returnPackagesToCarryOver =
       lastReservation?.returnPackages?.filter(a => a.events.length === 0) || []
@@ -1505,13 +1507,27 @@ export class ReservationService {
     const customerShippingAddressRecordID =
       customerWithData.detail.shippingAddress.id
     const uniqueReservationNumber = await this.utils.getUniqueReservationNumber()
-    let createData = Prisma.validator<Prisma.ReservationCreateInput>()({
+
+    const reservationPhysicalProductCreateDatas = allPhysicalProductsInReservation.map(
+      physicalProduct => ({
+        id: cuid(),
+        physicalProductId: physicalProduct.id,
+        isNew: newPhysicalProductSUIDs.includes(physicalProduct.seasonsUID),
+      })
+    )
+
+    promises.push(
+      reservationPhysicalProductCreateDatas.map(data =>
+        this.prisma.client.reservationPhysicalProduct.create({ data })
+      )
+    )
+
+    const reservationCreateData = Prisma.validator<
+      Prisma.ReservationCreateInput
+    >()({
       id: cuid(),
-      products: {
-        connect: physicalProductSUIDs,
-      },
-      newProducts: {
-        connect: newPhysicalProductSUIDs,
+      reservationPhysicalProducts: {
+        connect: reservationPhysicalProductCreateDatas.map(a => ({ id: a.id })),
       },
       customer: {
         connect: {
@@ -1533,12 +1549,10 @@ export class ReservationService {
         create: {
           ...createPartialPackageCreateInput(seasonsToCustomerTransaction),
           weight: shipmentWeight,
-          items: {
-            // need to include the type on the function passed into map
-            // or we get build errors comlaining about the type here
-            connect: physicalProductsBeingReserved.map(prod => {
-              return { id: prod.id }
-            }),
+          reservationPhysicalProductsOnOutboundPackage: {
+            connect: newPhysicalProductSUIDs.map(seasonsUID => ({
+              seasonsUID,
+            })),
           },
           fromAddress: {
             connect: {
@@ -1581,6 +1595,18 @@ export class ReservationService {
       previousReservationWasPacked: lastReservation?.status === "Packed",
     })
 
-    return createData
+    promises.push(
+      this.prisma.client.reservation.create({ data: reservationCreateData })
+    )
+
+    return {
+      promises,
+      datas: {
+        reservationId: reservationCreateData.id,
+        reservationPhysicalProductIds: reservationPhysicalProductCreateDatas.map(
+          a => a.id
+        ),
+      },
+    }
   }
 }
