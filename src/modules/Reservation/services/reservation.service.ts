@@ -176,7 +176,6 @@ export class ReservationService {
         returnedProducts: { select: { id: true } },
       }
     )
-    await this.validateLastReservation(lastReservation, items)
 
     // Get the most recent reservation that potentially carries products being kept in the new reservation
     const lastReservationWithHeldItems = !!lastReservation
@@ -1251,22 +1250,6 @@ export class ReservationService {
         price: sentRate?.amount,
       },
     ].filter(a => a.price > 0)
-  }
-
-  // TODO: We can rip this out when we move to a world where we don't carry items over from reservations
-  private async validateLastReservation(lastReservation, items) {
-    if (!lastReservation) {
-      return
-    }
-
-    if (
-      items.length <=
-      lastReservation.products.length - lastReservation.returnedProducts.length
-    ) {
-      throw new ApolloError(
-        `Must have all unreturned items from last reservation included in the new reservation. Last Reservation number, status: ${lastReservation.reservationNumber}, ${lastReservation.status}`
-      )
-    }
   }
 
   private async updateLastReservation(lastReservation) {

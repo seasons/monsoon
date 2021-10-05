@@ -29,7 +29,7 @@ type Query {
 
 type Mutation {
   reserveItems(
-    items: [ID!]!
+    items: [ID!]! @deprecated(reason: "Backend calculates based on bag items")
     options: ReserveItemsOptions
     shippingCode: ShippingCode
   ): Reservation @hasRole(roles: [Customer])
