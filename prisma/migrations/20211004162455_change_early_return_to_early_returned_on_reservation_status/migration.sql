@@ -6,5 +6,4 @@
 -- the enum.
 
 
-ALTER TYPE "ReservationStatus" ADD VALUE 'Received';
 ALTER TYPE "ReservationStatus" ADD VALUE 'EarlyReturned';
