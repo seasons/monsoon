@@ -1409,7 +1409,7 @@ model ReservationPhysicalProduct {
   isPurchased Boolean
   purchasedAt DateTime?
 
-  status ReservationPhysicalProductStatus
+  status ReservationPhysicalProductStatus @default(value: Queued)
 
   // customer or UPS
   droppedOffBy ReservationDropOffAgent?
