@@ -289,18 +289,17 @@ export class UpdatePaymentService {
     customer,
     user
   ) {
-    const billingCity = billingAddress?.city
-    const billingPostalCode = billingAddress?.postalCode
-    const billingState = billingAddress?.state
-    const billingStreet1 = billingAddress?.street1
-    const billingStreet2 = billingAddress?.street2
+    const billingCity = billingAddress?.city?.trim()
+    const billingPostalCode = billingAddress?.postalCode?.trim()
+    const billingState = billingAddress?.state?.trim()
+    const billingStreet1 = billingAddress?.street1?.trim()
+    const billingStreet2 = billingAddress?.street2?.trim()
 
-    const {
-      city: shippingCity,
-      postalCode: shippingPostalCode,
-      state: shippingState,
-      street1: shippingStreet1,
-    } = shippingAddress
+    const shippingCity = shippingAddress?.city?.trim()
+    const shippingPostalCode = shippingAddress?.postalCode?.trim()
+    const shippingState = shippingAddress?.state?.trim()
+    const shippingStreet1 = shippingAddress?.street1?.trim()
+    const shippingStreet2 = shippingAddress?.street2?.trim()
 
     if (
       !shippingCity ||
@@ -342,6 +341,7 @@ export class UpdatePaymentService {
     } = await this.shippingService.shippoValidateAddress({
       name: user.firstName,
       street1: shippingStreet1,
+      street2: shippingStreet2,
       city: shippingCity,
       state: abbrShippingState,
       zip: shippingPostalCode,
@@ -425,11 +425,11 @@ export class UpdatePaymentService {
     billingPostalCode
   ) {
     const billingAddressData = {
-      city: billingCity,
-      postal_code: billingPostalCode,
-      state: billingState,
-      street1: billingStreet1,
-      street2: billingStreet2,
+      city: billingCity.trim(),
+      postal_code: billingPostalCode.trim(),
+      state: billingState.trim(),
+      street1: billingStreet1.trim(),
+      street2: billingStreet2.trim(),
     }
 
     const billingInfo = await this.prisma.client.billingInfo.findFirst({
