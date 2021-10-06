@@ -163,6 +163,7 @@ type CustomerMembership {
   id: ID!
   subscriptionId: String!
   plan: PaymentPlan
+  currentBalance: Int
   creditBalance: Int
   adjustedCreditBalance: Int
   currentRentalInvoice: RentalInvoice

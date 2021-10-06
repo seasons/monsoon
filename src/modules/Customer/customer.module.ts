@@ -8,6 +8,7 @@ import { CustomerFieldsResolver } from "./fields/customer.fields.resolver"
 import { CustomerDetailFieldsResolver } from "./fields/customerDetail.fields.resolver"
 import { CustomerMembershipFieldsResolver } from "./fields/customerMembership.fields.resolver"
 import { CustomerQueriesResolver } from "./queries/customer.queries.resolver"
+import { CustomerMembershipService } from "./services/customerMembership.service"
 import { PaymentModule, ReservationModule, UserModule } from ".."
 
 export const CustomerModuleDef = {
@@ -25,6 +26,7 @@ export const CustomerModuleDef = {
     CustomerDetailFieldsResolver,
     PaymentPlanFieldsResolver,
     CustomerMembershipFieldsResolver,
+    CustomerMembershipService,
   ],
 }
 @Module(CustomerModuleDef)

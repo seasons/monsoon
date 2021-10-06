@@ -16,6 +16,7 @@ import { Prisma } from "@prisma/client"
 import { PrismaService } from "@prisma1/prisma.service"
 import chargebee from "chargebee"
 import { head, orderBy } from "lodash"
+import { DateTime } from "luxon"
 
 import { RESERVATION_PROCESSING_FEE } from "../constants"
 import { AccessPlanID } from "../payment.types"
@@ -300,7 +301,8 @@ export class RentalService {
 
   async calcDaysRented(
     invoice: Pick<RentalInvoice, "id">,
-    physicalProduct: Pick<PhysicalProduct, "seasonsUID">
+    physicalProduct: Pick<PhysicalProduct, "seasonsUID">,
+    options: { upToToday?: boolean } = { upToToday: false }
   ) {
     const invoiceWithData = await this.prisma.client.rentalInvoice.findUnique({
       where: { id: invoice.id },
@@ -446,6 +448,10 @@ export class RentalService {
         )
     }
 
+    if (options?.upToToday) {
+      rentalEndedAt = DateTime.local().toISO()
+    }
+
     daysRented =
       !!rentalStartedAt && !!rentalEndedAt
         ? this.timeUtils.numDaysBetween(rentalStartedAt, rentalEndedAt)
@@ -506,18 +512,16 @@ export class RentalService {
           initialReservationId,
           ...daysRentedMetadata
         } = await this.calcDaysRented(invoice, physicalProduct)
-        const rawDailyRentalPrice =
-          physicalProduct.productVariant.product.computedRentalPrice / 30
-        const roundedDailyRentalPriceAsString = rawDailyRentalPrice.toFixed(2)
-        const roundedDailyRentalPrice = +roundedDailyRentalPriceAsString
+
+        const defaultPrice = this.calculatePriceForDaysRented(
+          physicalProduct.productVariant.product,
+          daysRented
+        )
 
         const initialReservation = await this.prisma.client.reservation.findUnique(
           { where: { id: initialReservationId }, select: { createdAt: true } }
         )
 
-        const defaultPrice = Math.round(
-          daysRented * roundedDailyRentalPrice * 100
-        )
         const applyGrandfatheredPricing =
           createdBeforeLaunchDay &&
           isCustomersFirstRentalInvoice &&
@@ -584,6 +588,17 @@ export class RentalService {
     const lineItems = await this.prisma.client.$transaction(lineItemPromises)
 
     return lineItems
+  }
+
+  calculatePriceForDaysRented(
+    product: Pick<Product, "computedRentalPrice">,
+    daysRented: number
+  ) {
+    const rawDailyRentalPrice = product.computedRentalPrice / 30
+    const roundedDailyRentalPriceAsString = rawDailyRentalPrice.toFixed(2)
+    const roundedDailyRentalPrice = +roundedDailyRentalPriceAsString
+
+    return Math.round(daysRented * roundedDailyRentalPrice * 100)
   }
 
   private async calculateBillingEndDateFromStartDate(
