@@ -141,13 +141,12 @@ export class MeFieldsResolver {
 
   @ResolveField()
   async recentlyViewedProducts(@Customer() customer, @Select() select) {
-    const customerId = customer.id
-    if (!customerId) {
+    if (!customer) {
       return []
     }
     const viewedProducts = await this.prisma.client.recentlyViewedProduct.findMany(
       {
-        where: { customer: { id: customerId } },
+        where: { customer: { id: customer.id } },
         orderBy: { updatedAt: "desc" },
         take: 10,
         select: { updatedAt: true, product: { select } },
