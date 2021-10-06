@@ -1379,7 +1379,7 @@ model Reservation {
   products                     PhysicalProduct[]            @relation("ReservationToAllProducts")
   newProducts                  PhysicalProduct[]            @relation("ReservationToNewProducts")
   returnedProducts             PhysicalProduct[]            @relation("ReservationToReturnedProducts")
-  rentalInvoice                RentalInvoice[]              @relation("RentalInvoiceToReservations")
+  rentalInvoices               RentalInvoice[]              @relation("RentalInvoiceToReservations")
   purchasedProducts            PhysicalProduct[]            @relation("ReservationToPurchasedProducts")
   reservationPhysicalProducts  ReservationPhysicalProduct[]
 }

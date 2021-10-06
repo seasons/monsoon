@@ -6,10 +6,15 @@ const run = async () => {
   const ps = new PrismaService()
 
   const a = await ps.client.reservation.findUnique({
-    where: { reservationNumber: 558427573 },
+    where: { reservationNumber: 943308992 },
     select: {
       sentPackage: {
-        select: { id: true, reservationPhysicalProductsOnInboundPackage: true },
+        select: {
+          id: true,
+          reservationPhysicalProductsOnOutboundPackage: {
+            select: { id: true },
+          },
+        },
       },
       reservationPhysicalProducts: {
         select: {
@@ -22,6 +27,12 @@ const run = async () => {
               },
             },
           },
+        },
+      },
+      rentalInvoices: {
+        select: {
+          id: true,
+          reservationPhysicalProducts: { select: { id: true } },
         },
       },
     },

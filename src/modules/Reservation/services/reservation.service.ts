@@ -261,24 +261,22 @@ export class ReservationService {
       shipmentWeight,
       physicalProductsBeingReserved,
       heldPhysicalProducts,
-      shippingCode,
-      activeRentalInvoice
+      shippingCode
     )
 
     promises.push(...reservationCreatePromises)
 
-    // if (customerPlanType === "Access") {
-    //   const rentalInvoicePromise = this.prisma.client.rentalInvoice.update({
-    //     where: { id: activeRentalInvoice.id },
-    //     data: {
-    //       reservations: { connect: { id: reservationId } },
-    //       // reservationPhysicalProducts: {
-    //       //   connect: reservationPhysicalProductIds.map(id => ({ id })),
-    //       // },
-    //     },
-    //   })
-    //   promises.push(rentalInvoicePromise)
-    // }
+    promises.push(
+      this.prisma.client.rentalInvoice.update({
+        where: { id: activeRentalInvoice.id },
+        data: {
+          reservations: { connect: { id: reservationId } },
+          reservationPhysicalProducts: {
+            connect: reservationPhysicalProductIds.map(id => ({ id })),
+          },
+        },
+      })
+    )
 
     await this.prisma.client.$transaction(promises.flat())
 
@@ -1408,8 +1406,7 @@ export class ReservationService {
     shipmentWeight: number,
     physicalProductsBeingReserved: ReserveItemsPhysicalProduct[],
     heldPhysicalProducts: ReserveItemsPhysicalProduct[],
-    shippingCode: ShippingCode | null,
-    activeRentalInvoice: Pick<RentalInvoice, "id">
+    shippingCode: ShippingCode | null
   ): Promise<{
     promises: PrismaPromise<Reservation | ReservationPhysicalProduct[]>[]
     datas: { reservationId: string; reservationPhysicalProductIds: string[] }
@@ -1442,9 +1439,6 @@ export class ReservationService {
       ...heldPhysicalProducts,
     ]
 
-    // const physicalProductSUIDs = allPhysicalProductsInReservation.map(
-    //   p => p.seasonsUID
-    // )
     const newPhysicalProductSUIDs = allPhysicalProductsInReservation
       .filter(a => !!a.warehouseLocation?.id)
       .map(a => a.seasonsUID)
@@ -1480,27 +1474,20 @@ export class ReservationService {
       customerWithData.detail.shippingAddress.id
     const uniqueReservationNumber = await this.utils.getUniqueReservationNumber()
 
+    const reservationId = cuid()
+    const outboundPackageId = cuid()
     const reservationPhysicalProductCreateDatas = allPhysicalProductsInReservation.map(
       physicalProduct =>
         Prisma.validator<
           Prisma.ReservationPhysicalProductUncheckedCreateWithoutReservationInput
         >()({
           id: cuid(),
+          outboundPackageId,
           physicalProductId: physicalProduct.id,
           isNew: newPhysicalProductSUIDs.includes(physicalProduct.seasonsUID),
         })
     )
 
-    // promises.push(
-    //   this.prisma.client.reservationPhysicalProduct.createMany({
-    //     data: reservationPhysicalProductCreateDatas,
-    //   })
-    //   // ...reservationPhysicalProductCreateDatas.map(data =>
-    //   this.prisma.client.reservationPhysicalProduct.create({ data })
-    // )
-    // )
-
-    const reservationId = cuid()
     const reservationCreateData = Prisma.validator<
       Prisma.ReservationCreateInput
     >()({
@@ -1521,6 +1508,7 @@ export class ReservationService {
       phase: "BusinessToCustomer",
       sentPackage: {
         create: {
+          id: outboundPackageId,
           ...createPartialPackageCreateInput(seasonsToCustomerTransaction),
           weight: shipmentWeight,
           // reservationPhysicalProductsOnOutboundPackage: {
@@ -1574,7 +1562,6 @@ export class ReservationService {
       shipped: false,
       status: "Queued",
       previousReservationWasPacked: lastReservation?.status === "Packed",
-      rentalInvoice: { connect: { id: activeRentalInvoice.id } },
     })
 
     promises.push(
