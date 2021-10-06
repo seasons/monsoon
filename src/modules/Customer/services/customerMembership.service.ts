@@ -1,5 +1,4 @@
 import { RentalService } from "@app/modules/Payment/services/rental.service"
-import { ProductUtilsService } from "@app/modules/Utils/services/product.utils.service"
 import { PrismaService } from "@app/prisma/prisma.service"
 import { Injectable } from "@nestjs/common"
 
@@ -7,8 +6,7 @@ import { Injectable } from "@nestjs/common"
 export class CustomerMembershipService {
   constructor(
     private readonly prisma: PrismaService,
-    private readonly rental: RentalService,
-    private readonly productUtils: ProductUtilsService
+    private readonly rental: RentalService
   ) {}
 
   async calculateCurrentBalance(
@@ -71,8 +69,6 @@ export class CustomerMembershipService {
 
       rentalPrices.push(rentalPriceForDaysUntilToday)
     }
-
-    console.log(rentalPrices)
 
     return rentalPrices.reduce((a, b) => a + b, 0)
   }
