@@ -91,6 +91,19 @@ export class ReservationService {
       select: {
         id: true,
         status: true,
+        detail: {
+          select: {
+            shippingAddress: {
+              select: {
+                state: true,
+                address1: true,
+                address2: true,
+                city: true,
+                zipCode: true,
+              },
+            },
+          },
+        },
         membership: {
           select: {
             plan: { select: { itemCount: true, tier: true } },
@@ -108,6 +121,20 @@ export class ReservationService {
 
     if (customerWithData.status !== "Active") {
       throw new Error(`Only Active customers can place a reservation`)
+    }
+
+    // Validate address and provide suggested one if needed
+    const {
+      isValid: shippingAddressIsValid,
+    } = await this.shippingService.shippoValidateAddress({
+      street1: customerWithData.detail.shippingAddress.address1,
+      street2: customerWithData.detail.shippingAddress.address2,
+      city: customerWithData.detail.shippingAddress.city,
+      state: customerWithData.detail.shippingAddress.state,
+      zip: customerWithData.detail.shippingAddress.zipCode,
+    })
+    if (!shippingAddressIsValid) {
+      throw new Error("Shipping address is invalid")
     }
 
     const promises = []
@@ -149,7 +176,6 @@ export class ReservationService {
         returnedProducts: { select: { id: true } },
       }
     )
-    await this.validateLastReservation(lastReservation, items)
 
     // Get the most recent reservation that potentially carries products being kept in the new reservation
     const lastReservationWithHeldItems = !!lastReservation
@@ -1224,22 +1250,6 @@ export class ReservationService {
         price: sentRate?.amount,
       },
     ].filter(a => a.price > 0)
-  }
-
-  // TODO: We can rip this out when we move to a world where we don't carry items over from reservations
-  private async validateLastReservation(lastReservation, items) {
-    if (!lastReservation) {
-      return
-    }
-
-    if (
-      items.length <=
-      lastReservation.products.length - lastReservation.returnedProducts.length
-    ) {
-      throw new ApolloError(
-        `Must have all unreturned items from last reservation included in the new reservation. Last Reservation number, status: ${lastReservation.reservationNumber}, ${lastReservation.status}`
-      )
-    }
   }
 
   private async updateLastReservation(lastReservation) {

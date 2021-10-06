@@ -29,7 +29,7 @@ type Query {
 
 type Mutation {
   reserveItems(
-    items: [ID!]!
+    items: [ID!]
     options: ReserveItemsOptions
     shippingCode: ShippingCode
   ): Reservation @hasRole(roles: [Customer])

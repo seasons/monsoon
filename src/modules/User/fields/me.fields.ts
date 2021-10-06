@@ -131,12 +131,28 @@ export class MeFieldsResolver {
     })
 
     const sortValues = {
-      Reserved: 0,
+      Added: 0,
       Received: 1,
-      Added: 2,
+      Reserved: 2,
     }
 
     return bagItems.sort((a, b) => sortValues[a.status] - sortValues[b.status])
+  }
+
+  @ResolveField()
+  async recentlyViewedProducts(@Customer() customer, @Select() select) {
+    if (!customer) {
+      return []
+    }
+    const viewedProducts = await this.prisma.client.recentlyViewedProduct.findMany(
+      {
+        where: { customer: { id: customer.id } },
+        orderBy: { updatedAt: "desc" },
+        take: 10,
+        select: { updatedAt: true, product: { select } },
+      }
+    )
+    return viewedProducts.map(viewedProduct => viewedProduct.product)
   }
 
   @ResolveField()
