@@ -61,7 +61,7 @@ type Mutation {
     trackingNumber: String
     productStates: ProductStateInput
     droppedOfBy: ReservationDropOffAgent
-  ): Boolean @hasRole(roles: [Admin])
+  ): Reservation @hasRole(roles: [Admin])
 }
 
 type ReservationFeedback {

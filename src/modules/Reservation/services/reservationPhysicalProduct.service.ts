@@ -118,7 +118,7 @@ export class ReservationPhysicalProductService {
     )
 
     for (let reservation of reservations) {
-      const allProductsReturned = reservation.reservationPhysicalProduct.every(
+      const allProductsReturned = reservation.reservationPhysicalProducts.every(
         a => a.hasReturnProcessed
       )
       const reservationWhere = {
