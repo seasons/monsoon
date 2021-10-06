@@ -131,9 +131,9 @@ export class MeFieldsResolver {
     })
 
     const sortValues = {
-      Reserved: 0,
+      Added: 0,
       Received: 1,
-      Added: 2,
+      Reserved: 2,
     }
 
     return bagItems.sort((a, b) => sortValues[a.status] - sortValues[b.status])
