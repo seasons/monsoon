@@ -1,5 +1,9 @@
 type Query {
-  homepage: Homepage @cacheControl(maxAge: 0)
+  homepage: Homepage
+    @cacheControl(maxAge: 0)
+    @deprecated(
+      reason: "We've moved all the homepage fields to individual field resolvers elsewhere"
+    )
 }
 
 type Homepage {
