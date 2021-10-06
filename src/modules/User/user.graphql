@@ -98,6 +98,7 @@ type Me @cacheControl(maxAge: 0, scope: PRIVATE) {
   ): [ReservationLineItem!]
   notificationBar: NotificationBar
   nextFreeSwapDate: DateTime
+  recentlyViewedProducts: [Product!]
 }
 
 type NotificationBar {

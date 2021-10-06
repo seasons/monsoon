@@ -140,6 +140,22 @@ export class MeFieldsResolver {
   }
 
   @ResolveField()
+  async recentlyViewedProducts(@Customer() customer, @Select() select) {
+    if (!customer) {
+      return []
+    }
+    const viewedProducts = await this.prisma.client.recentlyViewedProduct.findMany(
+      {
+        where: { customer: { id: customer.id } },
+        orderBy: { updatedAt: "desc" },
+        take: 10,
+        select: { updatedAt: true, product: { select } },
+      }
+    )
+    return viewedProducts.map(viewedProduct => viewedProduct.product)
+  }
+
+  @ResolveField()
   async savedItems(@Customer() customer, @Select() select) {
     if (!customer) {
       return null
