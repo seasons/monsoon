@@ -11,24 +11,10 @@ export class CustomerMembershipService {
     private readonly productUtils: ProductUtilsService
   ) {}
 
-  async calculateCurrentBalance(customerId: string) {
-    const customer = await this.prisma.client.customer.findFirst({
-      where: { id: customerId },
-      select: {
-        membership: {
-          select: {
-            id: true,
-            subscription: {
-              select: {
-                currentTermStart: true,
-                currentTermEnd: true,
-              },
-            },
-          },
-        },
-      },
-    })
-
+  async calculateCurrentBalance(
+    customerId: string,
+    options: { upTo?: "today" | "billingEnd" | null } = { upTo: null }
+  ) {
     const currentInvoice = await this.prisma.client.rentalInvoice.findFirst({
       where: {
         membership: {
@@ -75,7 +61,7 @@ export class CustomerMembershipService {
       const { daysRented } = await this.rental.calcDaysRented(
         currentInvoice,
         product,
-        { upToToday: true }
+        { upTo: options.upTo }
       )
 
       const rentalPriceForDaysUntilToday = this.rental.calculatePriceForDaysRented(

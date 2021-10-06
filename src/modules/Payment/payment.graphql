@@ -215,6 +215,7 @@ type RentalInvoiceLineItem {
 
 type RentalInvoice {
   id: ID!
+  estimatedTotal: Int
   lineItems: [RentalInvoiceLineItem!]
   products: [PhysicalProduct!]
   billingStartAt: DateTime!

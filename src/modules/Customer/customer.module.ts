@@ -28,6 +28,7 @@ export const CustomerModuleDef = {
     CustomerMembershipFieldsResolver,
     CustomerMembershipService,
   ],
+  exports: [CustomerMembershipService],
 }
 @Module(CustomerModuleDef)
 export class CustomerModule {}

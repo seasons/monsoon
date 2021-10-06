@@ -302,7 +302,7 @@ export class RentalService {
   async calcDaysRented(
     invoice: Pick<RentalInvoice, "id">,
     physicalProduct: Pick<PhysicalProduct, "seasonsUID">,
-    options: { upToToday?: boolean } = { upToToday: false }
+    options: { upTo?: "today" | "billingEnd" | null } = { upTo: null }
   ) {
     const invoiceWithData = await this.prisma.client.rentalInvoice.findUnique({
       where: { id: invoice.id },
@@ -448,8 +448,10 @@ export class RentalService {
         )
     }
 
-    if (options?.upToToday) {
+    if (options?.upTo === "today") {
       rentalEndedAt = DateTime.local().toISO()
+    } else if (options?.upTo === "billingEnd") {
+      rentalEndedAt = invoiceWithData.billingEndAt
     }
 
     daysRented =
