@@ -1477,11 +1477,11 @@ model ReservationPhysicalProduct {
   inboundPackageId String?  @db.VarChar(30)
   inboundPackage   Package? @relation("ReservationPhysicalProductToInboundPackage", fields: [inboundPackageId], references: [id])
 
-  physicalProductId String?          @map("physicalProduct") @db.VarChar(30)
-  physicalProduct   PhysicalProduct? @relation(fields: [physicalProductId], references: [id])
+  physicalProductId String          @map("physicalProduct") @db.VarChar(30)
+  physicalProduct   PhysicalProduct @relation(fields: [physicalProductId], references: [id])
 
-  reservationId String?      @map("reservation") @db.VarChar(30)
-  reservation   Reservation? @relation(fields: [id], references: [id])
+  reservationId String      @map("reservation") @db.VarChar(30)
+  reservation   Reservation @relation(fields: [reservationId], references: [id])
 
   bagItem          BagItem?
   shippingMethodId String?         @map("shippingMethod") @db.VarChar(30)
