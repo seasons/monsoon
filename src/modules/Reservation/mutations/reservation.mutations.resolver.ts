@@ -62,21 +62,7 @@ export class ReservationMutationsResolver {
     select,
     @Application() application
   ) {
-    const itemsToReserve = await this.prisma.client.bagItem.findMany({
-      where: {
-        customer: { id: customer.id },
-        status: { in: ["Reserved", "Added"] },
-        saved: false,
-      },
-      select: { productVariant: { select: { id: true } } },
-    })
-    const productVariantIDs = itemsToReserve.map(a => a.productVariant.id)
-    const returnData = await this.reservation.reserveItems({
-      items: productVariantIDs,
-      pickupTime: {
-        date: options?.pickupDate,
-        timeWindowID: options?.timeWindowID,
-      },
+    const returnData = await this.reservation.reserveItems(
       shippingCode,
       customer,
       select,
@@ -86,7 +72,7 @@ export class ReservationMutationsResolver {
     this.segment.track(user.id, "Reserved Items", {
       ...pick(user, ["email", "firstName", "lastName"]),
       reservationID: returnData.id,
-      productVariantIDs,
+      // productVariantIDs, TODO: Fill this in
       units: returnData.products.map(a => a.seasonsUID),
       application,
     })
@@ -118,10 +104,7 @@ export class ReservationMutationsResolver {
         },
       },
     })
-
-    const items = custWithData.bagItems.map(a => a.productVariant.id)
-    const returnData = await this.reservation.reserveItems({
-      items,
+    const returnData = await this.reservation.reserveItems(
       shippingCode,
       customer: custWithData,
       select,
@@ -131,7 +114,7 @@ export class ReservationMutationsResolver {
     this.segment.track(custWithData.user.id, "Reserved Items", {
       ...pick(custWithData.user, ["email", "firstName", "lastName"]),
       reservationID: returnData.id,
-      items,
+      // items, TODO: FIll this in
       units: returnData.products.map(a => a.seasonsUID),
       application,
     })

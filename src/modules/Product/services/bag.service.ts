@@ -248,8 +248,7 @@ export class BagService {
 
     const productVariant = oldBagItem.productVariant
     const lastReservation = (await this.utils.getLatestReservation(
-      customerID,
-      undefined
+      customerID
     )) as any
 
     if (!["Queued", "Hold"].includes(lastReservation.status)) {

@@ -20,6 +20,7 @@ import { ReservationService } from "./services/reservation.service"
 import { ReservationUtilsService } from "./services/reservation.utils.service"
 import { ReservationFeedbackService } from "./services/reservationFeedback.service"
 import { ReservationPhysicalProductService } from "./services/reservationPhysicalProduct.service"
+import { ReserveService } from "./services/reserve.service"
 
 @Module({
   imports: [
@@ -43,6 +44,7 @@ import { ReservationPhysicalProductService } from "./services/reservationPhysica
     ReservationQueriesResolver,
     ReservationUtilsService,
     ReservationService,
+    ReserveService,
     ReservationMutationsResolver,
     ReservationPhysicalProductService,
   ],
