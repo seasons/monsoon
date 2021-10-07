@@ -144,6 +144,8 @@ export class ChargebeeController {
       await this.email.sendReturnToGoodStandingEmail(custWithData.user)
     }
 
+    await this.rental.initFirstRentalInvoice(custWithData.id)
+
     let isRecurringSubscription =
       !!subscription &&
       !this.utils.isSameDay(
