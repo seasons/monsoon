@@ -576,6 +576,20 @@ export class ReservationService {
       },
     })
 
+    if (reservation.status === "ReturnPending") {
+      promises.push(
+        this.prisma.client.reservation.updateMany({
+          where: {
+            customerId: { equals: reservation.customer.id },
+            status: "ReturnPending",
+          },
+          data: {
+            status: "Completed",
+          },
+        })
+      )
+    }
+
     const updateBagPromise = this.prisma.client.bagItem.deleteMany({
       where: {
         customer: { id: reservation.customer.id },
@@ -1112,7 +1126,7 @@ export class ReservationService {
     productVariants,
     user,
     reservation
-  ): Promise<[PrismaPromise<ReservationFeedback>]> {
+  ): Promise<[PrismaPromise<ReservationFeedback>?]> {
     const MULTIPLE_CHOICE = "MultipleChoice"
     const variantInfos = await Promise.all(
       productVariants.map(async variant => {
@@ -1137,6 +1151,18 @@ export class ReservationService {
         }
       })
     )
+
+    const hasReservationFeedback = await this.prisma.client.reservationFeedback.findFirst(
+      {
+        where: {
+          reservationId: reservation.id,
+        },
+      }
+    )
+
+    if (!!hasReservationFeedback) {
+      return Promise.resolve([])
+    }
 
     return [
       this.prisma.client.reservationFeedback.create({
