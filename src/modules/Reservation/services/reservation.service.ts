@@ -627,14 +627,16 @@ export class ReservationService {
       trackingNumber
     )
 
-    await this.prisma.client.$transaction([
-      ...(promises as PrismaPromise<any>[]),
-      receiptPromise,
-      reservationPromise,
-      updateBagPromise,
-      reservationFeedbackPromise,
-      updateReturnPackagePromise,
-    ])
+    await this.prisma.client.$transaction(
+      [
+        ...(promises as PrismaPromise<any>[]),
+        receiptPromise,
+        reservationPromise,
+        updateBagPromise,
+        reservationFeedbackPromise,
+        updateReturnPackagePromise,
+      ].filter(Boolean)
+    )
 
     await this.pushNotifs.pushNotifyUsers({
       emails: [prismaUser.email],
