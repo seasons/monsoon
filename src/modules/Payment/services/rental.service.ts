@@ -448,8 +448,12 @@ export class RentalService {
         )
     }
 
+    if (options?.upTo) {
+      rentalStartedAt ||= invoiceWithData.billingStartAt
+    }
+
     if (options?.upTo === "today") {
-      rentalEndedAt = DateTime.local().toISO()
+      rentalEndedAt = DateTime.local().toJSDate()
     } else if (options?.upTo === "billingEnd") {
       rentalEndedAt = invoiceWithData.billingEndAt
     }

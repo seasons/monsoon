@@ -67,7 +67,8 @@ export class CustomerMembershipFieldsResolver {
   @ResolveField()
   async currentBalance(@Customer() customer) {
     const currentBalance = await this.membership.calculateCurrentBalance(
-      customer.id
+      customer.id,
+      { upTo: "today" }
     )
     return currentBalance
   }
