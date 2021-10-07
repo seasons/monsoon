@@ -56,13 +56,6 @@ export interface ReservationWithProductVariantData {
   products: PhysicalProductWithProductVariant[]
 }
 
-type ReserveItemsPhysicalProduct = Pick<
-  PhysicalProduct,
-  "seasonsUID" | "id"
-> & {
-  warehouseLocation: Pick<WarehouseLocation, "id">
-}
-
 @Injectable()
 export class ReservationService {
   constructor(
@@ -123,35 +116,6 @@ export class ReservationService {
     return lastReservation
   }
 
-  async removeRestockNotifications(items: string[], customerID: string) {
-    const restockNotifications = await this.prisma.client.productNotification.findMany(
-      {
-        where: {
-          customer: {
-            id: customerID,
-          },
-          AND: {
-            productVariant: {
-              id: { in: items },
-            },
-          },
-        },
-        orderBy: {
-          createdAt: "desc",
-        },
-      }
-    )
-
-    if (restockNotifications?.length > 0) {
-      return await this.prisma.client.productNotification.updateMany({
-        where: { id: { in: restockNotifications.map(notif => notif.id) } },
-        data: {
-          shouldNotify: false,
-        },
-      })
-    }
-  }
-
   private async getReservation(reservationNumber: number) {
     return await this.prisma.client.reservation.findUnique({
       where: {
@@ -173,6 +137,7 @@ export class ReservationService {
         customer: {
           select: {
             id: true,
+            user: { select: { email: true } },
             detail: {
               select: {
                 shippingAddress: {
@@ -182,12 +147,6 @@ export class ReservationService {
                 },
               },
             },
-          },
-        },
-        user: {
-          select: {
-            id: true,
-            email: true,
           },
         },
         returnPackages: {
@@ -317,7 +276,7 @@ export class ReservationService {
 
     const prismaUser = await this.prisma.client.user.findUnique({
       where: {
-        email: reservation.user.email,
+        email: reservation.customer.user.email,
       },
     })
 
@@ -1020,189 +979,5 @@ export class ReservationService {
         price: sentRate?.amount,
       },
     ].filter(a => a.price > 0)
-  }
-
-  private async createReservation(
-    seasonsToCustomerTransaction,
-    customerToSeasonsTransaction,
-    lastReservation: Pick<Reservation, "status"> & {
-      returnPackages: Array<Pick<Package, "id"> & { events: { id: string }[] }>
-    },
-    customer: Pick<Customer, "id">,
-    shipmentWeight: number,
-    physicalProductsBeingReserved: ReserveItemsPhysicalProduct[],
-    heldPhysicalProducts: ReserveItemsPhysicalProduct[],
-    shippingCode: ShippingCode | null
-  ): Promise<{
-    promises: PrismaPromise<Reservation | ReservationPhysicalProduct[]>[]
-    datas: { reservationId: string; reservationPhysicalProductIds: string[] }
-  }> {
-    const promises = []
-
-    const customerWithData = await this.prisma.client.customer.findUnique({
-      where: { id: customer.id },
-      select: {
-        user: { select: { id: true } },
-        detail: {
-          select: {
-            shippingAddress: {
-              select: {
-                id: true,
-                shippingOptions: {
-                  select: {
-                    id: true,
-                    shippingMethod: { select: { code: true } },
-                  },
-                },
-              },
-            },
-          },
-        },
-      },
-    })
-    const allPhysicalProductsInReservation = [
-      ...physicalProductsBeingReserved,
-      ...heldPhysicalProducts,
-    ]
-
-    const newPhysicalProductSUIDs = allPhysicalProductsInReservation
-      .filter(a => !!a.warehouseLocation?.id)
-      .map(a => a.seasonsUID)
-
-    const returnPackagesToCarryOver =
-      lastReservation?.returnPackages?.filter(a => a.events.length === 0) || []
-    const createPartialPackageCreateInput = (
-      shippoTransaction
-    ): Partial<Prisma.PackageCreateInput> => {
-      return {
-        transactionID: shippoTransaction.object_id,
-        shippingLabel: {
-          create: {
-            image: shippoTransaction.label_url || "",
-            trackingNumber: shippoTransaction.tracking_number || "",
-            trackingURL: shippoTransaction.tracking_url_provider || "",
-            name: "UPS",
-          },
-        },
-        amount: Math.round(shippoTransaction.rate.amount * 100),
-      }
-    }
-
-    let shippingOptionId
-    if (!!shippingCode) {
-      const shippingOption = customerWithData.detail.shippingAddress.shippingOptions.find(
-        a => a.shippingMethod.code === shippingCode
-      )
-      shippingOptionId = shippingOption?.id
-    }
-
-    const customerShippingAddressRecordID =
-      customerWithData.detail.shippingAddress.id
-    const uniqueReservationNumber = await this.utils.getUniqueReservationNumber()
-
-    const reservationId = cuid()
-    const outboundPackageId = cuid()
-    const reservationPhysicalProductCreateDatas = allPhysicalProductsInReservation.map(
-      physicalProduct =>
-        Prisma.validator<
-          Prisma.ReservationPhysicalProductUncheckedCreateWithoutReservationInput
-        >()({
-          id: cuid(),
-          outboundPackageId,
-          physicalProductId: physicalProduct.id,
-          isNew: newPhysicalProductSUIDs.includes(physicalProduct.seasonsUID),
-        })
-    )
-
-    const reservationCreateData = Prisma.validator<
-      Prisma.ReservationCreateInput
-    >()({
-      id: reservationId,
-      reservationPhysicalProducts: {
-        create: reservationPhysicalProductCreateDatas,
-      },
-      customer: {
-        connect: {
-          id: customer.id,
-        },
-      },
-      user: {
-        connect: {
-          id: customerWithData.user.id,
-        },
-      },
-      phase: "BusinessToCustomer",
-      sentPackage: {
-        create: {
-          id: outboundPackageId,
-          ...createPartialPackageCreateInput(seasonsToCustomerTransaction),
-          weight: shipmentWeight,
-          // reservationPhysicalProductsOnOutboundPackage: {
-          //   connect: reservationPhysicalProductCreateDatas
-          //     .filter(a => a.isNew)
-          //     .map(a => ({ id: a.id })),
-          // },
-          fromAddress: {
-            connect: {
-              slug: process.env.SEASONS_CLEANER_LOCATION_SLUG,
-            },
-          },
-          toAddress: {
-            connect: { id: customerShippingAddressRecordID },
-          },
-        },
-      } as any,
-      returnPackages: {
-        create: {
-          ...createPartialPackageCreateInput(customerToSeasonsTransaction),
-          fromAddress: {
-            connect: {
-              id: customerShippingAddressRecordID,
-            },
-          },
-          toAddress: {
-            connect: {
-              slug: process.env.SEASONS_CLEANER_LOCATION_SLUG,
-            },
-          },
-        } as any,
-        connect: returnPackagesToCarryOver.map(a => ({
-          id: a.id,
-        })),
-      },
-      reservationNumber: uniqueReservationNumber,
-      lastLocation: {
-        connect: {
-          slug: process.env.SEASONS_CLEANER_LOCATION_SLUG,
-        },
-      },
-      ...(!!shippingOptionId
-        ? {
-            shippingOption: {
-              connect: {
-                id: shippingOptionId,
-              },
-            },
-          }
-        : {}),
-      shipped: false,
-      status: "Queued",
-      previousReservationWasPacked: lastReservation?.status === "Packed",
-    })
-
-    promises.push(
-      //@ts-ignore
-      this.prisma.client.reservation.create({ data: reservationCreateData })
-    )
-
-    return {
-      promises,
-      datas: {
-        reservationId: reservationCreateData.id,
-        reservationPhysicalProductIds: reservationPhysicalProductCreateDatas.map(
-          a => a.id
-        ),
-      },
-    }
   }
 }

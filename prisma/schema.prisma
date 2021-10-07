@@ -1345,7 +1345,6 @@ model Reservation {
   shipped                      Boolean
   createdAt                    DateTime                     @default(now())
   updatedAt                    DateTime                     @updatedAt
-  userId                       String?                      @map("user") @db.VarChar(30)
   reservationNumber            Int                          @unique
   status                       ReservationStatus
   shippedAt                    DateTime?
@@ -1372,7 +1371,6 @@ model Reservation {
   returnPackages               Package[]                    @relation("PackageToReservationReturnPackages")
   sentPackage                  Package?                     @relation("PackageToReservation_sentPackage", fields: [sentPackageId], references: [id])
   shippingOption               ShippingOption?              @relation(fields: [shippingOptionId], references: [id])
-  user                         User?                        @relation(fields: [userId], references: [id])
   lineItems                    OrderLineItem[]
   packageEvents                PackageTransitEvent[]
   feedback                     ReservationFeedback?
@@ -1657,7 +1655,6 @@ model User {
   physicalProductQualityReportS PhysicalProductQualityReport[]
   productRequests               ProductRequest[]
   productVariantWants           ProductVariantWant[]
-  reservations                  Reservation[]
   reservationFeedbacks          ReservationFeedback[]
   smsReceipts                   SmsReceipt[]
   userPushNotificationInterests UserPushNotificationInterest[]

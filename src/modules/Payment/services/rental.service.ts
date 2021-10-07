@@ -376,6 +376,7 @@ export class RentalService {
           rentalStartedAt = undefined
           addComment(itemStatusComments["enRoute"])
         } else {
+          // rentalEndedAt = billingEndAt
           throw "unimplemented"
           /* 
           Simplest case: Customer has one reservation. This item was sent on that reservation, and is now being returned with the label provided on that item.
@@ -394,6 +395,7 @@ export class RentalService {
 
           addComment(itemStatusComments["withCustomer"])
         } else {
+          // rentalEndedAt = billingEndAt
           throw "unimplemented"
           // TODO: FIgure out this logic
         }
