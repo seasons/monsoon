@@ -1514,7 +1514,6 @@ const addToBagAndReserveForCustomer = async (
   })
   const prodVarsToReserve = bagItemsToReserve.map(a => a.productVariant.id)
   const r = await reservationService.reserveItems(
-    prodVarsToReserve,
     shippingCode,
     testCustomer as any,
     {
