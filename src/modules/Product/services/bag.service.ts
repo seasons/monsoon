@@ -1,3 +1,7 @@
+import { Customer } from "@app/decorators"
+import { ErrorService } from "@app/modules/Error/services/error.service"
+import { ProductUtilsService } from "@app/modules/Utils/services/product.utils.service"
+import { StatementsService } from "@app/modules/Utils/services/statements.service"
 import { UtilsService } from "@app/modules/Utils/services/utils.service"
 import { Injectable } from "@nestjs/common"
 import { BagItem, InventoryStatus, Prisma } from "@prisma/client"
@@ -22,7 +26,8 @@ export class BagService {
     private readonly prisma: PrismaService,
     private readonly reservationService: ReservationService,
     private readonly productVariantService: ProductVariantService,
-    private readonly utils: UtilsService
+    private readonly utils: UtilsService,
+    private readonly productUtils: ProductUtilsService
   ) {}
 
   async bagSection(status: BagSectionStatus, customer) {
@@ -401,7 +406,7 @@ export class BagService {
     const results = await this.prisma.client.$transaction(promises.flat())
     const addedBagItem = results.pop()
 
-    await this.reservationService.removeRestockNotifications(
+    await this.productUtils.removeRestockNotifications(
       [newProductVariantID],
       customerID
     )

@@ -7,6 +7,7 @@ import { Args, Mutation, Resolver } from "@nestjs/graphql"
 import { pick } from "lodash"
 
 import { ReservationPhysicalProductService } from "../services/reservationPhysicalProduct.service"
+import { ReserveService } from "../services/reserve.service"
 import { ReservationService } from ".."
 
 const ENSURE_TRACK_DATA_FRAGMENT = `fragment EnsureTrackData on Reservation {id products {seasonsUID}}`
@@ -15,6 +16,7 @@ const ENSURE_TRACK_DATA_FRAGMENT = `fragment EnsureTrackData on Reservation {id 
 export class ReservationMutationsResolver {
   constructor(
     private readonly reservation: ReservationService,
+    private readonly reserve: ReserveService,
     private readonly segment: SegmentService,
     private readonly prisma: PrismaService,
     private readonly reservationPhysicalProduct: ReservationPhysicalProductService
@@ -62,7 +64,7 @@ export class ReservationMutationsResolver {
     select,
     @Application() application
   ) {
-    const returnData = await this.reservation.reserveItems(
+    const returnData = await this.reserve.reserveItems(
       shippingCode,
       customer,
       select,
@@ -104,7 +106,7 @@ export class ReservationMutationsResolver {
         },
       },
     })
-    const returnData = await this.reservation.reserveItems(
+    const returnData = await this.reserve.reserveItems(
       shippingCode,
       customer: custWithData,
       select,

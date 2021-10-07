@@ -1,6 +1,7 @@
 import { EmailService } from "@app/modules/Email/services/email.service"
 import { PushNotificationService } from "@app/modules/PushNotification/services/pushNotification.service"
 import { ReservationService } from "@app/modules/Reservation"
+import { ReserveService } from "@app/modules/Reservation/services/reserve.service"
 import { EmailServiceMock } from "@app/modules/Utils/mocks/emailService.mock"
 import { ShippoMock } from "@app/modules/Utils/mocks/shippo.mock"
 import { TestUtilsService } from "@app/modules/Utils/services/test.service"
@@ -235,6 +236,7 @@ class ChargeBeeMock {
 
 let prisma: PrismaService
 let rentalService: RentalService
+let reseveService: ReserveService
 let reservationService: ReservationService
 let utils: UtilsService
 let timeUtils: TimeUtilsService
@@ -263,6 +265,7 @@ describe("Rental Service", () => {
     rentalService = moduleRef.get<RentalService>(RentalService)
     utils = moduleRef.get<UtilsService>(UtilsService)
     timeUtils = moduleRef.get<TimeUtilsService>(TimeUtilsService)
+    reseveService = moduleRef.get<ReserveService>(ReserveService)
     reservationService = moduleRef.get<ReservationService>(ReservationService)
     testUtils = moduleRef.get<TestUtilsService>(TestUtilsService)
 
