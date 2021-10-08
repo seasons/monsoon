@@ -1,4 +1,6 @@
+import { WinstonLogger } from "@app/lib/logger"
 import { CustomerMembershipService } from "@app/modules/Customer/services/customerMembership.service"
+import { ErrorService } from "@app/modules/Error/services/error.service"
 import {
   CREATE_RENTAL_INVOICE_LINE_ITEMS_INVOICE_SELECT,
   RentalService,
@@ -9,12 +11,15 @@ import { Cron, CronExpression } from "@nestjs/schedule"
 
 @Injectable()
 export class BillingScheduledJobs {
-  private readonly logger = new Logger(`Cron: ${BillingScheduledJobs.name}`)
+  private readonly logger = (new Logger(
+    `Cron: ${BillingScheduledJobs.name}`
+  ) as unknown) as WinstonLogger
 
   constructor(
     private readonly prisma: PrismaService,
     private readonly membership: CustomerMembershipService,
-    private readonly rental: RentalService
+    private readonly rental: RentalService,
+    private readonly error: ErrorService
   ) {}
 
   @Cron(CronExpression.EVERY_DAY_AT_4AM)
@@ -94,6 +99,10 @@ export class BillingScheduledJobs {
         console.log(err)
         this.error.setExtraContext(invoice)
         this.error.captureError(err)
+        this.logger.error("Rental invoice billing failed", {
+          invoice,
+          error: err,
+        })
       }
     }
 
