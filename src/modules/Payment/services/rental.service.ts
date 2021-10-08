@@ -337,14 +337,21 @@ export class RentalService {
       sentPackage.deliveredAt,
       initialReservation.createdAt
     )
-    const deliveredThisBillingCycle = this.timeUtils.isLaterDate(
-      itemDeliveredAt,
-      invoiceWithData.billingStartAt
-    )
 
-    let rentalStartedAt = deliveredThisBillingCycle
-      ? itemDeliveredAt
-      : invoiceWithData.billingStartAt
+    const deliveredBeforeBillingCycle = this.timeUtils.isLaterDate(
+      invoiceWithData.billingStartAt,
+      itemDeliveredAt
+    )
+    const deliveredAfterBillingCycle = this.timeUtils.isLaterDate(
+      itemDeliveredAt,
+      invoiceWithData.billingEndAt
+    )
+    let rentalStartedAt = deliveredBeforeBillingCycle
+      ? invoiceWithData.billingStartAt
+      : deliveredAfterBillingCycle
+      ? undefined
+      : itemDeliveredAt
+
     const itemStatusComments = {
       returned: "Item status: returned",
       withCustomer: "Item status: with customer",
@@ -414,7 +421,7 @@ export class RentalService {
           )
           rentalEndedAt = this.getSafeReturnPackageEntryDate(
             returnPackage.enteredDeliverySystemAt,
-            returnReservation.completedAt
+            returnReservation.completedAt || invoiceWithData.billingEndAt
           )
           addComment(itemStatusComments["returned"])
         } else {
@@ -436,6 +443,16 @@ export class RentalService {
         throw new Error(
           `Unexpected reservation status: ${initialReservation.status}`
         )
+    }
+
+    // If we end up in a nonsense situation, just don't charge them anything
+    if (
+      !!rentalStartedAt &&
+      !!rentalEndedAt &&
+      this.timeUtils.isLaterDate(rentalStartedAt, rentalEndedAt)
+    ) {
+      rentalStartedAt = undefined
+      rentalEndedAt = undefined
     }
 
     daysRented =
@@ -498,6 +515,10 @@ export class RentalService {
           initialReservationId,
           ...daysRentedMetadata
         } = await this.calcDaysRented(invoice, physicalProduct)
+        console.log(
+          physicalProduct.seasonsUID,
+          JSON.stringify(daysRentedMetadata)
+        )
         const rawDailyRentalPrice =
           physicalProduct.productVariant.product.computedRentalPrice / 30
         const roundedDailyRentalPriceAsString = rawDailyRentalPrice.toFixed(2)
@@ -638,12 +659,12 @@ export class RentalService {
       description: this.lineItemToDescription(prismaLineItem),
       ...(prismaLineItem.name !== "Processing"
         ? {
-            date_from: this.timeUtils.secondsSinceEpoch(
-              prismaLineItem.rentalStartedAt
-            ),
-            date_to: this.timeUtils.secondsSinceEpoch(
-              prismaLineItem.rentalEndedAt
-            ),
+            date_from:
+              !!prismaLineItem.rentalStartedAt &&
+              this.timeUtils.secondsSinceEpoch(prismaLineItem.rentalStartedAt),
+            date_to:
+              !!prismaLineItem.rentalEndedAt &&
+              this.timeUtils.secondsSinceEpoch(prismaLineItem.rentalEndedAt),
           }
         : {}),
     }
@@ -730,9 +751,9 @@ export class RentalService {
         .create({
           customer_id: prismaUserId,
           currency_code: "USD",
-          charges: lineItemsWithData.map(
-            this.prismaLineItemToChargebeeChargeInput
-          ),
+          charges: lineItemsWithData
+            .filter(a => a.price > 0)
+            .map(this.prismaLineItemToChargebeeChargeInput),
         })
         .request(this.handleChargebeeRequestResult)
       const chargebeeLineItems = result?.invoice?.line_items
