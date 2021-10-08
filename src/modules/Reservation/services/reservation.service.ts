@@ -91,6 +91,19 @@ export class ReservationService {
       select: {
         id: true,
         status: true,
+        detail: {
+          select: {
+            shippingAddress: {
+              select: {
+                state: true,
+                address1: true,
+                address2: true,
+                city: true,
+                zipCode: true,
+              },
+            },
+          },
+        },
         membership: {
           select: {
             plan: { select: { itemCount: true, tier: true } },
@@ -108,6 +121,20 @@ export class ReservationService {
 
     if (customerWithData.status !== "Active") {
       throw new Error(`Only Active customers can place a reservation`)
+    }
+
+    // Validate address and provide suggested one if needed
+    const {
+      isValid: shippingAddressIsValid,
+    } = await this.shippingService.shippoValidateAddress({
+      street1: customerWithData.detail.shippingAddress.address1,
+      street2: customerWithData.detail.shippingAddress.address2,
+      city: customerWithData.detail.shippingAddress.city,
+      state: customerWithData.detail.shippingAddress.state,
+      zip: customerWithData.detail.shippingAddress.zipCode,
+    })
+    if (!shippingAddressIsValid) {
+      throw new Error("Shipping address is invalid")
     }
 
     const promises = []
@@ -149,7 +176,6 @@ export class ReservationService {
         returnedProducts: { select: { id: true } },
       }
     )
-    await this.validateLastReservation(lastReservation, items)
 
     // Get the most recent reservation that potentially carries products being kept in the new reservation
     const lastReservationWithHeldItems = !!lastReservation
@@ -550,6 +576,20 @@ export class ReservationService {
       },
     })
 
+    if (reservation.status === "ReturnPending") {
+      promises.push(
+        this.prisma.client.reservation.updateMany({
+          where: {
+            customerId: { equals: reservation.customer.id },
+            status: "ReturnPending",
+          },
+          data: {
+            status: "Completed",
+          },
+        })
+      )
+    }
+
     const updateBagPromise = this.prisma.client.bagItem.deleteMany({
       where: {
         customer: { id: reservation.customer.id },
@@ -642,6 +682,11 @@ export class ReservationService {
         billingInfo: {
           select: {
             state: true,
+          },
+        },
+        membership: {
+          select: {
+            creditBalance: true,
           },
         },
         detail: {
@@ -786,6 +831,8 @@ export class ReservationService {
           ? true
           : DateTime.fromISO(nextFreeSwapDate) <= DateTime.local()
 
+      const creditBalance = customerWithUser.membership.creditBalance
+
       const processingFeeLines = await this.calculateProcessingFee({
         variantIDs,
         customer: customerWithUser,
@@ -812,10 +859,6 @@ export class ReservationService {
         })
         .request()
 
-      const processingTotal = processingFeeLines.reduce(
-        (acc, curr) => acc + curr.price,
-        0
-      )
       const taxTotal = invoice_estimate.taxes.reduce(
         (acc, curr) => acc + curr.amount,
         0
@@ -823,13 +866,18 @@ export class ReservationService {
 
       const linesWithTotal = [
         ...lines,
-        {
-          name: "Processing + Tax",
-          recordType: "Fee",
-          recordID: customer.id,
-          price: processingTotal + taxTotal,
-        },
-        ...(invoice_estimate?.discounts?.length > 0
+        ...processingFeeLines,
+        ...(taxTotal > 0
+          ? [
+              {
+                name: "Taxes",
+                recordType: "Fee",
+                recordID: customer.id,
+                price: taxTotal,
+              },
+            ]
+          : []),
+        ...(creditBalance > 0
           ? [
               {
                 name: "Sub-total",
@@ -841,13 +889,13 @@ export class ReservationService {
                 name: "Credits applied",
                 recordType: "Credit",
                 recordID: customer.id,
-                price: -invoice_estimate.discounts[0].amount,
+                price: -creditBalance,
               },
               {
                 name: "Total",
                 recordType: "Total",
                 recordID: customer.id,
-                price: invoice_estimate.total,
+                price: Math.max(0, invoice_estimate.sub_total - creditBalance),
               },
             ]
           : [
@@ -1078,7 +1126,7 @@ export class ReservationService {
     productVariants,
     user,
     reservation
-  ): Promise<[PrismaPromise<ReservationFeedback>]> {
+  ): Promise<[PrismaPromise<ReservationFeedback>?]> {
     const MULTIPLE_CHOICE = "MultipleChoice"
     const variantInfos = await Promise.all(
       productVariants.map(async variant => {
@@ -1103,6 +1151,18 @@ export class ReservationService {
         }
       })
     )
+
+    const hasReservationFeedback = await this.prisma.client.reservationFeedback.findFirst(
+      {
+        where: {
+          reservationId: reservation.id,
+        },
+      }
+    )
+
+    if (!!hasReservationFeedback) {
+      return Promise.resolve([])
+    }
 
     return [
       this.prisma.client.reservationFeedback.create({
@@ -1194,11 +1254,10 @@ export class ReservationService {
   }) {
     const {
       sentRate,
-      returnRate,
     } = await this.shippingService.getShippingRateForVariantIDs(variantIDs, {
       customer,
       includeSentPackage: !hasFreeSwap,
-      includeReturnPackage: !hasFreeSwap,
+      includeReturnPackage: false,
       serviceLevel:
         shippingCode === "UPSGround"
           ? UPSServiceLevel.Ground
@@ -1207,37 +1266,16 @@ export class ReservationService {
 
     return [
       {
-        name: "Base Fee",
+        name: "Processing",
         recordType: "Fee",
         price: 550,
       },
       {
-        name: "Inbound shipping",
+        name: "Shipping",
         recordType: "Fee",
         price: sentRate?.amount,
       },
-      {
-        name: "Outbound shipping",
-        recordType: "Fee",
-        price: returnRate?.amount,
-      },
     ].filter(a => a.price > 0)
-  }
-
-  // TODO: We can rip this out when we move to a world where we don't carry items over from reservations
-  private async validateLastReservation(lastReservation, items) {
-    if (!lastReservation) {
-      return
-    }
-
-    if (
-      items.length <=
-      lastReservation.products.length - lastReservation.returnedProducts.length
-    ) {
-      throw new ApolloError(
-        `Must have all unreturned items from last reservation included in the new reservation. Last Reservation number, status: ${lastReservation.reservationNumber}, ${lastReservation.status}`
-      )
-    }
   }
 
   private async updateLastReservation(lastReservation) {

@@ -330,7 +330,7 @@ export class RentalService {
     const initialReservation = sentPackage.reservationOnSentPackage
 
     let daysRented, rentalEndedAt, comment
-    comment = `Initial reservation: ${initialReservation.reservationNumber}, status ${initialReservation.status}.`
+    comment = `Initial reservation: ${initialReservation.reservationNumber}, status ${initialReservation.status}, phase ${initialReservation.phase}`
     const addComment = line => (comment += `\n${line}`)
 
     const itemDeliveredAt = this.getSafeSentPackageDeliveryDate(
@@ -353,6 +353,8 @@ export class RentalService {
       enRoute: "Item status: en route to customer",
       lostOnRouteToCustomer: "item status: lost en route to customer",
       cancelled: "item status: never sent. initial reservation cancelled",
+      shippedB2C: "Item status: Either with us or with customer.",
+      unknownMinCharge: "Item status: Unknown. Applied minimum charge (7 days)",
     }
     switch (initialReservation.status) {
       case "Hold":
@@ -376,29 +378,19 @@ export class RentalService {
           rentalStartedAt = undefined
           addComment(itemStatusComments["enRoute"])
         } else {
-          throw "unimplemented"
-          /* 
-          Simplest case: Customer has one reservation. This item was sent on that reservation, and is now being returned with the label provided on that item.
-            See if this item is on the `returnedProducts` array for the reservation. 
-              If it is, the return date is the date the return package entered the carrier network, with today - a cushion as the fallback. 
-              If it isn't, 
-          
-          */
-          // TODO: Figure out this logic. How do we know if the item is on its way back or not?
+          rentalEndedAt = invoiceWithData.billingEndAt
+          addComment(itemStatusComments["shippedB2C"])
         }
         break
-
       case "Delivered":
         if (initialReservation.phase === "BusinessToCustomer") {
           rentalEndedAt = invoiceWithData.billingEndAt
-
           addComment(itemStatusComments["withCustomer"])
         } else {
-          throw "unimplemented"
-          // TODO: FIgure out this logic
+          rentalEndedAt = invoiceWithData.billingEndAt
+          addComment(itemStatusComments["shippedB2C"])
         }
         break
-
       case "ReturnPending":
       case "Completed":
         const possibleReturnReservations = [
@@ -436,8 +428,8 @@ export class RentalService {
           rentalStartedAt = undefined
           addComment(itemStatusComments["lostOnRouteToCustomer"])
         } else {
-          throw "unimplemented"
-          // TODO:
+          rentalEndedAt = this.timeUtils.xDaysAfterDate(rentalStartedAt, 7) // minimum charge
+          addComment(itemStatusComments["unknownMinCharge"])
         }
         break
       default:
