@@ -1389,17 +1389,17 @@ enum ReservationDropOffAgent {
 }
 
 enum ReservationPhysicalProductStatus {
-	Queued
-	Picked
-	Packed
-	ShippedToCustomer
-	ShippedToBusiness
-	DeliveredToCustomer
-	DeliveredToBusiness
-	ReturnProcessed
-	ResetEarly
-	Hold
-	Lost
+  Queued
+  Picked
+  Packed
+  ShippedToCustomer
+  ShippedToBusiness
+  DeliveredToCustomer
+  DeliveredToBusiness
+  ReturnProcessed
+  ResetEarly
+  Hold
+  Lost
 }
 
 model ReservationPhysicalProduct {
@@ -1662,9 +1662,9 @@ model User {
 }
 
 model UserDeviceData {
-  id              String  @id @default(cuid()) @db.VarChar(30)
-  iOSVersion      String?
-  user            User?
+  id         String  @id @default(cuid()) @db.VarChar(30)
+  iOSVersion String?
+  user       User?
 }
 
 model UserPushNotification {
