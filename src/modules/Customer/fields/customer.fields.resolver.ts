@@ -1,5 +1,4 @@
 import { Customer, User } from "@app/decorators"
-import { MaxIOSVersion } from "@app/decorators/maxIOSVersion.decorator"
 import { PrismaGenerateParams } from "@app/modules/DataLoader/dataloader.types.d"
 import { TransactionsForCustomersLoader } from "@app/modules/Payment/loaders/transactionsForCustomers.loader"
 import { CustomerUtilsService } from "@app/modules/User/services/customer.utils.service"
@@ -17,6 +16,7 @@ import { Prisma } from "@prisma/client"
 import { PrismaService } from "@prisma1/prisma.service"
 import { isObject } from "lodash"
 import { DateTime } from "luxon"
+import semverCompare from "semver-compare"
 
 const getUserIDGenerateParams = {
   model: "Customer",
@@ -36,7 +36,6 @@ export class CustomerFieldsResolver {
   @ResolveField()
   async iOSAppStatus(
     @Parent() customer,
-    @MaxIOSVersion() maxIOSVersion,
     @Loader({
       params: {
         model: "Customer",
@@ -47,9 +46,6 @@ export class CustomerFieldsResolver {
               deviceData: {
                 select: {
                   iOSVersion: true,
-                  iOSMajorVersion: true,
-                  iOSMinorVersion: true,
-                  iOSPatch: true,
                 },
               },
             },
@@ -64,21 +60,24 @@ export class CustomerFieldsResolver {
       return "NoRecord"
     }
 
-    const sameMajorVersion =
-      custWithData.user.deviceData.iOSMajorVersion ===
-      maxIOSVersion.iOSMajorVersion
-    const sameMinorVersion =
-      custWithData.user.deviceData.iOSMinorVersion ===
-      maxIOSVersion.iOSMinorVersion
-    const samePatch =
-      custWithData.user.deviceData.iOSPatch === maxIOSVersion.iOSPatch
-    const upToDate = sameMajorVersion && sameMinorVersion && samePatch
-
-    if (upToDate) {
-      return "UpToDate"
+    const latestIOSAppVersion = this.customerUtils.getMaxIOSAppVersion()
+    if (latestIOSAppVersion == undefined) {
+      return "NoRecord"
     }
 
-    return "Outdated"
+    const comparison = semverCompare(
+      custWithData.user.deviceData.iOSVersion,
+      latestIOSAppVersion
+    )
+
+    if (comparison === 0) {
+      return "UpToDate"
+    } else if (comparison === -1) {
+      return "Outdated"
+    } else {
+      // technically an error. Don't blow up the app. Just return NoRecord
+      return "NoRecord"
+    }
   }
 
   /*
