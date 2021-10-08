@@ -25,6 +25,10 @@ export class BillingScheduledJobs {
       },
     })
 
+    this.logger.log(
+      `Start update current balance on ${customers.length} customers`
+    )
+
     const promises = []
 
     for (const customer of customers) {
@@ -46,6 +50,12 @@ export class BillingScheduledJobs {
         })
       )
     }
+
+    await this.prisma.client.$transaction(promises)
+
+    this.logger.log(
+      `End update current balance on ${customers.length} customers`
+    )
   }
 
   @Cron(CronExpression.EVERY_HOUR)

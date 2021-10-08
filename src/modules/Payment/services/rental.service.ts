@@ -1,3 +1,4 @@
+import { CustomerMembershipService } from "@app/modules/Customer/services/customerMembership.service"
 import { ErrorService } from "@app/modules/Error/services/error.service"
 import { ProductUtilsService } from "@app/modules/Utils/services/product.utils.service"
 import { TimeUtilsService } from "@app/modules/Utils/services/time.service"
@@ -107,7 +108,8 @@ export class RentalService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly timeUtils: TimeUtilsService,
-    private readonly error: ErrorService
+    private readonly error: ErrorService,
+    private readonly membership: CustomerMembershipService
   ) {}
 
   private rentalReservationSelect = Prisma.validator<
@@ -239,7 +241,7 @@ export class RentalService {
       now,
       !lastInvoice
     )
-    const data = {
+    const data = Prisma.validator<Prisma.RentalInvoiceCreateInput>()({
       membership: {
         connect: { id: membershipId },
       },
@@ -248,6 +250,12 @@ export class RentalService {
       // To clean that up a bit, we get the max of now and the calcualted billingEndAt
       billingEndAt: this.timeUtils.getLaterDate(now, billingEndAt),
       status: "Draft" as RentalInvoiceStatus,
+      estimatedTotal: await this.membership.calculateCurrentBalance(
+        customer.id,
+        {
+          upTo: "billingEnd",
+        }
+      ),
       reservations: {
         connect: reservationIds.map(a => ({
           id: a,
@@ -258,7 +266,7 @@ export class RentalService {
           id: b,
         })),
       },
-    } as Prisma.RentalInvoiceCreateInput
+    })
 
     const promise = this.prisma.client.rentalInvoice.create({
       data,
