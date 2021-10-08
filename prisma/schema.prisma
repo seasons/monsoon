@@ -1664,9 +1664,6 @@ model User {
 model UserDeviceData {
   id              String  @id @default(cuid()) @db.VarChar(30)
   iOSVersion      String?
-  iOSMajorVersion Int?
-  iOSMinorVersion Int?
-  iOSPatch        Int?
   user            User?
 }
 
