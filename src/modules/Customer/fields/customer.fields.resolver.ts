@@ -16,6 +16,7 @@ import { Prisma } from "@prisma/client"
 import { PrismaService } from "@prisma1/prisma.service"
 import { isObject } from "lodash"
 import { DateTime } from "luxon"
+import semverCompare from "semver-compare"
 
 const getUserIDGenerateParams = {
   model: "Customer",
@@ -32,13 +33,60 @@ export class CustomerFieldsResolver {
     private readonly customerUtils: CustomerUtilsService
   ) {}
 
+  @ResolveField()
+  async iOSAppStatus(
+    @Parent() customer,
+    @Loader({
+      params: {
+        model: "Customer",
+        select: Prisma.validator<Prisma.CustomerSelect>()({
+          id: true,
+          user: {
+            select: {
+              deviceData: {
+                select: {
+                  iOSVersion: true,
+                },
+              },
+            },
+          },
+        }),
+      },
+    })
+    customerLoader: PrismaDataLoader<any>
+  ) {
+    const custWithData = await customerLoader.load(customer.id)
+    if (!custWithData.user.deviceData) {
+      return "NoRecord"
+    }
+
+    const latestIOSAppVersion = this.customerUtils.getMaxIOSAppVersion()
+    if (latestIOSAppVersion == undefined) {
+      return "NoRecord"
+    }
+
+    const comparison = semverCompare(
+      custWithData.user.deviceData.iOSVersion,
+      latestIOSAppVersion
+    )
+
+    if (comparison === 0) {
+      return "UpToDate"
+    } else if (comparison === -1) {
+      return "Outdated"
+    } else {
+      // technically an error. Don't blow up the app. Just return NoRecord
+      return "NoRecord"
+    }
+  }
+
   /*
    * While we transition to new plan types some customers will be
    * grandfathered in with the original plan, i.e. essential and all-access
    */
   @ResolveField()
   async grandfathered(
-    @Customer() _customer,
+    @Parent() _customer,
     @Loader({
       params: {
         model: "Customer",
@@ -211,7 +259,7 @@ export class CustomerFieldsResolver {
   }
 
   @ResolveField()
-  async shouldPayForNextReservation(@Customer() customer) {
+  async shouldPayForNextReservation(@Parent() customer) {
     // TODO: add loader
     const lastReservation = await this.utils.getLatestReservation(customer.id)
 

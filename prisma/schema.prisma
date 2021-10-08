@@ -1389,17 +1389,17 @@ enum ReservationDropOffAgent {
 }
 
 enum ReservationPhysicalProductStatus {
-	Queued
-	Picked
-	Packed
-	ShippedToCustomer
-	ShippedToBusiness
-	DeliveredToCustomer
-	DeliveredToBusiness
-	ReturnProcessed
-	ResetEarly
-	Hold
-	Lost
+  Queued
+  Picked
+  Packed
+  ShippedToCustomer
+  ShippedToBusiness
+  DeliveredToCustomer
+  DeliveredToBusiness
+  ReturnProcessed
+  ResetEarly
+  Hold
+  Lost
 }
 
 model ReservationPhysicalProduct {
