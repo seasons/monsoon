@@ -115,9 +115,6 @@ export class SubscriptionsScheduledJobs {
     let invoicesHandled = 0
     const invoicesToHandle = await this.prisma.client.rentalInvoice.findMany({
       where: {
-        membership: {
-          plan: { tier: "Access" },
-        },
         billingEndAt: {
           lte: new Date(),
         },
@@ -126,7 +123,6 @@ export class SubscriptionsScheduledJobs {
       select: CREATE_RENTAL_INVOICE_LINE_ITEMS_INVOICE_SELECT,
     })
 
-    let resultDict = { successes: [], errors: [] }
     for (const invoice of invoicesToHandle) {
       invoicesHandled++
       try {
@@ -135,12 +131,7 @@ export class SubscriptionsScheduledJobs {
           invoice
         )
         await this.rental.chargeTab(planID, invoice, lineItems)
-        resultDict.successes.push(invoice.membership.customer.user.email)
       } catch (err) {
-        resultDict.errors.push({
-          email: invoice.membership.customer.user.email,
-          err,
-        })
         console.log(err)
         this.error.setExtraContext(invoice)
         this.error.captureError(err)
@@ -150,6 +141,5 @@ export class SubscriptionsScheduledJobs {
     this.logger.log(
       `End handle rental invoices job: ${invoicesHandled} invoices handled`
     )
-    this.logger.log(resultDict)
   }
 }
