@@ -7,6 +7,7 @@ import { DripModule } from "../Drip/drip.module"
 import { EmailModule } from "../Email/email.module"
 import { ErrorModule } from "../Error/error.module"
 import { PaymentModule } from "../Payment/payment.module"
+import { ProductModule } from "../Product/product.module"
 import { PushNotificationModule } from "../PushNotification/pushNotification.module"
 import { ReservationModule } from "../Reservation/reservation.module"
 import { ShippingModule } from "../Shipping/shipping.module"
@@ -35,6 +36,7 @@ export const USER_MODULE_DEF = {
     SMSModule,
     ErrorModule,
     DripModule,
+    forwardRef(() => ProductModule),
     forwardRef(() => PaymentModule),
     forwardRef(() => ReservationModule),
   ],

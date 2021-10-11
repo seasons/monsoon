@@ -85,11 +85,25 @@ enum ReservationLineItemsFilter {
   NewItems
 }
 
+enum GroupedBagItemStatus {
+  Added
+  AtHome
+  CustomerToBusiness
+  BusinessToCustomer
+  ReturnPending
+}
+
+type GroupedBagItem {
+  status: GroupedBagItemStatus
+  bagItems: [BagItem!]
+}
+
 type Me @cacheControl(maxAge: 0, scope: PRIVATE) {
   id: ID
   user: User
   customer: Customer
   activeReservation: Reservation
+  groupedBagItems: [GroupedBagItem!]
   bag(status: BagItemStatus): [BagItem!]
   savedItems: [BagItem!]
   reservationLineItems(

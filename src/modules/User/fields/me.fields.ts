@@ -1,5 +1,6 @@
 import { Customer, User } from "@app/decorators"
 import { Select } from "@app/decorators/select.decorator"
+import { BagService } from "@app/modules/Product/services/bag.service"
 import { ReservationService } from "@app/modules/Reservation/services/reservation.service"
 import { CustomerService } from "@app/modules/User/services/customer.service"
 import { CustomerUtilsService } from "@app/modules/User/services/customer.utils.service"
@@ -24,7 +25,8 @@ export class MeFieldsResolver {
     private readonly customerService: CustomerService,
     private readonly statements: StatementsService,
     private readonly customerUtils: CustomerUtilsService,
-    private readonly reservation: ReservationService
+    private readonly reservation: ReservationService,
+    private readonly bagService: BagService
   ) {}
 
   @ResolveField()
@@ -106,6 +108,14 @@ export class MeFieldsResolver {
     }
 
     return null
+  }
+
+  @ResolveField()
+  async groupedBagItems(@Customer() customer, @Select() select) {
+    if (!customer) {
+      return null
+    }
+    return await this.bagService.groupedBagItems(customer, select)
   }
 
   @ResolveField()

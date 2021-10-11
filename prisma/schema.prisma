@@ -500,18 +500,21 @@ model AdminActionLogInterpretation {
 }
 
 model BagItem {
-  id                String           @id @default(cuid()) @db.VarChar(30)
-  position          Int?
-  saved             Boolean?
-  status            BagItemStatus
-  customerId        String?          @map("customer") @db.VarChar(30)
-  productVariantId  String?          @map("productVariant") @db.VarChar(30)
-  physicalProductId String?          @map("physicalProduct") @db.VarChar(30)
-  createdAt         DateTime         @default(now())
-  updatedAt         DateTime         @updatedAt
-  customer          Customer?        @relation(fields: [customerId], references: [id])
-  productVariant    ProductVariant?  @relation(fields: [productVariantId], references: [id])
-  physicalProduct   PhysicalProduct? @relation(fields: [physicalProductId], references: [id])
+  id                           String           @id @default(cuid()) @db.VarChar(30)
+  position                     Int?
+  saved                        Boolean?
+  status                       BagItemStatus
+  customerId                   String?          @map("customer") @db.VarChar(30)
+  productVariantId             String?          @map("productVariant") @db.VarChar(30)
+  physicalProductId            String?          @map("physicalProduct") @db.VarChar(30)
+  reservationPhysicalProductId String?          @map("reservationPhysicalProduct") @db.VarChar(30)
+  createdAt                    DateTime         @default(now())
+  updatedAt                    DateTime         @updatedAt
+  customer                     Customer?        @relation(fields: [customerId], references: [id])
+  productVariant               ProductVariant?  @relation(fields: [productVariantId], references: [id])
+  physicalProduct              PhysicalProduct? @relation(fields: [physicalProductId], references: [id])
+  reservationPhysicalProduct   ReservationPhysicalProduct? @relation(fields: [reservationPhysicalProductId], references: [id])
+
 
   @@unique([productVariantId, customerId])
 }
@@ -1423,61 +1426,61 @@ enum ReservationPhysicalProductStatus {
 }
 
 model ReservationPhysicalProduct {
-  id    String  @id @default(cuid()) @db.VarChar(30)
-  isNew Boolean
+  id                               String  @id @default(cuid()) @db.VarChar(30)
+  isNew                            Boolean
 
-  isPurchased Boolean
-  purchasedAt DateTime?
+  isPurchased                      Boolean
+  purchasedAt                      DateTime?
 
-  status ReservationPhysicalProductStatus @default(value: Queued)
+  status                           ReservationPhysicalProductStatus @default(value: Queued)
 
   // customer or UPS
-  droppedOffBy ReservationDropOffAgent?
-  droppedOffAt DateTime?
+  droppedOffBy                     ReservationDropOffAgent?
+  droppedOffAt                     DateTime?
 
   // item has been returned and processed by associate
-  hasReturnProcessed Boolean
-  returnProcessedAt  DateTime?
+  hasReturnProcessed               Boolean
+  returnProcessedAt                DateTime?
 
   // admin marked item as returned early, it's still on its way
-  isResetEarlyByAdmin Boolean
-  resetEarlyByAdminAt DateTime?
+  isResetEarlyByAdmin              Boolean
+  resetEarlyByAdminAt              DateTime?
 
   // denotes customer filling out the return flow
-  hasCustomerReturnIntent Boolean
-  customerReturnIntentAt  DateTime?
+  hasCustomerReturnIntent          Boolean
+  customerReturnIntentAt           DateTime?
 
-  isLost      Boolean
-  lostAt      DateTime?
-  lostInPhase ReservationPhase?
+  isLost                           Boolean
+  lostAt                           DateTime?
+  lostInPhase                      ReservationPhase?
 
-  isDeliveredToCustomer Boolean
-  deliveredToCustomerAt DateTime?
+  isDeliveredToCustomer            Boolean
+  deliveredToCustomerAt            DateTime?
 
-  isDeliveredToBusiness Boolean
-  deliveredToBusinessAt DateTime?
+  isDeliveredToBusiness            Boolean
+  deliveredToBusinessAt            DateTime?
 
   // when UPS first gets the package into
-  scannedOnInboundAt      DateTime?
-  hasBeenScannedOnInbound Boolean
+  scannedOnInboundAt               DateTime?
+  hasBeenScannedOnInbound          Boolean
 
-  scannedOnOutboundAt      DateTime?
-  hasBeenScannedOnOutbound Boolean
+  scannedOnOutboundAt              DateTime?
+  hasBeenScannedOnOutbound         Boolean
 
-  lineItemId String?        @db.VarChar(30)
-  lineItem   OrderLineItem? @relation(fields: [lineItemId], references: [id])
+  lineItemId                       String? @db.VarChar(30)
+  lineItem                         OrderLineItem? @relation(fields: [lineItemId], references: [id])
 
-  outboundPackageId String?  @db.VarChar(30)
-  outboundPackage   Package? @relation("ReservationPhysicalProductToOutboundPackage", fields: [outboundPackageId], references: [id])
+  outboundPackageId                String? @db.VarChar(30)
+  outboundPackage                  Package? @relation("ReservationPhysicalProductToOutboundPackage", fields: [outboundPackageId], references: [id])
 
-  inboundPackageId String?  @db.VarChar(30)
-  inboundPackage   Package? @relation("ReservationPhysicalProductToInboundPackage", fields: [inboundPackageId], references: [id])
+  inboundPackageId                 String?  @db.VarChar(30)
+  inboundPackage                   Package? @relation("ReservationPhysicalProductToInboundPackage", fields: [inboundPackageId], references: [id])
 
-  physicalProductId String?          @map("physicalProduct") @db.VarChar(30)
-  physicalProduct   PhysicalProduct? @relation(fields: [physicalProductId], references: [id])
+  physicalProductId                String?          @map("physicalProduct") @db.VarChar(30)
+  physicalProduct                  PhysicalProduct? @relation(fields: [physicalProductId], references: [id])
 
-  reservationId String?      @map("reservation") @db.VarChar(30)
-  reservation   Reservation? @relation(fields: [id], references: [id])
+  reservationId                    String?      @map("reservation") @db.VarChar(30)
+  reservation                      Reservation? @relation(fields: [id], references: [id])
 
   shippingMethodId String?         @map("shippingMethod") @db.VarChar(30)
   shippingMethod   ShippingMethod? @relation(fields: [shippingMethodId], references: [id])
