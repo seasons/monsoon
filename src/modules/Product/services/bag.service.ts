@@ -6,6 +6,8 @@ import { Injectable } from "@nestjs/common"
 import { BagItem, BagItemStatus, InventoryStatus, Prisma } from "@prisma/client"
 import { PrismaService } from "@prisma1/prisma.service"
 import { ApolloError } from "apollo-server"
+import { merge } from "lodash"
+import { DateTime } from "luxon"
 
 import { ReservationService } from "../../Reservation/services/reservation.service"
 import { ProductVariantService } from "../services/productVariant.service"
@@ -20,6 +22,95 @@ export class BagService {
     private readonly error: ErrorService,
     private readonly statements: StatementsService
   ) {}
+
+  async groupedBagItems(customer, select) {
+    const bagItems = await this.prisma.client.bagItem.findMany({
+      where: {
+        customer: {
+          id: customer.id,
+        },
+        saved: false,
+      },
+      select: merge(select, {
+        id: true,
+        status: true,
+        updatedAt: true,
+        physicalProduct: {
+          id: true,
+          reservationPhysicalProduct: {
+            select: {
+              id: true,
+            },
+          },
+        },
+      }),
+    })
+
+    const groupedBagItems = []
+
+    const addedBagItems = bagItems.filter(item => item.status === "Added")
+    const atHomeBagItems = bagItems.filter(item => {
+      const updatedMoreThan24HoursAgo =
+        item?.updatedAt &&
+        DateTime.fromISO(item?.updatedAt).diffNow("days")?.values?.days <= -1
+
+      return (
+        item.status === "Delivered" &&
+        !activeReservation?.returnedAt &&
+        updatedMoreThan24HoursAgo
+      )
+    })
+    const customerToBusinessBagItems = bagItems.filter(item => {
+      const updatedMoreThan24HoursAgo =
+        item?.updatedAt &&
+        DateTime.fromISO(item?.updatedAt).diffNow("days")?.values?.days <= -1
+
+      return (
+        item.status === "Delivered" &&
+        !activeReservation?.returnedAt &&
+        updatedMoreThan24HoursAgo
+      )
+    })
+    const businessToCustomerBagItems = bagItems.filter(item => {
+      const updatedMoreThan24HoursAgo =
+        item?.updatedAt &&
+        DateTime.fromISO(item?.updatedAt).diffNow("days")?.values?.days <= -1
+
+      return (
+        item.status === "Delivered" &&
+        !activeReservation?.returnedAt &&
+        updatedMoreThan24HoursAgo
+      )
+    })
+    const returnPendingBagItems = bagItems.filter(item => {
+      const updatedMoreThan24HoursAgo =
+        item?.updatedAt &&
+        DateTime.fromISO(item?.updatedAt).diffNow("days")?.values?.days <= -1
+
+      return (
+        item.status === "Delivered" &&
+        !activeReservation?.returnedAt &&
+        updatedMoreThan24HoursAgo
+      )
+    })
+
+    if (addedBagItems.length > 0) {
+      groupedBagItems.push({
+        status: "Added",
+        bagItems: addedBagItems,
+      })
+    }
+    if (atHomeBagItems.length > 0) {
+      groupedBagItems.push({
+        status: "AtHome",
+        bagItems: atHomeBagItems,
+      })
+    }
+
+    console.log("groupedBagItems", groupedBagItems)
+
+    return groupedBagItems
+  }
 
   async addToBag(
     itemId,
