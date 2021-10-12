@@ -1,6 +1,4 @@
-import { CustomerMembershipService } from "@app/modules/Customer/services/customerMembership.service"
 import { ErrorService } from "@app/modules/Error/services/error.service"
-import { ProductUtilsService } from "@app/modules/Utils/services/product.utils.service"
 import { TimeUtilsService } from "@app/modules/Utils/services/time.service"
 import { Injectable } from "@nestjs/common"
 import {
@@ -16,7 +14,7 @@ import {
 import { Prisma } from "@prisma/client"
 import { PrismaService } from "@prisma1/prisma.service"
 import chargebee from "chargebee"
-import { head, orderBy } from "lodash"
+import { orderBy } from "lodash"
 import { DateTime } from "luxon"
 
 import { RESERVATION_PROCESSING_FEE } from "../constants"
@@ -108,8 +106,7 @@ export class RentalService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly timeUtils: TimeUtilsService,
-    private readonly error: ErrorService,
-    private readonly membership: CustomerMembershipService
+    private readonly error: ErrorService
   ) {}
 
   private rentalReservationSelect = Prisma.validator<
@@ -219,6 +216,7 @@ export class RentalService {
     const customer = await this.prisma.client.customer.findFirst({
       where: { membership: { id: membershipId } },
       select: {
+        id: true,
         reservations: {
           where: {
             status: { notIn: ["Completed", "Cancelled", "Lost"] },
@@ -250,12 +248,9 @@ export class RentalService {
       // To clean that up a bit, we get the max of now and the calcualted billingEndAt
       billingEndAt: this.timeUtils.getLaterDate(now, billingEndAt),
       status: "Draft" as RentalInvoiceStatus,
-      estimatedTotal: await this.membership.calculateCurrentBalance(
-        customer.id,
-        {
-          upTo: "billingEnd",
-        }
-      ),
+      estimatedTotal: await this.calculateCurrentBalance(customer.id, {
+        upTo: "billingEnd",
+      }),
       reservations: {
         connect: reservationIds.map(a => ({
           id: a,
@@ -457,7 +452,7 @@ export class RentalService {
     }
 
     if (options?.upTo) {
-      rentalStartedAt ||= invoiceWithData.billingStartAt
+      rentalStartedAt = rentalStartedAt ?? invoiceWithData.billingStartAt
     }
 
     if (options?.upTo === "today") {
@@ -613,6 +608,70 @@ export class RentalService {
     const roundedDailyRentalPrice = +roundedDailyRentalPriceAsString
 
     return Math.round(daysRented * roundedDailyRentalPrice * 100)
+  }
+
+  async calculateCurrentBalance(
+    customerId: string,
+    options: { upTo?: "today" | "billingEnd" | null } = { upTo: null }
+  ) {
+    const currentInvoice = await this.prisma.client.rentalInvoice.findFirst({
+      where: {
+        membership: {
+          customerId,
+        },
+        status: "Draft",
+      },
+      orderBy: {
+        createdAt: "desc",
+      },
+      select: {
+        id: true,
+        products: {
+          select: {
+            id: true,
+            seasonsUID: true,
+            productVariant: {
+              select: {
+                product: {
+                  select: {
+                    id: true,
+                    computedRentalPrice: true,
+                    rentalPriceOverride: true,
+                    wholesalePrice: true,
+                    recoupment: true,
+                    category: {
+                      select: {
+                        dryCleaningFee: true,
+                        recoupment: true,
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    })
+
+    const rentalPrices = []
+
+    for (const product of currentInvoice.products) {
+      const { daysRented } = await this.calcDaysRented(
+        currentInvoice,
+        product,
+        { upTo: options.upTo }
+      )
+
+      const rentalPriceForDaysUntilToday = this.calculatePriceForDaysRented(
+        product.productVariant.product,
+        daysRented
+      )
+
+      rentalPrices.push(rentalPriceForDaysUntilToday)
+    }
+
+    return rentalPrices.reduce((a, b) => a + b, 0)
   }
 
   private async calculateBillingEndDateFromStartDate(

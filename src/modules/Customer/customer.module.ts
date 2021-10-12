@@ -1,3 +1,6 @@
+import { PaymentModule } from "@modules/Payment/payment.module"
+import { ReservationModule } from "@modules/Reservation/reservation.module"
+import { UserModule } from "@modules/User/user.module"
 import { UtilsModule } from "@modules/Utils/utils.module"
 import { Module, forwardRef } from "@nestjs/common"
 import { PrismaModule } from "@prisma1/prisma.module"
@@ -8,15 +11,13 @@ import { CustomerFieldsResolver } from "./fields/customer.fields.resolver"
 import { CustomerDetailFieldsResolver } from "./fields/customerDetail.fields.resolver"
 import { CustomerMembershipFieldsResolver } from "./fields/customerMembership.fields.resolver"
 import { CustomerQueriesResolver } from "./queries/customer.queries.resolver"
-import { CustomerMembershipService } from "./services/customerMembership.service"
-import { PaymentModule, ReservationModule, UserModule } from ".."
 
 export const CustomerModuleDef = {
   imports: [
     PrismaModule,
-    forwardRef(() => PaymentModule),
     ReservationModule,
     UtilsModule,
+    forwardRef(() => PaymentModule),
     forwardRef(() => UserModule),
   ],
   providers: [
@@ -26,9 +27,7 @@ export const CustomerModuleDef = {
     CustomerDetailFieldsResolver,
     PaymentPlanFieldsResolver,
     CustomerMembershipFieldsResolver,
-    CustomerMembershipService,
   ],
-  exports: [CustomerMembershipService],
 }
 @Module(CustomerModuleDef)
 export class CustomerModule {}

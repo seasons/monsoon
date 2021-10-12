@@ -1,19 +1,17 @@
 import { Customer } from "@app/decorators"
-import { CustomerMembershipService } from "@app/modules/Customer/services/customerMembership.service"
 import { ResolveField, Resolver } from "@nestjs/graphql"
+
+import { RentalService } from "../services/rental.service"
 
 @Resolver("RentalInvoice")
 export class RentalInvoiceFieldsResolver {
-  constructor(private readonly customerMembership: CustomerMembershipService) {}
+  constructor(private readonly rental: RentalService) {}
 
   @ResolveField()
   async estimatedTotal(@Customer() customer) {
-    const total = await this.customerMembership.calculateCurrentBalance(
-      customer.id,
-      {
-        upTo: "billingEnd",
-      }
-    )
+    const total = await this.rental.calculateCurrentBalance(customer.id, {
+      upTo: "billingEnd",
+    })
 
     return total
   }

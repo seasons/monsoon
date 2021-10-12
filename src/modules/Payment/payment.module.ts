@@ -1,5 +1,4 @@
 import { AnalyticsModule } from "@modules/Analytics/analytics.module"
-import { CustomerModule } from "@modules/Customer/customer.module"
 import { EmailModule } from "@modules/Email/email.module"
 import { ShippingModule } from "@modules/Shipping/shipping.module"
 import { UserModule } from "@modules/User/user.module"
@@ -31,7 +30,6 @@ export const PaymentModuleDef = {
     PrismaModule,
     ShippingModule,
     forwardRef(() => UserModule),
-    forwardRef(() => CustomerModule),
     UtilsModule,
     AnalyticsModule,
     ErrorModule,

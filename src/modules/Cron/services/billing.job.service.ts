@@ -1,6 +1,6 @@
 import { WinstonLogger } from "@app/lib/logger"
-import { CustomerMembershipService } from "@app/modules/Customer/services/customerMembership.service"
 import { ErrorService } from "@app/modules/Error/services/error.service"
+import { AccessPlanID } from "@app/modules/Payment/payment.types"
 import {
   CREATE_RENTAL_INVOICE_LINE_ITEMS_INVOICE_SELECT,
   RentalService,
@@ -17,7 +17,6 @@ export class BillingScheduledJobs {
 
   constructor(
     private readonly prisma: PrismaService,
-    private readonly membership: CustomerMembershipService,
     private readonly rental: RentalService,
     private readonly error: ErrorService
   ) {}
@@ -35,25 +34,37 @@ export class BillingScheduledJobs {
     )
 
     const promises = []
-
+    let i = 1
     for (const customer of customers) {
-      promises.push(
-        this.prisma.client.customer.update({
-          where: {
-            id: customer.id,
-          },
-          data: {
-            membership: {
-              update: {
-                currentBalance: await this.membership.calculateCurrentBalance(
-                  customer.id,
-                  { upTo: "today" }
-                ),
+      try {
+        promises.push(
+          this.prisma.client.customer.update({
+            where: {
+              id: customer.id,
+            },
+            data: {
+              membership: {
+                update: {
+                  currentBalance: await this.rental.calculateCurrentBalance(
+                    customer.id,
+                    { upTo: "today" }
+                  ),
+                },
               },
             },
-          },
+          })
+        )
+        this.logger.log(
+          `Done setting current balance on customer ${i++} of ${
+            customers.length
+          }`
+        )
+      } catch (err) {
+        this.logger.error(`Error while setting current balance on customer`, {
+          customer,
+          error: err,
         })
-      )
+      }
     }
 
     await this.prisma.client.$transaction(promises)
