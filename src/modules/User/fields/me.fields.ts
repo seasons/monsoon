@@ -111,11 +111,11 @@ export class MeFieldsResolver {
   }
 
   @ResolveField()
-  async groupedBagItems(@Customer() customer, @Select() select) {
+  async bagSections(@Customer() customer) {
     if (!customer) {
       return null
     }
-    return await this.bagService.groupedBagItems(customer, select)
+    return await this.bagService.bagSections(customer)
   }
 
   @ResolveField()

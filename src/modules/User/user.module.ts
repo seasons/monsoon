@@ -13,6 +13,7 @@ import { ReservationModule } from "../Reservation/reservation.module"
 import { ShippingModule } from "../Shipping/shipping.module"
 import { SMSModule } from "../SMS/sms.module"
 import { UtilsModule } from "../Utils/utils.module"
+import { BagSectionFieldsResolver } from "./fields/bagSection.fields"
 import { MeFieldsResolver } from "./fields/me.fields"
 import { UserFieldsResolver } from "./fields/user.fields"
 import { AuthMutationsResolver } from "./mutations/auth.mutations"
@@ -50,6 +51,7 @@ import { CustomerService } from "./services/customer.service"
     UserMutationsResolver,
     UserQueriesResolver,
     UserFieldsResolver,
+    BagSectionFieldsResolver,
     AdmissionsService,
     CustomerUtilsService,
   ],
