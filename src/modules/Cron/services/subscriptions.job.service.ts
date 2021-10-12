@@ -76,7 +76,10 @@ export class SubscriptionsScheduledJobs {
             subscription
           )
 
-          let grandfatheredPayload = data?.planID?.includes("access")
+          let grandfatheredPayload = [
+            "access-yearly",
+            "access-monthly",
+          ].includes(data?.planID)
             ? { grandfathered: false }
             : {}
 
