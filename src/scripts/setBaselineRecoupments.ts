@@ -1,6 +1,9 @@
 import { ChargeBee, _invoice } from "chargebee-typescript"
 
-const allPaidInvoices: typeof chargebee.invoice[] = []
+import { PrismaService } from "../prisma/prisma.service"
+
+const ps = new PrismaService()
+const allPaidInvoices: any[] = []
 
 // 1. Get invoices from Chargebee
 const chargebee = new ChargeBee()
@@ -31,7 +34,7 @@ const fetchAllPaidInvoices = async (offset: string) => {
   for (let i = 0; i < result?.list?.length; i++) {
     const entry = result?.list[i]
 
-    const invoice: typeof chargebee.invoice = entry?.invoice
+    const invoice: any = entry?.invoice
     allPaidInvoices.push(invoice)
   }
 
@@ -41,16 +44,69 @@ const fetchAllPaidInvoices = async (offset: string) => {
 }
 
 const getResyHistoryForInvoices = async () => {
-  console.log(4)
-  console.log("\n\nTOTAL INVOICES: ", allPaidInvoices.length)
+  const customers = await ps.client.customer.findMany({
+    select: {
+      id: true,
+      user: true,
+    },
+  })
+
+  console.log("\n\n customers:", customers)
+
+  // const resys = await ps.client.customer.findMany({
+  //   where: { user: { in: allPaidInvoices.map(a => a.customer_id) } },
+  //   select: {
+  //     id: true,
+  //     reservations: {
+  //       select: {
+  //         id: true,
+  //         reservationNumber: true,
+  //         status: true,
+  //         receipt: {
+  //           select: {
+  //             id: true,
+  //           },
+  //         },
+  //         products: {
+  //           select: {
+  //             id: true,
+  //           },
+  //         },
+  //         rentalInvoice: {
+  //           select: {
+  //             id: true,
+  //           },
+  //         },
+  //       },
+  //     },
+  //   },
+  // })
+
+  // console.log("\n\n RESY:", resys)
 
   return
 }
 
 const getInvoices = async () => {
-  await fetchAllPaidInvoices("")
+  // await fetchAllPaidInvoices("")
 
-  await getResyHistoryForInvoices()
+  // await getResyHistoryForInvoices()
+
+  // 1. get users/customers
+  const customers = await ps.client.customer.findMany({
+    select: {
+      id: true,
+      user: { select: { id: true } },
+    },
+  })
+
+  console.log("\n\n customers:", customers)
+
+  // 2. build map
+
+  // 3. get resys
+
+  return
 }
 
 getInvoices()
