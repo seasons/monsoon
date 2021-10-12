@@ -9,7 +9,6 @@ import { PrismaModule } from "@prisma1/prisma.module"
 import { ErrorModule } from "../Error/error.module"
 import { ProductModule } from "../Product/product.module"
 import { ChargebeeController } from "./controllers/chargebee.controller"
-import { RentalInvoiceFieldsResolver } from "./fields/rentalInvoice.fields.resolver"
 import { InvoicesForCustomersLoader } from "./loaders/invoicesForCustomers.loaders"
 import { TransactionsLoader } from "./loaders/transactions.loaders"
 import { TransactionsForCustomersLoader } from "./loaders/transactionsForCustomers.loader"
@@ -48,7 +47,6 @@ export const PaymentModuleDef = {
     TransactionsLoader,
     TransactionsForCustomersLoader,
     RentalService,
-    RentalInvoiceFieldsResolver,
   ],
   exports: [
     SubscriptionService,

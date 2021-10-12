@@ -33,27 +33,25 @@ export class BillingScheduledJobs {
       `Start update current balance on ${customers.length} customers`
     )
 
-    const promises = []
     let i = 1
     for (const customer of customers) {
       try {
-        promises.push(
-          this.prisma.client.customer.update({
-            where: {
-              id: customer.id,
-            },
-            data: {
-              membership: {
-                update: {
-                  currentBalance: await this.rental.calculateCurrentBalance(
-                    customer.id,
-                    { upTo: "today" }
-                  ),
-                },
+        await this.prisma.client.customer.update({
+          where: {
+            id: customer.id,
+          },
+          data: {
+            membership: {
+              update: {
+                currentBalance: await this.rental.calculateCurrentBalance(
+                  customer.id,
+                  { upTo: "today" }
+                ),
               },
             },
-          })
-        )
+          },
+        })
+
         this.logger.log(
           `Done setting current balance on customer ${i++} of ${
             customers.length
@@ -67,11 +65,51 @@ export class BillingScheduledJobs {
       }
     }
 
-    await this.prisma.client.$transaction(promises)
-
     this.logger.log(
       `End update current balance on ${customers.length} customers`
     )
+  }
+
+  @Cron(CronExpression.EVERY_DAY_AT_4AM)
+  async updateEstimatedTotalOnInvoices() {
+    const invoices = await this.prisma.client.rentalInvoice.findMany({
+      where: {
+        status: "Draft",
+      },
+      select: {
+        id: true,
+        membership: {
+          select: {
+            customerId: true,
+          },
+        },
+      },
+    })
+
+    this.logger.log(`Updating ${invoices.length} invoices`)
+
+    for (let invoice of invoices) {
+      try {
+        const [estimatedTotal] = await this.rental.updateEstimatedTotal(invoice)
+
+        this.logger.log(
+          `Updated invoice ${invoice.id}, estimated total: ${(
+            estimatedTotal / 100
+          ).toLocaleString("en-US", {
+            style: "currency",
+            currency: "USD",
+          })}`,
+          {
+            estimatedTotal,
+            invoice,
+          }
+        )
+      } catch (e) {
+        this.logger.error(`Error while updating invoice ${invoice.id}`, e)
+      }
+    }
+
+    this.logger.log(`Done updating invoices`)
   }
 
   @Cron(CronExpression.EVERY_HOUR)

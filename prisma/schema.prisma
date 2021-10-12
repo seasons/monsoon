@@ -739,7 +739,7 @@ model CustomerMembership {
   planId                   String                              @map("plan") @db.VarChar(30)
   giftId                   String?
   grandfathered            Boolean?                            @default(false)
-  creditBalance            Int?
+  creditBalance            Int                                 @default(0) 
   currentBalance           Int?
   membershipSubscriptionId String?                             @map("subscription") @db.VarChar(30)
   customer                 Customer                            @relation(fields: [customerId], references: [id])
@@ -947,7 +947,7 @@ model RentalInvoice {
   billingStartAt DateTime
   billingEndAt   DateTime
   creditsApplied Int?
-  estimatedTotal Int?
+  estimatedTotal Int                     @default(0)
   status         RentalInvoiceStatus     @default(Draft)
   reservations   Reservation[]           @relation("RentalInvoiceToReservations")
   products       PhysicalProduct[]       @relation("RentalInvoiceToProducts")

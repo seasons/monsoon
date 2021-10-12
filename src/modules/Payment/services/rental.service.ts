@@ -248,9 +248,6 @@ export class RentalService {
       // To clean that up a bit, we get the max of now and the calcualted billingEndAt
       billingEndAt: this.timeUtils.getLaterDate(now, billingEndAt),
       status: "Draft" as RentalInvoiceStatus,
-      estimatedTotal: await this.calculateCurrentBalance(customer.id, {
-        upTo: "billingEnd",
-      }),
       reservations: {
         connect: reservationIds.map(a => ({
           id: a,
@@ -265,6 +262,14 @@ export class RentalService {
 
     const promise = this.prisma.client.rentalInvoice.create({
       data,
+      select: {
+        id: true,
+        membership: {
+          select: {
+            customerId: true,
+          },
+        },
+      },
     })
     if (mode === "promise") {
       return {
@@ -368,6 +373,17 @@ export class RentalService {
       shippedB2C: "Item status: Either with us or with customer.",
       unknownMinCharge: "Item status: Unknown. Applied minimum charge (7 days)",
     }
+
+    const getRentalEndedAt = defaultDate => {
+      if (options.upTo === "today") {
+        return DateTime.local().toJSDate()
+      }
+      if (options.upTo === "billingEnd") {
+        return invoiceWithData.billingEndAt
+      }
+      return defaultDate
+    }
+
     switch (initialReservation.status) {
       case "Hold":
       case "Blocked":
@@ -390,16 +406,16 @@ export class RentalService {
           rentalStartedAt = undefined
           addComment(itemStatusComments["enRoute"])
         } else {
-          rentalEndedAt = invoiceWithData.billingEndAt
+          rentalEndedAt = getRentalEndedAt(invoiceWithData.billingEndAt)
           addComment(itemStatusComments["shippedB2C"])
         }
         break
       case "Delivered":
         if (initialReservation.phase === "BusinessToCustomer") {
-          rentalEndedAt = invoiceWithData.billingEndAt
+          rentalEndedAt = getRentalEndedAt(invoiceWithData.billingEndAt)
           addComment(itemStatusComments["withCustomer"])
         } else {
-          rentalEndedAt = invoiceWithData.billingEndAt
+          rentalEndedAt = getRentalEndedAt(invoiceWithData.billingEndAt)
           addComment(itemStatusComments["shippedB2C"])
         }
         break
@@ -424,13 +440,15 @@ export class RentalService {
           const returnPackage = returnReservation.returnPackages.find(b =>
             b.items.map(c => c.seasonsUID).includes(physicalProduct.seasonsUID)
           )
-          rentalEndedAt = this.getSafeReturnPackageEntryDate(
-            returnPackage.enteredDeliverySystemAt,
-            returnReservation.completedAt || invoiceWithData.billingEndAt
+          rentalEndedAt = getRentalEndedAt(
+            this.getSafeReturnPackageEntryDate(
+              returnPackage.enteredDeliverySystemAt,
+              returnReservation.completedAt || invoiceWithData.billingEndAt
+            )
           )
           addComment(itemStatusComments["returned"])
         } else {
-          rentalEndedAt = invoiceWithData.billingEndAt
+          rentalEndedAt = getRentalEndedAt(invoiceWithData.billingEndAt)
           addComment(itemStatusComments["withCustomer"])
         }
         break
@@ -440,7 +458,9 @@ export class RentalService {
           rentalStartedAt = undefined
           addComment(itemStatusComments["lostOnRouteToCustomer"])
         } else {
-          rentalEndedAt = this.timeUtils.xDaysAfterDate(rentalStartedAt, 7) // minimum charge
+          rentalEndedAt = getRentalEndedAt(
+            this.timeUtils.xDaysAfterDate(rentalStartedAt, 7)
+          ) // minimum charge
           addComment(itemStatusComments["unknownMinCharge"])
         }
         break
@@ -448,16 +468,6 @@ export class RentalService {
         throw new Error(
           `Unexpected reservation status: ${initialReservation.status}`
         )
-    }
-
-    if (options?.upTo) {
-      rentalStartedAt = rentalStartedAt ?? invoiceWithData.billingStartAt
-
-      if (options?.upTo === "today") {
-        rentalEndedAt = DateTime.local().toJSDate()
-      } else if (options?.upTo === "billingEnd") {
-        rentalEndedAt = invoiceWithData.billingEndAt
-      }
     }
 
     // If we end up in a nonsense situation, just don't charge them anything
@@ -681,6 +691,32 @@ export class RentalService {
     }
 
     return rentalPrices.reduce((a, b) => a + b, 0)
+  }
+
+  async updateEstimatedTotal(invoice: {
+    id: string
+    membership: {
+      customerId: string
+    }
+  }): Promise<[number, any]> {
+    const estimatedTotal = await this.calculateCurrentBalance(
+      invoice.membership.customerId,
+      {
+        upTo: "billingEnd",
+      }
+    )
+
+    return [
+      estimatedTotal,
+      await this.prisma.client.rentalInvoice.update({
+        where: {
+          id: invoice.id,
+        },
+        data: {
+          estimatedTotal,
+        },
+      }),
+    ]
   }
 
   private async calculateBillingEndDateFromStartDate(
