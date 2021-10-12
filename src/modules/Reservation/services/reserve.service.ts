@@ -514,7 +514,7 @@ export class ReserveService {
           id: cuid(),
           outboundPackageId,
           physicalProductId: physicalProduct.id,
-          isNew: newPhysicalProductSUIDs.includes(physicalProduct.seasonsUID),
+          isNew: newPhysicalProductSUIDs.includes(physicalProduct.seasonsUID), // TODO: Should always be true, since reservations are now atomic
         })
     )
 
