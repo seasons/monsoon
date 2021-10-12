@@ -85,7 +85,7 @@ enum ReservationLineItemsFilter {
   NewItems
 }
 
-enum GroupedBagItemStatus {
+enum BagSectionStatus {
   Added
   AtHome
   CustomerToBusiness
@@ -93,8 +93,8 @@ enum GroupedBagItemStatus {
   ReturnPending
 }
 
-type GroupedBagItem {
-  status: GroupedBagItemStatus
+type BagSection {
+  status: BagSectionStatus
   bagItems: [BagItem!]
 }
 
@@ -103,7 +103,7 @@ type Me @cacheControl(maxAge: 0, scope: PRIVATE) {
   user: User
   customer: Customer
   activeReservation: Reservation
-  groupedBagItems: [GroupedBagItem!]
+  bagSections: [BagSection!]
   bag(status: BagItemStatus): [BagItem!]
   savedItems: [BagItem!]
   reservationLineItems(
