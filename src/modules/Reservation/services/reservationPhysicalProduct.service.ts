@@ -59,11 +59,13 @@ export class ReservationPhysicalProductService {
     const reservationPhysicalProductData = {
       hasReturnedProcessed: true,
       returnProcessedAt: DateTime.local().toISO(),
-      returnedPackage: {
-        connect: {
-          returnedPackage,
+      ...(returnedPackage && {
+        returnedPackage: {
+          connect: {
+            returnedPackage,
+          },
         },
-      },
+      }),
       droppedOffBy: droppedOffBy,
       droppedOffAt: DateTime.local().toISO(),
     }
