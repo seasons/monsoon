@@ -61,9 +61,6 @@ export class ReserveService {
     private readonly productUtils: ProductUtilsService
   ) {}
 
-  // TODO:
-  // - Query last reservation directly in the updateLastReservation function
-  // - Query last reservation directly in the createReservation function
   async reserveItems(
     shippingCode: ShippingCode,
     customer: Pick<Customer, "id">,
