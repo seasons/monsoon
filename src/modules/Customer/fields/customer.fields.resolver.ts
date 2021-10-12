@@ -94,11 +94,7 @@ export class CustomerFieldsResolver {
           id: true,
           membership: {
             select: {
-              plan: {
-                select: {
-                  tier: true,
-                },
-              },
+              grandfathered: true,
             },
           },
         }),
@@ -107,8 +103,7 @@ export class CustomerFieldsResolver {
     prismaLoader: PrismaDataLoader<any>
   ) {
     const customer = await prismaLoader.load(_customer.id)
-    const tier = customer.membership.plan.tier
-    return tier === "Essential" || tier === "AllAccess"
+    return customer.membership?.grandfathered || false
   }
 
   @ResolveField()
