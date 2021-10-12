@@ -103,7 +103,12 @@ enum OnboardingStep {
   SetShippingAddress
 }
 
-# isSwapped nowhere in sight
+enum CustomerIOSAppStatus {
+  UpToDate
+  Outdated
+  NoRecord
+}
+
 type Customer {
   id: ID!
   user: User!
@@ -151,6 +156,7 @@ type Customer {
   createdAt: DateTime!
   updatedAt: DateTime!
   grandfathered: Boolean!
+  iOSAppStatus: CustomerIOSAppStatus
 }
 
 input NotificationBarReceiptUpdateInput {
