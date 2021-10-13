@@ -384,6 +384,16 @@ export class RentalService {
       return defaultDate
     }
 
+    const getNewReservationRentalStartedAt = defaultDate => {
+      if (options.upTo === "today") {
+        return defaultDate
+      }
+      if (options.upTo === "billingEnd") {
+        return new Date(this.timeUtils.xDaysFromNowISOString(2))
+      }
+      return defaultDate
+    }
+
     switch (initialReservation.status) {
       case "Hold":
       case "Blocked":
@@ -395,7 +405,7 @@ export class RentalService {
       case "Picked":
       case "Packed":
         addComment(itemStatusComments["preparing"])
-        rentalStartedAt = undefined
+        rentalStartedAt = getNewReservationRentalStartedAt(undefined)
         break
       case "Cancelled":
         addComment(itemStatusComments["cancelled"])
@@ -403,7 +413,7 @@ export class RentalService {
         break
       case "Shipped":
         if (initialReservation.phase === "BusinessToCustomer") {
-          rentalStartedAt = undefined
+          rentalStartedAt = getNewReservationRentalStartedAt(undefined)
           addComment(itemStatusComments["enRoute"])
         } else {
           rentalEndedAt = getRentalEndedAt(invoiceWithData.billingEndAt)
@@ -459,7 +469,7 @@ export class RentalService {
           addComment(itemStatusComments["lostOnRouteToCustomer"])
         } else {
           rentalEndedAt = getRentalEndedAt(
-            this.timeUtils.xDaysAfterDate(rentalStartedAt, 7)
+            new Date(this.timeUtils.xDaysAfterDate(rentalStartedAt, 7))
           ) // minimum charge
           addComment(itemStatusComments["unknownMinCharge"])
         }
@@ -713,7 +723,7 @@ export class RentalService {
           id: invoice.id,
         },
         data: {
-          estimatedTotal,
+          estimatedTotal: estimatedTotal ?? 0,
         },
       }),
     ]
