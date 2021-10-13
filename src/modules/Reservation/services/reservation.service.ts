@@ -1,3 +1,4 @@
+import { WinstonLogger } from "@app/lib/logger"
 import { ErrorService } from "@app/modules/Error/services/error.service"
 import { RentalService } from "@app/modules/Payment/services/rental.service"
 import { ProductVariantService } from "@app/modules/Product/services/productVariant.service"
@@ -12,7 +13,7 @@ import {
   ShippingService,
   UPSServiceLevel,
 } from "@modules/Shipping/services/shipping.service"
-import { Injectable } from "@nestjs/common"
+import { Injectable, Logger } from "@nestjs/common"
 import {
   AdminActionLog,
   Customer,
@@ -67,6 +68,10 @@ type ReserveItemsPhysicalProduct = Pick<
 
 @Injectable()
 export class ReservationService {
+  private readonly logger = (new Logger(
+    `ReservationService`
+  ) as unknown) as WinstonLogger
+
   constructor(
     private readonly prisma: PrismaService,
     private readonly productUtils: ProductUtilsService,
@@ -293,8 +298,6 @@ export class ReservationService {
       }),
     })) as any
 
-    await this.rental.updateEstimatedTotal(activeRentalInvoice)
-
     // Send confirmation email
     await this.emails.sendReservationConfirmationEmail(
       customerWithData.user,
@@ -306,10 +309,16 @@ export class ReservationService {
 
     try {
       await this.removeRestockNotifications(items, customer?.id)
+      await this.rental.updateEstimatedTotal(activeRentalInvoice)
     } catch (err) {
       this.error.setUserContext(customerWithData.user)
       this.error.setExtraContext({ items })
       this.error.captureError(err)
+      this.logger.error(`Error in post-reservation code`, {
+        customerWithData,
+        reservation,
+        error: err,
+      })
     }
 
     return reservation
