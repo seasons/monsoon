@@ -295,6 +295,7 @@ enum InAdmissableReason {
 enum ShippingCode {
   UPSGround
   UPSSelect
+  Pickup
 }
 
 enum PhysicalProductDamageType {
