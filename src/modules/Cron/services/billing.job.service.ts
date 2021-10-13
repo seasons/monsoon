@@ -132,21 +132,14 @@ export class BillingScheduledJobs {
 
     for (const invoice of invoicesToHandle) {
       invoicesHandled++
-      try {
-        const planID = invoice.membership.plan.planID as AccessPlanID
-        const lineItems = await this.rental.createRentalInvoiceLineItems(
-          invoice
-        )
-        await this.rental.chargeTab(planID, invoice, lineItems)
-      } catch (err) {
-        console.log(err)
+      this.rental.processInvoice(invoice, err => {
         this.error.setExtraContext(invoice)
         this.error.captureError(err)
         this.logger.error("Rental invoice billing failed", {
           invoice,
           error: err,
         })
-      }
+      })
     }
 
     this.logger.log(
