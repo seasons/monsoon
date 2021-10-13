@@ -12,9 +12,7 @@ export class BagSectionFieldsResolver {
     return await this.prisma.client.bagItem.findMany({
       where: {
         id: {
-          in: parent.bagItems.map(b => {
-            return { id: b.id }
-          }),
+          in: parent.bagItems.map(b => b.id),
         },
       },
       select: merge(select, {

@@ -94,7 +94,12 @@ enum BagSectionStatus {
 }
 
 type BagSection {
-  status: BagSectionStatus
+  id: String!
+  deliveryStep: Int
+  deliveryStatusText: String
+  deliveryTrackingUrl: String
+  status: BagSectionStatus!
+  title: String!
   bagItems: [BagItem!]
 }
 
