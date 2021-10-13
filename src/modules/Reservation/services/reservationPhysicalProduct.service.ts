@@ -2,9 +2,8 @@ import { ProductVariantService } from "@app/modules/Product/services/productVari
 import { InventoryStatus, PhysicalProductStatus } from "@app/prisma"
 import { PrismaService } from "@app/prisma/prisma.service"
 import { Injectable } from "@nestjs/common"
+import { ReservationDropOffAgent } from "@prisma/client"
 import { DateTime } from "luxon"
-
-import { ReservationDropOffAgent } from ".prisma/client"
 
 interface ProductState {
   productUID: string
@@ -57,27 +56,25 @@ export class ReservationPhysicalProductService {
     let promises = []
 
     const reservationPhysicalProductData = {
-      hasReturnedProcessed: true,
+      hasReturnProcessed: true,
       returnProcessedAt: DateTime.local().toISO(),
       ...(returnedPackage && {
-        returnedPackage: {
+        inboundPackage: {
           connect: {
             returnedPackage,
           },
         },
+        inboundPackageId: returnedPackage.id,
       }),
-      droppedOffBy: droppedOffBy,
+      droppedOffBy: { set: droppedOffBy },
       droppedOffAt: DateTime.local().toISO(),
     }
-
     await this.prisma.client.reservationPhysicalProduct.updateMany({
       where: {
-        physicalProduct: {
-          seasonsUID: {
-            in: productStates.map(a => {
-              return a.productUID
-            }),
-          },
+        physicalProductId: {
+          in: physicalProducts.map(a => {
+            return a.id
+          }),
         },
       },
       data: { ...reservationPhysicalProductData },
@@ -86,7 +83,7 @@ export class ReservationPhysicalProductService {
     const reservations = await this.prisma.client.reservation.findMany({
       where: {
         reservationPhysicalProducts: {
-          every: {
+          some: {
             physicalProduct: {
               seasonsUID: {
                 in: productStates.map(a => {
@@ -110,7 +107,7 @@ export class ReservationPhysicalProductService {
     promises.push(
       this.prisma.client.bagItem.deleteMany({
         where: {
-          id: {
+          physicalProductId: {
             in: physicalProducts.map(a => {
               return a.id
             }),
@@ -123,29 +120,19 @@ export class ReservationPhysicalProductService {
       const allProductsReturned = reservation.reservationPhysicalProducts.every(
         a => a.hasReturnProcessed
       )
-      const reservationWhere = {
-        where: {
-          id: reservation.id,
-        },
-      }
+
       if (allProductsReturned) {
-        return promises.push(
+        promises.push(
           this.prisma.client.reservation.update({
-            ...reservationWhere,
+            where: {
+              id: reservation.id,
+            },
             data: {
               status: "Completed",
             },
           })
         )
       }
-      return promises.push(
-        this.prisma.client.reservation.update({
-          ...reservationWhere,
-          data: {
-            status: "ReturnPending",
-          },
-        })
-      )
     }
 
     for (let state of productStates) {
@@ -201,6 +188,8 @@ export class ReservationPhysicalProductService {
         })
       )
     }
+
     const results = await this.prisma.client.$transaction(promises)
+    return !!results
   }
 }
