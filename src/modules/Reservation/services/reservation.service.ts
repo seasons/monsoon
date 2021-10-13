@@ -1,4 +1,5 @@
 import { ErrorService } from "@app/modules/Error/services/error.service"
+import { RentalService } from "@app/modules/Payment/services/rental.service"
 import { ProductVariantService } from "@app/modules/Product/services/productVariant.service"
 import { PushNotificationService } from "@app/modules/PushNotification"
 import { CustomerUtilsService } from "@app/modules/User/services/customer.utils.service"
@@ -77,7 +78,8 @@ export class ReservationService {
     private readonly error: ErrorService,
     private readonly utils: UtilsService,
     private readonly customerUtils: CustomerUtilsService,
-    private readonly statements: StatementsService
+    private readonly statements: StatementsService,
+    private readonly rental: RentalService
   ) {}
 
   async reserveItems(
@@ -108,7 +110,10 @@ export class ReservationService {
           select: {
             plan: { select: { itemCount: true, tier: true } },
             rentalInvoices: {
-              select: { id: true },
+              select: {
+                id: true,
+                membership: { select: { customerId: true } },
+              },
               where: { status: "Draft" },
             },
           },
@@ -287,6 +292,8 @@ export class ReservationService {
         products: { select: { seasonsUID: true } },
       }),
     })) as any
+
+    await this.rental.updateEstimatedTotal(activeRentalInvoice)
 
     // Send confirmation email
     await this.emails.sendReservationConfirmationEmail(

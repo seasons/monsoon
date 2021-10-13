@@ -1,13 +1,14 @@
+import { Customer } from "@app/decorators"
 import { Loader } from "@app/modules/DataLoader/decorators/dataloader.decorator"
+import { RentalService } from "@app/modules/Payment/services/rental.service"
 import { PrismaDataLoader, PrismaLoader } from "@app/prisma/prisma.loader"
-import { PrismaService } from "@app/prisma/prisma.service"
 import { Parent, ResolveField, Resolver } from "@nestjs/graphql"
 import { CustomerMembership, Prisma } from "@prisma/client"
 import { head } from "lodash"
 
 @Resolver("CustomerMembership")
 export class CustomerMembershipFieldsResolver {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(private readonly rental: RentalService) {}
 
   @ResolveField()
   async adjustedCreditBalance(
@@ -56,5 +57,18 @@ export class CustomerMembershipFieldsResolver {
   ) {
     const rentalInvoices = await rentalInvoiceLoader.load(parent.id)
     return head(rentalInvoices)
+  }
+
+  @ResolveField()
+  async currentBalance(@Parent() membership, @Customer() customer) {
+    if (membership.currentBalance) {
+      return membership.currentBalance
+    }
+
+    const currentBalance = await this.rental.calculateCurrentBalance(
+      customer.id,
+      { upTo: "today" }
+    )
+    return currentBalance
   }
 }
