@@ -126,15 +126,14 @@ export class RentalService {
     lostInPhase: true,
   })
 
-  async chargeTab(planID: AccessPlanID, invoice, lineItems: { id: string }[]) {
-    let invoices, chargePromises
+  async processInvoice(invoice, onError = err => null) {
+    let chargebeeInvoices, chargePromises, lineItems
     let promises = []
     try {
-      // Chargebee stuff
+      const planID = invoice.membership.plan.planID
+      lineItems = await this.createRentalInvoiceLineItems(invoice)
       const chargeResult = await this.chargebeeChargeTab(planID, lineItems)
-      ;[chargePromises, invoices] = chargeResult
-
-      // DB Stuff
+      ;[chargePromises, chargebeeInvoices] = chargeResult
       promises.push(...chargePromises)
       promises.push(
         this.prisma.client.rentalInvoice.update({
@@ -143,18 +142,13 @@ export class RentalService {
         })
       )
     } catch (err) {
-      console.log(err)
-      this.error.setExtraContext(
-        { planID, invoice, lineItems },
-        "chargeTabInputs"
-      )
-      this.error.captureError(err)
       promises.push(
         this.prisma.client.rentalInvoice.update({
           where: { id: invoice.id },
           data: { status: "ChargeFailed" },
         })
       )
+      onError(err)
     } finally {
       const newRentalInvoicePromise = ((await this.initDraftRentalInvoice(
         invoice.membership.id,
@@ -164,7 +158,7 @@ export class RentalService {
       await this.prisma.client.$transaction(promises)
     }
 
-    return invoices
+    return { lineItems, charges: chargebeeInvoices }
   }
 
   async initFirstRentalInvoice(
@@ -809,7 +803,7 @@ export class RentalService {
   }
 
   private async chargebeeChargeTab(
-    planID: AccessPlanID,
+    planID: string,
     lineItems: { id: string }[]
   ) {
     const promises = []

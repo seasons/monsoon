@@ -965,16 +965,11 @@ describe("Rental Service", () => {
           select: CREATE_RENTAL_INVOICE_LINE_ITEMS_INVOICE_SELECT,
         })
 
-        lineItems = await rentalService.createRentalInvoiceLineItems(
-          rentalInvoiceToBeBilled
-        )
-
         await setCustomerPlanType("access-monthly")
-        addedCharges = await rentalService.chargeTab(
-          "access-monthly",
-          rentalInvoiceToBeBilled,
-          lineItems
-        )
+        ;({
+          lineItems,
+          charges: addedCharges,
+        } = await rentalService.processInvoice(rentalInvoiceToBeBilled))
         billedRentalInvoice = await prisma.client.rentalInvoice.findUnique({
           where: { id: rentalInvoiceToBeBilled.id },
           select: { id: true, status: true },
@@ -1075,21 +1070,15 @@ describe("Rental Service", () => {
           a => a.seasonsUID
         )
         await overridePrices(initialReservationProductSUIDs, [30, 50])
+        await setCustomerPlanType("access-yearly")
         rentalInvoiceToBeBilled = await prisma.client.rentalInvoice.findUnique({
           where: { id: custWithData.membership.rentalInvoices[0].id },
           select: CREATE_RENTAL_INVOICE_LINE_ITEMS_INVOICE_SELECT,
         })
-
-        lineItems = await rentalService.createRentalInvoiceLineItems(
-          rentalInvoiceToBeBilled
-        )
-
-        await setCustomerPlanType("access-yearly")
-        addedCharges = await rentalService.chargeTab(
-          "access-yearly",
-          rentalInvoiceToBeBilled,
-          lineItems
-        )
+        ;({
+          lineItems,
+          charges: addedCharges,
+        } = await rentalService.processInvoice(rentalInvoiceToBeBilled))
 
         billedRentalInvoice = await prisma.client.rentalInvoice.findUnique({
           where: { id: rentalInvoiceToBeBilled.id },
@@ -1163,7 +1152,7 @@ describe("Rental Service", () => {
       })
     })
 
-    describe("Properly handles an error", () => {
+    describe("Properly handles an error from chargebee", () => {
       beforeAll(async () => {
         jest
           .spyOn<any, any>(chargebee.subscription, "add_charge_at_term_end")
@@ -1190,16 +1179,74 @@ describe("Rental Service", () => {
           where: { id: custWithData.membership.rentalInvoices[0].id },
           select: CREATE_RENTAL_INVOICE_LINE_ITEMS_INVOICE_SELECT,
         })
-        lineItems = await rentalService.createRentalInvoiceLineItems(
-          rentalInvoiceToBeBilled
-        )
 
         await setCustomerPlanType("access-monthly")
-        await rentalService.chargeTab(
-          "access-monthly",
-          rentalInvoiceToBeBilled,
-          lineItems
+        ;({ lineItems } = await rentalService.processInvoice(
+          rentalInvoiceToBeBilled
+        ))
+
+        billedRentalInvoice = await prisma.client.rentalInvoice.findUnique({
+          where: { id: rentalInvoiceToBeBilled.id },
+          select: { id: true, status: true },
+        })
+
+        const custWithUpdatedData = (await getCustWithData({
+          membership: {
+            select: {
+              rentalInvoices: {
+                select: { status: true },
+                orderBy: { createdAt: "desc" },
+              },
+            },
+          },
+        })) as any
+        customerRentalInvoicesAfterBilling =
+          custWithUpdatedData.membership.rentalInvoices
+      })
+
+      it("Marks the current rental invoice as ChargeFailed", () => {
+        expect(billedRentalInvoice.status).toBe("ChargeFailed")
+      })
+
+      it("Initializes their next rental invoice", () => {
+        expect(customerRentalInvoicesAfterBilling.length).toBe(2)
+        expect(customerRentalInvoicesAfterBilling[0].status).toBe("Draft")
+        expect(customerRentalInvoicesAfterBilling[1].status).toBe(
+          "ChargeFailed"
         )
+      })
+    })
+
+    describe("Properly handles an error when creating line items", () => {
+      beforeAll(async () => {
+        jest
+          .spyOn<any, any>(rentalService, "createRentalInvoiceLineItems")
+          .mockImplementation(() => {
+            throw "Test Error"
+          })
+
+        const { cleanupFunc, customer } = await createTestCustomer({
+          select: testCustomerSelect,
+        })
+        cleanupFuncs.push(cleanupFunc)
+        testCustomer = customer
+
+        const initialReservation = await addToBagAndReserveForCustomer(2)
+        await setReservationCreatedAt(initialReservation.id, 25)
+        await setPackageDeliveredAt(initialReservation.sentPackage.id, 23)
+        await setReservationStatus(initialReservation.id, "Delivered")
+
+        const custWithData = (await getCustWithData()) as any
+
+        rentalInvoiceToBeBilled = await prisma.client.rentalInvoice.findUnique({
+          where: { id: custWithData.membership.rentalInvoices[0].id },
+          select: CREATE_RENTAL_INVOICE_LINE_ITEMS_INVOICE_SELECT,
+        })
+
+        await setCustomerPlanType("access-monthly")
+        ;({ lineItems } = await rentalService.processInvoice(
+          rentalInvoiceToBeBilled
+        ))
 
         billedRentalInvoice = await prisma.client.rentalInvoice.findUnique({
           where: { id: rentalInvoiceToBeBilled.id },
