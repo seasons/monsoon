@@ -409,7 +409,7 @@ export class UserCommands {
     const fullName = `${firstName} ${lastName}`
     const slug = `${firstName}-${lastName}`.toLowerCase()
     email = email || `${slug}@seasons.nyc`
-    password = password || faker.random.alphaNumeric(6)
+    password = password || "Winter2021"
 
     return { firstName, lastName, fullName, email, password, slug }
   }
