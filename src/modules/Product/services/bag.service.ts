@@ -65,24 +65,42 @@ export class BagService {
     const returnPendingBagItems = bagItems
 
     bagSections.push({
+      id: "addedSectionId",
+      title: "Reserving",
       status: "Added",
       bagItems: addedBagItems,
     })
     bagSections.push({
-      status: "AtHome",
-      bagItems: atHomeBagItems,
-    })
-    bagSections.push({
-      status: "CustomerToBusiness",
-      bagItems: customerToBusinessBagItems,
-    })
-    bagSections.push({
-      status: "BusinessToCustomer",
-      bagItems: businessToCustomerBagItems,
-    })
-    bagSections.push({
+      id: "returnPendingSectionId",
+      title: "Returning",
       status: "ReturnPending",
       bagItems: returnPendingBagItems,
+    })
+
+    // FIXME: use correct data
+    bagSections.push({
+      id: "customerToBusinessSectionId",
+      title: "Order on the way",
+      status: "CustomerToBusiness",
+      bagItems: customerToBusinessBagItems,
+      deliveryStep: 1,
+      deliveryStatusText: "Received",
+      deliveryTrackingUrl: "",
+    })
+    bagSections.push({
+      id: "businessToCustomerSectionId",
+      title: "On the way back",
+      status: "BusinessToCustomer",
+      bagItems: businessToCustomerBagItems,
+      deliveryStep: 2,
+      deliveryStatusText: "Received by UPS",
+      deliveryTrackingUrl: "",
+    })
+    bagSections.push({
+      id: "atHomeSectionId",
+      title: "At home",
+      status: "AtHome",
+      bagItems: atHomeBagItems,
     })
 
     console.log("bagSections", bagSections)
