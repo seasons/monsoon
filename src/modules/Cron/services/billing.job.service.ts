@@ -55,7 +55,10 @@ export class BillingScheduledJobs {
         this.logger.log(
           `Done setting current balance on customer ${i++} of ${
             customers.length
-          }`
+          }`,
+          {
+            customer,
+          }
         )
       } catch (err) {
         this.logger.error(`Error while setting current balance on customer`, {

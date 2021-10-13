@@ -10,6 +10,7 @@ const run = async () => {
   const job = app.get(BillingScheduledJobs)
 
   await job.updateCurrentBalanceOnCustomers()
+  await job.updateEstimatedTotalOnInvoices()
 }
 
 run()
