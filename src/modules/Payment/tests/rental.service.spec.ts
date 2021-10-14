@@ -12,6 +12,7 @@ import {
   ShippingCode,
   ShippingOption,
 } from "@prisma/client"
+import { LexRuntime } from "aws-sdk"
 import chargebee from "chargebee"
 import { head, merge } from "lodash"
 import moment from "moment"
@@ -1579,6 +1580,64 @@ describe("Rental Service", () => {
       } = await rentalService.processInvoice(rentalInvoiceToBeBilled)
 
       expect(addedCharges.length).toBe(1)
+    })
+
+    it("Doesn't create another rental invoice if the invoice being billed is in status ChargeFailed", async () => {
+      const { customer } = await createTestCustomer({
+        select: testCustomerSelect,
+      })
+      testCustomer = customer
+
+      const spy = jest
+        .spyOn<any, any>(rentalService, "createRentalInvoiceLineItems")
+        .mockImplementation(() => {
+          throw "Test Error"
+        })
+
+      // Invoice 1. Should end up with ChargeFailed
+      const initialReservation = await addToBagAndReserveForCustomer(2)
+      await setReservationCreatedAt(initialReservation.id, 25)
+      await setPackageDeliveredAt(initialReservation.sentPackage.id, 23)
+      await setReservationStatus(initialReservation.id, "Delivered")
+
+      let custWithData = (await getCustWithData()) as any
+      expect(custWithData.membership.rentalInvoices.length).toBe(1)
+      let rentalInvoiceToBeBilled = await prisma.client.rentalInvoice.findUnique(
+        {
+          where: { id: custWithData.membership.rentalInvoices[0].id },
+          select: CREATE_RENTAL_INVOICE_LINE_ITEMS_INVOICE_SELECT,
+        }
+      )
+      const {
+        lineItems,
+        charges: addedCharges,
+      } = await rentalService.processInvoice(rentalInvoiceToBeBilled)
+      custWithData = (await getCustWithData()) as any
+      expect(custWithData.membership.rentalInvoices.length).toBe(2)
+      let rentalInvoicesStatuses = custWithData.membership.rentalInvoices.map(
+        a => a.status
+      )
+      expect(rentalInvoicesStatuses.includes("ChargeFailed")).toBe(true)
+      expect(rentalInvoicesStatuses.includes("Draft")).toBe(true)
+
+      // Next charge. No error being thrown this time
+      spy.mockRestore()
+      const rentalInvoiceToBeBilledID = custWithData.membership.rentalInvoices.find(
+        a => a.status === "ChargeFailed"
+      ).id
+      rentalInvoiceToBeBilled = await prisma.client.rentalInvoice.findUnique({
+        where: { id: rentalInvoiceToBeBilledID },
+        select: CREATE_RENTAL_INVOICE_LINE_ITEMS_INVOICE_SELECT,
+      })
+      await rentalService.processInvoice(rentalInvoiceToBeBilled)
+
+      custWithData = (await getCustWithData()) as any
+      rentalInvoicesStatuses = custWithData.membership.rentalInvoices.map(
+        a => a.status
+      )
+      expect(custWithData.membership.rentalInvoices.length).toBe(2)
+      expect(rentalInvoicesStatuses.includes("Billed")).toBe(true)
+      expect(rentalInvoicesStatuses.includes("Draft")).toBe(true)
     })
   })
 
