@@ -18,6 +18,7 @@ const EnsureFieldsForDownstreamFieldResolvers = `fragment EnsureFieldsForDownstr
     }
   }
 }`
+
 @Resolver("Me")
 export class MeFieldsResolver {
   constructor(
@@ -108,6 +109,14 @@ export class MeFieldsResolver {
     }
 
     return null
+  }
+
+  @ResolveField()
+  async bagSection(@Args() { status }, @Customer() customer) {
+    if (!customer) {
+      return null
+    }
+    return await this.bagService.bagSection(status, customer)
   }
 
   @ResolveField()

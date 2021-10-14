@@ -12,6 +12,14 @@ import { DateTime } from "luxon"
 import { ReservationService } from "../../Reservation/services/reservation.service"
 import { ProductVariantService } from "../services/productVariant.service"
 
+enum BagSectionStatus {
+  Added = "Added",
+  AtHome = "AtHome",
+  CustomerToBusiness = "CustomerToBusiness",
+  BusinessToCustomer = "BusinessToCustomer",
+  ReturnPending = "ReturnPending",
+}
+
 @Injectable()
 export class BagService {
   constructor(
@@ -22,6 +30,42 @@ export class BagService {
     private readonly error: ErrorService,
     private readonly statements: StatementsService
   ) {}
+
+  async bagSection(status: BagSectionStatus, customer) {
+    const bagItems = await this.prisma.client.bagItem.findMany({
+      where: {
+        customer: {
+          id: customer.id,
+        },
+        saved: false,
+      },
+      select: {
+        id: true,
+        status: true,
+        updatedAt: true,
+        physicalProduct: {
+          select: {
+            id: true,
+          },
+        },
+      },
+    })
+
+    switch (status) {
+      case "Added":
+        return await this.getAddedSection(bagItems)
+      case "AtHome":
+        return await this.getAtHomeSection(bagItems)
+      case "CustomerToBusiness":
+        return await this.getCustomerToBusinessSection(bagItems)
+      case "BusinessToCustomer":
+        return await this.getBusinessToCustomerSection(bagItems)
+      case "ReturnPending":
+        return await this.getReturnPendingSection(bagItems)
+      default:
+        return null
+    }
+  }
 
   async bagSections(customer) {
     const bagItems = await this.prisma.client.bagItem.findMany({
@@ -43,69 +87,23 @@ export class BagService {
       },
     })
 
-    const bagSections = []
+    const addedSection = await this.getAddedSection(bagItems)
+    const returnPendingSection = await this.getReturnPendingSection(bagItems)
+    const businessToCustomerSection = await this.getBusinessToCustomerSection(
+      bagItems
+    )
+    const customerToBusinessSection = await this.getCustomerToBusinessSection(
+      bagItems
+    )
+    const atHomeSection = await this.getAtHomeSection(bagItems)
 
-    const addedBagItems = bagItems.filter(item => item.status === "Added")
-
-    // const atHomeBagItems = bagItems.filter(item => {
-    //   const updatedMoreThan24HoursAgo =
-    //     item?.updatedAt &&
-    //     DateTime.fromISO(item?.updatedAt.toISOString()).diffNow("days")?.values
-    //       ?.days <= -1
-
-    //   return item.status === "Reserved" && updatedMoreThan24HoursAgo
-    // })
-
-    const atHomeBagItems = bagItems
-
-    const customerToBusinessBagItems = bagItems
-
-    const businessToCustomerBagItems = bagItems
-
-    const returnPendingBagItems = bagItems
-
-    bagSections.push({
-      id: "addedSectionId",
-      title: "Reserving",
-      status: "Added",
-      bagItems: addedBagItems,
-    })
-    bagSections.push({
-      id: "returnPendingSectionId",
-      title: "Returning",
-      status: "ReturnPending",
-      bagItems: returnPendingBagItems,
-    })
-
-    // FIXME: use correct data
-    bagSections.push({
-      id: "customerToBusinessSectionId",
-      title: "Order on the way",
-      status: "CustomerToBusiness",
-      bagItems: customerToBusinessBagItems,
-      deliveryStep: 1,
-      deliveryStatusText: "Received",
-      deliveryTrackingUrl: "",
-    })
-    bagSections.push({
-      id: "businessToCustomerSectionId",
-      title: "On the way back",
-      status: "BusinessToCustomer",
-      bagItems: businessToCustomerBagItems,
-      deliveryStep: 2,
-      deliveryStatusText: "Received by UPS",
-      deliveryTrackingUrl: "",
-    })
-    bagSections.push({
-      id: "atHomeSectionId",
-      title: "At home",
-      status: "AtHome",
-      bagItems: atHomeBagItems,
-    })
-
-    console.log("bagSections", bagSections)
-
-    return bagSections
+    return [
+      addedSection,
+      returnPendingSection,
+      businessToCustomerSection,
+      customerToBusinessSection,
+      atHomeSection,
+    ]
   }
 
   async addToBag(
@@ -432,22 +430,65 @@ export class BagService {
     return bagItem
   }
 
-  private getPhysicalProductFromLastReservationAndBagItem(
-    lastReservation,
-    bagItem
-  ) {
-    const physicalProductsInRes = lastReservation.products
+  private async getAtHomeSection(bagItems) {
+    const atHomeBagItems = bagItems.filter(item => {
+      const updatedMoreThan24HoursAgo =
+        item?.updatedAt &&
+        DateTime.fromISO(item?.updatedAt.toISOString()).diffNow("days")?.values
+          ?.days <= -1
 
-    const physicalProduct = physicalProductsInRes.find(
-      physProd => physProd.productVariant.id === bagItem.productVariant.id
-    )
+      return item.status === "Reserved" && updatedMoreThan24HoursAgo
+    })
 
-    if (!physicalProduct) {
-      throw Error(
-        `Physical product not in the last reservation: ${lastReservation.id}`
-      )
+    return {
+      id: "atHomeSectionId",
+      title: "At home",
+      status: "AtHome",
+      bagItems: atHomeBagItems,
     }
+  }
 
-    return physicalProduct
+  private async getCustomerToBusinessSection(bagItems) {
+    return {
+      id: "customerToBusinessSectionId",
+      title: "Order on the way",
+      status: "CustomerToBusiness",
+      bagItems: bagItems,
+      deliveryStep: 1,
+      deliveryStatusText: "Received",
+      deliveryTrackingUrl: "",
+    }
+  }
+
+  private async getBusinessToCustomerSection(bagItems) {
+    return {
+      id: "customerToBusinessSectionId",
+      title: "Order on the way",
+      status: "CustomerToBusiness",
+      bagItems: bagItems,
+      deliveryStep: 1,
+      deliveryStatusText: "Received",
+      deliveryTrackingUrl: "",
+    }
+  }
+
+  private async getReturnPendingSection(bagItems) {
+    return {
+      id: "returnPendingSectionId",
+      title: "Returning",
+      status: "ReturnPending",
+      bagItems: bagItems,
+    }
+  }
+
+  private async getAddedSection(bagItems) {
+    const addedBagItems = bagItems.filter(item => item.status === "Added")
+
+    return {
+      id: "addedSectionId",
+      title: "Reserving",
+      status: "Added",
+      bagItems: addedBagItems,
+    }
   }
 }
