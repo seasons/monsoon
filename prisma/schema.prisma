@@ -886,8 +886,6 @@ model Location {
   Package_LocationToPackage_toAddress            Package[]         @relation("LocationToPackage_toAddress")
   physicalProducts                               PhysicalProduct[]
   Reservation                                    Reservation[]
-  shippingOptions                                ShippingOption[]  @relation("LocationToShippingOption_destination")
-  ShippingOption_LocationToShippingOption_origin ShippingOption[]  @relation("LocationToShippingOption_origin")
 }
 
 model Order {
@@ -1366,14 +1364,12 @@ model Reservation {
   receiptId                    String?                      @map("receipt") @db.VarChar(30)
   phase                        ReservationPhase
   statusUpdatedAt              DateTime?
-  shippingOptionId             String?                      @map("shippingOption") @db.VarChar(30)
   customer                     Customer?                    @relation(fields: [customerId], references: [id])
   lastLocation                 Location?                    @relation(fields: [lastLocationId], references: [id])
   receipt                      ReservationReceipt?          @relation(fields: [receiptId], references: [id])
   returnedPackage              Package?                     @relation("PackageToReservation_returnedPackage", fields: [returnedPackageId], references: [id])
   returnPackages               Package[]                    @relation("PackageToReservationReturnPackages")
   sentPackage                  Package?                     @relation("PackageToReservation_sentPackage", fields: [sentPackageId], references: [id])
-  shippingOption               ShippingOption?              @relation(fields: [shippingOptionId], references: [id])
   user                         User?                        @relation(fields: [userId], references: [id])
   lineItems                    OrderLineItem[]
   packageEvents                PackageTransitEvent[]
@@ -1512,25 +1508,8 @@ model ShippingMethod {
   displayText     String
   createdAt       DateTime         @default(now())
   updatedAt       DateTime         @updatedAt
-  shippingOptions ShippingOption[]
 }
 
-model ShippingOption {
-  id               String          @id @default(cuid()) @db.VarChar(30)
-  externalCost     Int?
-  averageDuration  Int?
-  createdAt        DateTime        @default(now())
-  updatedAt        DateTime        @updatedAt
-  destinationId    String?         @map("destination") @db.VarChar(30)
-  originId         String?         @map("origin") @db.VarChar(30)
-  shippingMethodId String?         @map("shippingMethod") @db.VarChar(30)
-  destination      Location?       @relation("LocationToShippingOption_destination", fields: [destinationId], references: [id])
-  origin           Location?       @relation("LocationToShippingOption_origin", fields: [originId], references: [id])
-  shippingMethod   ShippingMethod? @relation(fields: [shippingMethodId], references: [id])
-  reservations     Reservation[]
-
-  @@unique([originId, destinationId, shippingMethodId])
-}
 
 model ShopifyProductVariant {
   id                     String                                @id @default(cuid()) @db.VarChar(30)

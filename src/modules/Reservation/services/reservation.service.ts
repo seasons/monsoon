@@ -701,17 +701,6 @@ export class ReservationService {
         detail: {
           select: {
             id: true,
-            shippingAddress: {
-              select: {
-                shippingOptions: {
-                  select: {
-                    id: true,
-                    shippingMethod: true,
-                    externalCost: true,
-                  },
-                },
-              },
-            },
           },
         },
       },

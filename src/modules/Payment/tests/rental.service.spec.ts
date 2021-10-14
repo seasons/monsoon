@@ -10,7 +10,6 @@ import {
   RentalInvoiceLineItem,
   ReservationStatus,
   ShippingCode,
-  ShippingOption,
 } from "@prisma/client"
 import chargebee from "chargebee"
 import { head, merge } from "lodash"
