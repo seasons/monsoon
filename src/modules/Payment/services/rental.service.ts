@@ -1049,8 +1049,12 @@ export class RentalService {
   }
 
   private lineItemToDescription(lineItem: LineItemToDescriptionLineItem) {
-    if (lineItem.name === "Processing") {
-      return `Processing`
+    if (
+      lineItem.name?.includes("OutboundPackage") ||
+      lineItem.name?.includes("InboundPackage") ||
+      lineItem.name?.includes("Processing")
+    ) {
+      return lineItem.name
     }
 
     // Else, it's for an actual item rented

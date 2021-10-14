@@ -668,19 +668,11 @@ describe("Rental Service", () => {
       let expectedResultsBySUIDOrName
       let lineItemsPhysicalProductSUIDs
       let invoicePhysicalProductSUIDs
-      let createProcessingObjectKey
       let initialReservation
       let reservationTwo
       let reservationThree
 
       beforeAll(async () => {
-        createProcessingObjectKey = (
-          reservationNumber,
-          type: "OutboundPackage" | "Processing"
-        ) => {
-          return "Reservation-" + reservationNumber + "-" + type
-        }
-
         const { cleanupFunc, customer } = await createTestCustomer({
           select: testCustomerSelect,
         })
@@ -1182,6 +1174,10 @@ describe("Rental Service", () => {
         lineItemsBySUIDOrName = createLineItemHash(
           lineItemsWithDataAfterCharging
         )
+        const processingKey = createProcessingObjectKey(
+          initialReservation.reservationNumber,
+          "Processing"
+        )
         expectedResultsBySUIDOrName = {
           [initialReservationProductSUIDs[0]]: {
             taxPrice: 184,
@@ -1191,7 +1187,7 @@ describe("Rental Service", () => {
             taxPrice: 307,
             taxRate: 0.08,
           },
-          Processing: {
+          [processingKey]: {
             taxPrice: 44,
             taxRate: 0.08,
           },
@@ -1213,7 +1209,8 @@ describe("Rental Service", () => {
       })
 
       it("Adds taxes to the line items", () => {
-        for (const id of [...initialReservationProductSUIDs, "Processing"]) {
+        expect(Object.keys(expectedResultsBySUIDOrName).length).toBe(3)
+        for (const id of Object.keys(expectedResultsBySUIDOrName)) {
           expect(lineItemsBySUIDOrName[id].taxPrice).toEqual(
             expectedResultsBySUIDOrName[id].taxPrice
           )
@@ -1292,6 +1289,10 @@ describe("Rental Service", () => {
         lineItemsBySUIDOrName = createLineItemHash(
           lineItemsWithDataAfterCharging
         )
+        const processingKey = createProcessingObjectKey(
+          initialReservation.reservationNumber,
+          "Processing"
+        )
         expectedResultsBySUIDOrName = {
           [initialReservationProductSUIDs[0]]: {
             taxPrice: 184,
@@ -1301,7 +1302,7 @@ describe("Rental Service", () => {
             taxPrice: 307,
             taxRate: 0.08,
           },
-          Processing: { taxPrice: 44, taxRate: 0.08 },
+          [processingKey]: { taxPrice: 44, taxRate: 0.08 },
         }
       })
 
@@ -1320,7 +1321,8 @@ describe("Rental Service", () => {
       })
 
       it("Adds taxes to the line items", () => {
-        for (const id of [...initialReservationProductSUIDs, "Processing"]) {
+        expect(Object.keys(expectedResultsBySUIDOrName).length).toBe(3)
+        for (const id of Object.keys(expectedResultsBySUIDOrName)) {
           expect(lineItemsBySUIDOrName[id].taxPrice).toEqual(
             expectedResultsBySUIDOrName[id].taxPrice
           )
@@ -1890,3 +1892,10 @@ const createLineItemHash = (
       [curVal.physicalProduct?.seasonsUID || curVal.name]: curVal,
     }
   }, {})
+
+const createProcessingObjectKey = (
+  reservationNumber,
+  type: "OutboundPackage" | "Processing"
+) => {
+  return "Reservation-" + reservationNumber + "-" + type
+}
