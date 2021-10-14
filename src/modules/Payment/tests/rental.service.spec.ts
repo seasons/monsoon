@@ -39,6 +39,7 @@ enum ChargebeeMockFunction {
   UndefinedNextBillingAtSubscriptionRetrieve,
   DummyNextBillingAtSubscriptionRetrieve,
   OldNextBillingAtSubscriptionRetrieve,
+  SubscriptionRetrieveWithError,
   PromotionalCreditAdd,
 }
 
@@ -111,6 +112,7 @@ class ChargeBeeMock {
           },
         }
       case ChargebeeMockFunction.SubscriptionAddChargeAtTermEndWithError:
+      case ChargebeeMockFunction.SubscriptionRetrieveWithError:
         throw "test error"
       case ChargebeeMockFunction.SubscriptionRetrieve:
         return {
@@ -1614,6 +1616,22 @@ describe("Rental Service", () => {
         custWithData
       )
       expect(nextBillingAt).toBe("dummy")
+    })
+
+    it("If the querying Chargebee throws an error, returns 30 days from billingStartAt", async () => {
+      await setCustomerSubscriptionNextBillingAt(null)
+
+      jest
+        .spyOn<any, any>(chargebee.subscription, "retrieve")
+        .mockReturnValue(
+          new ChargeBeeMock(ChargebeeMockFunction.SubscriptionRetrieveWithError)
+        )
+
+      rentalInvoiceBillingEndAt = await rentalService.getRentalInvoiceBillingEndAt(
+        custWithData.membership.id,
+        februarySeventh2021
+      )
+      expectTimeToEqual(rentalInvoiceBillingEndAt, marchSeventh2021)
     })
 
     it("If nextBillingAt is before today, returns 30 days from billingStartAt", async () => {
