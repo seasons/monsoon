@@ -14,7 +14,6 @@ export class CustomerUtilsService {
       const response = got(authenticatedURL).then(response => {
         const packageJSON = JSON.parse(response.body)
         this.latestIOSAppVersion = packageJSON["version"]
-        console.log(this.latestIOSAppVersion)
       })
     } catch (err) {
       // noop

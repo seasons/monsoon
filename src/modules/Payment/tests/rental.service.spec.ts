@@ -668,8 +668,19 @@ describe("Rental Service", () => {
       let expectedResultsBySUIDOrName
       let lineItemsPhysicalProductSUIDs
       let invoicePhysicalProductSUIDs
+      let createProcessingObjectKey
+      let initialReservation
+      let reservationTwo
+      let reservationThree
 
       beforeAll(async () => {
+        createProcessingObjectKey = (
+          reservationNumber,
+          type: "OutboundPackage" | "Processing"
+        ) => {
+          return "Reservation-" + reservationNumber + "-" + type
+        }
+
         const { cleanupFunc, customer } = await createTestCustomer({
           select: testCustomerSelect,
         })
@@ -677,18 +688,18 @@ describe("Rental Service", () => {
         testCustomer = customer
 
         // Two delivered reservations
-        const initialReservation = await addToBagAndReserveForCustomer(2)
+        initialReservation = await addToBagAndReserveForCustomer(2)
         await setReservationCreatedAt(initialReservation.id, 25)
         await setPackageDeliveredAt(initialReservation.sentPackage.id, 23)
         await setReservationStatus(initialReservation.id, "Delivered")
 
-        const reservationTwo = await addToBagAndReserveForCustomer(1)
+        reservationTwo = await addToBagAndReserveForCustomer(1)
         await setReservationCreatedAt(reservationTwo.id, 10)
         await setPackageDeliveredAt(reservationTwo.sentPackage.id, 9)
         await setReservationStatus(reservationTwo.id, "Delivered")
 
         // One queued reservation
-        const reservationThree = await addToBagAndReserveForCustomer(1)
+        reservationThree = await addToBagAndReserveForCustomer(1)
         await setReservationCreatedAt(reservationTwo.id, 2)
 
         const initialReservationProductSUIDs = initialReservation.newProducts.map(
@@ -750,6 +761,7 @@ describe("Rental Service", () => {
           .map(a => a.physicalProduct.seasonsUID)
 
         lineItemsBySUIDOrName = createLineItemHash(lineItemsWithData)
+
         expectedResultsBySUIDOrName = {
           [initialReservationProductSUIDs[0]]: {
             daysRented: 23,
@@ -775,10 +787,44 @@ describe("Rental Service", () => {
             rentalEndedAt: null,
             price: 0,
           },
-          Processing: {
-            // 3 reservations sent, none returned --> paying for 2 sent packages at 1000 each. 1st package is on us --> 2000
-            // 3 new reservations, 3 * reservation_processing_cost (550) --> 1650
-            price: 3650,
+          // Processing fees:
+          // 3 reservations sent, none returned --> paying for 2 sent packages at 1000 each. 1st package is on us --> 2000
+          // 3 new reservations, 3 * reservation_processing_cost (550) --> 1650
+          [createProcessingObjectKey(
+            initialReservation.reservationNumber,
+            "OutboundPackage"
+          )]: {
+            price: 0,
+          },
+          [createProcessingObjectKey(
+            reservationTwo.reservationNumber,
+            "OutboundPackage"
+          )]: {
+            price: 1000,
+          },
+          [createProcessingObjectKey(
+            reservationThree.reservationNumber,
+            "OutboundPackage"
+          )]: {
+            price: 1000,
+          },
+          [createProcessingObjectKey(
+            initialReservation.reservationNumber,
+            "Processing"
+          )]: {
+            price: 550,
+          },
+          [createProcessingObjectKey(
+            reservationTwo.reservationNumber,
+            "Processing"
+          )]: {
+            price: 550,
+          },
+          [createProcessingObjectKey(
+            reservationThree.reservationNumber,
+            "Processing"
+          )]: {
+            price: 550,
           },
         }
       })
@@ -823,14 +869,64 @@ describe("Rental Service", () => {
       If there are 2 or more new reservations in this billing cycle, we charge for the 
         sent package on all but the first
       */
-      it("Properly calculates the price for the processing fees line item", () => {
-        expect(lineItemsBySUIDOrName["Processing"].price).toBe(
-          expectedResultsBySUIDOrName["Processing"].price
+      it("Creates a line item for the first outbound package with a price of 0", () => {
+        const key = createProcessingObjectKey(
+          initialReservation.reservationNumber,
+          "OutboundPackage"
+        )
+        expect(lineItemsBySUIDOrName[key]).toBeDefined()
+        expect(lineItemsBySUIDOrName[key].price).toBe(
+          expectedResultsBySUIDOrName[key].price
         )
       })
 
+      it("Creates line items for the 2nd and 3rd outbound packages with nonzero prices", () => {
+        const keyTwo = createProcessingObjectKey(
+          reservationTwo.reservationNumber,
+          "OutboundPackage"
+        )
+        const keyThree = createProcessingObjectKey(
+          reservationThree.reservationNumber,
+          "OutboundPackage"
+        )
+
+        expect(lineItemsBySUIDOrName[keyTwo]).toBeDefined()
+        expect(lineItemsBySUIDOrName[keyTwo].price).toBe(
+          expectedResultsBySUIDOrName[keyTwo].price
+        )
+
+        expect(lineItemsBySUIDOrName[keyThree]).toBeDefined()
+        expect(lineItemsBySUIDOrName[keyThree].price).toBe(
+          expectedResultsBySUIDOrName[keyThree].price
+        )
+      })
+
+      it("Creates processing line items for all three new reservations with proper prices", () => {
+        const keyOne = createProcessingObjectKey(
+          initialReservation.reservationNumber,
+          "Processing"
+        )
+        const keyTwo = createProcessingObjectKey(
+          reservationTwo.reservationNumber,
+          "Processing"
+        )
+        const keyThree = createProcessingObjectKey(
+          reservationThree.reservationNumber,
+          "Processing"
+        )
+        for (const key of [keyOne, keyTwo, keyThree]) {
+          expect(lineItemsBySUIDOrName[key]).toBeDefined()
+          expect(lineItemsBySUIDOrName[key].price).toBe(
+            expectedResultsBySUIDOrName[key].price
+          )
+        }
+      })
+
       it("Doesn't set the taxes on them", () => {
-        for (const id of [...invoicePhysicalProductSUIDs, "Processing"]) {
+        expect(Object.keys(expectedResultsBySUIDOrName).length).toBeGreaterThan(
+          0
+        )
+        for (const id of Object.keys(expectedResultsBySUIDOrName)) {
           expect(lineItemsBySUIDOrName[id].taxPrice).toBe(null)
           expect(lineItemsBySUIDOrName[id].taxRate).toBe(null)
           expect(lineItemsBySUIDOrName[id].taxPercentage).toBe(null)
@@ -860,8 +956,10 @@ describe("Rental Service", () => {
           rentalInvoice
         )
 
-        const processingLineItem = lineItems.find(a => a.name === "Processing")
-        expect(processingLineItem.price).toBe(0)
+        const processingLineItem = lineItems.find(a =>
+          a.name?.includes("Reservation")
+        )
+        expect(processingLineItem).toBe(undefined)
       })
 
       it("Charges for the return package if a reservation was created in a previous billing cycle and returned in this one", async () => {
@@ -878,7 +976,10 @@ describe("Rental Service", () => {
           rentalInvoice
         )
 
-        const processingLineItem = lineItems.find(a => a.name === "Processing")
+        const processingLineItem = lineItems.find(
+          a => a.name === "InboundPackage-1"
+        )
+        expect(processingLineItem).toBeDefined()
         expect(processingLineItem.price).toBe(UPS_GROUND_FEE)
       })
 
@@ -896,10 +997,22 @@ describe("Rental Service", () => {
           rentalInvoice
         )
 
-        const processingLineItem = lineItems.find(a => a.name === "Processing")
-        expect(processingLineItem.price).toBe(
-          BASE_PROCESSING_FEE + UPS_GROUND_FEE
+        const inboundPackageLineItem = lineItems.find(
+          a => a.name === "InboundPackage-1"
         )
+        const processingLineItem = lineItems.find(
+          a =>
+            a.name ===
+            "Reservation-" +
+              initialReservation.reservationNumber +
+              "-Processing"
+        )
+
+        expect(inboundPackageLineItem).toBeDefined()
+        expect(processingLineItem).toBeDefined()
+
+        expect(inboundPackageLineItem.price).toBe(UPS_GROUND_FEE)
+        expect(processingLineItem.price).toBe(BASE_PROCESSING_FEE)
       })
 
       it("Charges for the sent package if a reservation used a premium shipping option", async () => {
@@ -920,10 +1033,76 @@ describe("Rental Service", () => {
           rentalInvoice
         )
 
-        const processingLineItem = lineItems.find(a => a.name === "Processing")
-        expect(processingLineItem.price).toBe(
-          BASE_PROCESSING_FEE + UPS_SELECT_FEE
+        const outboundPackageLineItem = lineItems.find(
+          a =>
+            a.name ===
+            "Reservation-" +
+              initialReservation.reservationNumber +
+              "-OutboundPackage"
         )
+        const processingLineItem = lineItems.find(
+          a =>
+            a.name ===
+            "Reservation-" +
+              initialReservation.reservationNumber +
+              "-Processing"
+        )
+
+        expect(outboundPackageLineItem).toBeDefined()
+        expect(processingLineItem).toBeDefined()
+
+        expect(outboundPackageLineItem.price).toBe(UPS_SELECT_FEE)
+        expect(processingLineItem.price).toBe(BASE_PROCESSING_FEE)
+      })
+
+      /* We once had a bug where we were double charging for inbound packages. */
+      it("Charges for each inbound package only once", async () => {
+        const initialReservation = await addToBagAndReserveForCustomer(2)
+        await setReservationCreatedAt(initialReservation.id, 25)
+        await setPackageDeliveredAt(initialReservation.sentPackage.id, 23)
+        await setReservationStatus(initialReservation.id, "Completed")
+        await setPackageDeliveredAt(initialReservation.returnPackages[0].id, 10)
+
+        const reservationTwo = await addToBagAndReserveForCustomer(2)
+        await setReservationCreatedAt(reservationTwo.id, 20)
+        await setPackageDeliveredAt(reservationTwo.sentPackage.id, 18)
+        await setReservationStatus(reservationTwo.id, "Completed")
+        await setPackageDeliveredAt(reservationTwo.returnPackages[0].id, 5)
+
+        const reservationThree = await addToBagAndReserveForCustomer(1)
+        await setReservationCreatedAt(reservationThree.id, 10)
+        await setPackageDeliveredAt(reservationThree.sentPackage.id, 8)
+        await setReservationStatus(reservationThree.id, "Completed")
+        await setPackageDeliveredAt(reservationThree.returnPackages[0].id, 2)
+
+        const custWithData = (await getCustWithData()) as any
+        const rentalInvoice = custWithData.membership.rentalInvoices[0]
+        const lineItems = await rentalService.createRentalInvoiceLineItems(
+          rentalInvoice
+        )
+
+        const inboundPackageOneLineItem = lineItems.find(
+          a => a.name === "InboundPackage-1"
+        )
+        const inboundPackageTwoLineItem = lineItems.find(
+          a => a.name === "InboundPackage-2"
+        )
+        const inboundPackageThreeLineItem = lineItems.find(
+          a => a.name === "InboundPackage-3"
+        )
+
+        for (const lineItem of [
+          inboundPackageOneLineItem,
+          inboundPackageTwoLineItem,
+          inboundPackageThreeLineItem,
+        ]) {
+          expect(lineItem).toBeDefined()
+        }
+
+        const numInboundPackageLineItems = lineItems.filter(a =>
+          a.name?.includes("InboundPackage")
+        )
+        expect(numInboundPackageLineItems.length).toBe(3)
       })
     })
   })
@@ -1582,6 +1761,7 @@ const addToBagAndReserveForCustomer = async (
       newProducts: { select: { seasonsUID: true } },
       sentPackage: { select: { id: true } },
       returnPackages: {
+        orderBy: { createdAt: "desc" },
         select: {
           id: true,
           shippingLabel: { select: { trackingNumber: true } },
