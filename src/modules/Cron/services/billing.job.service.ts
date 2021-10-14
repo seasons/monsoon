@@ -125,7 +125,7 @@ export class BillingScheduledJobs {
         billingEndAt: {
           lte: new Date(),
         },
-        status: "Draft",
+        status: { in: ["Draft", "ChargeFailed"] },
       },
       select: CREATE_RENTAL_INVOICE_LINE_ITEMS_INVOICE_SELECT,
     })

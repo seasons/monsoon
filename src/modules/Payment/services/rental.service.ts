@@ -109,6 +109,7 @@ export const CREATE_RENTAL_INVOICE_LINE_ITEMS_INVOICE_SELECT = Prisma.validator<
       id: true,
     },
   },
+  status: true,
 })
 @Injectable()
 export class RentalService {
@@ -163,11 +164,14 @@ export class RentalService {
       )
       onError(err)
     } finally {
-      const newRentalInvoicePromise = ((await this.initDraftRentalInvoice(
-        invoice.membership.id,
-        "promise"
-      )) as any).promise
-      promises.push(newRentalInvoicePromise)
+      if (invoice.status === "Draft") {
+        const newRentalInvoicePromise = ((await this.initDraftRentalInvoice(
+          invoice.membership.id,
+          "promise"
+        )) as any).promise
+        promises.push(newRentalInvoicePromise)
+      }
+
       await this.prisma.client.$transaction(promises)
     }
 
