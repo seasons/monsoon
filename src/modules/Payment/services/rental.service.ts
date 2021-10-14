@@ -2,6 +2,7 @@ import { ErrorService } from "@app/modules/Error/services/error.service"
 import { TimeUtilsService } from "@app/modules/Utils/services/time.service"
 import { Injectable } from "@nestjs/common"
 import {
+  CustomerMembershipSubscriptionData,
   Package,
   PhysicalProduct,
   Product,
@@ -281,6 +282,21 @@ export class RentalService {
     return await promise
   }
 
+  async getSanitizedCustomerNextBillingAt(customerWithData: {
+    membership: {
+      subscription: Pick<
+        CustomerMembershipSubscriptionData,
+        "nextBillingAt" | "subscriptionId"
+      >
+    }
+  }) {
+    /*
+    If nextBillingAt is defined and greater than now, return that
+    Otherwise query from chargebee and get that.
+    */
+    return null
+  }
+
   async getRentalInvoiceBillingEndAt(
     customerMembershipId: string,
     billingStartAt: Date,
@@ -300,7 +316,6 @@ export class RentalService {
       )
     } else {
       billingEndAt = await this.calculateBillingEndDateFromStartDate(
-        customerMembershipId,
         billingStartAt
       )
     }
@@ -766,13 +781,9 @@ export class RentalService {
     ]
   }
 
-  private async calculateBillingEndDateFromStartDate(
-    subscriptionId: string,
+  async calculateBillingEndDateFromStartDate(
     billingStartAt: Date
   ): Promise<Date> {
-    // TODO: If next month is their plan billing month, use next_billing_at from
-    // their chargebee data.
-
     const startYear = billingStartAt.getFullYear()
     const startMonth = billingStartAt.getMonth()
     const startDate = billingStartAt.getDate()
