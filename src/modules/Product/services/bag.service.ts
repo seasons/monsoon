@@ -3,7 +3,6 @@ import { Injectable } from "@nestjs/common"
 import { BagItem, InventoryStatus, Prisma } from "@prisma/client"
 import { PrismaService } from "@prisma1/prisma.service"
 import { ApolloError } from "apollo-server"
-import { merge } from "lodash"
 import { DateTime } from "luxon"
 
 import { ReservationService } from "../../Reservation/services/reservation.service"
