@@ -3,7 +3,7 @@ import { ReservationService } from "@app/modules/Reservation"
 import { TimeUtilsService } from "@app/modules/Utils/services/time.service"
 import { UtilsService } from "@app/modules/Utils/services/utils.service"
 import { PrismaService } from "@app/prisma/prisma.service"
-import { Test } from "@nestjs/testing"
+import { Test, TestingModule } from "@nestjs/testing"
 import {
   PhysicalProduct,
   Prisma,
@@ -159,6 +159,7 @@ let utils: UtilsService
 let timeUtils: TimeUtilsService
 let cleanupFuncs = []
 let testCustomer: any
+let moduleRef: TestingModule
 
 const testCustomerSelect = Prisma.validator<Prisma.CustomerSelect>()({
   id: true,
@@ -173,7 +174,7 @@ describe("Rental Service", () => {
     const moduleBuilder = await Test.createTestingModule(PAYMENT_MODULE_DEF)
     moduleBuilder.overrideProvider(PaymentService).useClass(PaymentServiceMock)
 
-    const moduleRef = await moduleBuilder.compile()
+    moduleRef = await moduleBuilder.compile()
 
     prisma = moduleRef.get<PrismaService>(PrismaService)
     rentalService = moduleRef.get<RentalService>(RentalService)
@@ -1126,7 +1127,6 @@ describe("Rental Service", () => {
     })
   })
 
-  // TODO: Add case for a rental invoice with no line items
   describe("Charge customer", () => {
     let rentalInvoiceToBeBilled
     let billedRentalInvoice
@@ -1274,6 +1274,9 @@ describe("Rental Service", () => {
         )
         await overridePrices(initialReservationProductSUIDs, [30, 50])
         await setCustomerPlanType("access-yearly")
+        await setCustomerSubscriptionNextBillingAt(
+          timeUtils.xDaysFromNowISOString(100)
+        )
         rentalInvoiceToBeBilled = await prisma.client.rentalInvoice.findUnique({
           where: { id: custWithData.membership.rentalInvoices[0].id },
           select: CREATE_RENTAL_INVOICE_LINE_ITEMS_INVOICE_SELECT,
@@ -1427,7 +1430,7 @@ describe("Rental Service", () => {
 
     describe("Properly handles an error when creating line items", () => {
       beforeAll(async () => {
-        jest
+        const spy = jest
           .spyOn<any, any>(rentalService, "createRentalInvoiceLineItems")
           .mockImplementation(() => {
             throw "Test Error"
@@ -1473,6 +1476,8 @@ describe("Rental Service", () => {
         })) as any
         customerRentalInvoicesAfterBilling =
           custWithUpdatedData.membership.rentalInvoices
+
+        spy.mockRestore()
       })
 
       it("Marks the current rental invoice as ChargeFailed", () => {
@@ -1488,7 +1493,93 @@ describe("Rental Service", () => {
       })
     })
 
-    describe()
+    it("Charges them immediately if their subscription is set to cancelled", async () => {
+      const { customer } = await createTestCustomer({
+        select: testCustomerSelect,
+      })
+      testCustomer = customer
+      await setCustomerSubscriptionStatus("cancelled")
+
+      const initialReservation = await addToBagAndReserveForCustomer(2)
+      await setReservationCreatedAt(initialReservation.id, 25)
+      await setPackageDeliveredAt(initialReservation.sentPackage.id, 23)
+      await setReservationStatus(initialReservation.id, "Delivered")
+
+      const custWithData = (await getCustWithData()) as any
+      const rentalInvoiceToBeBilled = await prisma.client.rentalInvoice.findUnique(
+        {
+          where: { id: custWithData.membership.rentalInvoices[0].id },
+          select: CREATE_RENTAL_INVOICE_LINE_ITEMS_INVOICE_SELECT,
+        }
+      )
+
+      const {
+        lineItems,
+        charges: addedCharges,
+      } = await rentalService.processInvoice(rentalInvoiceToBeBilled)
+
+      expect(addedCharges.length).toBe(1)
+    })
+
+    it("Charges them immediately if their subscription is set to non_renewing", async () => {
+      const { customer } = await createTestCustomer({
+        select: testCustomerSelect,
+      })
+      testCustomer = customer
+      await setCustomerSubscriptionStatus("non_renewing")
+
+      const initialReservation = await addToBagAndReserveForCustomer(2)
+      await setReservationCreatedAt(initialReservation.id, 25)
+      await setPackageDeliveredAt(initialReservation.sentPackage.id, 23)
+      await setReservationStatus(initialReservation.id, "Delivered")
+
+      const custWithData = (await getCustWithData()) as any
+
+      const rentalInvoiceToBeBilled = await prisma.client.rentalInvoice.findUnique(
+        {
+          where: { id: custWithData.membership.rentalInvoices[0].id },
+          select: CREATE_RENTAL_INVOICE_LINE_ITEMS_INVOICE_SELECT,
+        }
+      )
+
+      const {
+        lineItems,
+        charges: addedCharges,
+      } = await rentalService.processInvoice(rentalInvoiceToBeBilled)
+
+      expect(addedCharges.length).toBe(1)
+    })
+
+    it("Charges them immediately if their subscription nextBillingAt is more than 2 days from now", async () => {
+      const { customer } = await createTestCustomer({
+        select: testCustomerSelect,
+      })
+      testCustomer = customer
+      await setCustomerSubscriptionNextBillingAt(
+        timeUtils.xDaysFromNowISOString(3)
+      )
+
+      const initialReservation = await addToBagAndReserveForCustomer(2)
+      await setReservationCreatedAt(initialReservation.id, 25)
+      await setPackageDeliveredAt(initialReservation.sentPackage.id, 23)
+      await setReservationStatus(initialReservation.id, "Delivered")
+
+      const custWithData = (await getCustWithData()) as any
+
+      const rentalInvoiceToBeBilled = await prisma.client.rentalInvoice.findUnique(
+        {
+          where: { id: custWithData.membership.rentalInvoices[0].id },
+          select: CREATE_RENTAL_INVOICE_LINE_ITEMS_INVOICE_SELECT,
+        }
+      )
+
+      const {
+        lineItems,
+        charges: addedCharges,
+      } = await rentalService.processInvoice(rentalInvoiceToBeBilled)
+
+      expect(addedCharges.length).toBe(1)
+    })
   })
 
   describe("Initialize rental invoice", () => {

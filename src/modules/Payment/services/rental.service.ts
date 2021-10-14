@@ -954,6 +954,9 @@ export class RentalService {
               membership: {
                 select: {
                   subscriptionId: true,
+                  subscription: {
+                    select: { status: true, nextBillingAt: true },
+                  },
                   customer: {
                     select: { user: { select: { id: true, createdAt: true } } },
                   },
@@ -989,14 +992,21 @@ export class RentalService {
     )
     const prismaUserId =
       lineItemsWithData[0].rentalInvoice.membership.customer.user.id
-
+    const subscriptionStatus =
+      lineItemsWithData[0].rentalInvoice.membership.subscription.status
+    const nextBillingAt =
+      lineItemsWithData[0].rentalInvoice.membership.subscription.nextBillingAt
     await this.addPromotionalCredits(
       prismaUserId,
       totalInvoiceCharges,
       lineItemsWithData[0].rentalInvoice.id
     )
 
-    if (planID === "access-yearly") {
+    const shouldChargeImmediately =
+      ["non_renewing", "cancelled"].includes(subscriptionStatus) ||
+      this.timeUtils.isXOrMoreDaysFromNow(nextBillingAt.toISOString(), 2)
+
+    if (shouldChargeImmediately) {
       const result = await chargebee.invoice
         .create({
           customer_id: prismaUserId,
@@ -1016,7 +1026,6 @@ export class RentalService {
       }
       invoicesCreated.push(result)
     } else {
-      // access-monthly, and any other plan
       for (const lineItem of lineItemsWithData) {
         if (lineItem.price === 0) {
           continue
