@@ -394,23 +394,6 @@ export class UpdatePaymentService {
       phoneNumber
     )
 
-    // Adds the customer's shipping options to their location record
-    const customerWithLocationId = await this.prisma.client.customer.findUnique(
-      {
-        where: { id: customer.id },
-        select: {
-          detail: { select: { shippingAddress: { select: { id: true } } } },
-        },
-      }
-    )
-
-    if (!!customerWithLocationId?.detail?.shippingAddress?.id) {
-      await this.customerService.addCustomerLocationShippingOptions(
-        shippingState,
-        customerWithLocationId.detail.shippingAddress.id
-      )
-    }
-
     return null
   }
 
