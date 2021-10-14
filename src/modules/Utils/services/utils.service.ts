@@ -120,15 +120,6 @@ export class UtilsService {
     return before.isBefore(after) && after.diff(before, "days") === numDays
   }
 
-  // pass in an ISO datestring
-  isLessThanXDaysFromNow(dateString: string, x: number) {
-    var date = moment(dateString)
-    return (
-      date.isSameOrBefore(moment().add(x, "days")) &&
-      date.isSameOrAfter(moment())
-    )
-  }
-
   isSameDay(first: Date, second: Date) {
     return (
       first.getFullYear() === second.getFullYear() &&
