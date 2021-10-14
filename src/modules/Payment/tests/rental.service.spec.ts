@@ -36,6 +36,9 @@ enum ChargebeeMockFunction {
   SubscriptionAddChargeAtTermEndWithError,
   InvoiceCreate,
   SubscriptionRetrieve,
+  UndefinedNextBillingAtSubscriptionRetrieve,
+  DummyNextBillingAtSubscriptionRetrieve,
+  OldNextBillingAtSubscriptionRetrieve,
   PromotionalCreditAdd,
 }
 
@@ -114,6 +117,27 @@ class ChargeBeeMock {
           customer: {},
           subscription: {
             next_billing_at: moment().add(5, "days").unix(),
+          },
+        }
+      case ChargebeeMockFunction.OldNextBillingAtSubscriptionRetrieve:
+        return {
+          customer: {},
+          subscription: {
+            next_billing_at: moment().subtract(1, "days").unix(),
+          },
+        }
+      case ChargebeeMockFunction.UndefinedNextBillingAtSubscriptionRetrieve:
+        return {
+          customer: {},
+          subscription: {
+            next_billing_at: undefined,
+          },
+        }
+      case ChargebeeMockFunction.DummyNextBillingAtSubscriptionRetrieve:
+        return {
+          customer: {},
+          subscription: {
+            next_billing_at: "dummy",
           },
         }
       case ChargebeeMockFunction.PromotionalCreditAdd:
@@ -1479,23 +1503,12 @@ describe("Rental Service", () => {
     */
   })
 
-  /*
-  TODO: Update this test suite for the following cases:
-
-  If we're creating the customer's initial rental invoice
-    AND they are access-monthly:
-      -> query chargebee, get next billing at, and return 1 day before that
-    AND they are access-yearly,
-      -> do 30 days from the start date, adjusted for month length
-  If we're creating the customer's 2nd or later rental invoice:
-    AND they are access-monthly:
-      -> do 30 days from the start date, adjusted for month length
-    AND they are access-yearly:
-      -> do 30 days from the start date, adjusted for month length
-  */
   describe("GetRentalInvoiceBillingEndAt", () => {
     let rentalInvoiceBillingEndAt: Date
     let custWithData
+    let now
+    let februarySeventh2021
+    let marchSeventh2021
 
     beforeAll(async () => {
       const { cleanupFunc, customer } = await createTestCustomer({
@@ -1503,56 +1516,163 @@ describe("Rental Service", () => {
       })
       cleanupFuncs.push(cleanupFunc)
       testCustomer = customer
-    })
 
-    describe("Access Monthly Customers", () => {
-      beforeAll(async () => {
-        await setCustomerPlanType("access-monthly")
-        custWithData = (await getCustWithData({
-          membership: {
-            select: {
-              id: true,
+      custWithData = (await getCustWithData({
+        membership: {
+          select: {
+            id: true,
+            subscription: {
+              select: { subscriptionId: true, nextBillingAt: true },
             },
           },
-        })) as any
-      })
+        },
+      })) as any
 
-      it("queries chargebee and uses next_billing_at (minus 1)", async () => {
-        rentalInvoiceBillingEndAt = await rentalService.getRentalInvoiceBillingEndAt(
-          custWithData.membership.id,
-          null
-        )
-        expect(rentalInvoiceBillingEndAt).toBe(
-          timeUtils.xDaysFromNowISOString(4)
-        )
-      })
+      now = new Date()
+      februarySeventh2021 = new Date(2021, 1, 7)
+      marchSeventh2021 = new Date(2021, 2, 7)
     })
 
-    describe("Access Annual Customers", () => {
-      beforeAll(async () => {
-        await setCustomerPlanType("access-yearly")
-        custWithData = (await getCustWithData({
-          membership: {
-            select: {
-              id: true,
+    it("If the customer's subscription is set to cancel, returns 30 days from billingStartAt", async () => {
+      await setCustomerSubscriptionStatus("non_renewing")
+
+      rentalInvoiceBillingEndAt = await rentalService.getRentalInvoiceBillingEndAt(
+        custWithData.membership.id,
+        februarySeventh2021
+      )
+      expectTimeToEqual(rentalInvoiceBillingEndAt, marchSeventh2021)
+    })
+
+    it("If nextBillingAt is undefined, returns 30 days from billingStartAt", async () => {
+      await setCustomerSubscriptionNextBillingAt(null)
+      jest
+        .spyOn<any, any>(chargebee.subscription, "retrieve")
+        .mockReturnValue(
+          new ChargeBeeMock(
+            ChargebeeMockFunction.UndefinedNextBillingAtSubscriptionRetrieve
+          )
+        )
+
+      rentalInvoiceBillingEndAt = await rentalService.getRentalInvoiceBillingEndAt(
+        custWithData.membership.id,
+        februarySeventh2021
+      )
+      expectTimeToEqual(rentalInvoiceBillingEndAt, marchSeventh2021)
+    })
+
+    it("If the DB nextBillingAt is undefined, it queries chargebee", async () => {
+      await setCustomerSubscriptionNextBillingAt(null)
+
+      jest
+        .spyOn<any, any>(chargebee.subscription, "retrieve")
+        .mockReturnValue(
+          new ChargeBeeMock(
+            ChargebeeMockFunction.DummyNextBillingAtSubscriptionRetrieve
+          )
+        )
+
+      custWithData = (await getCustWithData({
+        membership: {
+          select: {
+            id: true,
+            subscription: {
+              select: { subscriptionId: true, nextBillingAt: true },
             },
           },
-        })) as any
-      })
+        },
+      })) as any
+      const nextBillingAt = await rentalService.getSanitizedCustomerNextBillingAt(
+        custWithData
+      )
+      expect(nextBillingAt).toBe("dummy")
+    })
 
+    it("If the DB nextBillingAt is before now, it queries Chargebee", async () => {
+      await setCustomerSubscriptionNextBillingAt(
+        new Date(timeUtils.xDaysAgoISOString(1))
+      )
+
+      jest
+        .spyOn<any, any>(chargebee.subscription, "retrieve")
+        .mockReturnValue(
+          new ChargeBeeMock(
+            ChargebeeMockFunction.DummyNextBillingAtSubscriptionRetrieve
+          )
+        )
+
+      custWithData = (await getCustWithData({
+        membership: {
+          select: {
+            id: true,
+            subscription: {
+              select: { subscriptionId: true, nextBillingAt: true },
+            },
+          },
+        },
+      })) as any
+      const nextBillingAt = await rentalService.getSanitizedCustomerNextBillingAt(
+        custWithData
+      )
+      expect(nextBillingAt).toBe("dummy")
+    })
+
+    it("If nextBillingAt is before today, returns 30 days from billingStartAt", async () => {
+      await setCustomerSubscriptionNextBillingAt(
+        new Date(timeUtils.xDaysAgoISOString(1))
+      )
+
+      jest
+        .spyOn<any, any>(chargebee.subscription, "retrieve")
+        .mockReturnValue(
+          new ChargeBeeMock(
+            ChargebeeMockFunction.OldNextBillingAtSubscriptionRetrieve
+          )
+        )
+
+      rentalInvoiceBillingEndAt = await rentalService.getRentalInvoiceBillingEndAt(
+        custWithData.membership.id,
+        februarySeventh2021
+      )
+      expectTimeToEqual(rentalInvoiceBillingEndAt, marchSeventh2021)
+    })
+
+    it("If nextBillingAt is tomorrow, returns nextBillingAt + 30 - 1", async () => {
+      const tomorrow = new Date(timeUtils.xDaysFromNowISOString(1))
+      await setCustomerSubscriptionNextBillingAt(tomorrow)
+      const expectedValue = await rentalService.calculateBillingEndDateFromStartDate(
+        tomorrow
+      )
+
+      rentalInvoiceBillingEndAt = await rentalService.getRentalInvoiceBillingEndAt(
+        custWithData.membership.id,
+        null
+      )
+      expectTimeToEqual(rentalInvoiceBillingEndAt, expectedValue)
+    })
+
+    it("If nextBillingAt is 14 days from now, returns nextBillingAt - 1", async () => {
+      const fourteenDaysFromNow = new Date(timeUtils.xDaysFromNowISOString(14))
+      const thirteenDaysFromNow = new Date(timeUtils.xDaysFromNowISOString(3))
+      await setCustomerSubscriptionNextBillingAt(fourteenDaysFromNow)
+
+      rentalInvoiceBillingEndAt = await rentalService.getRentalInvoiceBillingEndAt(
+        custWithData.membership.id,
+        null
+      )
+      expectTimeToEqual(rentalInvoiceBillingEndAt, thirteenDaysFromNow)
+    })
+
+    describe("CalculateBillingEndDateFromStartDate", () => {
       it("If the next month has the start date's date, it uses that", async () => {
-        const februarySeventh2021 = new Date(2021, 1, 7)
-        rentalInvoiceBillingEndAt = await rentalService.getRentalInvoiceBillingEndAt(
-          custWithData.membership.id,
+        rentalInvoiceBillingEndAt = await rentalService.calculateBillingEndDateFromStartDate(
           februarySeventh2021
         )
-        expectTimeToEqual(rentalInvoiceBillingEndAt, new Date(2021, 2, 7))
+        expectTimeToEqual(rentalInvoiceBillingEndAt, marchSeventh2021)
       })
 
       it("If the start date is the 31st and the next month only has 30 days, it uses 30", async () => {
         const marchThirtyFirst2021 = new Date(2021, 2, 31)
-        rentalInvoiceBillingEndAt = await rentalService.getRentalInvoiceBillingEndAt(
-          custWithData.membership.id,
+        rentalInvoiceBillingEndAt = await rentalService.calculateBillingEndDateFromStartDate(
           marchThirtyFirst2021
         )
         expectTimeToEqual(rentalInvoiceBillingEndAt, new Date(2021, 3, 30))
@@ -1560,8 +1680,7 @@ describe("Rental Service", () => {
 
       it("If the start date is 30 and the next month is February in a non leap year, it uses the 28th", async () => {
         const januaryThirty2021 = new Date(2021, 0, 30)
-        rentalInvoiceBillingEndAt = await rentalService.getRentalInvoiceBillingEndAt(
-          custWithData.membership.id,
+        rentalInvoiceBillingEndAt = await rentalService.calculateBillingEndDateFromStartDate(
           januaryThirty2021
         )
         expectTimeToEqual(rentalInvoiceBillingEndAt, new Date(2021, 1, 28))
@@ -1569,8 +1688,7 @@ describe("Rental Service", () => {
 
       it("If the start date is 30 and the next month is February in a leap year, it uses the 29th", async () => {
         const januaryThirty2024 = new Date(2024, 0, 30)
-        rentalInvoiceBillingEndAt = await rentalService.getRentalInvoiceBillingEndAt(
-          custWithData.membership.id,
+        rentalInvoiceBillingEndAt = await rentalService.calculateBillingEndDateFromStartDate(
           januaryThirty2024
         )
         expectTimeToEqual(rentalInvoiceBillingEndAt, new Date(2024, 1, 29))
@@ -1578,8 +1696,7 @@ describe("Rental Service", () => {
 
       it("If the start date is 29 and the next month is February in a leap year, it uses the 29th", async () => {
         const januaryTwentyNine2024 = new Date(2024, 0, 29)
-        rentalInvoiceBillingEndAt = await rentalService.getRentalInvoiceBillingEndAt(
-          custWithData.membership.id,
+        rentalInvoiceBillingEndAt = await rentalService.calculateBillingEndDateFromStartDate(
           januaryTwentyNine2024
         )
         expectTimeToEqual(rentalInvoiceBillingEndAt, new Date(2024, 1, 29))
@@ -1587,8 +1704,7 @@ describe("Rental Service", () => {
 
       it("If the start date is in december, it creates the billing end at date in the following year", async () => {
         const decemberThirtyOne2021 = new Date(2021, 11, 31)
-        rentalInvoiceBillingEndAt = await rentalService.getRentalInvoiceBillingEndAt(
-          custWithData.membership.id,
+        rentalInvoiceBillingEndAt = await rentalService.calculateBillingEndDateFromStartDate(
           decemberThirtyOne2021
         )
         expectTimeToEqual(rentalInvoiceBillingEndAt, new Date(2022, 0, 31))
@@ -1685,6 +1801,22 @@ const setCustomerPlanType = async (
   await prisma.client.customer.update({
     where: { id: testCustomer.id },
     data: { membership: { update: { plan: { connect: { planID } } } } },
+  })
+}
+
+const setCustomerSubscriptionStatus = async status => {
+  await prisma.client.customer.update({
+    where: { id: testCustomer.id },
+    data: { membership: { update: { subscription: { update: { status } } } } },
+  })
+}
+
+const setCustomerSubscriptionNextBillingAt = async nextBillingAt => {
+  await prisma.client.customer.update({
+    where: { id: testCustomer.id },
+    data: {
+      membership: { update: { subscription: { update: { nextBillingAt } } } },
+    },
   })
 }
 
