@@ -16,6 +16,7 @@ import chargebee from "chargebee"
 import { head, merge } from "lodash"
 import moment from "moment"
 
+import { PAYMENT_MODULE_DEF } from "../payment.module"
 import { PaymentService } from "../services/payment.service"
 import {
   CREATE_RENTAL_INVOICE_LINE_ITEMS_INVOICE_SELECT,
@@ -37,7 +38,7 @@ enum ChargebeeMockFunction {
   InvoiceCreate,
   SubscriptionRetrieve,
   UndefinedNextBillingAtSubscriptionRetrieve,
-  DummyNextBillingAtSubscriptionRetrieve,
+  OneHundredDaysAgoBillingAtSubscriptionRetrieve,
   OldNextBillingAtSubscriptionRetrieve,
   SubscriptionRetrieveWithError,
   PromotionalCreditAdd,
@@ -135,11 +136,11 @@ class ChargeBeeMock {
             next_billing_at: undefined,
           },
         }
-      case ChargebeeMockFunction.DummyNextBillingAtSubscriptionRetrieve:
+      case ChargebeeMockFunction.OneHundredDaysAgoBillingAtSubscriptionRetrieve:
         return {
           customer: {},
           subscription: {
-            next_billing_at: "dummy",
+            next_billing_at: moment().subtract(100, "days").unix(),
           },
         }
       case ChargebeeMockFunction.PromotionalCreditAdd:
@@ -169,7 +170,7 @@ describe("Rental Service", () => {
   const now = new Date()
 
   beforeAll(async () => {
-    const moduleBuilder = await Test.createTestingModule(APP_MODULE_DEF)
+    const moduleBuilder = await Test.createTestingModule(PAYMENT_MODULE_DEF)
     moduleBuilder.overrideProvider(PaymentService).useClass(PaymentServiceMock)
 
     const moduleRef = await moduleBuilder.compile()
@@ -1486,6 +1487,8 @@ describe("Rental Service", () => {
         )
       })
     })
+
+    describe()
   })
 
   describe("Initialize rental invoice", () => {
@@ -1543,6 +1546,7 @@ describe("Rental Service", () => {
         februarySeventh2021
       )
       expectTimeToEqual(rentalInvoiceBillingEndAt, marchSeventh2021)
+      await setCustomerSubscriptionStatus("active")
     })
 
     it("If nextBillingAt is undefined, returns 30 days from billingStartAt", async () => {
@@ -1562,6 +1566,18 @@ describe("Rental Service", () => {
       expectTimeToEqual(rentalInvoiceBillingEndAt, marchSeventh2021)
     })
 
+    it("If nextBillingAt is 40 days from now, returns 30 days from billingStartAt", async () => {
+      await setCustomerSubscriptionNextBillingAt(
+        timeUtils.xDaysFromNowISOString(40)
+      )
+
+      rentalInvoiceBillingEndAt = await rentalService.getRentalInvoiceBillingEndAt(
+        custWithData.membership.id,
+        februarySeventh2021
+      )
+      expectTimeToEqual(rentalInvoiceBillingEndAt, marchSeventh2021)
+    })
+
     it("If the DB nextBillingAt is undefined, it queries chargebee", async () => {
       await setCustomerSubscriptionNextBillingAt(null)
 
@@ -1569,7 +1585,7 @@ describe("Rental Service", () => {
         .spyOn<any, any>(chargebee.subscription, "retrieve")
         .mockReturnValue(
           new ChargeBeeMock(
-            ChargebeeMockFunction.DummyNextBillingAtSubscriptionRetrieve
+            ChargebeeMockFunction.OneHundredDaysAgoBillingAtSubscriptionRetrieve
           )
         )
 
@@ -1586,7 +1602,10 @@ describe("Rental Service", () => {
       const nextBillingAt = await rentalService.getSanitizedCustomerNextBillingAt(
         custWithData
       )
-      expect(nextBillingAt).toBe("dummy")
+      expectTimeToEqual(
+        nextBillingAt,
+        new Date(timeUtils.xDaysAgoISOString(100))
+      )
     })
 
     it("If the DB nextBillingAt is before now, it queries Chargebee", async () => {
@@ -1598,7 +1617,7 @@ describe("Rental Service", () => {
         .spyOn<any, any>(chargebee.subscription, "retrieve")
         .mockReturnValue(
           new ChargeBeeMock(
-            ChargebeeMockFunction.DummyNextBillingAtSubscriptionRetrieve
+            ChargebeeMockFunction.OneHundredDaysAgoBillingAtSubscriptionRetrieve
           )
         )
 
@@ -1615,10 +1634,13 @@ describe("Rental Service", () => {
       const nextBillingAt = await rentalService.getSanitizedCustomerNextBillingAt(
         custWithData
       )
-      expect(nextBillingAt).toBe("dummy")
+      expectTimeToEqual(
+        nextBillingAt,
+        new Date(timeUtils.xDaysAgoISOString(100))
+      )
     })
 
-    it("If the querying Chargebee throws an error, returns 30 days from billingStartAt", async () => {
+    it("If querying Chargebee throws an error, returns 30 days from billingStartAt", async () => {
       await setCustomerSubscriptionNextBillingAt(null)
 
       jest
@@ -1663,19 +1685,19 @@ describe("Rental Service", () => {
 
       rentalInvoiceBillingEndAt = await rentalService.getRentalInvoiceBillingEndAt(
         custWithData.membership.id,
-        null
+        februarySeventh2021
       )
       expectTimeToEqual(rentalInvoiceBillingEndAt, expectedValue)
     })
 
     it("If nextBillingAt is 14 days from now, returns nextBillingAt - 1", async () => {
       const fourteenDaysFromNow = new Date(timeUtils.xDaysFromNowISOString(14))
-      const thirteenDaysFromNow = new Date(timeUtils.xDaysFromNowISOString(3))
+      const thirteenDaysFromNow = new Date(timeUtils.xDaysFromNowISOString(13))
       await setCustomerSubscriptionNextBillingAt(fourteenDaysFromNow)
 
       rentalInvoiceBillingEndAt = await rentalService.getRentalInvoiceBillingEndAt(
         custWithData.membership.id,
-        null
+        februarySeventh2021
       )
       expectTimeToEqual(rentalInvoiceBillingEndAt, thirteenDaysFromNow)
     })

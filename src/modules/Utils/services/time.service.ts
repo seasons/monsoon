@@ -97,4 +97,19 @@ export class TimeUtilsService {
     const divider = unit === "seconds" ? 1000 : 1
     return date.getTime() / divider
   }
+
+  // pass in an ISO datestring
+  isLessThanXDaysFromNow(dateString: string, x: number) {
+    var date = moment(dateString)
+    return (
+      date.isSameOrBefore(moment().add(x, "days")) &&
+      date.isSameOrAfter(moment())
+    )
+  }
+
+  // pass in an ISO datestring
+  isXOrMoreDaysFromNow(dateString: string, x: number) {
+    var date = moment(dateString)
+    return date.isSameOrAfter(moment().add(x, "days"))
+  }
 }

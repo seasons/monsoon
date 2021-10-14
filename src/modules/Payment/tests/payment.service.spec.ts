@@ -6,7 +6,7 @@ import { PrismaService } from "@app/prisma/prisma.service"
 import { Test } from "@nestjs/testing"
 import chargebee from "chargebee"
 
-import { PaymentModuleDef } from "../payment.module"
+import { PAYMENT_MODULE_DEF } from "../payment.module"
 import { PaymentService } from "../services/payment.service"
 
 enum ChargebeeMockFunction {
@@ -67,7 +67,9 @@ xdescribe("Payment Service", () => {
   let testUtils: TestUtilsService
 
   beforeAll(async () => {
-    const moduleRef = await Test.createTestingModule(PaymentModuleDef).compile()
+    const moduleRef = await Test.createTestingModule(
+      PAYMENT_MODULE_DEF
+    ).compile()
 
     prisma = moduleRef.get<PrismaService>(PrismaService)
     const utilsService = moduleRef.get<UtilsService>(UtilsService)

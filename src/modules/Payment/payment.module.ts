@@ -22,7 +22,7 @@ import { RentalService } from "./services/rental.service"
 import { SubscriptionService } from "./services/subscription.service"
 import { UpdatePaymentService } from "./services/updatePayment.service"
 
-export const PaymentModuleDef = {
+export const PAYMENT_MODULE_DEF = {
   controllers: [ChargebeeController],
   imports: [
     EmailModule,
@@ -55,5 +55,5 @@ export const PaymentModuleDef = {
     RentalService,
   ],
 }
-@Module(PaymentModuleDef)
+@Module(PAYMENT_MODULE_DEF)
 export class PaymentModule {}

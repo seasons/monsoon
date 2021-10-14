@@ -1,6 +1,7 @@
+import { WinstonLogger } from "@app/lib/logger"
 import { ErrorService } from "@app/modules/Error/services/error.service"
 import { TimeUtilsService } from "@app/modules/Utils/services/time.service"
-import { Injectable } from "@nestjs/common"
+import { Injectable, Logger } from "@nestjs/common"
 import {
   CustomerMembershipSubscriptionData,
   Package,
@@ -111,6 +112,10 @@ export const CREATE_RENTAL_INVOICE_LINE_ITEMS_INVOICE_SELECT = Prisma.validator<
 })
 @Injectable()
 export class RentalService {
+  private readonly logger = (new Logger(
+    "RentalService"
+  ) as unknown) as WinstonLogger
+
   constructor(
     private readonly prisma: PrismaService,
     private readonly timeUtils: TimeUtilsService,
@@ -207,7 +212,7 @@ export class RentalService {
     const lastInvoice = await this.prisma.client.rentalInvoice.findFirst({
       where: { membershipId },
       orderBy: { createdAt: "desc" },
-      select: { reservations: { select: { id: true } } },
+      select: { reservations: { select: { id: true } }, billingEndAt: true },
     })
     if (!!lastInvoice) {
       reservationWhereInputFromLastInvoice = {
@@ -238,8 +243,7 @@ export class RentalService {
     const now = new Date()
     const billingEndAt = await this.getRentalInvoiceBillingEndAt(
       membershipId,
-      now,
-      !lastInvoice
+      lastInvoice?.billingEndAt || now
     )
     const data = Prisma.validator<Prisma.RentalInvoiceCreateInput>()({
       membership: {
@@ -290,34 +294,102 @@ export class RentalService {
       >
     }
   }) {
-    /*
-    If nextBillingAt is defined and greater than now, return that
-    Otherwise query from chargebee and get that.
-    */
-    return null
+    const dbValue = customerWithData.membership.subscription.nextBillingAt
+    if (!!dbValue && this.timeUtils.isLaterDate(dbValue, new Date())) {
+      return dbValue
+    }
+
+    try {
+      const result = await chargebee.subscription
+        .retrieve(customerWithData.membership.subscription.subscriptionId)
+        .request(this.handleChargebeeRequestResult)
+      const nextBillingAtTimestamp = result.subscription.next_billing_at
+      if (!nextBillingAtTimestamp) {
+        return undefined
+      }
+
+      const nextBillingAtDate = this.timeUtils.dateFromUTCTimestamp(
+        nextBillingAtTimestamp
+      )
+      return nextBillingAtDate
+    } catch (err) {
+      this.logger.error("Unable to query chargebee for nextBillingAt", {
+        error: err,
+      })
+      return undefined
+    }
   }
 
   async getRentalInvoiceBillingEndAt(
     customerMembershipId: string,
-    billingStartAt: Date,
-    initial = false
+    billingStartAt: Date
   ): Promise<Date> {
     const membershipWithData = await this.prisma.client.customerMembership.findUnique(
       {
         where: { id: customerMembershipId },
-        select: { subscriptionId: true, plan: { select: { planID: true } } },
+        select: {
+          plan: { select: { planID: true } },
+          subscription: {
+            select: { subscriptionId: true, status: true, nextBillingAt: true },
+          },
+        },
       }
     )
+    const sanitizedNextBillingAt = await this.getSanitizedCustomerNextBillingAt(
+      {
+        membership: membershipWithData,
+      }
+    )
+    const thirtyDaysFromBillingStartAt = await this.calculateBillingEndDateFromStartDate(
+      billingStartAt
+    )
+
+    const subscriptionCancelled = ["cancelled", "non_renewing"].includes(
+      membershipWithData.subscription.status
+    )
+    if (!sanitizedNextBillingAt || subscriptionCancelled) {
+      return thirtyDaysFromBillingStartAt
+    }
+
+    /*
+    Depending on when the nextBillingAt is relative to now, we return an appropriate value. 
+
+    We use 3 and 33 as "accurate enough" boundaries to desginate a nextBillingAt either being
+    too close, just far away enough, or too far away
+    */
+    const nextBillingAtBeforeNow = this.timeUtils.isLaterDate(
+      new Date(),
+      sanitizedNextBillingAt
+    )
+    const nextBillingAtLessThanThreeDaysFromNow = this.timeUtils.isLessThanXDaysFromNow(
+      sanitizedNextBillingAt.toISOString(),
+      3
+    )
+    const nextBillingAtJustFarEnoughAway =
+      this.timeUtils.isLaterDate(
+        sanitizedNextBillingAt,
+        new Date(this.timeUtils.xDaysFromNowISOString(3))
+      ) &&
+      this.timeUtils.isLessThanXDaysFromNow(
+        sanitizedNextBillingAt.toISOString(),
+        33
+      )
 
     let billingEndAt
-    if (initial && membershipWithData.plan.planID !== "access-yearly") {
-      billingEndAt = await this.getBillingEndDateFromNextBillingAt(
-        membershipWithData.subscriptionId
+    if (nextBillingAtBeforeNow) {
+      billingEndAt = thirtyDaysFromBillingStartAt
+    } else if (nextBillingAtLessThanThreeDaysFromNow) {
+      billingEndAt = await this.calculateBillingEndDateFromStartDate(
+        sanitizedNextBillingAt
+      )
+    } else if (nextBillingAtJustFarEnoughAway) {
+      billingEndAt = this.timeUtils.xDaysBeforeDate(
+        sanitizedNextBillingAt,
+        1,
+        "date"
       )
     } else {
-      billingEndAt = await this.calculateBillingEndDateFromStartDate(
-        billingStartAt
-      )
+      billingEndAt = thirtyDaysFromBillingStartAt
     }
 
     return billingEndAt
