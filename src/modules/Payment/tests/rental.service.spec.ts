@@ -1,4 +1,3 @@
-import { APP_MODULE_DEF } from "@app/app.module"
 import { ReservationService } from "@app/modules/Reservation"
 import { TimeUtilsService } from "@app/modules/Utils/services/time.service"
 import { UtilsService } from "@app/modules/Utils/services/utils.service"
@@ -10,7 +9,6 @@ import {
   RentalInvoiceLineItem,
   ReservationStatus,
   ShippingCode,
-  ShippingOption,
 } from "@prisma/client"
 import chargebee from "chargebee"
 import { head, merge } from "lodash"
@@ -36,6 +34,7 @@ enum ChargebeeMockFunction {
   SubscriptionAddChargeAtTermEnd,
   SubscriptionAddChargeAtTermEndWithError,
   InvoiceCreate,
+  InvoiceCreateWithError,
   SubscriptionRetrieve,
   UndefinedNextBillingAtSubscriptionRetrieve,
   OneHundredDaysAgoBillingAtSubscriptionRetrieve,
@@ -92,6 +91,8 @@ class ChargeBeeMock {
             line_items: this.usageLineItems,
           },
         }
+      case ChargebeeMockFunction.InvoiceCreateWithError:
+        throw "Invoice Create test error"
       case ChargebeeMockFunction.SubscriptionAddChargeAtTermEnd:
         return {
           estimate: {
@@ -114,7 +115,7 @@ class ChargeBeeMock {
         }
       case ChargebeeMockFunction.SubscriptionAddChargeAtTermEndWithError:
       case ChargebeeMockFunction.SubscriptionRetrieveWithError:
-        throw "test error"
+        throw "Subscription Retrieve Test Error"
       case ChargebeeMockFunction.SubscriptionRetrieve:
         return {
           customer: {},
@@ -1365,7 +1366,7 @@ describe("Rental Service", () => {
 
     describe("Properly handles an error from chargebee", () => {
       beforeAll(async () => {
-        jest
+        const spy = jest
           .spyOn<any, any>(chargebee.subscription, "add_charge_at_term_end")
           .mockReturnValue(
             new ChargeBeeMock(
@@ -1413,6 +1414,13 @@ describe("Rental Service", () => {
         })) as any
         customerRentalInvoicesAfterBilling =
           custWithUpdatedData.membership.rentalInvoices
+
+        // Revert back to non-error mock function so other tests work
+        jest
+          .spyOn<any, any>(chargebee.subscription, "retrieve")
+          .mockReturnValue(
+            new ChargeBeeMock(ChargebeeMockFunction.SubscriptionRetrieve)
+          )
       })
 
       it("Marks the current rental invoice as ChargeFailed", () => {
@@ -1433,7 +1441,7 @@ describe("Rental Service", () => {
         const spy = jest
           .spyOn<any, any>(rentalService, "createRentalInvoiceLineItems")
           .mockImplementation(() => {
-            throw "Test Error"
+            throw "Create Rental Invoice Line Items Test Error"
           })
 
         const { cleanupFunc, customer } = await createTestCustomer({
@@ -1579,6 +1587,177 @@ describe("Rental Service", () => {
       } = await rentalService.processInvoice(rentalInvoiceToBeBilled)
 
       expect(addedCharges.length).toBe(1)
+    })
+
+    describe("Properly handles retries of invoices with status ChargeFailed", () => {
+      let custWithData
+      let rentalInvoicesStatuses
+      let lineItems
+
+      describe("Line items were successfully created the first time through", () => {
+        beforeAll(async () => {
+          const { customer } = await createTestCustomer({
+            select: testCustomerSelect,
+          })
+          testCustomer = customer
+          await setCustomerSubscriptionNextBillingAt(
+            timeUtils.xDaysFromNowISOString(20)
+          )
+
+          jest
+            .spyOn<any, any>(chargebee.invoice, "create")
+            .mockReturnValue(
+              new ChargeBeeMock(ChargebeeMockFunction.InvoiceCreateWithError)
+            )
+
+          // Invoice 1. Should end up with ChargeFailed
+          const initialReservation = await addToBagAndReserveForCustomer(2)
+          await setReservationCreatedAt(initialReservation.id, 25)
+          await setPackageDeliveredAt(initialReservation.sentPackage.id, 23)
+          await setReservationStatus(initialReservation.id, "Delivered")
+
+          custWithData = (await getCustWithData()) as any
+          expect(custWithData.membership.rentalInvoices.length).toBe(1)
+          let rentalInvoiceToBeBilled = await prisma.client.rentalInvoice.findUnique(
+            {
+              where: { id: custWithData.membership.rentalInvoices[0].id },
+              select: CREATE_RENTAL_INVOICE_LINE_ITEMS_INVOICE_SELECT,
+            }
+          )
+          await rentalService.processInvoice(rentalInvoiceToBeBilled, err =>
+            console.log(err)
+          )
+          lineItems = await prisma.client.rentalInvoiceLineItem.findMany({
+            where: { rentalInvoice: { id: rentalInvoiceToBeBilled.id } },
+          })
+          custWithData = (await getCustWithData()) as any
+          rentalInvoicesStatuses = custWithData.membership.rentalInvoices.map(
+            a => a.status
+          )
+
+          expect(custWithData.membership.rentalInvoices.length).toBe(2)
+          expect(rentalInvoicesStatuses.includes("ChargeFailed")).toBe(true)
+          expect(rentalInvoicesStatuses.includes("Draft")).toBe(true)
+          expect(lineItems.length).toBe(4) // two item charges, one outbound package, one processing fee
+
+          // Next charge. No error being thrown this time
+          jest
+            .spyOn<any, any>(chargebee.invoice, "create")
+            .mockReturnValue(
+              new ChargeBeeMock(ChargebeeMockFunction.InvoiceCreate)
+            )
+          const rentalInvoiceToBeBilledID = custWithData.membership.rentalInvoices.find(
+            a => a.status === "ChargeFailed"
+          ).id
+          rentalInvoiceToBeBilled = await prisma.client.rentalInvoice.findUnique(
+            {
+              where: { id: rentalInvoiceToBeBilledID },
+              select: CREATE_RENTAL_INVOICE_LINE_ITEMS_INVOICE_SELECT,
+            }
+          )
+          await rentalService.processInvoice(rentalInvoiceToBeBilled, err =>
+            console.log(err)
+          )
+
+          custWithData = (await getCustWithData()) as any
+          rentalInvoicesStatuses = custWithData.membership.rentalInvoices.map(
+            a => a.status
+          )
+          lineItems = await prisma.client.rentalInvoiceLineItem.findMany({
+            where: { rentalInvoice: { id: rentalInvoiceToBeBilled.id } },
+            select: { id: true },
+          })
+        })
+
+        it("Doesn't create another rental invoice during retry", () => {
+          expect(custWithData.membership.rentalInvoices.length).toBe(2)
+          expect(rentalInvoicesStatuses.includes("Billed")).toBe(true)
+          expect(rentalInvoicesStatuses.includes("Draft")).toBe(true)
+        })
+
+        it("Doesn't re-create line items if they already exist on a rental invoice", () => {
+          // two for item charges. one for procesing. one for an outbound package
+          expect(lineItems.length).toBe(4)
+        })
+      })
+
+      describe("Line items were not successfully created the first time through", () => {
+        beforeAll(async () => {
+          const { customer } = await createTestCustomer({
+            select: testCustomerSelect,
+          })
+          testCustomer = customer
+          await setCustomerSubscriptionNextBillingAt(
+            timeUtils.xDaysFromNowISOString(20)
+          )
+
+          const spy = jest
+            .spyOn<any, any>(rentalService, "createRentalInvoiceLineItems")
+            .mockImplementation(() => {
+              throw "Create Rental Invoice Line Items Test Error"
+            })
+
+          // Invoice 1. Should end up with ChargeFailed
+          const initialReservation = await addToBagAndReserveForCustomer(2)
+          await setReservationCreatedAt(initialReservation.id, 25)
+          await setPackageDeliveredAt(initialReservation.sentPackage.id, 23)
+          await setReservationStatus(initialReservation.id, "Delivered")
+
+          custWithData = (await getCustWithData()) as any
+          expect(custWithData.membership.rentalInvoices.length).toBe(1)
+          let rentalInvoiceToBeBilled = await prisma.client.rentalInvoice.findUnique(
+            {
+              where: { id: custWithData.membership.rentalInvoices[0].id },
+              select: CREATE_RENTAL_INVOICE_LINE_ITEMS_INVOICE_SELECT,
+            }
+          )
+          await rentalService.processInvoice(rentalInvoiceToBeBilled)
+          lineItems = await prisma.client.rentalInvoiceLineItem.findMany({
+            where: { rentalInvoice: { id: rentalInvoiceToBeBilled.id } },
+          })
+          custWithData = (await getCustWithData()) as any
+          rentalInvoicesStatuses = custWithData.membership.rentalInvoices.map(
+            a => a.status
+          )
+
+          expect(custWithData.membership.rentalInvoices.length).toBe(2)
+          expect(rentalInvoicesStatuses.includes("ChargeFailed")).toBe(true)
+          expect(rentalInvoicesStatuses.includes("Draft")).toBe(true)
+          expect(lineItems.length).toBe(0) // failure during line item creation
+
+          // Next charge. No error being thrown this time
+          spy.mockRestore()
+          const rentalInvoiceToBeBilledID = custWithData.membership.rentalInvoices.find(
+            a => a.status === "ChargeFailed"
+          ).id
+          rentalInvoiceToBeBilled = await prisma.client.rentalInvoice.findUnique(
+            {
+              where: { id: rentalInvoiceToBeBilledID },
+              select: CREATE_RENTAL_INVOICE_LINE_ITEMS_INVOICE_SELECT,
+            }
+          )
+          await rentalService.processInvoice(rentalInvoiceToBeBilled)
+
+          custWithData = (await getCustWithData()) as any
+          rentalInvoicesStatuses = custWithData.membership.rentalInvoices.map(
+            a => a.status
+          )
+          lineItems = await prisma.client.rentalInvoiceLineItem.findMany({
+            where: { rentalInvoice: { id: rentalInvoiceToBeBilled.id } },
+            select: { id: true },
+          })
+        })
+
+        it("Creates the line items the second time through", () => {
+          expect(lineItems.length).toBe(4) // two items, one outbound package, one processing fee
+        })
+
+        it("Doesn't create another rental invoice during retry", () => {
+          expect(custWithData.membership.rentalInvoices.length).toBe(2)
+          expect(rentalInvoicesStatuses.includes("Billed")).toBe(true)
+          expect(rentalInvoicesStatuses.includes("Draft")).toBe(true)
+        })
+      })
     })
   })
 
@@ -1739,11 +1918,17 @@ describe("Rental Service", () => {
         .mockReturnValue(
           new ChargeBeeMock(ChargebeeMockFunction.SubscriptionRetrieveWithError)
         )
-
       rentalInvoiceBillingEndAt = await rentalService.getRentalInvoiceBillingEndAt(
         custWithData.membership.id,
         februarySeventh2021
       )
+      // revert it back so it doesn't affect other tests
+      jest
+        .spyOn<any, any>(chargebee.subscription, "retrieve")
+        .mockReturnValue(
+          new ChargeBeeMock(ChargebeeMockFunction.SubscriptionRetrieve)
+        )
+
       expectTimeToEqual(rentalInvoiceBillingEndAt, marchSeventh2021)
     })
 
@@ -1764,6 +1949,12 @@ describe("Rental Service", () => {
         custWithData.membership.id,
         februarySeventh2021
       )
+      // revert it back so it doesn't affect other tests
+      jest
+        .spyOn<any, any>(chargebee.subscription, "retrieve")
+        .mockReturnValue(
+          new ChargeBeeMock(ChargebeeMockFunction.SubscriptionRetrieve)
+        )
       expectTimeToEqual(rentalInvoiceBillingEndAt, marchSeventh2021)
     })
 
