@@ -5,13 +5,20 @@ import { PrismaService } from "../../prisma/prisma.service"
 const run = async () => {
   const ps = new PrismaService()
 
-  const email = "ryanofcali@yahoo.com"
-  const x = await ps.client.customer.findMany({
-    where: { status: { in: ["Active", "Paused", "PaymentFailed"] } },
-    select: { user: { select: { email: true } } },
+  const email = "alexandrahowley@gmail.com"
+  const x = await ps.client.customer.findFirst({
+    where: { user: { email } },
+    select: {
+      user: { select: { email: true } },
+      membership: {
+        select: {
+          rentalInvoices: {
+            select: { status: true, billingEndAt: true, billingStartAt: true },
+          },
+        },
+      },
+    },
   })
-  for (const cust of x) {
-    console.log(cust.user.email)
-  }
+  console.dir(x, { depth: null })
 }
 run()

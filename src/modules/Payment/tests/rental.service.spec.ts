@@ -115,7 +115,7 @@ class ChargeBeeMock {
         }
       case ChargebeeMockFunction.SubscriptionAddChargeAtTermEndWithError:
       case ChargebeeMockFunction.SubscriptionRetrieveWithError:
-        throw "test error"
+        throw "Subscription Retrieve Test Error"
       case ChargebeeMockFunction.SubscriptionRetrieve:
         return {
           customer: {},
@@ -1366,7 +1366,7 @@ describe("Rental Service", () => {
 
     describe("Properly handles an error from chargebee", () => {
       beforeAll(async () => {
-        jest
+        const spy = jest
           .spyOn<any, any>(chargebee.subscription, "add_charge_at_term_end")
           .mockReturnValue(
             new ChargeBeeMock(
@@ -1414,6 +1414,13 @@ describe("Rental Service", () => {
         })) as any
         customerRentalInvoicesAfterBilling =
           custWithUpdatedData.membership.rentalInvoices
+
+        // Revert back to non-error mock function so other tests work
+        jest
+          .spyOn<any, any>(chargebee.subscription, "retrieve")
+          .mockReturnValue(
+            new ChargeBeeMock(ChargebeeMockFunction.SubscriptionRetrieve)
+          )
       })
 
       it("Marks the current rental invoice as ChargeFailed", () => {
@@ -1434,7 +1441,7 @@ describe("Rental Service", () => {
         const spy = jest
           .spyOn<any, any>(rentalService, "createRentalInvoiceLineItems")
           .mockImplementation(() => {
-            throw "Test Error"
+            throw "Create Rental Invoice Line Items Test Error"
           })
 
         const { cleanupFunc, customer } = await createTestCustomer({
@@ -1587,11 +1594,14 @@ describe("Rental Service", () => {
         select: testCustomerSelect,
       })
       testCustomer = customer
+      await setCustomerSubscriptionNextBillingAt(
+        timeUtils.xDaysFromNowISOString(20)
+      )
 
       const spy = jest
         .spyOn<any, any>(rentalService, "createRentalInvoiceLineItems")
         .mockImplementation(() => {
-          throw "Test Error"
+          throw "Create Rental Invoice Line Items test error"
         })
 
       // Invoice 1. Should end up with ChargeFailed
@@ -1611,7 +1621,9 @@ describe("Rental Service", () => {
       const {
         lineItems,
         charges: addedCharges,
-      } = await rentalService.processInvoice(rentalInvoiceToBeBilled)
+      } = await rentalService.processInvoice(rentalInvoiceToBeBilled, err =>
+        console.log(err)
+      )
       custWithData = (await getCustWithData()) as any
       expect(custWithData.membership.rentalInvoices.length).toBe(2)
       let rentalInvoicesStatuses = custWithData.membership.rentalInvoices.map(
@@ -1629,12 +1641,15 @@ describe("Rental Service", () => {
         where: { id: rentalInvoiceToBeBilledID },
         select: CREATE_RENTAL_INVOICE_LINE_ITEMS_INVOICE_SELECT,
       })
-      await rentalService.processInvoice(rentalInvoiceToBeBilled)
+      await rentalService.processInvoice(rentalInvoiceToBeBilled, err =>
+        console.log(err)
+      )
 
       custWithData = (await getCustWithData()) as any
       rentalInvoicesStatuses = custWithData.membership.rentalInvoices.map(
         a => a.status
       )
+      console.log(rentalInvoicesStatuses)
       expect(custWithData.membership.rentalInvoices.length).toBe(2)
       expect(rentalInvoicesStatuses.includes("Billed")).toBe(true)
       expect(rentalInvoicesStatuses.includes("Draft")).toBe(true)
@@ -1798,11 +1813,17 @@ describe("Rental Service", () => {
         .mockReturnValue(
           new ChargeBeeMock(ChargebeeMockFunction.SubscriptionRetrieveWithError)
         )
-
       rentalInvoiceBillingEndAt = await rentalService.getRentalInvoiceBillingEndAt(
         custWithData.membership.id,
         februarySeventh2021
       )
+      // revert it back so it doesn't affect other tests
+      jest
+        .spyOn<any, any>(chargebee.subscription, "retrieve")
+        .mockReturnValue(
+          new ChargeBeeMock(ChargebeeMockFunction.SubscriptionRetrieve)
+        )
+
       expectTimeToEqual(rentalInvoiceBillingEndAt, marchSeventh2021)
     })
 
@@ -1823,6 +1844,12 @@ describe("Rental Service", () => {
         custWithData.membership.id,
         februarySeventh2021
       )
+      // revert it back so it doesn't affect other tests
+      jest
+        .spyOn<any, any>(chargebee.subscription, "retrieve")
+        .mockReturnValue(
+          new ChargeBeeMock(ChargebeeMockFunction.SubscriptionRetrieve)
+        )
       expectTimeToEqual(rentalInvoiceBillingEndAt, marchSeventh2021)
     })
 
