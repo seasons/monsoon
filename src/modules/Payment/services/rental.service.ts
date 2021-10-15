@@ -65,9 +65,6 @@ export const CREATE_RENTAL_INVOICE_LINE_ITEMS_INVOICE_SELECT = Prisma.validator<
       createdAt: true,
       returnPackages: { select: { deliveredAt: true, amount: true } },
       sentPackage: { select: { amount: true } },
-      shippingOption: {
-        select: { shippingMethod: { select: { code: true } } },
-      },
     },
     orderBy: { createdAt: "asc" },
   },
@@ -507,8 +504,6 @@ export class RentalService {
     invoice: Pick<RentalInvoice, "id" | "billingStartAt"> & {
       reservations: (Pick<Reservation, "createdAt"> & {
         returnPackages: Pick<Package, "deliveredAt" | "amount">[]
-      } & {
-        shippingOption: { shippingMethod: Pick<ShippingMethod, "code"> }
       })[]
       products: (Pick<PhysicalProduct, "id" | "seasonsUID"> & {
         productVariant: { product: Pick<Product, "computedRentalPrice"> }

@@ -81,6 +81,12 @@ type ReservationFeedback {
   respondedAt: DateTime
 }
 
+enum ShippingCode {
+  UPSGround
+  UPSSelect
+  Pickup
+}
+
 enum ReservationLineItemRecordType {
   Credit
   ProductVariant
@@ -215,6 +221,7 @@ input ProductStateInput {
 
 input ReserveItemsOptions {
   dryRun: Boolean
+  timeWindowID: ID
 }
 
 enum ReservationAdminMessage {
