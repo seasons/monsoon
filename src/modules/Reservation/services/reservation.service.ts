@@ -352,8 +352,6 @@ export class ReservationService {
       customer.id
     )
 
-    console.log("returnReasons", returnReasons)
-
     // If there's an item being returned that isn't in the current reservation
     // throw an error
     if (
@@ -378,7 +376,6 @@ export class ReservationService {
     })
 
     for (const r of returnReasons) {
-      console.log("r.physicalProductId", r.physicalProductId)
       await this.prisma.client.physicalProduct.update({
         where: { id: r.physicalProductId },
         data: {
