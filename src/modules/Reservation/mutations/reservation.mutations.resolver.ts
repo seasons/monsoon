@@ -64,11 +64,20 @@ export class ReservationMutationsResolver {
     select,
     @Application() application
   ) {
+    const itemsToReserve = await this.prisma.client.bagItem.findMany({
+      where: {
+        customer: { id: customer.id },
+        status: { in: ["Reserved", "Added"] },
+        saved: false,
+      },
+      select: { productVariant: { select: { id: true } } },
+    })
+    const productVariantIDs = itemsToReserve.map(a => a.productVariant.id)
     const returnData = await this.reserve.reserveItems(
       shippingCode,
       customer,
-      select,
-    })
+      select
+    )
 
     // Track the selection
     this.segment.track(user.id, "Reserved Items", {
@@ -108,9 +117,9 @@ export class ReservationMutationsResolver {
     })
     const returnData = await this.reserve.reserveItems(
       shippingCode,
-      customer: custWithData,
-      select,
-    })
+      custWithData,
+      select
+    )
 
     // Track the selection
     this.segment.track(custWithData.user.id, "Reserved Items", {
