@@ -110,6 +110,7 @@ export const CREATE_RENTAL_INVOICE_LINE_ITEMS_INVOICE_SELECT = Prisma.validator<
     },
   },
   status: true,
+  lineItems: { select: { id: true } },
 })
 @Injectable()
 export class RentalService {
@@ -141,11 +142,18 @@ export class RentalService {
   })
 
   async processInvoice(invoice, onError = err => null) {
-    let chargebeeInvoices, chargePromises, lineItems
+    let chargebeeInvoices, chargePromises
     let promises = []
+    let lineItems = invoice.lineItems
     try {
       const planID = invoice.membership.plan.planID
-      lineItems = await this.createRentalInvoiceLineItems(invoice)
+
+      // If we're retrying an invoice, we may have already created their line items.
+      // So we don't want to recreate them.
+      if (lineItems.length === 0) {
+        lineItems = await this.createRentalInvoiceLineItems(invoice)
+      }
+
       const chargeResult = await this.chargebeeChargeTab(planID, lineItems)
       ;[chargePromises, chargebeeInvoices] = chargeResult
       promises.push(...chargePromises)
@@ -897,16 +905,6 @@ export class RentalService {
     return billingEndAtDate
   }
 
-  private async getBillingEndDateFromNextBillingAt(subscriptionId) {
-    const result = await chargebee.subscription
-      .retrieve(subscriptionId)
-      .request(this.handleChargebeeRequestResult)
-    const nextBillingAtTimestamp = result.subscription.next_billing_at
-    const nextBillingAtDate = this.timeUtils.dateFromUTCTimestamp(
-      nextBillingAtTimestamp
-    )
-    return this.timeUtils.xDaysBeforeDate(nextBillingAtDate, 1, "date")
-  }
   private prismaLineItemToChargebeeChargeInput = prismaLineItem => {
     return {
       amount: prismaLineItem.price,
