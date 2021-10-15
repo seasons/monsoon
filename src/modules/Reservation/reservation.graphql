@@ -27,6 +27,11 @@ type Query {
   reservationFeedback: ReservationFeedback @cacheControl(maxAge: 0)
 }
 
+input ReturnReasonInput {
+  physicalProductId: ID!
+  reason: String!
+}
+
 type Mutation {
   reserveItems(
     items: [ID!]
@@ -55,7 +60,8 @@ type Mutation {
     data: ReservationUpdateInput!
     where: ReservationWhereUniqueInput!
   ): Reservation @hasRole(roles: [Admin])
-  returnItems(items: [ID!]!): Reservation @hasRole(roles: [Customer])
+  returnItems(items: [ID!]!, returnReasons: [ReturnReasonInput!]): Reservation
+    @hasRole(roles: [Customer])
   cancelReturn: Reservation @hasRole(roles: [Customer])
 }
 

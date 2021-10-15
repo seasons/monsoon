@@ -158,6 +158,7 @@ type Query {
     first: Int
     last: Int
   ): [Tag]! @cacheControl(maxAge: 0)
+  returnReasons: [String!]
 }
 
 enum ProductStatus {

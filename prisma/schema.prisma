@@ -1074,6 +1074,7 @@ model PhysicalProduct {
   barcoded                     Boolean?                       @default(value: false)
   priceId                      String?                        @map("price") @db.VarChar(30)
   packedAt                     DateTime?
+  returnReasons                String[]
   productVariantId             String?                        @map("productVariant") @db.VarChar(30)
   location                     Location?                      @relation(fields: [locationId], references: [id])
   price                        PhysicalProductPrice?          @relation(fields: [priceId], references: [id])

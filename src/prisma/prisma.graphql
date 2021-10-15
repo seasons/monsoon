@@ -12608,6 +12608,7 @@ input PhysicalProductUpdateInput {
   price: PhysicalProductPriceUpdateOneInput
   reports: PhysicalProductQualityReportUpdateManyWithoutPhysicalProductInput
   packedAt: DateTime
+  returnReasons: [String!]
 }
 
 input PhysicalProductUpdateManyDataInput {

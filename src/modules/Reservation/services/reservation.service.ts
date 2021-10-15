@@ -59,6 +59,11 @@ export interface ReservationWithProductVariantData {
   products: PhysicalProductWithProductVariant[]
 }
 
+interface ReturnReason {
+  physicalProductId: string
+  reason: string
+}
+
 type ReserveItemsPhysicalProduct = Pick<
   PhysicalProduct,
   "seasonsUID" | "id"
@@ -338,10 +343,16 @@ export class ReservationService {
     return lastReservation
   }
 
-  async returnItems(items: string[], customer: Customer) {
+  async returnItems(
+    items: string[],
+    returnReasons: ReturnReason[],
+    customer: Customer
+  ) {
     const lastReservation: any = await this.utils.getLatestReservation(
       customer.id
     )
+
+    console.log("returnReasons", returnReasons)
 
     // If there's an item being returned that isn't in the current reservation
     // throw an error
@@ -365,6 +376,16 @@ export class ReservationService {
       },
       where: { id: String(lastReservation.id) },
     })
+
+    for (const r of returnReasons) {
+      console.log("r.physicalProductId", r.physicalProductId)
+      await this.prisma.client.physicalProduct.update({
+        where: { id: r.physicalProductId },
+        data: {
+          returnReasons: { push: r.reason },
+        },
+      })
+    }
 
     return lastReservation
   }

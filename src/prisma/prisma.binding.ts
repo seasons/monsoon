@@ -20259,6 +20259,7 @@ input PhysicalProductUpdateDataInput {
 
 input PhysicalProductUpdateInput {
   seasonsUID: String
+  returnReasons: [String!]
   inventoryStatus: InventoryStatus
   productStatus: PhysicalProductStatus
   offloadMethod: PhysicalProductOffloadMethod

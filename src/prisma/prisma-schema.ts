@@ -11543,6 +11543,7 @@ input PhysicalProductUpdateDataInput {
 }
 
 input PhysicalProductUpdateInput {
+  returnReasons: [String!]
   seasonsUID: String
   location: LocationUpdateOneWithoutPhysicalProductsInput
   productVariant: ProductVariantUpdateOneRequiredWithoutPhysicalProductsInput
