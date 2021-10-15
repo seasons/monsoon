@@ -3,6 +3,7 @@ import { ErrorService } from "@app/modules/Error/services/error.service"
 import { RentalService } from "@app/modules/Payment/services/rental.service"
 import { ProductVariantService } from "@app/modules/Product/services/productVariant.service"
 import { PushNotificationService } from "@app/modules/PushNotification"
+import { ShippingMethodFieldsResolver } from "@app/modules/Shipping/fields/shippingMethod.fields.resolver"
 import { CustomerUtilsService } from "@app/modules/User/services/customer.utils.service"
 import { ProductUtilsService } from "@app/modules/Utils/services/product.utils.service"
 import { StatementsService } from "@app/modules/Utils/services/statements.service"
@@ -87,12 +88,19 @@ export class ReservationService {
     private readonly rental: RentalService
   ) {}
 
-  async reserveItems(
-    items: string[],
-    shippingCode: ShippingCode,
-    customer: Pick<Customer, "id">,
-    select: Prisma.ReservationSelect = { id: true }
-  ) {
+  async reserveItems({
+    items,
+    shippingCode,
+    timeWindowID,
+    customer,
+    select = { id: true },
+  }: {
+    items: string[]
+    timeWindowID?: string
+    shippingCode: ShippingCode
+    customer: Pick<Customer, "id">
+    select: Prisma.ReservationSelect
+  }) {
     const customerWithData = await this.prisma.client.customer.findUnique({
       where: { id: customer.id },
       select: {
@@ -132,6 +140,8 @@ export class ReservationService {
     if (customerWithData.status !== "Active") {
       throw new Error(`Only Active customers can place a reservation`)
     }
+
+    const timeWindow = ShippingMethodFieldsResolver.getTimeWindow(timeWindowID)
 
     // Validate address and provide suggested one if needed
     const {
@@ -760,11 +770,6 @@ export class ReservationService {
                       },
                     },
                   },
-                },
-              },
-              shippingOption: {
-                select: {
-                  shippingMethod: true,
                 },
               },
             },
@@ -1449,12 +1454,6 @@ export class ReservationService {
             shippingAddress: {
               select: {
                 id: true,
-                shippingOptions: {
-                  select: {
-                    id: true,
-                    shippingMethod: { select: { code: true } },
-                  },
-                },
               },
             },
           },
@@ -1490,14 +1489,6 @@ export class ReservationService {
         },
         amount: Math.round(shippoTransaction.rate.amount * 100),
       }
-    }
-
-    let shippingOptionId
-    if (!!shippingCode) {
-      const shippingOption = customerWithData.detail.shippingAddress.shippingOptions.find(
-        a => a.shippingMethod.code === shippingCode
-      )
-      shippingOptionId = shippingOption?.id
     }
 
     const customerShippingAddressRecordID =
@@ -1567,15 +1558,6 @@ export class ReservationService {
           slug: process.env.SEASONS_CLEANER_LOCATION_SLUG,
         },
       },
-      ...(!!shippingOptionId
-        ? {
-            shippingOption: {
-              connect: {
-                id: shippingOptionId,
-              },
-            },
-          }
-        : {}),
       shipped: false,
       status: "Queued",
       previousReservationWasPacked: lastReservation?.status === "Packed",

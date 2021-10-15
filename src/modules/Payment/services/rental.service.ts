@@ -74,9 +74,6 @@ export const CREATE_RENTAL_INVOICE_LINE_ITEMS_INVOICE_SELECT = Prisma.validator<
         },
       },
       sentPackage: { select: { amount: true } },
-      shippingOption: {
-        select: { shippingMethod: { select: { code: true } } },
-      },
     },
     orderBy: { createdAt: "asc" },
   },
