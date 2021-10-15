@@ -1,4 +1,3 @@
-import { APP_MODULE_DEF } from "@app/app.module"
 import { ReservationService } from "@app/modules/Reservation"
 import { TimeUtilsService } from "@app/modules/Utils/services/time.service"
 import { UtilsService } from "@app/modules/Utils/services/utils.service"
@@ -10,9 +9,7 @@ import {
   RentalInvoiceLineItem,
   ReservationStatus,
   ShippingCode,
-  ShippingOption,
 } from "@prisma/client"
-import { LexRuntime } from "aws-sdk"
 import chargebee from "chargebee"
 import { head, merge } from "lodash"
 import moment from "moment"
