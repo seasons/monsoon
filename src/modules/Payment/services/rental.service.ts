@@ -153,6 +153,16 @@ export class RentalService {
       // So we don't want to recreate them.
       if (lineItems.length === 0) {
         lineItems = await this.createRentalInvoiceLineItems(invoice)
+      } else {
+        // If there are already line items, that means we may have tried to
+        // process this before. So we clear out any added charges we may have on
+        // chargebee so that we don't create duplicate charges
+        try {
+          const chargebeeCustomerId = invoice.membership.customer.user.id
+          await this.deleteUnbilledCharges(chargebeeCustomerId)
+        } catch (unbilledChargeErr) {
+          onError(unbilledChargeErr)
+        }
       }
 
       const chargeResult = await this.chargebeeChargeTab(planID, lineItems)
@@ -171,6 +181,12 @@ export class RentalService {
           data: { status: "ChargeFailed" },
         })
       )
+      try {
+        const chargebeeCustomerId = invoice.membership.customer.user.id
+        await this.deleteUnbilledCharges(chargebeeCustomerId)
+      } catch (unbilledChargeErr) {
+        onError(unbilledChargeErr)
+      }
       onError(err)
     } finally {
       if (invoice.status === "Draft") {
@@ -185,6 +201,20 @@ export class RentalService {
     }
 
     return { lineItems, charges: chargebeeInvoices }
+  }
+
+  async deleteUnbilledCharges(customerId) {
+    const result = await chargebee.unbilled_charge
+      .list({
+        "customer_id[is]": customerId,
+      })
+      .request(this.handleChargebeeRequestResult)
+    const { list: unbilledCharges } = result
+    for (const { unbilled_charge } of unbilledCharges) {
+      await chargebee.unbilled_charge
+        .delete(unbilled_charge.id)
+        .request(this.handleChargebeeRequestResult)
+    }
   }
 
   async initFirstRentalInvoice(
@@ -912,7 +942,7 @@ export class RentalService {
     return {
       amount: prismaLineItem.price,
       description: this.lineItemToDescription(prismaLineItem),
-      ...(prismaLineItem.name !== "Processing"
+      ...(!this.isProcessingLineItem(prismaLineItem)
         ? {
             date_from:
               !!prismaLineItem.rentalStartedAt &&
@@ -1146,11 +1176,7 @@ export class RentalService {
   }
 
   private lineItemToDescription(lineItem: LineItemToDescriptionLineItem) {
-    if (
-      lineItem.name?.includes("OutboundPackage") ||
-      lineItem.name?.includes("InboundPackage") ||
-      lineItem.name?.includes("Processing")
-    ) {
+    if (this.isProcessingLineItem(lineItem)) {
       return lineItem.name
     }
 
@@ -1160,6 +1186,14 @@ export class RentalService {
     const monthlyRentalPrice =
       lineItem.physicalProduct.productVariant.product.computedRentalPrice
     return `${productName} (${displaySize}) for ${lineItem.daysRented} days at \$${monthlyRentalPrice} per mo.`
+  }
+
+  private isProcessingLineItem(lineItem: Pick<RentalInvoiceLineItem, "name">) {
+    return (
+      lineItem.name?.includes("OutboundPackage") ||
+      lineItem.name?.includes("InboundPackage") ||
+      lineItem.name?.includes("Processing")
+    )
   }
 
   private getSafeSentPackageDeliveryDate = (

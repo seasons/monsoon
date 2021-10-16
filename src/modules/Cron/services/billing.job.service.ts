@@ -126,13 +126,14 @@ export class BillingScheduledJobs {
           lte: new Date(),
         },
         status: { in: ["Draft", "ChargeFailed"] },
+        id: "cktt7znfl11649rduv03byh1fn",
       },
       select: CREATE_RENTAL_INVOICE_LINE_ITEMS_INVOICE_SELECT,
     })
 
     for (const invoice of invoicesToHandle) {
       invoicesHandled++
-      this.rental.processInvoice(invoice, err => {
+      await this.rental.processInvoice(invoice, err => {
         this.error.setExtraContext(invoice)
         this.error.captureError(err)
         this.logger.error("Rental invoice billing failed", {
