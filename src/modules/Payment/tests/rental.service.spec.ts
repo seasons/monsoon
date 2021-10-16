@@ -41,6 +41,8 @@ enum ChargebeeMockFunction {
   OldNextBillingAtSubscriptionRetrieve,
   SubscriptionRetrieveWithError,
   PromotionalCreditAdd,
+  UnbilledChargesList,
+  DeleteUnbilledCharge,
 }
 
 class ChargeBeeMock {
@@ -78,6 +80,75 @@ class ChargeBeeMock {
 
   async request() {
     switch (this.mockFunction) {
+      case ChargebeeMockFunction.UnbilledChargesList:
+        return {
+          list: [
+            {
+              unbilled_charge: {
+                amount: 100,
+                currency_code: "USD",
+                customer_id: "__test__8aszcSOcqy1i6F",
+                date_from: 1517495909,
+                date_to: 1519915109,
+                deleted: false,
+                description: "Day Pass USD Monthly",
+                discount_amount: 0,
+                entity_id: "day-pass-USD",
+                entity_type: "addon_item_price",
+                id: "li___test__8aszcSOcqyBc6L",
+                is_voided: false,
+                object: "unbilled_charge",
+                pricing_model: "flat_fee",
+                quantity: 1,
+                subscription_id: "__test__8aszcSOcqy6V6I",
+                unit_amount: 100,
+              },
+            },
+            {
+              unbilled_charge: {
+                amount: 100,
+                currency_code: "USD",
+                customer_id: "__test__8aszcSOcqy1iasdfasdf",
+                date_from: 1517495909,
+                date_to: 1519915109,
+                deleted: false,
+                description: "Day Pass USD Monthly",
+                discount_amount: 0,
+                entity_id: "day-pass-USD",
+                entity_type: "addon_item_price",
+                id: "li___test__8aszcSOcqyBc6L",
+                is_voided: false,
+                object: "unbilled_charge",
+                pricing_model: "flat_fee",
+                quantity: 1,
+                subscription_id: "__test__8aszcSOcqy6V6I",
+                unit_amount: 100,
+              },
+            },
+          ],
+        }
+      case ChargebeeMockFunction.DeleteUnbilledCharge:
+        return {
+          unbilled_charge: {
+            amount: 100,
+            currency_code: "USD",
+            customer_id: "__test__8aszcSOcqxML5l",
+            date_from: 1517495906,
+            date_to: 1519915106,
+            deleted: false,
+            description: "Day Pass USD Monthly",
+            discount_amount: 0,
+            entity_id: "day-pass-USD",
+            entity_type: "addon_item_price",
+            id: "li___test__8aszcSOcqxX05r",
+            is_voided: false,
+            object: "unbilled_charge",
+            pricing_model: "flat_fee",
+            quantity: 1,
+            subscription_id: "__test__8aszcSOcqxTF5o",
+            unit_amount: 100,
+          },
+        }
       case ChargebeeMockFunction.InvoiceCreate:
         return {
           invoice: {
@@ -114,6 +185,7 @@ class ChargeBeeMock {
           },
         }
       case ChargebeeMockFunction.SubscriptionAddChargeAtTermEndWithError:
+        throw "Subscription Add Chargre at Term End With Error"
       case ChargebeeMockFunction.SubscriptionRetrieveWithError:
         throw "Subscription Retrieve Test Error"
       case ChargebeeMockFunction.SubscriptionRetrieve:
@@ -123,6 +195,8 @@ class ChargeBeeMock {
             next_billing_at: moment().add(5, "days").unix(),
           },
         }
+      case ChargebeeMockFunction.PromotionalCreditAdd:
+        return {}
       case ChargebeeMockFunction.OldNextBillingAtSubscriptionRetrieve:
         return {
           customer: {},
@@ -208,14 +282,21 @@ describe("Rental Service", () => {
     jest
       .spyOn<any, any>(chargebee.promotional_credit, "add")
       .mockReturnValue(
-        new ChargeBeeMock(ChargebeeMockFunction.SubscriptionRetrieve)
+        new ChargeBeeMock(ChargebeeMockFunction.PromotionalCreditAdd)
+      )
+
+    jest
+      .spyOn<any, any>(chargebee.unbilled_charge, "list")
+      .mockReturnValue(
+        new ChargeBeeMock(ChargebeeMockFunction.UnbilledChargesList)
+      )
+
+    jest
+      .spyOn<any, any>(chargebee.unbilled_charge, "delete")
+      .mockReturnValue(
+        new ChargeBeeMock(ChargebeeMockFunction.DeleteUnbilledCharge)
       )
   })
-
-  // Bring this back if we get cascading deletes figured out
-  // afterAll(async () => {
-  //   await Promise.all(cleanupFuncs.map(a => a()))
-  // })
 
   describe("Calculate Days Rented", () => {
     beforeEach(async () => {
@@ -1756,6 +1837,79 @@ describe("Rental Service", () => {
           expect(custWithData.membership.rentalInvoices.length).toBe(2)
           expect(rentalInvoicesStatuses.includes("Billed")).toBe(true)
           expect(rentalInvoicesStatuses.includes("Draft")).toBe(true)
+        })
+      })
+
+      describe("Deletes pending charges before retrying an invoice", () => {
+        let deleteUnbilledChargesSpy
+        let chargebeeDeleteUnbilledChargeSpy
+
+        beforeAll(async () => {
+          const { customer } = await createTestCustomer({
+            select: testCustomerSelect,
+          })
+          testCustomer = customer
+          await setCustomerSubscriptionNextBillingAt(
+            timeUtils.xDaysFromNowISOString(1)
+          )
+          jest
+            .spyOn<any, any>(chargebee.subscription, "add_charge_at_term_end")
+            .mockReturnValue(
+              new ChargeBeeMock(
+                ChargebeeMockFunction.SubscriptionAddChargeAtTermEndWithError
+              )
+            )
+          deleteUnbilledChargesSpy = jest.spyOn(
+            rentalService,
+            "deleteUnbilledCharges"
+          )
+          chargebeeDeleteUnbilledChargeSpy = jest.spyOn(
+            chargebee.unbilled_charge,
+            "delete"
+          )
+
+          // Invoice 1. Should end up with ChargeFailed
+          const initialReservation = await addToBagAndReserveForCustomer(2)
+          await setReservationCreatedAt(initialReservation.id, 25)
+          await setPackageDeliveredAt(initialReservation.sentPackage.id, 23)
+          await setReservationStatus(initialReservation.id, "Delivered")
+
+          custWithData = (await getCustWithData()) as any
+          let rentalInvoiceToBeBilled = await prisma.client.rentalInvoice.findUnique(
+            {
+              where: { id: custWithData.membership.rentalInvoices[0].id },
+              select: CREATE_RENTAL_INVOICE_LINE_ITEMS_INVOICE_SELECT,
+            }
+          )
+          await rentalService.processInvoice(rentalInvoiceToBeBilled, err =>
+            console.log(err)
+          )
+
+          // Next charge. No error being thrown this time
+          jest
+            .spyOn<any, any>(chargebee.subscription, "add_charge_at_term_end")
+            .mockReturnValue(
+              new ChargeBeeMock(
+                ChargebeeMockFunction.SubscriptionAddChargeAtTermEnd
+              )
+            )
+          custWithData = (await getCustWithData()) as any
+          const rentalInvoiceToBeBilledID = custWithData.membership.rentalInvoices.find(
+            a => a.status === "ChargeFailed"
+          ).id
+          rentalInvoiceToBeBilled = await prisma.client.rentalInvoice.findUnique(
+            {
+              where: { id: rentalInvoiceToBeBilledID },
+              select: CREATE_RENTAL_INVOICE_LINE_ITEMS_INVOICE_SELECT,
+            }
+          )
+          await rentalService.processInvoice(rentalInvoiceToBeBilled, err =>
+            console.log(err)
+          )
+        })
+        it("Deletes unbilled charges on chargebee", () => {
+          expect(deleteUnbilledChargesSpy).toHaveBeenCalledTimes(2) // once on initial failure, one on retry
+          expect(chargebeeDeleteUnbilledChargeSpy).toHaveBeenCalledTimes(4) // twice on initial failure, and twice on retry
         })
       })
     })
