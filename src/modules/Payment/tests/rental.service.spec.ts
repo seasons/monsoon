@@ -1705,9 +1705,7 @@ describe("Rental Service", () => {
               select: CREATE_RENTAL_INVOICE_LINE_ITEMS_INVOICE_SELECT,
             }
           )
-          await rentalService.processInvoice(rentalInvoiceToBeBilled, err =>
-            console.log(err)
-          )
+          await rentalService.processInvoice(rentalInvoiceToBeBilled)
           lineItems = await prisma.client.rentalInvoiceLineItem.findMany({
             where: { rentalInvoice: { id: rentalInvoiceToBeBilled.id } },
           })
@@ -1867,6 +1865,7 @@ describe("Rental Service", () => {
             chargebee.unbilled_charge,
             "delete"
           )
+          chargebeeDeleteUnbilledChargeSpy.mockClear()
 
           // Invoice 1. Should end up with ChargeFailed
           const initialReservation = await addToBagAndReserveForCustomer(2)
