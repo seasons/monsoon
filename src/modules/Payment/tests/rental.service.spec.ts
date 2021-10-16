@@ -1865,6 +1865,7 @@ describe("Rental Service", () => {
             chargebee.unbilled_charge,
             "delete"
           )
+          deleteUnbilledChargesSpy.mockClear()
           chargebeeDeleteUnbilledChargeSpy.mockClear()
 
           // Invoice 1. Should end up with ChargeFailed
