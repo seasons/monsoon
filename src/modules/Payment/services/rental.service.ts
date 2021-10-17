@@ -970,7 +970,7 @@ export class RentalService {
     const promises = []
     const invoicesCreated = []
     if (lineItems.length === 0) {
-      return
+      return [promises, invoicesCreated]
     }
 
     const lineItemsWithData = await this.prisma.client.rentalInvoiceLineItem.findMany(
