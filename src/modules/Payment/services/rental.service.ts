@@ -583,10 +583,11 @@ export class RentalService {
           )
           rentalEndedAt = getRentalEndedAt(
             this.getSafeReturnPackageEntryDate(
-              returnPackage.enteredDeliverySystemAt,
-              returnReservation.returnedAt ||
-                returnReservation.completedAt ||
-                invoiceWithData.billingEndAt
+              // there may not be a return package yet, since an item can be
+              // in the returnedProducts array due to the customer filling out the
+              // return flow
+              returnPackage?.enteredDeliverySystemAt,
+              returnReservation.completedAt || invoiceWithData.billingEndAt
             )
           )
           addComment(itemStatusComments["returned"])
