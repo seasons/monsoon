@@ -582,7 +582,10 @@ export class RentalService {
           )
           rentalEndedAt = getRentalEndedAt(
             this.getSafeReturnPackageEntryDate(
-              returnPackage.enteredDeliverySystemAt,
+              // there may not be a return package yet, since an item can be
+              // in the returnedProducts array due to the customer filling out the
+              // return flow
+              returnPackage?.enteredDeliverySystemAt,
               returnReservation.completedAt || invoiceWithData.billingEndAt
             )
           )
