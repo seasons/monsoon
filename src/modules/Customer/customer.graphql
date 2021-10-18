@@ -75,6 +75,8 @@ type Mutation {
   updateNotificationBarReceipt(
     notification: NotificationBarReceiptUpdateInput
   ): CustomerNotificationBarReceipt @hasRole(roles: [Customer])
+  updateCreditBalance(membershipId: ID, amount: Int, reason: String): Boolean
+    @hasRole(roles: [Admin])
 }
 
 input AddressInput {

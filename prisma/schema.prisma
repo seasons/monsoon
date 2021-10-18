@@ -747,7 +747,17 @@ model CustomerMembership {
   subscription             CustomerMembershipSubscriptionData? @relation(fields: [membershipSubscriptionId], references: [id])
   pauseRequests            PauseRequest[]
   rentalInvoices           RentalInvoice[]
+  creditUpdateHistory      CreditBalanceUpdateLog[]   
 }
+
+model CreditBalanceUpdateLog {
+  id                  String                  @id @default(cuid()) @db.VarChar(30)
+  membershipId        String                  @map("membership") @db.VarChar(30)
+  membership          CustomerMembership      @relation(fields: [membershipId], references: [id])
+  amount              Int                
+  reason              String           
+}
+
 
 model CustomerMembershipSubscriptionData {
   id               String              @id @default(cuid()) @db.VarChar(30)
