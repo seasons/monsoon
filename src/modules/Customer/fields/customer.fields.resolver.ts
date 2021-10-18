@@ -1,6 +1,8 @@
 import { Customer, User } from "@app/decorators"
+import { Application } from "@app/decorators/application.decorator"
 import { PrismaGenerateParams } from "@app/modules/DataLoader/dataloader.types.d"
 import { TransactionsForCustomersLoader } from "@app/modules/Payment/loaders/transactionsForCustomers.loader"
+import { BagService } from "@app/modules/Product/services/bag.service"
 import { CustomerUtilsService } from "@app/modules/User/services/customer.utils.service"
 import { UtilsService } from "@app/modules/Utils/services/utils.service"
 import { PrismaDataLoader } from "@app/prisma/prisma.loader"
@@ -30,8 +32,14 @@ export class CustomerFieldsResolver {
     private readonly prisma: PrismaService,
     private readonly paymentService: PaymentService,
     private readonly utils: UtilsService,
-    private readonly customerUtils: CustomerUtilsService
+    private readonly customerUtils: CustomerUtilsService,
+    private readonly bagService: BagService
   ) {}
+
+  @ResolveField()
+  async bagSections(@Parent() customer, @Application() application) {
+    return this.bagService.bagSections(customer, application)
+  }
 
   @ResolveField()
   async iOSAppStatus(
