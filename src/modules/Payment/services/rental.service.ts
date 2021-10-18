@@ -803,7 +803,6 @@ export class RentalService {
                 product: {
                   select: {
                     id: true,
-                    name: true,
                     computedRentalPrice: true,
                     rentalPriceOverride: true,
                     wholesalePrice: true,
