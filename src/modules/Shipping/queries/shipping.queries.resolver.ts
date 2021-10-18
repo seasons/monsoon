@@ -10,6 +10,9 @@ export class ShippingQueriesResolver {
   async shippingMethods(@FindManyArgs() args) {
     return this.prisma.client.shippingMethod.findMany({
       ...args,
+      orderBy: {
+        position: "asc",
+      },
     })
   }
 }
