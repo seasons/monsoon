@@ -5,39 +5,15 @@ import { PrismaService } from "../../prisma/prisma.service"
 const run = async () => {
   const ps = new PrismaService()
 
-  const a = await ps.client.reservation.findUnique({
-    where: { reservationNumber: 943308992 },
+  const invoiceId = "cktt8xz7s9298q6uvwyrsnrut"
+  const x = await ps.client.rentalInvoice.findUnique({
+    where: { id: invoiceId },
     select: {
-      sentPackage: {
-        select: {
-          id: true,
-          reservationPhysicalProductsOnOutboundPackage: {
-            select: { id: true },
-          },
-        },
-      },
-      reservationPhysicalProducts: {
-        select: {
-          id: true,
-          physicalProduct: {
-            select: {
-              seasonsUID: true,
-              productVariant: {
-                select: { product: { select: { name: true } } },
-              },
-            },
-          },
-        },
-      },
-      rentalInvoices: {
-        select: {
-          id: true,
-          reservationPhysicalProducts: { select: { id: true } },
-        },
-      },
+      status: true,
+      lineItems: { select: { price: true, name: true, comment: true } },
+      membership: { select: { customer: { select: { user: true } } } },
     },
   })
-  console.dir(a, { depth: null })
-  console.log("done")
+  console.dir(x, { depth: null })
 }
 run()

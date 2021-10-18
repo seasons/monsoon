@@ -6,7 +6,6 @@ import { UtilsService } from "@app/modules/Utils/services/utils.service"
 import { PrismaService } from "@app/prisma/prisma.service"
 import { Body, Controller, Logger, Post } from "@nestjs/common"
 import { CustomerStatus } from "@prisma/client"
-import chargebee from "chargebee"
 import { pick } from "lodash"
 
 import { PaymentService } from "../services/payment.service"
@@ -15,6 +14,13 @@ import { RentalService } from "../services/rental.service"
 export type ChargebeeEvent = {
   content: any
   event_type: string
+}
+
+export type RentalInvoiceWithCustomerID = {
+  id: string
+  membership: {
+    customerId: string
+  }
 }
 
 // For a full list of webhook types, see https://apidocs.chargebee.com/docs/api/events#event_types
@@ -142,6 +148,13 @@ export class ChargebeeController {
         data: { status: newStatus },
       })
       await this.email.sendReturnToGoodStandingEmail(custWithData.user)
+    }
+
+    const invoice = await this.rental.initFirstRentalInvoice(custWithData.id)
+    if (invoice) {
+      await this.rental.updateEstimatedTotal(
+        invoice as RentalInvoiceWithCustomerID
+      )
     }
 
     let isRecurringSubscription =

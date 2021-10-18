@@ -18,13 +18,16 @@ export class SegmentController {
   @Post()
   async handlePost(@Body() body: SegmentEvent) {
     if (body.type === "identify" && body.userId !== null) {
+      const data = {
+        iOSVersion: body.context.app.version,
+      }
       await this.prisma.client.user.update({
         where: { id: body.userId },
         data: {
           deviceData: {
             upsert: {
-              create: { iOSVersion: body.context.app.version },
-              update: { iOSVersion: body.context.app.version },
+              create: data,
+              update: data,
             },
           },
         },

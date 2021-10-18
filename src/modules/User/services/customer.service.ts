@@ -183,12 +183,12 @@ export class CustomerService {
     if (isUpdatingShippingAddress) {
       const addressCreateData = details.shippingAddress.create
       const name = addressCreateData.name?.trim()
-      const street1 = addressCreateData.street1?.trim()
-      const street2 = addressCreateData.street2?.trim()
+      const address1 = addressCreateData.address1?.trim()
+      const address2 = addressCreateData.address2?.trim()
       const city = addressCreateData.city?.trim()
       const state = addressCreateData.state?.trim()
       const zip = addressCreateData.zipCode?.trim()
-      if (!(street1 && city && state && zip)) {
+      if (!(address1 && city && state && zip)) {
         throw new Error(
           "Missing a required field. Expected address1, city, state, and zipCode."
         )
@@ -197,8 +197,8 @@ export class CustomerService {
         isValid: shippingAddressIsValid,
       } = await this.shipping.shippoValidateAddress({
         name,
-        street1,
-        street2,
+        street1: address1,
+        street2: address2,
         city,
         state,
         zip,
@@ -209,8 +209,8 @@ export class CustomerService {
 
       data.shippingAddress.create = {
         name,
-        street1,
-        street2,
+        address1,
+        address2,
         city,
         state,
         zipCode: zip,

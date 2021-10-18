@@ -1,4 +1,6 @@
+import { WinstonLogger } from "@app/lib/logger"
 import { ErrorService } from "@app/modules/Error/services/error.service"
+import { RentalService } from "@app/modules/Payment/services/rental.service"
 import { ProductVariantService } from "@app/modules/Product/services/productVariant.service"
 import { PushNotificationService } from "@app/modules/PushNotification"
 import { CustomerUtilsService } from "@app/modules/User/services/customer.utils.service"
@@ -9,7 +11,7 @@ import {
   ShippingService,
   UPSServiceLevel,
 } from "@modules/Shipping/services/shipping.service"
-import { Injectable } from "@nestjs/common"
+import { Injectable, Logger } from "@nestjs/common"
 import {
   AdminActionLog,
   Customer,
@@ -58,6 +60,10 @@ export interface ReservationWithProductVariantData {
 
 @Injectable()
 export class ReservationService {
+  private readonly logger = (new Logger(
+    `ReservationService`
+  ) as unknown) as WinstonLogger
+
   constructor(
     private readonly prisma: PrismaService,
     private readonly productVariantService: ProductVariantService,
@@ -305,6 +311,20 @@ export class ReservationService {
       },
     })
 
+    if (reservation.status === "ReturnPending") {
+      promises.push(
+        this.prisma.client.reservation.updateMany({
+          where: {
+            customerId: { equals: reservation.customer.id },
+            status: "ReturnPending",
+          },
+          data: {
+            status: "Completed",
+          },
+        })
+      )
+    }
+
     const updateBagPromise = this.prisma.client.bagItem.deleteMany({
       where: {
         customer: { id: reservation.customer.id },
@@ -341,14 +361,16 @@ export class ReservationService {
       trackingNumber
     )
 
-    await this.prisma.client.$transaction([
-      ...(promises as PrismaPromise<any>[]),
-      receiptPromise,
-      reservationPromise,
-      updateBagPromise,
-      reservationFeedbackPromise,
-      updateReturnPackagePromise,
-    ])
+    await this.prisma.client.$transaction(
+      [
+        ...(promises as PrismaPromise<any>[]),
+        receiptPromise,
+        reservationPromise,
+        updateBagPromise,
+        reservationFeedbackPromise,
+        updateReturnPackagePromise,
+      ].filter(Boolean)
+    )
 
     await this.pushNotifs.pushNotifyUsers({
       emails: [prismaUser.email],
@@ -841,7 +863,7 @@ export class ReservationService {
     productVariants,
     user,
     reservation
-  ): Promise<[PrismaPromise<ReservationFeedback>]> {
+  ): Promise<[PrismaPromise<ReservationFeedback>?]> {
     const MULTIPLE_CHOICE = "MultipleChoice"
     const variantInfos = await Promise.all(
       productVariants.map(async variant => {
@@ -866,6 +888,18 @@ export class ReservationService {
         }
       })
     )
+
+    const hasReservationFeedback = await this.prisma.client.reservationFeedback.findFirst(
+      {
+        where: {
+          reservationId: reservation.id,
+        },
+      }
+    )
+
+    if (!!hasReservationFeedback) {
+      return Promise.resolve([])
+    }
 
     return [
       this.prisma.client.reservationFeedback.create({

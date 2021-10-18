@@ -1,6 +1,6 @@
 import { ImageModule } from "@modules/Image/image.module"
 import { PaymentModule } from "@modules/Payment/payment.module"
-import { PushNotificationModule } from "@modules/PushNotification"
+import { PushNotificationModule } from "@modules/PushNotification/pushNotification.module"
 import { ShippingModule } from "@modules/Shipping/shipping.module"
 import { UserModule } from "@modules/User/user.module"
 import { Module, forwardRef } from "@nestjs/common"
@@ -29,11 +29,11 @@ import { ReserveService } from "./services/reserve.service"
     forwardRef(() => ProductModule),
     PushNotificationModule,
     ShippingModule,
-    PaymentModule,
+    forwardRef(() => PaymentModule),
     AnalyticsModule,
     UtilsModule,
     ErrorModule,
-    UserModule,
+    forwardRef(() => UserModule),
   ],
   providers: [
     ReservationFeedbackMutationsResolver,

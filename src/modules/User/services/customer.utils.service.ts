@@ -1,10 +1,28 @@
 import { Injectable } from "@nestjs/common"
 import { PrismaService } from "@prisma1/prisma.service"
+import got from "got"
 import { head } from "lodash"
 
 @Injectable()
 export class CustomerUtilsService {
-  constructor(private readonly prisma: PrismaService) {}
+  private latestIOSAppVersion
+
+  constructor(private readonly prisma: PrismaService) {
+    // Cache latest ios app version
+    try {
+      const authenticatedURL = `https://${process.env.GITHUB_ACCESS_TOKEN}@raw.githubusercontent.com/seasons/harvest/production/package.json`
+      const response = got(authenticatedURL).then(response => {
+        const packageJSON = JSON.parse(response.body)
+        this.latestIOSAppVersion = packageJSON["version"]
+      })
+    } catch (err) {
+      // noop
+    }
+  }
+
+  getMaxIOSAppVersion() {
+    return this.latestIOSAppVersion
+  }
 
   async nextFreeSwapDate(customerID: string): Promise<string> {
     const customer = await this.prisma.client.customer.findUnique({

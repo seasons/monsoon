@@ -13985,6 +13985,8 @@ enum ProductOrderByInput {
   publishedAt_DESC
   retailPrice_ASC
   retailPrice_DESC
+  computedRentalPrice_ASC
+  computedRentalPrice_DESC
   slug_ASC
   slug_DESC
   status_ASC
