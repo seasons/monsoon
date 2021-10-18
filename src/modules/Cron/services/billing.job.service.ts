@@ -132,7 +132,7 @@ export class BillingScheduledJobs {
 
     for (const invoice of invoicesToHandle) {
       invoicesHandled++
-      this.rental.processInvoice(invoice, err => {
+      await this.rental.processInvoice(invoice, err => {
         this.error.setExtraContext(invoice)
         this.error.captureError(err)
         this.logger.error("Rental invoice billing failed", {

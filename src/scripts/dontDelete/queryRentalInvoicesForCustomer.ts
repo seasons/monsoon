@@ -7,8 +7,8 @@ const run = async () => {
   const ps = new PrismaService()
   const timeUtils = new TimeUtilsService()
 
-  const email = "vena-wisozk@seasons.nyc"
-  const c = await ps.client.customer.findFirst({
+  const email = "justice.sifford@gmail.com"
+  const c = await ps.client.customer.findMany({
     where: { user: { email } },
     select: {
       membership: {
@@ -16,6 +16,7 @@ const run = async () => {
           rentalInvoices: {
             orderBy: { createdAt: "asc" },
             select: {
+              id: true,
               status: true,
               createdAt: true,
               billingEndAt: true,
