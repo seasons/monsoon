@@ -1362,6 +1362,7 @@ model Reservation {
   sentPackageId                String?                      @map("sentPackage") @db.VarChar(30)
   returnedPackageId            String?                      @map("returnedPackage") @db.VarChar(30)
   receiptId                    String?                      @map("receipt") @db.VarChar(30)
+  pickupDate                   DateTime? 
   pickupWindowId               String?
   phase                        ReservationPhase
   statusUpdatedAt              DateTime?
@@ -1509,6 +1510,7 @@ model ShippingMethod {
   id              String           @id @default(cuid()) @db.VarChar(30)
   code            ShippingCode
   displayText     String
+  position        Int              @default(0)
   createdAt       DateTime         @default(now())
   updatedAt       DateTime         @updatedAt
 }

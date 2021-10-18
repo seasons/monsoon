@@ -47,6 +47,7 @@ type ShippingMethod {
   code: ShippingCode!
   displayText: String!
   timeWindows: [TimeWindow!]!
+  position: Int
   createdAt: DateTime!
   updatedAt: DateTime!
 }
