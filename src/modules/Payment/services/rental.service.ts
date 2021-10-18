@@ -134,6 +134,7 @@ export class RentalService {
       select: { items: true, enteredDeliverySystemAt: true },
     },
     returnedProducts: { select: { seasonsUID: true } },
+    shippingMethod: { select: { id: true, code: true } },
     lostAt: true,
     lostInPhase: true,
   })
@@ -640,7 +641,7 @@ export class RentalService {
         returnPackages: Array<
           Pick<Package, "deliveredAt" | "amount"> & {
             items: Array<Pick<PhysicalProduct, "seasonsUID">>
-          } & { shippingMethod: Pick<ShippingMethod, "code"> }
+          } & { shippingMethod?: Pick<ShippingMethod, "code"> }
         >
       })[]
       products: (Pick<PhysicalProduct, "id" | "seasonsUID"> & {
@@ -722,11 +723,10 @@ export class RentalService {
         let comment
         if (idx === 0) {
           const usedPremiumShipping =
-            !!r.shippingOption &&
-            r.shippingOption.shippingMethod.code !== "UPSGround"
+            !!r && r.shippingMethod.code !== "UPSGround"
           if (usedPremiumShipping) {
             comment =
-              "First reservation of billing cycle. Used premium shiping. Charge full outbound package."
+              "First reservation of billing cycle. Used premium shipping. Charge full outbound package."
           } else {
             comment =
               "First reservation of billing cycle. Free outbound package"
