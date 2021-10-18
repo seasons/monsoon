@@ -5,13 +5,15 @@ import { PrismaService } from "../../prisma/prisma.service"
 const run = async () => {
   const ps = new PrismaService()
 
-  const email = "ryanofcali@yahoo.com"
-  const x = await ps.client.customer.findMany({
-    where: { status: { in: ["Active", "Paused", "PaymentFailed"] } },
-    select: { user: { select: { email: true } } },
+  const invoiceId = "cktt8xz7s9298q6uvwyrsnrut"
+  const x = await ps.client.rentalInvoice.findUnique({
+    where: { id: invoiceId },
+    select: {
+      status: true,
+      lineItems: { select: { price: true, name: true, comment: true } },
+      membership: { select: { customer: { select: { user: true } } } },
+    },
   })
-  for (const cust of x) {
-    console.log(cust.user.email)
-  }
+  console.dir(x, { depth: null })
 }
 run()

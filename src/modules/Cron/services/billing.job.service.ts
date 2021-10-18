@@ -125,28 +125,21 @@ export class BillingScheduledJobs {
         billingEndAt: {
           lte: new Date(),
         },
-        status: "Draft",
+        status: { in: ["Draft", "ChargeFailed"] },
       },
       select: CREATE_RENTAL_INVOICE_LINE_ITEMS_INVOICE_SELECT,
     })
 
     for (const invoice of invoicesToHandle) {
       invoicesHandled++
-      try {
-        const planID = invoice.membership.plan.planID as AccessPlanID
-        const lineItems = await this.rental.createRentalInvoiceLineItems(
-          invoice
-        )
-        await this.rental.chargeTab(planID, invoice, lineItems)
-      } catch (err) {
-        console.log(err)
+      await this.rental.processInvoice(invoice, err => {
         this.error.setExtraContext(invoice)
         this.error.captureError(err)
         this.logger.error("Rental invoice billing failed", {
           invoice,
           error: err,
         })
-      }
+      })
     }
 
     this.logger.log(

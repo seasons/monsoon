@@ -9,8 +9,9 @@ const run = async () => {
   const app = await NestFactory.createApplicationContext(AppModule)
   const job = app.get(BillingScheduledJobs)
 
-  await job.updateCurrentBalanceOnCustomers()
-  await job.updateEstimatedTotalOnInvoices()
+  // await job.updateCurrentBalanceOnCustomers()
+  // await job.updateEstimatedTotalOnInvoices()
+  await job.handleRentalInvoices()
 }
 
 run()
