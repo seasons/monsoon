@@ -59,6 +59,23 @@ export class CustomerMutationsResolver {
   }
 
   @Mutation()
+  async updateCreditBalance(@Args() { membershipId, amount, reason }) {
+    if (reason.length <= 0) {
+      throw new Error(`Must have a reason for updating a credit balance`)
+    }
+
+    if (amount === 0) {
+      throw new Error(`A value must be given for amount`)
+    }
+
+    return await this.customerService.updateCreditBalance(
+      membershipId,
+      amount,
+      reason
+    )
+  }
+
+  @Mutation()
   async triageCustomer(
     @Customer() sessionCustomer,
     @Application() application

@@ -448,6 +448,35 @@ export class CustomerService {
     })
   }
 
+  async updateCreditBalance(
+    membershipId: string,
+    amount: number,
+    reason: string
+  ) {
+    const promises = []
+
+    promises.push(
+      this.prisma.client.customerMembership.update({
+        where: {
+          id: membershipId,
+        },
+        data: {
+          creditUpdateHistory: {
+            create: {
+              amount: amount,
+              reason: reason,
+            },
+          },
+          creditBalance: { increment: amount },
+        },
+      })
+    )
+
+    const results = await this.prisma.client.$transaction(promises)
+    const updatedCustomerMembership = results.pop()
+    return !!updatedCustomerMembership
+  }
+
   async triageCustomer(
     where: Prisma.CustomerWhereUniqueInput,
     application: ApplicationType,
