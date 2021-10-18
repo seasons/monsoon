@@ -86,12 +86,15 @@ export class ReservationService {
   async reserveItems({
     items,
     shippingCode,
-    timeWindowID,
+    pickupTime,
     customer,
     select = { id: true },
   }: {
     items: string[]
-    timeWindowID?: string
+    pickupTime?: {
+      date: string
+      timeWindowID?: string
+    }
     shippingCode: ShippingCode
     customer: Pick<Customer, "id">
     select: Prisma.ReservationSelect
@@ -136,7 +139,9 @@ export class ReservationService {
       throw new Error(`Only Active customers can place a reservation`)
     }
 
-    const timeWindow = ShippingMethodFieldsResolver.getTimeWindow(timeWindowID)
+    const timeWindow = ShippingMethodFieldsResolver.getTimeWindow(
+      pickupTime?.timeWindowID
+    )
 
     // Validate address and provide suggested one if needed
     const {
@@ -265,7 +270,8 @@ export class ReservationService {
       ),
       physicalProductsBeingReserved,
       heldPhysicalProducts,
-      shippingCode
+      shippingCode,
+      pickupTime
     )
 
     const lastReservationPromises = await this.updateLastReservation(
@@ -1434,7 +1440,11 @@ export class ReservationService {
     shipmentWeight: number,
     physicalProductsBeingReserved: ReserveItemsPhysicalProduct[],
     heldPhysicalProducts: ReserveItemsPhysicalProduct[],
-    shippingCode: ShippingCode | null
+    shippingCode: ShippingCode | null,
+    pickupTime?: {
+      timeWindowID?: string
+      date: string
+    }
   ) {
     const customerWithData = await this.prisma.client.customer.findUnique({
       where: { id: customer.id },
@@ -1549,6 +1559,8 @@ export class ReservationService {
           slug: process.env.SEASONS_CLEANER_LOCATION_SLUG,
         },
       },
+      pickupDate: pickupTime?.date,
+      pickupWindowId: pickupTime?.timeWindowID,
       shipped: false,
       status: "Queued",
       previousReservationWasPacked: lastReservation?.status === "Packed",

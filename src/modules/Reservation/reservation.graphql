@@ -222,6 +222,7 @@ input ProductStateInput {
 input ReserveItemsOptions {
   dryRun: Boolean
   timeWindowID: ID
+  pickupDate: DateTime
 }
 
 enum ReservationAdminMessage {
@@ -264,6 +265,9 @@ type Reservation @cacheControl(maxAge: 0) {
   returnedAt: DateTime
   createdAt: DateTime!
   updatedAt: DateTime!
+  pickupDate: DateTime
+  pickupWindowId: String
+  pickupWindow: TimeWindow
   adminLogs: [AdminActionLog!]! @hasRole(roles: [Admin])
   shippingOption: ShippingOption
   adminMessage: ReservationAdminMessage! @hasRole(roles: [Admin])

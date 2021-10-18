@@ -1,11 +1,11 @@
 import { Customer, User } from "@app/decorators"
-import { Select } from "@app/decorators/select.decorator"
 import { Loader } from "@app/modules/DataLoader/decorators/dataloader.decorator"
 import { UtilsService } from "@app/modules/Utils/services/utils.service"
 import { PrismaDataLoader } from "@app/prisma/prisma.loader"
 import { PrismaService } from "@app/prisma/prisma.service"
 import { ImageSize } from "@modules/Image/image.types.d"
 import { ImageService } from "@modules/Image/services/image.service"
+import { ShippingMethodFieldsResolver } from "@modules/Shipping/fields/shippingMethod.fields.resolver"
 import { Args, Parent, ResolveField, Resolver } from "@nestjs/graphql"
 import { Prisma } from "@prisma/client"
 import { head } from "lodash"
@@ -199,5 +199,31 @@ export class ReservationFieldsResolver {
       customer,
       filterBy: args?.filterBy,
     })
+  }
+
+  @ResolveField()
+  async pickupWindow(
+    @Parent() reservation,
+    @Loader({
+      params: {
+        model: "Reservation",
+        select: Prisma.validator<Prisma.ReservationSelect>()({
+          id: true,
+          pickupWindowId: true,
+        }),
+      },
+    })
+    reservationLoader
+  ) {
+    const reservationWithPickupWindowId = await reservationLoader.load(
+      reservation.id
+    )
+    const pickupWindowId = reservationWithPickupWindowId.pickupWindowId
+
+    const timeWindow = ShippingMethodFieldsResolver.getTimeWindow(
+      pickupWindowId
+    )
+
+    return timeWindow
   }
 }

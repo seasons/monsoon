@@ -54,7 +54,10 @@ export class ReservationMutationsResolver {
     const productVariantIDs = itemsToReserve.map(a => a.productVariant.id)
     const returnData = await this.reservation.reserveItems({
       items: productVariantIDs,
-      timeWindowID: options?.timeWindowID,
+      pickupTime: {
+        date: options?.pickupDate,
+        timeWindowID: options?.timeWindowID,
+      },
       shippingCode,
       customer,
       select,
