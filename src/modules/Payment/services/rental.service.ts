@@ -129,6 +129,7 @@ export class RentalService {
   >()({
     id: true,
     createdAt: true,
+    returnedAt: true,
     completedAt: true,
     status: true,
     phase: true,
@@ -553,7 +554,9 @@ export class RentalService {
           rentalEndedAt = getRentalEndedAt(
             this.getSafeReturnPackageEntryDate(
               returnPackage.enteredDeliverySystemAt,
-              returnReservation.completedAt || invoiceWithData.billingEndAt
+              returnReservation.returnedAt ||
+                returnReservation.completedAt ||
+                invoiceWithData.billingEndAt
             )
           )
           addComment(itemStatusComments["returned"])
@@ -800,6 +803,7 @@ export class RentalService {
                 product: {
                   select: {
                     id: true,
+                    name: true,
                     computedRentalPrice: true,
                     rentalPriceOverride: true,
                     wholesalePrice: true,
