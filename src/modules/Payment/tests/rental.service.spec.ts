@@ -124,7 +124,7 @@ class ChargeBeeMock {
 
 let prisma: PrismaService
 let rentalService: RentalService
-let reseveService: ReserveService
+let reserveService: ReserveService
 let reservationService: ReservationService
 let utils: UtilsService
 let timeUtils: TimeUtilsService
@@ -150,7 +150,7 @@ describe("Rental Service", () => {
     rentalService = moduleRef.get<RentalService>(RentalService)
     utils = moduleRef.get<UtilsService>(UtilsService)
     timeUtils = moduleRef.get<TimeUtilsService>(TimeUtilsService)
-    reseveService = moduleRef.get<ReserveService>(ReserveService)
+    reserveService = moduleRef.get<ReserveService>(ReserveService)
     reservationService = moduleRef.get<ReservationService>(ReservationService)
 
     jest
@@ -1516,7 +1516,7 @@ const addToBagAndReserveForCustomer = async (
     select: { productVariant: { select: { id: true } } },
   })
   const prodVarsToReserve = bagItemsToReserve.map(a => a.productVariant.id)
-  const r = await reseveService.reserveItems(
+  const r = await reserveService.reserveItems(
     shippingCode,
     testCustomer as any,
     {
