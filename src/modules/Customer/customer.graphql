@@ -126,7 +126,6 @@ type Customer {
   plan: Plan @deprecated(reason: "replaced with customer.membership.plan")
   paymentPlan: PaymentPlan
     @deprecated(reason: "replaced with customer.membership.plan")
-
   bagItems(
     where: BagItemWhereInput
     orderBy: BagItemOrderByInput
@@ -136,6 +135,7 @@ type Customer {
     first: Int
     last: Int
   ): [BagItem!]
+  bagSections: [BagSection!]
   reservations(
     where: ReservationWhereInput
     orderBy: ReservationOrderByInput

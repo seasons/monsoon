@@ -87,8 +87,11 @@ enum ReservationLineItemsFilter {
 
 enum BagSectionStatus {
   Added
-  AtHome
+  Picked
+  Packed
+  Queued
   CustomerToBusiness
+  AtHome
   BusinessToCustomer
   ReturnPending
 }

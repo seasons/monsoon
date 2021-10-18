@@ -66,7 +66,7 @@ export class BagService {
     }
   }
 
-  async bagSections(customer) {
+  async bagSections(customer, application) {
     const bagItems = await this.prisma.client.bagItem.findMany({
       where: {
         customer: {
@@ -86,23 +86,25 @@ export class BagService {
       },
     })
 
-    const addedSection = await this.getAddedSection(bagItems)
-    const returnPendingSection = await this.getReturnPendingSection(bagItems)
-    const businessToCustomerSection = await this.getBusinessToCustomerSection(
-      bagItems
-    )
-    const customerToBusinessSection = await this.getCustomerToBusinessSection(
-      bagItems
-    )
-    const atHomeSection = await this.getAtHomeSection(bagItems)
-
-    return [
-      addedSection,
-      returnPendingSection,
-      businessToCustomerSection,
-      customerToBusinessSection,
-      atHomeSection,
-    ]
+    if (application === "spring") {
+      return [
+        await this.getQueuedSection(bagItems),
+        await this.getPickedSection(bagItems),
+        await this.getPackedSection(bagItems),
+        await this.getBusinessToCustomerSection(bagItems),
+        await this.getAtHomeSection(bagItems),
+        await this.getReturnPendingSection(bagItems),
+        await this.getCustomerToBusinessSection(bagItems),
+      ]
+    } else {
+      return [
+        await this.getAddedSection(bagItems),
+        await this.getReturnPendingSection(bagItems),
+        await this.getBusinessToCustomerSection(bagItems),
+        await this.getCustomerToBusinessSection(bagItems),
+        await this.getAtHomeSection(bagItems),
+      ]
+    }
   }
 
   async addToBag(
@@ -429,10 +431,20 @@ export class BagService {
     return bagItem
   }
 
+  private async getQueuedSection(bagItems) {
+    return {
+      id: "queued",
+      title: "Queued",
+      status: "Queued",
+      bagItems: bagItems,
+    }
+  }
+
   private async getAtHomeSection(bagItems) {
     const atHomeBagItems = bagItems.filter(item => {
       const updatedMoreThan24HoursAgo =
         item?.updatedAt &&
+        // @ts-ignore
         DateTime.fromISO(item?.updatedAt.toISOString()).diffNow("days")?.values
           ?.days <= -1
 
@@ -440,16 +452,34 @@ export class BagService {
     })
 
     return {
-      id: "atHomeSectionId",
+      id: "atHome",
       title: "At home",
       status: "AtHome",
       bagItems: atHomeBagItems,
     }
   }
 
+  private async getPickedSection(bagItems) {
+    return {
+      id: "picked",
+      title: "Picked",
+      status: "Picked",
+      bagItems: bagItems,
+    }
+  }
+
+  private async getPackedSection(bagItems) {
+    return {
+      id: "packed",
+      title: "Packed",
+      status: "Packed",
+      bagItems: bagItems,
+    }
+  }
+
   private async getCustomerToBusinessSection(bagItems) {
     return {
-      id: "customerToBusinessSectionId",
+      id: "customerToBusiness",
       title: "Order on the way",
       status: "CustomerToBusiness",
       bagItems: bagItems,
@@ -461,9 +491,9 @@ export class BagService {
 
   private async getBusinessToCustomerSection(bagItems) {
     return {
-      id: "customerToBusinessSectionId",
+      id: "businessToCustomer",
       title: "Order on the way",
-      status: "CustomerToBusiness",
+      status: "BusinessToCustomer",
       bagItems: bagItems,
       deliveryStep: 1,
       deliveryStatusText: "Received",
@@ -473,7 +503,7 @@ export class BagService {
 
   private async getReturnPendingSection(bagItems) {
     return {
-      id: "returnPendingSectionId",
+      id: "returnPending",
       title: "Returning",
       status: "ReturnPending",
       bagItems: bagItems,
@@ -484,7 +514,7 @@ export class BagService {
     const addedBagItems = bagItems.filter(item => item.status === "Added")
 
     return {
-      id: "addedSectionId",
+      id: "added",
       title: "Reserving",
       status: "Added",
       bagItems: addedBagItems,

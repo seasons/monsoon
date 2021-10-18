@@ -1,4 +1,5 @@
 import { Customer, User } from "@app/decorators"
+import { Application } from "@app/decorators/application.decorator"
 import { Select } from "@app/decorators/select.decorator"
 import { BagService } from "@app/modules/Product/services/bag.service"
 import { ReservationService } from "@app/modules/Reservation/services/reservation.service"
@@ -120,11 +121,11 @@ export class MeFieldsResolver {
   }
 
   @ResolveField()
-  async bagSections(@Customer() customer) {
+  async bagSections(@Customer() customer, @Application() application) {
     if (!customer) {
       return null
     }
-    return await this.bagService.bagSections(customer)
+    return await this.bagService.bagSections(customer, application)
   }
 
   @ResolveField()
