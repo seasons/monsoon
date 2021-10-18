@@ -1364,6 +1364,8 @@ model Reservation {
   receiptId                    String?                      @map("receipt") @db.VarChar(30)
   pickupDate                   DateTime? 
   pickupWindowId               String?
+  shippingMethodId             String?                      @map("shippingMethod") @db.VarChar(30)
+  shippingMethod               ShippingMethod?              @relation(fields: [shippingMethodId], references: [id])
   phase                        ReservationPhase
   statusUpdatedAt              DateTime?
   customer                     Customer?                    @relation(fields: [customerId], references: [id])
@@ -1460,6 +1462,9 @@ model ReservationPhysicalProduct {
   reservationId String?      @map("reservation") @db.VarChar(30)
   reservation   Reservation? @relation(fields: [id], references: [id])
 
+  shippingMethodId             String?                      @map("shippingMethod") @db.VarChar(30)
+  shippingMethod               ShippingMethod?              @relation(fields: [shippingMethodId], references: [id])
+
   pickupWindowId String?
 
   createdAt DateTime @default(now())
@@ -1508,11 +1513,13 @@ model Season {
 
 model ShippingMethod {
   id              String           @id @default(cuid()) @db.VarChar(30)
-  code            ShippingCode
+  code            ShippingCode     @unique
   displayText     String
   position        Int              @default(0)
   createdAt       DateTime         @default(now())
   updatedAt       DateTime         @updatedAt
+  reservations    Reservation[]
+  reservationPhysicalProducts ReservationPhysicalProduct[]
 }
 
 
