@@ -200,11 +200,6 @@ export class ReserveService {
     )
     promises.push(...bagItemPromises)
 
-    const lastReservationPromises = await this.updateLastReservation(
-      lastReservationWithData
-    )
-    promises.push(...lastReservationPromises)
-
     // Create reservation records in prisma
     const shipmentWeight = await this.shippingService.calcShipmentWeightFromProductVariantIDs(
       newProductVariantIDs
