@@ -76,7 +76,10 @@ export class SubscriptionsScheduledJobs {
             subscription
           )
 
-          let grandfatheredPayload = data?.planID?.includes("access")
+          let grandfatheredPayload = [
+            "access-yearly",
+            "access-monthly",
+          ].includes(data?.planID)
             ? { grandfathered: false }
             : {}
 
@@ -106,40 +109,5 @@ export class SubscriptionsScheduledJobs {
     }
 
     this.logger.log(`Finished update subscriptions field job`)
-  }
-
-  @Cron(CronExpression.EVERY_HOUR)
-  async handleRentalInvoices() {
-    this.logger.log(`Start handle rental invoices job`)
-
-    let invoicesHandled = 0
-    const invoicesToHandle = await this.prisma.client.rentalInvoice.findMany({
-      where: {
-        billingEndAt: {
-          lte: new Date(),
-        },
-        status: "Draft",
-      },
-      select: CREATE_RENTAL_INVOICE_LINE_ITEMS_INVOICE_SELECT,
-    })
-
-    for (const invoice of invoicesToHandle) {
-      invoicesHandled++
-      try {
-        const planID = invoice.membership.plan.planID as AccessPlanID
-        const lineItems = await this.rental.createRentalInvoiceLineItems(
-          invoice
-        )
-        await this.rental.chargeTab(planID, invoice, lineItems)
-      } catch (err) {
-        console.log(err)
-        this.error.setExtraContext(invoice)
-        this.error.captureError(err)
-      }
-    }
-
-    this.logger.log(
-      `End handle rental invoices job: ${invoicesHandled} invoices handled`
-    )
   }
 }

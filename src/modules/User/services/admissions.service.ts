@@ -1,4 +1,5 @@
 import { ProductWithEmailData } from "@app/modules/Email/services/email.utils.service"
+import { TimeUtilsService } from "@app/modules/Utils/services/time.service"
 import { UtilsService } from "@app/modules/Utils/services/utils.service"
 import { Injectable } from "@nestjs/common"
 import { CustomerStatus, Prisma } from "@prisma/client"
@@ -47,7 +48,8 @@ export class AdmissionsService {
 
   constructor(
     private readonly prisma: PrismaService,
-    private readonly utils: UtilsService
+    private readonly utils: UtilsService,
+    private readonly timeUtils: TimeUtilsService
   ) {
     ;({ states: this.serviceableStates } = this.utils.parseJSONFile(
       "src/modules/User/admissableStates"
@@ -334,7 +336,7 @@ export class AdmissionsService {
           this.utils.dateSort(a.createdAt, b.createdAt)
         )
       )
-      return this.utils.isLessThanXDaysFromNow(
+      return this.timeUtils.isLessThanXDaysFromNow(
         latestPauseRequest?.resumeDate.toISOString(),
         7
       )
