@@ -2361,11 +2361,11 @@ const addToBagAndReserveForCustomer = async (
     select: { productVariant: { select: { id: true } } },
   })
   const prodVarsToReserve = bagItemsToReserve.map(a => a.productVariant.id)
-  const r = await reservationService.reserveItems(
-    prodVarsToReserve,
+  const r = await reservationService.reserveItems({
+    items: prodVarsToReserve,
     shippingCode,
-    testCustomer as any,
-    {
+    customer: testCustomer as any,
+    select: {
       reservationNumber: true,
       products: { select: { seasonsUID: true } },
       newProducts: { select: { seasonsUID: true } },
@@ -2377,8 +2377,8 @@ const addToBagAndReserveForCustomer = async (
           shippingLabel: { select: { trackingNumber: true } },
         },
       },
-    }
-  )
+    },
+  })
   await setPackageAmount(r.sentPackage.id, UPS_GROUND_FEE)
   await setPackageAmount(r.returnPackages[0].id, UPS_GROUND_FEE)
   return r

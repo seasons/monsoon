@@ -3,6 +3,7 @@ import { ErrorService } from "@app/modules/Error/services/error.service"
 import { RentalService } from "@app/modules/Payment/services/rental.service"
 import { ProductVariantService } from "@app/modules/Product/services/productVariant.service"
 import { PushNotificationService } from "@app/modules/PushNotification"
+import { ShippingMethodFieldsResolver } from "@app/modules/Shipping/fields/shippingMethod.fields.resolver"
 import { CustomerUtilsService } from "@app/modules/User/services/customer.utils.service"
 import { ProductUtilsService } from "@app/modules/Utils/services/product.utils.service"
 import { StatementsService } from "@app/modules/Utils/services/statements.service"
@@ -87,12 +88,22 @@ export class ReservationService {
     private readonly rental: RentalService
   ) {}
 
-  async reserveItems(
-    items: string[],
-    shippingCode: ShippingCode,
-    customer: Pick<Customer, "id">,
-    select: Prisma.ReservationSelect = { id: true }
-  ) {
+  async reserveItems({
+    items,
+    shippingCode,
+    pickupTime,
+    customer,
+    select = { id: true },
+  }: {
+    items: string[]
+    pickupTime?: {
+      date: string
+      timeWindowID?: string
+    }
+    shippingCode: ShippingCode
+    customer: Pick<Customer, "id">
+    select: Prisma.ReservationSelect
+  }) {
     const customerWithData = await this.prisma.client.customer.findUnique({
       where: { id: customer.id },
       select: {
@@ -260,7 +271,8 @@ export class ReservationService {
       ),
       physicalProductsBeingReserved,
       heldPhysicalProducts,
-      shippingCode
+      shippingCode,
+      pickupTime
     )
 
     const lastReservationPromises = await this.updateLastReservation(
@@ -710,17 +722,6 @@ export class ReservationService {
         detail: {
           select: {
             id: true,
-            shippingAddress: {
-              select: {
-                shippingOptions: {
-                  select: {
-                    id: true,
-                    shippingMethod: true,
-                    externalCost: true,
-                  },
-                },
-              },
-            },
           },
         },
       },
@@ -771,11 +772,6 @@ export class ReservationService {
                       },
                     },
                   },
-                },
-              },
-              shippingOption: {
-                select: {
-                  shippingMethod: true,
                 },
               },
             },
@@ -1449,7 +1445,11 @@ export class ReservationService {
     shipmentWeight: number,
     physicalProductsBeingReserved: ReserveItemsPhysicalProduct[],
     heldPhysicalProducts: ReserveItemsPhysicalProduct[],
-    shippingCode: ShippingCode | null
+    shippingCode: ShippingCode | null,
+    pickupTime?: {
+      timeWindowID?: string
+      date: string
+    }
   ) {
     const customerWithData = await this.prisma.client.customer.findUnique({
       where: { id: customer.id },
@@ -1460,12 +1460,6 @@ export class ReservationService {
             shippingAddress: {
               select: {
                 id: true,
-                shippingOptions: {
-                  select: {
-                    id: true,
-                    shippingMethod: { select: { code: true } },
-                  },
-                },
               },
             },
           },
@@ -1503,14 +1497,6 @@ export class ReservationService {
       }
     }
 
-    let shippingOptionId
-    if (!!shippingCode) {
-      const shippingOption = customerWithData.detail.shippingAddress.shippingOptions.find(
-        a => a.shippingMethod.code === shippingCode
-      )
-      shippingOptionId = shippingOption?.id
-    }
-
     const customerShippingAddressRecordID =
       customerWithData.detail.shippingAddress.id
     const uniqueReservationNumber = await this.utils.getUniqueReservationNumber()
@@ -1530,6 +1516,11 @@ export class ReservationService {
       user: {
         connect: {
           id: customerWithData.user.id,
+        },
+      },
+      shippingMethod: {
+        connect: {
+          code: shippingCode,
         },
       },
       phase: "BusinessToCustomer",
@@ -1578,15 +1569,8 @@ export class ReservationService {
           slug: process.env.SEASONS_CLEANER_LOCATION_SLUG,
         },
       },
-      ...(!!shippingOptionId
-        ? {
-            shippingOption: {
-              connect: {
-                id: shippingOptionId,
-              },
-            },
-          }
-        : {}),
+      pickupDate: pickupTime?.date,
+      pickupWindowId: pickupTime?.timeWindowID,
       shipped: false,
       status: "Queued",
       previousReservationWasPacked: lastReservation?.status === "Packed",
