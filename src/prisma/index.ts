@@ -3381,6 +3381,7 @@ export type EmailId =
   | "ReservationReturnConfirmation"
   | "ResumeConfirmation"
   | "ResumeReminder"
+  | "RestockNotification"
   | "ReturnReminder"
   | "Rewaitlisted"
   | "SubmittedEmail"

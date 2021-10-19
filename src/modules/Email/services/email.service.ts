@@ -290,16 +290,28 @@ export class EmailService {
   }
 
   async sendRestockNotificationEmails(emails: string[], product) {
-    // const payload = await RenderEmail.restockNotification({
-    //   product,
-    // })
-    // for (const email of emails) {
-    //   return await this.sendPreRenderedTransactionalEmail({
-    //     user,
-    //     payload,
-    //     emailId: "RestockNotification",
-    //   })
-    // }
+    const payload = await RenderEmail.restockNotification(
+      this.emailUtils.productToGridPayload(product)
+    )
+
+    const users = await this.prisma.client.user.findMany({
+      where: {
+        email: { in: emails },
+      },
+      select: {
+        id: true,
+        email: true,
+        firstName: true,
+      },
+    })
+
+    for (const user of users) {
+      return await this.sendPreRenderedTransactionalEmail({
+        user,
+        payload,
+        emailId: "RestockNotification",
+      })
+    }
   }
 
   async sendYouCanNowReserveAgainEmail(user: EmailUser) {
