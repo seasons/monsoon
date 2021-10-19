@@ -451,9 +451,20 @@ export class CustomerService {
   async updateCreditBalance(
     membershipId: string,
     amount: number,
-    reason: string
+    reason: string,
+    customerId: string
   ) {
     const promises = []
+
+    const adminUser = await this.prisma.client.customer.findUnique({
+      where: {
+        id: customerId,
+      },
+      select: {
+        id: true,
+        userId: true,
+      },
+    })
 
     promises.push(
       this.prisma.client.customerMembership.update({
@@ -465,6 +476,11 @@ export class CustomerService {
             create: {
               amount: amount,
               reason: reason,
+              adminUser: {
+                connect: {
+                  id: adminUser.userId,
+                },
+              },
             },
           },
           creditBalance: { increment: amount },
