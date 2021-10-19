@@ -24,16 +24,16 @@ export class ReservationMutationsResolver {
   async returnMultiItems(
     @Args() { trackingNumber, productStates, droppedOffBy }
   ) {
-    if (droppedOffBy["UPS"] && trackingNumber === "") {
+    if (droppedOffBy?.["UPS"] && trackingNumber === "") {
       throw new Error(
         `Must specify return package tracking number when processing reservation`
       )
     }
 
     return this.reservationPhysicalProduct.returnMultiItems(
-      trackingNumber,
       productStates,
-      droppedOffBy
+      droppedOffBy,
+      trackingNumber
     )
   }
 
