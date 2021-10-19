@@ -6,6 +6,7 @@ import { PrismaService } from "@app/prisma/prisma.service"
 import { Args, Mutation, Resolver } from "@nestjs/graphql"
 import { pick } from "lodash"
 
+import { ReservationPhysicalProductService } from "../services/reservationPhysicalProduct.service"
 import { ReservationService } from ".."
 
 const ENSURE_TRACK_DATA_FRAGMENT = `fragment EnsureTrackData on Reservation {id products {seasonsUID}}`
@@ -15,8 +16,26 @@ export class ReservationMutationsResolver {
   constructor(
     private readonly reservation: ReservationService,
     private readonly segment: SegmentService,
-    private readonly prisma: PrismaService
+    private readonly prisma: PrismaService,
+    private readonly reservationPhysicalProduct: ReservationPhysicalProductService
   ) {}
+
+  @Mutation()
+  async returnMultiItems(
+    @Args() { trackingNumber, productStates, droppedOffBy }
+  ) {
+    if (droppedOffBy?.["UPS"] && trackingNumber === "") {
+      throw new Error(
+        `Must specify return package tracking number when processing reservation`
+      )
+    }
+
+    return this.reservationPhysicalProduct.returnMultiItems(
+      productStates,
+      droppedOffBy,
+      trackingNumber
+    )
+  }
 
   @Mutation()
   async updateReservation(@Args() { data, where }, @Select() select) {
