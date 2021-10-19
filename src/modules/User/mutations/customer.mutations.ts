@@ -59,7 +59,10 @@ export class CustomerMutationsResolver {
   }
 
   @Mutation()
-  async updateCreditBalance(@Args() { membershipId, amount, reason }) {
+  async updateCreditBalance(
+    @Args() { membershipId, amount, reason },
+    @Customer() customer
+  ) {
     if (reason.length <= 0) {
       throw new Error(`Must have a reason for updating a credit balance`)
     }
@@ -67,11 +70,13 @@ export class CustomerMutationsResolver {
     if (amount === 0) {
       throw new Error(`A value must be given for amount`)
     }
+    const customerId = customer.id
 
     return await this.customerService.updateCreditBalance(
       membershipId,
       amount,
-      reason
+      reason,
+      customerId
     )
   }
 
