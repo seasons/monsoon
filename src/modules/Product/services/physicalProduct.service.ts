@@ -1,6 +1,7 @@
 import { PushNotificationService } from "@app/modules/PushNotification/services/pushNotification.service"
 import { StatementsService } from "@app/modules/Utils/services/statements.service"
 import { UtilsService } from "@app/modules/Utils/services/utils.service"
+import { EmailService } from "@modules/Email/services/email.service"
 import { Injectable } from "@nestjs/common"
 import {
   Brand,
@@ -51,7 +52,8 @@ export class PhysicalProductService {
     private readonly productService: ProductService,
     private readonly physicalProductUtils: PhysicalProductUtilsService,
     private readonly utils: UtilsService,
-    private readonly statements: StatementsService
+    private readonly statements: StatementsService,
+    private readonly emails: EmailService
   ) {}
 
   async updatePhysicalProduct({
@@ -87,7 +89,19 @@ export class PhysicalProductService {
                   id: true,
                   slug: true,
                   name: true,
+                  images: {
+                    select: {
+                      url: true,
+                      id: true,
+                    },
+                  },
                   brand: { select: { id: true, name: true } },
+                  variants: {
+                    select: {
+                      id: true,
+                      displayShort: true,
+                    },
+                  },
                 },
               },
             },
@@ -139,7 +153,7 @@ export class PhysicalProductService {
         const emails = notifications.map(notif => notif.customer?.user?.email)
 
         // Send the notification
-        notifyUsersIfNeeded = async () =>
+        notifyUsersIfNeeded = async () => {
           await this.pushNotification.pushNotifyUsers({
             emails,
             pushNotifID: "ProductRestock",
@@ -150,6 +164,9 @@ export class PhysicalProductService {
               brandName: product?.brand?.name,
             },
           })
+
+          await this.emails.sendRestockNotificationEmails(emails, product)
+        }
       }
     } else if (
       !!physProdBeforeUpdate.warehouseLocation?.barcode &&
