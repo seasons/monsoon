@@ -307,7 +307,7 @@ export class EmailService {
     })
 
     for (const user of users) {
-      return await this.sendPreRenderedTransactionalEmail({
+      await this.sendPreRenderedTransactionalEmail({
         user,
         payload,
         emailId: "RestockNotification",
