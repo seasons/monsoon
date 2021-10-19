@@ -21,7 +21,7 @@ import { ReservationUtilsService } from "./services/reservation.utils.service"
 import { ReservationFeedbackService } from "./services/reservationFeedback.service"
 import { ReserveService } from "./services/reserve.service"
 
-@Module({
+export const RESERVATION_MODULE_DEF = {
   imports: [
     EmailModule,
     ImageModule,
@@ -47,5 +47,6 @@ import { ReserveService } from "./services/reserve.service"
     ReservationMutationsResolver,
   ],
   exports: [ReservationService, ReservationUtilsService],
-})
+}
+@Module(RESERVATION_MODULE_DEF)
 export class ReservationModule {}

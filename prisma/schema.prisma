@@ -505,11 +505,13 @@ model BagItem {
   customerId        String?          @map("customer") @db.VarChar(30)
   productVariantId  String?          @map("productVariant") @db.VarChar(30)
   physicalProductId String?          @map("physicalProduct") @db.VarChar(30)
+  reservationPhysicalProductId String?          @map("reservationPhysicalProduct") @db.VarChar(30)
   createdAt         DateTime         @default(now())
   updatedAt         DateTime         @updatedAt
   customer          Customer?        @relation(fields: [customerId], references: [id])
   productVariant    ProductVariant?  @relation(fields: [productVariantId], references: [id])
   physicalProduct   PhysicalProduct? @relation(fields: [physicalProductId], references: [id])
+  reservationPhysicalProduct ReservationPhysicalProduct? @relation(fields: [reservationPhysicalProductId], references: [id])
 
   @@unique([productVariantId, customerId])
 }
@@ -1461,6 +1463,8 @@ model ReservationPhysicalProduct {
   reservation   Reservation @relation(fields: [reservationId], references: [id])
 
   rentalInvoices RentalInvoice[] @relation("RentalInvoiceToReservationPhysicalProducts")
+
+  bagItem BagItem?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
