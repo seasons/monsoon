@@ -126,6 +126,7 @@ export class RentalService {
   >()({
     id: true,
     createdAt: true,
+    returnedAt: true,
     completedAt: true,
     status: true,
     phase: true,
@@ -584,7 +585,9 @@ export class RentalService {
               // in the returnedProducts array due to the customer filling out the
               // return flow
               returnPackage?.enteredDeliverySystemAt,
-              returnReservation.completedAt || invoiceWithData.billingEndAt
+              returnReservation.returnedAt ||
+                returnReservation.completedAt ||
+                invoiceWithData.billingEndAt
             )
           )
           addComment(itemStatusComments["returned"])
