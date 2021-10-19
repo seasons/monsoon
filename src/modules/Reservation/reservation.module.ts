@@ -22,7 +22,7 @@ import { ReservationFeedbackService } from "./services/reservationFeedback.servi
 import { ReservationPhysicalProductService } from "./services/reservationPhysicalProduct.service"
 import { ReserveService } from "./services/reserve.service"
 
-@Module({
+export const RESERVATION_MODULE_DEF = {
   imports: [
     EmailModule,
     ImageModule,
@@ -49,5 +49,6 @@ import { ReserveService } from "./services/reserve.service"
     ReservationPhysicalProductService,
   ],
   exports: [ReservationService, ReservationUtilsService],
-})
+}
+@Module(RESERVATION_MODULE_DEF)
 export class ReservationModule {}
