@@ -1,6 +1,7 @@
 import { Injectable } from "@nestjs/common"
 import { Order, ProductVariant } from "@prisma/client"
 import RenderEmail from "@seasons/wind"
+import { ProductGridInput } from "@seasons/wind/dist/RenderEmail.types"
 import sgMail from "@sendgrid/mail"
 import nodemailer from "nodemailer"
 
@@ -290,9 +291,9 @@ export class EmailService {
   }
 
   async sendRestockNotificationEmails(emails: string[], product) {
-    const payload = await RenderEmail.restockNotification(
-      this.emailUtils.productToGridPayload(product)
-    )
+    const payload = await RenderEmail.restockNotification({
+      products: [await this.emailUtils.productToGridPayload(product)],
+    })
 
     const users = await this.prisma.client.user.findMany({
       where: {
