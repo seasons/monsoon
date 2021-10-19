@@ -18,6 +18,7 @@ import httpContext from "express-http-context"
 import { importSchema } from "graphql-import"
 import GraphQLJSON from "graphql-type-json"
 
+import { apolloServerSentryPlugin } from "./apollo/sentryIntegration"
 import {
   BlogModule,
   CollectionModule,
@@ -156,6 +157,7 @@ export const APP_MODULE_DEF = {
               },
             }),
             ApolloServerPluginInlineTrace(),
+            apolloServerSentryPlugin,
           ],
           persistedQueries: {
             cache,
