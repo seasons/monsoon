@@ -89,7 +89,19 @@ export class PhysicalProductService {
                   id: true,
                   slug: true,
                   name: true,
+                  images: {
+                    select: {
+                      url: true,
+                      id: true,
+                    },
+                  },
                   brand: { select: { id: true, name: true } },
+                  variants: {
+                    select: {
+                      id: true,
+                      displayShort: true,
+                    },
+                  },
                 },
               },
             },
