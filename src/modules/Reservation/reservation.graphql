@@ -60,7 +60,7 @@ type Mutation {
   returnMultiItems(
     trackingNumber: String
     productStates: [ProductStateInput!]!
-    droppedOffBy: ReservationDropOffAgent
+    droppedOffBy: ReservationDropOffAgent!
   ): Boolean @hasRole(roles: [Admin])
 }
 
