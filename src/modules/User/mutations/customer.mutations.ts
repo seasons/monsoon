@@ -68,16 +68,16 @@ export class CustomerMutationsResolver {
     }
 
     if (amount === 0) {
-      throw new Error(`A value must be given for amount`)
+      throw new Error(`A value greater than 0 must be entered for amount`)
     }
     const customerId = customer.id
 
-    return await this.customerService.updateCreditBalance(
+    return await this.customerService.updateCreditBalance({
       membershipId,
       amount,
       reason,
-      customerId
-    )
+      customerId,
+    })
   }
 
   @Mutation()

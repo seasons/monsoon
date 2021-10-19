@@ -448,12 +448,17 @@ export class CustomerService {
     })
   }
 
-  async updateCreditBalance(
-    membershipId: string,
-    amount: number,
-    reason: string,
+  async updateCreditBalance({
+    membershipId,
+    amount,
+    reason,
+    customerId,
+  }: {
+    membershipId: string
+    amount: number
+    reason: string
     customerId: string
-  ) {
+  }) {
     const promises = []
 
     const adminUser = await this.prisma.client.customer.findUnique({
