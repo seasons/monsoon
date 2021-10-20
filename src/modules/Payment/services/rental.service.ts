@@ -454,7 +454,7 @@ export class RentalService {
     physicalProduct: Pick<PhysicalProduct, "seasonsUID">,
     options: { upTo?: "today" | "billingEnd" | null } = { upTo: null }
   ) {
-    const invoiceWithData = await this.prisma.client.rentalInvoice.findUnique({
+    const invoiceWithData = await this.prisma.client.rentalInvoice.findFirst({
       where: { id: invoice.id },
       select: {
         billingStartAt: true,
