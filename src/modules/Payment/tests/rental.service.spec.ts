@@ -1998,6 +1998,7 @@ describe("Rental Service", () => {
           appliedMinimum,
           adjustedForPreviousMinimum,
         } = await rentalService.calculatePriceForDaysRented({
+          invoice: { id: currentInvoiceId },
           customer: testCustomer,
           product: physicalProduct,
           daysRented: 5,
@@ -2019,6 +2020,7 @@ describe("Rental Service", () => {
           appliedMinimum,
           adjustedForPreviousMinimum,
         } = await rentalService.calculatePriceForDaysRented({
+          invoice: { id: currentInvoiceId },
           customer: testCustomer,
           product: physicalProduct,
           daysRented: 14,
@@ -2044,13 +2046,9 @@ describe("Rental Service", () => {
         it("If they held it for less than 12 days in the previous billing cycle, adjust the current charge for the difference in days", async () => {
           // e.g if they held it for 7 days in the last cycle, and 14 days in this cycle, only charge them for 14-5 or 9 days.
           await addLineItemToInvoice({
+            physicalProduct,
             invoiceId: previousInvoiceId,
-            productId: physicalProduct.id,
             daysRented: 7,
-            price: rentalService.calculateUnadjustedPriceForDaysRented(
-              physicalProduct,
-              7
-            ),
           })
 
           const {
@@ -2058,6 +2056,7 @@ describe("Rental Service", () => {
             appliedMinimum,
             adjustedForPreviousMinimum,
           } = await rentalService.calculatePriceForDaysRented({
+            invoice: { id: currentInvoiceId },
             customer: testCustomer,
             product: physicalProduct,
             daysRented: 14,
@@ -2074,13 +2073,9 @@ describe("Rental Service", () => {
 
         it("If they held it for exactly 12 days in the previous billing cycle, do not adjust the current charge", async () => {
           await addLineItemToInvoice({
+            physicalProduct,
             invoiceId: previousInvoiceId,
-            productId: physicalProduct.id,
             daysRented: 12,
-            price: rentalService.calculateUnadjustedPriceForDaysRented(
-              physicalProduct,
-              12
-            ),
           })
 
           const {
@@ -2088,6 +2083,7 @@ describe("Rental Service", () => {
             appliedMinimum,
             adjustedForPreviousMinimum,
           } = await rentalService.calculatePriceForDaysRented({
+            invoice: { id: currentInvoiceId },
             customer: testCustomer,
             product: physicalProduct,
             daysRented: 14,
@@ -2106,8 +2102,8 @@ describe("Rental Service", () => {
       describe("We charged more than the minimum the last invoice", () => {
         it("Charge them for exactly the number of days they held in this billing cycle", async () => {
           await addLineItemToInvoice({
+            physicalProduct,
             invoiceId: previousInvoiceId,
-            productId: physicalProduct.id,
             daysRented: 15,
           })
 
@@ -2116,6 +2112,7 @@ describe("Rental Service", () => {
             appliedMinimum,
             adjustedForPreviousMinimum,
           } = await rentalService.calculatePriceForDaysRented({
+            invoice: { id: currentInvoiceId },
             customer: testCustomer,
             product: physicalProduct,
             daysRented: 3,
@@ -2134,8 +2131,8 @@ describe("Rental Service", () => {
       describe("We charged 0 on the last invoice", () => {
         it("If a customer has held an item for less than or equal to 12 days, apply the minimum", async () => {
           await addLineItemToInvoice({
+            physicalProduct,
             invoiceId: previousInvoiceId,
-            productId: physicalProduct.id,
             daysRented: 0,
           })
 
@@ -2144,6 +2141,7 @@ describe("Rental Service", () => {
             appliedMinimum,
             adjustedForPreviousMinimum,
           } = await rentalService.calculatePriceForDaysRented({
+            invoice: { id: currentInvoiceId },
             customer: testCustomer,
             product: physicalProduct,
             daysRented: 3,
@@ -2160,8 +2158,8 @@ describe("Rental Service", () => {
 
         it("If a customer has held an item for more than 12 days, charge them the prorated total", async () => {
           await addLineItemToInvoice({
+            physicalProduct,
             invoiceId: previousInvoiceId,
-            productId: physicalProduct.id,
             daysRented: 0,
           })
 
@@ -2170,6 +2168,7 @@ describe("Rental Service", () => {
             appliedMinimum,
             adjustedForPreviousMinimum,
           } = await rentalService.calculatePriceForDaysRented({
+            invoice: { id: currentInvoiceId },
             customer: testCustomer,
             product: physicalProduct,
             daysRented: 18,
@@ -2192,6 +2191,7 @@ describe("Rental Service", () => {
             appliedMinimum,
             adjustedForPreviousMinimum,
           } = await rentalService.calculatePriceForDaysRented({
+            invoice: { id: currentInvoiceId },
             customer: testCustomer,
             product: physicalProduct,
             daysRented: 3,
@@ -2212,6 +2212,7 @@ describe("Rental Service", () => {
             appliedMinimum,
             adjustedForPreviousMinimum,
           } = await rentalService.calculatePriceForDaysRented({
+            invoice: { id: currentInvoiceId },
             customer: testCustomer,
             product: physicalProduct,
             daysRented: 15,
@@ -2568,13 +2569,11 @@ const createTestCustomer = async ({
 
 const addLineItemToInvoice = async ({
   invoiceId,
-  productId,
-  price,
+  physicalProduct,
   daysRented,
 }: {
   invoiceId: string
-  productId: string
-  price?: number
+  physicalProduct: { id: string }
   daysRented: number
 }) => {
   return await prisma.client.rentalInvoice.update({
@@ -2584,9 +2583,12 @@ const addLineItemToInvoice = async ({
         createMany: {
           data: [
             {
-              physicalProductId: productId,
+              physicalProductId: physicalProduct.id,
               daysRented: daysRented,
-              price: price || 0,
+              price: rentalService.calculateUnadjustedPriceForDaysRented(
+                physicalProduct,
+                daysRented
+              ),
               currencyCode: "USD",
             },
           ],
