@@ -695,11 +695,10 @@ export class RentalService {
           ...daysRentedMetadata
         } = await this.calcDaysRented(invoice, physicalProduct)
 
-        const defaultPrice = this.calculatePriceForDaysRented({
+        const defaultPrice = await this.calculatePriceForDaysRented({
           customer: custWithExtraData,
           product: physicalProduct,
           daysRented,
-          includeMinimumCharge,
         })
 
         const initialReservation = await this.prisma.client.reservation.findUnique(
@@ -809,7 +808,6 @@ export class RentalService {
     customer,
     product,
     daysRented,
-    includeMinimumCharge,
   }: {
     customer: Pick<Customer, "id">
     product: Pick<PhysicalProduct, "id"> & {
@@ -818,7 +816,6 @@ export class RentalService {
       }
     }
     daysRented: number
-    includeMinimumCharge: boolean
   }) {
     const previousInvoice = await this.prisma.client.rentalInvoice.findFirst({
       where: {
@@ -848,23 +845,15 @@ export class RentalService {
         createdAt: "desc",
       },
     })
-    const daysNeededForMinimumCharge = includeMinimumCharge ? 12 : 0
-
-    const computePriceForDaysRented = daysRented => {
-      const rawDailyRentalPrice =
-        product.productVariant.product.computedRentalPrice / 30
-      const roundedDailyRentalPriceAsString = rawDailyRentalPrice.toFixed(2)
-      const roundedDailyRentalPrice = +roundedDailyRentalPriceAsString
-
-      return Math.round(daysRented * roundedDailyRentalPrice * 100)
-    }
+    const daysNeededForMinimumCharge = 12
 
     if (!previousInvoice) {
       const adjustedDaysRented = Math.max(
         daysNeededForMinimumCharge,
         daysRented
       )
-      return computePriceForDaysRented(adjustedDaysRented)
+
+      return this.computePriceForDaysRented(product, adjustedDaysRented)
     }
 
     const previousLineItem = previousInvoice?.lineItems?.find(
@@ -881,11 +870,14 @@ export class RentalService {
           0,
           totalDaysBetweenPreviousAndCurrentInvoice - daysNeededForMinimumCharge
         )
-        return computePriceForDaysRented(countedDaysForCurrentInvoice)
+        return this.computePriceForDaysRented(
+          product,
+          countedDaysForCurrentInvoice
+        )
       }
     }
 
-    return computePriceForDaysRented(daysRented)
+    return this.computePriceForDaysRented(product, daysRented)
   }
 
   async calculateCurrentBalance(
@@ -945,7 +937,6 @@ export class RentalService {
       const rentalPriceForDaysUntilToday = this.calculatePriceForDaysRented({
         product: product,
         customer: { id: customerId },
-        includeMinimumCharge: true,
         daysRented,
       })
 
@@ -1019,6 +1010,15 @@ export class RentalService {
     }
 
     return billingEndAtDate
+  }
+
+  private computePriceForDaysRented = (product, daysRented) => {
+    const rawDailyRentalPrice =
+      product.productVariant.product.computedRentalPrice / 30
+    const roundedDailyRentalPriceAsString = rawDailyRentalPrice.toFixed(2)
+    const roundedDailyRentalPrice = +roundedDailyRentalPriceAsString
+
+    return Math.round(daysRented * roundedDailyRentalPrice * 100)
   }
 
   private prismaLineItemToChargebeeChargeInput = prismaLineItem => {
