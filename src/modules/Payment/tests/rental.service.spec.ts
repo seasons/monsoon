@@ -297,6 +297,14 @@ describe("Rental Service", () => {
       .mockReturnValue(
         new ChargeBeeMock(ChargebeeMockFunction.DeleteUnbilledCharge)
       )
+
+    jest
+      .spyOn(rentalService, "updateEstimatedTotal")
+      .mockImplementation(() => null)
+
+    jest
+      .spyOn(reservationService, "removeRestockNotifications")
+      .mockImplementation(() => null)
   })
 
   describe("Calculate Days Rented", () => {
