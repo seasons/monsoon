@@ -68,7 +68,7 @@ export class CustomerMutationsResolver {
     }
 
     if (amount === 0) {
-      throw new Error(`A value greater than 0 must be entered for amount`)
+      throw new Error(`A nonzero value must be entered for the amount`)
     }
     const customerId = customer.id
 
