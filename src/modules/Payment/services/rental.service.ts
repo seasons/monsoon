@@ -3,6 +3,7 @@ import { ErrorService } from "@app/modules/Error/services/error.service"
 import { TimeUtilsService } from "@app/modules/Utils/services/time.service"
 import { Injectable, Logger } from "@nestjs/common"
 import {
+  Customer,
   CustomerMembershipSubscriptionData,
   Package,
   PhysicalProduct,
@@ -51,6 +52,7 @@ export const CREATE_RENTAL_INVOICE_LINE_ITEMS_INVOICE_SELECT = Prisma.validator<
             select: {
               id: true,
               rentalPriceOverride: true,
+              retailPrice: true,
               wholesalePrice: true,
               recoupment: true,
               computedRentalPrice: true,
@@ -441,7 +443,7 @@ export class RentalService {
     physicalProduct: Pick<PhysicalProduct, "seasonsUID">,
     options: { upTo?: "today" | "billingEnd" | null } = { upTo: null }
   ) {
-    const invoiceWithData = await this.prisma.client.rentalInvoice.findUnique({
+    const invoiceWithData = await this.prisma.client.rentalInvoice.findFirst({
       where: { id: invoice.id },
       select: {
         billingStartAt: true,
@@ -628,12 +630,13 @@ export class RentalService {
       !!rentalStartedAt && !!rentalEndedAt
         ? this.timeUtils.numDaysBetween(rentalStartedAt, rentalEndedAt)
         : 0
+
     return {
       daysRented,
       rentalStartedAt,
       rentalEndedAt,
-      initialReservationId: initialReservation.id,
       comment,
+      initialReservationId: initialReservation.id,
     }
   }
 
@@ -648,13 +651,17 @@ export class RentalService {
         >
       })[]
       products: (Pick<PhysicalProduct, "id" | "seasonsUID"> & {
-        productVariant: { product: Pick<Product, "computedRentalPrice"> }
+        productVariant: {
+          product: Pick<Product, "computedRentalPrice">
+        }
       })[]
-    }
+    },
+    includeMinimumCharge: boolean = false
   ) {
     const custWithExtraData = await this.prisma.client.customer.findFirst({
       where: { membership: { rentalInvoices: { some: { id: invoice.id } } } },
       select: {
+        id: true,
         user: { select: { createdAt: true } },
         membership: {
           select: {
@@ -688,10 +695,12 @@ export class RentalService {
           ...daysRentedMetadata
         } = await this.calcDaysRented(invoice, physicalProduct)
 
-        const defaultPrice = this.calculatePriceForDaysRented(
-          physicalProduct.productVariant.product,
-          daysRented
-        )
+        const defaultPrice = this.calculatePriceForDaysRented({
+          customer: custWithExtraData,
+          product: physicalProduct,
+          daysRented,
+          includeMinimumCharge,
+        })
 
         const initialReservation = await this.prisma.client.reservation.findUnique(
           { where: { id: initialReservationId }, select: { createdAt: true } }
@@ -726,7 +735,7 @@ export class RentalService {
         let comment
         if (idx === 0) {
           const usedPremiumShipping =
-            !!r && r.shippingMethod.code !== "UPSGround"
+            !!r && r?.shippingMethod?.code !== "UPSGround"
           if (usedPremiumShipping) {
             comment =
               "First reservation of billing cycle. Used premium shipping. Charge full outbound package."
@@ -796,15 +805,87 @@ export class RentalService {
     return lineItems
   }
 
-  calculatePriceForDaysRented(
-    product: Pick<Product, "computedRentalPrice">,
+  async calculatePriceForDaysRented({
+    customer,
+    product,
+    daysRented,
+    includeMinimumCharge,
+  }: {
+    customer: Pick<Customer, "id">
+    product: Pick<PhysicalProduct, "id"> & {
+      productVariant: {
+        product: { computedRentalPrice: number }
+      }
+    }
     daysRented: number
-  ) {
-    const rawDailyRentalPrice = product.computedRentalPrice / 30
-    const roundedDailyRentalPriceAsString = rawDailyRentalPrice.toFixed(2)
-    const roundedDailyRentalPrice = +roundedDailyRentalPriceAsString
+    includeMinimumCharge: boolean
+  }) {
+    const previousInvoice = await this.prisma.client.rentalInvoice.findFirst({
+      where: {
+        membership: {
+          customer: { id: customer.id },
+        },
+        status: "Billed",
+      },
+      select: {
+        billingStartAt: true,
+        billingEndAt: true,
+        membership: { select: { customer: { select: { id: true } } } },
+        products: {
+          select: {
+            id: true,
+            seasonsUID: true,
+          },
+        },
+        lineItems: {
+          select: {
+            physicalProductId: true,
+            daysRented: true,
+          },
+        },
+      },
+      orderBy: {
+        createdAt: "desc",
+      },
+    })
+    const daysNeededForMinimumCharge = includeMinimumCharge ? 12 : 0
 
-    return Math.round(daysRented * roundedDailyRentalPrice * 100)
+    const computePriceForDaysRented = daysRented => {
+      const rawDailyRentalPrice =
+        product.productVariant.product.computedRentalPrice / 30
+      const roundedDailyRentalPriceAsString = rawDailyRentalPrice.toFixed(2)
+      const roundedDailyRentalPrice = +roundedDailyRentalPriceAsString
+
+      return Math.round(daysRented * roundedDailyRentalPrice * 100)
+    }
+
+    if (!previousInvoice) {
+      const adjustedDaysRented = Math.max(
+        daysNeededForMinimumCharge,
+        daysRented
+      )
+      return computePriceForDaysRented(adjustedDaysRented)
+    }
+
+    const previousLineItem = previousInvoice?.lineItems?.find(
+      l => l.physicalProductId === product.id
+    )
+
+    if (previousLineItem) {
+      const previousDaysRented = previousLineItem.daysRented
+      const totalDaysBetweenPreviousAndCurrentInvoice =
+        previousDaysRented + daysRented
+
+      if (previousDaysRented <= daysNeededForMinimumCharge) {
+        const countedDaysForCurrentInvoice = Math.max(
+          0,
+          totalDaysBetweenPreviousAndCurrentInvoice - daysNeededForMinimumCharge
+        )
+        return computePriceForDaysRented(countedDaysForCurrentInvoice)
+      }
+    }
+
+    return computePriceForDaysRented(daysRented)
   }
 
   async calculateCurrentBalance(
@@ -835,6 +916,7 @@ export class RentalService {
                     computedRentalPrice: true,
                     rentalPriceOverride: true,
                     wholesalePrice: true,
+                    retailPrice: true,
                     recoupment: true,
                     category: {
                       select: {
@@ -860,10 +942,12 @@ export class RentalService {
         { upTo: options.upTo }
       )
 
-      const rentalPriceForDaysUntilToday = this.calculatePriceForDaysRented(
-        product.productVariant.product,
-        daysRented
-      )
+      const rentalPriceForDaysUntilToday = this.calculatePriceForDaysRented({
+        product: product,
+        customer: { id: customerId },
+        includeMinimumCharge: true,
+        daysRented,
+      })
 
       rentalPrices.push(rentalPriceForDaysUntilToday)
     }

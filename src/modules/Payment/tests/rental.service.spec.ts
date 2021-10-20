@@ -11,6 +11,7 @@ import {
   ShippingCode,
 } from "@prisma/client"
 import chargebee from "chargebee"
+import cuid from "cuid"
 import { head, merge } from "lodash"
 import moment from "moment"
 
@@ -1915,6 +1916,229 @@ describe("Rental Service", () => {
     })
   })
 
+  describe("Price for items", () => {
+    let previousInvoiceId
+    let currentInvoiceId
+
+    const computePriceForDaysRented = (product, daysRented) => {
+      const rawDailyRentalPrice =
+        product.productVariant.product.computedRentalPrice / 30
+      const roundedDailyRentalPriceAsString = rawDailyRentalPrice.toFixed(2)
+      const roundedDailyRentalPrice = +roundedDailyRentalPriceAsString
+
+      return Math.round(daysRented * roundedDailyRentalPrice * 100)
+    }
+
+    const createTestCustomerWithRentalInvoices = async (
+      lines?: Prisma.Enumerable<Prisma.RentalInvoiceCreateManyMembershipInput>
+    ) => {
+      previousInvoiceId = cuid()
+      currentInvoiceId = cuid()
+
+      const { cleanupFunc, customer } = await createTestCustomer({
+        create: {
+          membership: {
+            create: {
+              subscriptionId: utils.randomString(),
+              plan: { connect: { planID: "access-monthly" } },
+              rentalInvoices: {
+                createMany: {
+                  data: lines || [
+                    {
+                      id: previousInvoiceId,
+                      billingStartAt: timeUtils.xDaysAgoISOString(35),
+                      billingEndAt: timeUtils.xDaysAgoISOString(5),
+                      status: "Billed",
+                    },
+                    {
+                      id: currentInvoiceId,
+                      billingStartAt: timeUtils.xDaysAgoISOString(4),
+                      billingEndAt: new Date(),
+                      status: "Draft",
+                    },
+                  ],
+                },
+              },
+            },
+          },
+        },
+        select: testCustomerSelect,
+      })
+
+      cleanupFuncs.push(cleanupFunc)
+      testCustomer = customer
+    }
+
+    describe("No previous rental invoice", () => {
+      beforeAll(async () => {
+        // createTestCustomerWithRentalInvoices([
+        //   {
+        //     id: cuid(),
+        //     billingStartAt: timeUtils.xDaysAgoISOString(4),
+        //     billingEndAt: new Date(),
+        //     status: "Draft",
+        //   },
+        // ])
+      })
+
+      it("If a customer has held an item for less than or equal to 12 days, apply the minimum", async () => {
+        expect(0).toBe(1)
+      })
+
+      it("If a customer has held an item for more than 12 days, charge them the prorated total", () => {
+        expect(0).toBe(1)
+      })
+    })
+
+    describe("Previous rental invoice where we have a line item for the given product", () => {
+      let physicalProduct
+
+      describe("We charged the minimum on the last invoice", () => {
+        beforeEach(async () => {
+          await createTestCustomerWithRentalInvoices()
+
+          physicalProduct = await prisma.client.physicalProduct.findFirst({
+            where: {
+              inventoryStatus: "Reservable",
+            },
+            select: {
+              id: true,
+              productVariant: {
+                select: {
+                  product: {
+                    select: {
+                      computedRentalPrice: true,
+                    },
+                  },
+                },
+              },
+            },
+          })
+        })
+        it("If they held it for less than 12 days in the previous billing cycle, adjust the current charge for the difference in days", async () => {
+          // e.g if they held it for 7 days in the last cycle, and 14 days in this cycle, only charge them for 14-5 or 9 days.
+          await addLineItemToInvoice({
+            invoiceId: previousInvoiceId,
+            productId: physicalProduct.id,
+            daysRented: 7,
+          })
+
+          const price = await rentalService.calculatePriceForDaysRented({
+            customer: testCustomer,
+            product: physicalProduct,
+            daysRented: 14,
+            includeMinimumCharge: true,
+          })
+
+          const expectedPrice = computePriceForDaysRented(physicalProduct, 9)
+          expect(price).toBe(expectedPrice)
+        })
+
+        it("If they held it for exactly 12 days in the previous billing cycle, do not adjust the current charge", async () => {
+          // e.g if they held it for 7 days in the last cycle, and 14 days in this cycle, only charge them for 14-5 or 9 days.
+          await addLineItemToInvoice({
+            invoiceId: previousInvoiceId,
+            productId: physicalProduct.id,
+            daysRented: 12,
+          })
+
+          const price = await rentalService.calculatePriceForDaysRented({
+            customer: testCustomer,
+            product: physicalProduct,
+            daysRented: 14,
+            includeMinimumCharge: true,
+          })
+
+          const expectedPrice = computePriceForDaysRented(physicalProduct, 14)
+          expect(price).toBe(expectedPrice)
+        })
+      })
+
+      describe("We charged more than the minimum the last invoice", () => {
+        it("Charge them for exactly the number of days they held in this billing cycle", async () => {
+          await addLineItemToInvoice({
+            invoiceId: previousInvoiceId,
+            productId: physicalProduct.id,
+            daysRented: 15,
+          })
+
+          const price = await rentalService.calculatePriceForDaysRented({
+            customer: testCustomer,
+            product: physicalProduct,
+            daysRented: 3,
+            includeMinimumCharge: true,
+          })
+
+          const expectedPrice = computePriceForDaysRented(physicalProduct, 3)
+          expect(price).toBe(expectedPrice)
+        })
+      })
+
+      describe("We charged 0 on the last invoice", () => {
+        it("If a customer has held an item for less than or equal to 12 days, apply the minimum", async () => {
+          await addLineItemToInvoice({
+            invoiceId: previousInvoiceId,
+            productId: physicalProduct.id,
+            daysRented: 0,
+          })
+
+          const price = await rentalService.calculatePriceForDaysRented({
+            customer: testCustomer,
+            product: physicalProduct,
+            daysRented: 3,
+            includeMinimumCharge: true,
+          })
+
+          const expectedPrice = computePriceForDaysRented(physicalProduct, 12)
+          expect(price).toBe(expectedPrice)
+        })
+
+        it("If a customer has held an item for more than 12 days, charge them the prorated total", async () => {
+          await addLineItemToInvoice({
+            invoiceId: previousInvoiceId,
+            productId: physicalProduct.id,
+            daysRented: 0,
+          })
+
+          const price = await rentalService.calculatePriceForDaysRented({
+            customer: testCustomer,
+            product: physicalProduct,
+            daysRented: 18,
+            includeMinimumCharge: true,
+          })
+
+          const expectedPrice = computePriceForDaysRented(physicalProduct, 18)
+          expect(price).toBe(expectedPrice)
+        })
+      })
+
+      describe("Previous rental invoice where we have no line item for the given product", () => {
+        it("If a customer has held an item for less than or equal to 12 days, apply the minimum", async () => {
+          const price = await rentalService.calculatePriceForDaysRented({
+            customer: testCustomer,
+            product: physicalProduct,
+            daysRented: 3,
+            includeMinimumCharge: true,
+          })
+
+          const expectedPrice = computePriceForDaysRented(physicalProduct, 12)
+          expect(price).toBe(expectedPrice)
+        })
+
+        it("If a customer has held an item for more than 12 days, charge them the prorated total", async () => {
+          const price = await rentalService.calculatePriceForDaysRented({
+            customer: testCustomer,
+            product: physicalProduct,
+            daysRented: 15,
+            includeMinimumCharge: true,
+          })
+
+          const expectedPrice = computePriceForDaysRented(physicalProduct, 15)
+          expect(price).toBe(expectedPrice)
+        })
+      })
+    })
+  })
   describe("Initialize rental invoice", () => {
     /*
     Creates it correctly the first time around
@@ -2196,12 +2420,6 @@ const createTestCustomer = async ({
   create?: Partial<Prisma.CustomerCreateInput>
   select?: Prisma.CustomerSelect
 }) => {
-  const upsGroundMethod = await prisma.client.shippingMethod.findFirst({
-    where: { code: "UPSGround" },
-  })
-  const upsSelectMethod = await prisma.client.shippingMethod.findFirst({
-    where: { code: "UPSSelect" },
-  })
   const chargebeeSubscriptionId = utils.randomString()
   const defaultCreateData = {
     status: "Active",
@@ -2221,18 +2439,6 @@ const createTestCustomer = async ({
             city: "Brooklyn",
             state: "NY",
             zipCode: "11201",
-            shippingOptions: {
-              create: [
-                {
-                  shippingMethod: { connect: { id: upsGroundMethod.id } },
-                  externalCost: 10,
-                },
-                {
-                  shippingMethod: { connect: { id: upsSelectMethod.id } },
-                  externalCost: 20,
-                },
-              ],
-            },
           },
         },
       },
@@ -2271,6 +2477,34 @@ const createTestCustomer = async ({
   return { cleanupFunc, customer }
 }
 
+const addLineItemToInvoice = async ({
+  invoiceId,
+  productId,
+  daysRented,
+}: {
+  invoiceId: string
+  productId: string
+  daysRented: number
+}) => {
+  return await prisma.client.rentalInvoice.update({
+    where: { id: invoiceId },
+    data: {
+      lineItems: {
+        createMany: {
+          data: [
+            {
+              physicalProductId: productId,
+              daysRented: daysRented,
+              price: 0,
+              currencyCode: "USD",
+            },
+          ],
+        },
+      },
+    },
+  })
+}
+
 const setCustomerPlanType = async (
   planID: "access-monthly" | "access-yearly"
 ) => {
@@ -2300,7 +2534,7 @@ const addToBagAndReserveForCustomer = async (
   numProductsToAdd,
   options: { shippingCode?: ShippingCode } = {}
 ) => {
-  const { shippingCode = null } = options
+  const { shippingCode = "UPSGround" } = options
   const reservedBagItems = await prisma.client.bagItem.findMany({
     where: {
       customer: { id: testCustomer.id },
