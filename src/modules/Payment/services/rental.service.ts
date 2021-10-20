@@ -677,16 +677,6 @@ export class RentalService {
       currencyCode: "USD",
     })
 
-    const launchDate = this.timeUtils.dateFromUTCTimestamp(
-      process.env.LAUNCH_DATE_TIMESTAMP
-    )
-    const createdBeforeLaunchDay = this.timeUtils.isLaterDate(
-      launchDate,
-      custWithExtraData.user.createdAt
-    )
-    const isCustomersFirstRentalInvoice =
-      custWithExtraData.membership.rentalInvoices.length === 1
-
     const lineItemsForPhysicalProductDatas = (await Promise.all(
       invoice.products.map(async physicalProduct => {
         const {
@@ -695,21 +685,11 @@ export class RentalService {
           ...daysRentedMetadata
         } = await this.calcDaysRented(invoice, physicalProduct)
 
-        const defaultPrice = await this.calculatePriceForDaysRented({
+        const price = await this.calculatePriceForDaysRented({
           customer: custWithExtraData,
           product: physicalProduct,
           daysRented,
         })
-
-        const initialReservation = await this.prisma.client.reservation.findUnique(
-          { where: { id: initialReservationId }, select: { createdAt: true } }
-        )
-
-        const applyGrandfatheredPricing =
-          createdBeforeLaunchDay &&
-          isCustomersFirstRentalInvoice &&
-          this.timeUtils.isLaterDate(launchDate, initialReservation.createdAt)
-        let price = applyGrandfatheredPricing ? 0 : defaultPrice
 
         return addLineItemBasics({
           ...daysRentedMetadata,
