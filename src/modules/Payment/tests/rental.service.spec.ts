@@ -890,7 +890,7 @@ describe("Rental Service", () => {
             daysRented: 9,
             rentalStartedAt: timeUtils.xDaysAgoISOString(9),
             rentalEndedAt: now,
-            price: 2403,
+            price: 3200,
           },
           [reservationThreeSUIDs[0]]: {
             daysRented: 0,
