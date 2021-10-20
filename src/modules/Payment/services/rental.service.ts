@@ -735,7 +735,7 @@ export class RentalService {
         let comment
         if (idx === 0) {
           const usedPremiumShipping =
-            !!r && r?.shippingMethod?.code !== "UPSGround"
+            !!r && r.shippingMethod.code === "UPSSelect"
           if (usedPremiumShipping) {
             comment =
               "First reservation of billing cycle. Used premium shipping. Charge full outbound package."

@@ -229,6 +229,7 @@ enum EmailId {
   UnpaidMembership
   ReturnToGoodStanding
   RecommendedItemsNurture
+  RestockNotification
 }
 
 enum PackageTransitEventStatus {
@@ -748,7 +749,20 @@ model CustomerMembership {
   subscription             CustomerMembershipSubscriptionData? @relation(fields: [membershipSubscriptionId], references: [id])
   pauseRequests            PauseRequest[]
   rentalInvoices           RentalInvoice[]
+  creditUpdateHistory      CreditBalanceUpdateLog[]   
 }
+
+model CreditBalanceUpdateLog {
+  id                  String                  @id @default(cuid()) @db.VarChar(30)
+  membershipId        String                  @map("membership") @db.VarChar(30)
+  membership          CustomerMembership      @relation(fields: [membershipId], references: [id])
+  amount              Int                
+  reason              String
+  adminUser           User                    @relation(fields: [adminUserId], references: [id])
+  adminUserId         String                  @map("user") @db.VarChar(30)
+  createdAt           DateTime @default(now())          
+}
+
 
 model CustomerMembershipSubscriptionData {
   id               String              @id @default(cuid()) @db.VarChar(30)
@@ -1653,6 +1667,7 @@ model User {
   smsReceipts                   SmsReceipt[]
   userPushNotificationInterests UserPushNotificationInterest[]
   pushNotifications             PushNotificationReceipt[]      @relation("UserToPushNotificationReceipts")
+  creditUpdateHistory           CreditBalanceUpdateLog[]
 }
 
 model UserDeviceData {

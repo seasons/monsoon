@@ -448,6 +448,56 @@ export class CustomerService {
     })
   }
 
+  async updateCreditBalance({
+    membershipId,
+    amount,
+    reason,
+    customerId,
+  }: {
+    membershipId: string
+    amount: number
+    reason: string
+    customerId: string
+  }) {
+    const promises = []
+
+    const adminUser = await this.prisma.client.customer.findUnique({
+      where: {
+        id: customerId,
+      },
+      select: {
+        id: true,
+        userId: true,
+      },
+    })
+
+    promises.push(
+      this.prisma.client.customerMembership.update({
+        where: {
+          id: membershipId,
+        },
+        data: {
+          creditUpdateHistory: {
+            create: {
+              amount: amount,
+              reason: reason,
+              adminUser: {
+                connect: {
+                  id: adminUser.userId,
+                },
+              },
+            },
+          },
+          creditBalance: { increment: amount },
+        },
+      })
+    )
+
+    const results = await this.prisma.client.$transaction(promises)
+    const updatedCustomerMembership = results.pop()
+    return !!updatedCustomerMembership
+  }
+
   async triageCustomer(
     where: Prisma.CustomerWhereUniqueInput,
     application: ApplicationType,
