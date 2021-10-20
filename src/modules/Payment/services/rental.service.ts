@@ -851,6 +851,14 @@ export class RentalService {
       l => l.physicalProductId === product.id
     )
 
+    if (daysRented === 0) {
+      return {
+        price: 0,
+        appliedMinimum,
+        adjustedForPreviousMinimum,
+      }
+    }
+
     // Apply minimum if needed
     if (
       !previousInvoice ||

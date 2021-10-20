@@ -1,3 +1,4 @@
+import { PushNotificationService } from "@app/modules/PushNotification/services/pushNotification.service"
 import { ReservationService } from "@app/modules/Reservation"
 import { TimeUtilsService } from "@app/modules/Utils/services/time.service"
 import { UtilsService } from "@app/modules/Utils/services/utils.service"
@@ -258,6 +259,10 @@ describe("Rental Service", () => {
     timeUtils = moduleRef.get<TimeUtilsService>(TimeUtilsService)
     reservationService = moduleRef.get<ReservationService>(ReservationService)
 
+    const notificationService = moduleRef.get<PushNotificationService>(
+      PushNotificationService
+    )
+
     jest
       .spyOn<any, any>(chargebee.subscription, "add_charge_at_term_end")
       .mockReturnValue(
@@ -304,6 +309,10 @@ describe("Rental Service", () => {
 
     jest
       .spyOn(reservationService, "removeRestockNotifications")
+      .mockImplementation(() => null)
+
+    jest
+      .spyOn(notificationService, "pushNotifyUsers")
       .mockImplementation(() => null)
   })
 
@@ -2000,6 +2009,23 @@ describe("Rental Service", () => {
         ])
       })
 
+      it("If an item was not delivered (held for 0 days) do not apply the minimum", async () => {
+        const {
+          price,
+          appliedMinimum,
+          adjustedForPreviousMinimum,
+        } = await rentalService.calculatePriceForDaysRented({
+          invoice: { id: currentInvoiceId },
+          customer: testCustomer,
+          product: physicalProduct,
+          daysRented: 0,
+        })
+
+        expect(price).toBe(0)
+        expect(appliedMinimum).toBe(false)
+        expect(adjustedForPreviousMinimum).toBe(false)
+      })
+
       it("If a customer has held an item for less than or equal to 12 days, apply the minimum", async () => {
         const {
           price,
@@ -2051,6 +2077,23 @@ describe("Rental Service", () => {
       })
 
       describe("We charged the minimum on the last invoice", () => {
+        it("If an item was not delivered (held for 0 days) do not apply the minimum", async () => {
+          const {
+            price,
+            appliedMinimum,
+            adjustedForPreviousMinimum,
+          } = await rentalService.calculatePriceForDaysRented({
+            invoice: { id: currentInvoiceId },
+            customer: testCustomer,
+            product: physicalProduct,
+            daysRented: 0,
+          })
+
+          expect(price).toBe(0)
+          expect(appliedMinimum).toBe(false)
+          expect(adjustedForPreviousMinimum).toBe(false)
+        })
+
         it("If they held it for less than 12 days in the previous billing cycle, adjust the current charge for the difference in days", async () => {
           // e.g if they held it for 7 days in the last cycle, and 14 days in this cycle, only charge them for 14-5 or 9 days.
           await addLineItemToInvoice({
@@ -2108,6 +2151,23 @@ describe("Rental Service", () => {
       })
 
       describe("We charged more than the minimum the last invoice", () => {
+        it("If an item was not delivered (held for 0 days) do not apply the minimum", async () => {
+          const {
+            price,
+            appliedMinimum,
+            adjustedForPreviousMinimum,
+          } = await rentalService.calculatePriceForDaysRented({
+            invoice: { id: currentInvoiceId },
+            customer: testCustomer,
+            product: physicalProduct,
+            daysRented: 0,
+          })
+
+          expect(price).toBe(0)
+          expect(appliedMinimum).toBe(false)
+          expect(adjustedForPreviousMinimum).toBe(false)
+        })
+
         it("Charge them for exactly the number of days they held in this billing cycle", async () => {
           await addLineItemToInvoice({
             physicalProduct,
