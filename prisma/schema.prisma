@@ -985,6 +985,7 @@ model RentalInvoiceLineItem {
   price             Int
   currencyCode      String
   appliedMinimum    Boolean?         @default(false)
+  adjustedForPreviousMinimum Boolean? @default(false)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
