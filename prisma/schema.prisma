@@ -943,7 +943,6 @@ model OrderLineItem {
   reservationId String?                 @map("reservation") @db.VarChar(30)
   reservation   Reservation?            @relation(fields: [reservationId], references: [id])
   Order         Order[]
-
   reservationPhysicalProduct ReservationPhysicalProduct?
 }
 
@@ -1110,7 +1109,7 @@ model PhysicalProduct {
   purchasedOnReservationId     String?                        @map("purchasedOnReservation") @db.VarChar(30)
   purchasedOnReservation       Reservation?                   @relation("ReservationToPurchasedProducts", fields: [purchasedOnReservationId], references: [id])
   bagItems                     BagItem[]
-  reservationPhysicalProducts  ReservationPhysicalProduct[]
+  reservationPhysicalProduct   ReservationPhysicalProduct[]
 }
 
 model PhysicalProductPrice {
