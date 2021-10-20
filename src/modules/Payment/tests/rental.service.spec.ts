@@ -1919,15 +1919,7 @@ describe("Rental Service", () => {
   describe("Price for items", () => {
     let previousInvoiceId
     let currentInvoiceId
-
-    const computePriceForDaysRented = (product, daysRented) => {
-      const rawDailyRentalPrice =
-        product.productVariant.product.computedRentalPrice / 30
-      const roundedDailyRentalPriceAsString = rawDailyRentalPrice.toFixed(2)
-      const roundedDailyRentalPrice = +roundedDailyRentalPriceAsString
-
-      return Math.round(daysRented * roundedDailyRentalPrice * 100)
-    }
+    let physicalProduct
 
     const createTestCustomerWithRentalInvoices = async (
       lines?: Prisma.Enumerable<Prisma.RentalInvoiceCreateManyMembershipInput>
@@ -1969,51 +1961,85 @@ describe("Rental Service", () => {
       testCustomer = customer
     }
 
-    describe("No previous rental invoice", () => {
-      beforeAll(async () => {
-        // createTestCustomerWithRentalInvoices([
-        //   {
-        //     id: cuid(),
-        //     billingStartAt: timeUtils.xDaysAgoISOString(4),
-        //     billingEndAt: new Date(),
-        //     status: "Draft",
-        //   },
-        // ])
-      })
-
-      it("If a customer has held an item for less than or equal to 12 days, apply the minimum", async () => {
-        expect(0).toBe(1)
-      })
-
-      it("If a customer has held an item for more than 12 days, charge them the prorated total", () => {
-        expect(0).toBe(1)
-      })
-    })
-
-    describe("Previous rental invoice where we have a line item for the given product", () => {
-      let physicalProduct
-
-      beforeEach(async () => {
-        await createTestCustomerWithRentalInvoices()
-
-        physicalProduct = await prisma.client.physicalProduct.findFirst({
-          where: {
-            inventoryStatus: "Reservable",
-          },
-          select: {
-            id: true,
-            productVariant: {
-              select: {
-                product: {
-                  select: {
-                    computedRentalPrice: true,
-                  },
+    beforeEach(async () => {
+      physicalProduct = await prisma.client.physicalProduct.findFirst({
+        where: {
+          inventoryStatus: "Reservable",
+        },
+        select: {
+          id: true,
+          productVariant: {
+            select: {
+              product: {
+                select: {
+                  computedRentalPrice: true,
                 },
               },
             },
           },
-        })
+        },
       })
+    })
+
+    describe("No previous rental invoice", () => {
+      beforeEach(async () => {
+        await createTestCustomerWithRentalInvoices([
+          {
+            billingStartAt: timeUtils.xDaysAgoISOString(15),
+            billingEndAt: new Date(),
+            status: "Draft",
+          },
+        ])
+      })
+
+      it("If a customer has held an item for less than or equal to 12 days, apply the minimum", async () => {
+        const {
+          price,
+          appliedMinimum,
+          adjustedForPreviousMinimum,
+        } = await rentalService.calculatePriceForDaysRented({
+          customer: testCustomer,
+          product: physicalProduct,
+          daysRented: 5,
+        })
+
+        const expectedPrice = rentalService.calculateUnadjustedPriceForDaysRented(
+          physicalProduct,
+          12
+        )
+
+        expect(price).toBe(expectedPrice)
+        expect(appliedMinimum).toBe(true)
+        expect(adjustedForPreviousMinimum).toBe(false)
+      })
+
+      it("If a customer has held an item for more than 12 days, charge them the prorated total", async () => {
+        const {
+          price,
+          appliedMinimum,
+          adjustedForPreviousMinimum,
+        } = await rentalService.calculatePriceForDaysRented({
+          customer: testCustomer,
+          product: physicalProduct,
+          daysRented: 14,
+        })
+
+        const expectedPrice = rentalService.calculateUnadjustedPriceForDaysRented(
+          physicalProduct,
+          14
+        )
+
+        expect(price).toBe(expectedPrice)
+        expect(appliedMinimum).toBe(false)
+        expect(adjustedForPreviousMinimum).toBe(false)
+      })
+    })
+
+    describe("Previous rental invoice where we have a line item for the given product", () => {
+      beforeEach(async () => {
+        await createTestCustomerWithRentalInvoices()
+      })
+
       describe("We charged the minimum on the last invoice", () => {
         it("If they held it for less than 12 days in the previous billing cycle, adjust the current charge for the difference in days", async () => {
           // e.g if they held it for 7 days in the last cycle, and 14 days in this cycle, only charge them for 14-5 or 9 days.
@@ -2021,16 +2047,29 @@ describe("Rental Service", () => {
             invoiceId: previousInvoiceId,
             productId: physicalProduct.id,
             daysRented: 7,
+            price: rentalService.calculateUnadjustedPriceForDaysRented(
+              physicalProduct,
+              7
+            ),
           })
 
-          const price = await rentalService.calculatePriceForDaysRented({
+          const {
+            price,
+            appliedMinimum,
+            adjustedForPreviousMinimum,
+          } = await rentalService.calculatePriceForDaysRented({
             customer: testCustomer,
             product: physicalProduct,
             daysRented: 14,
           })
 
-          const expectedPrice = computePriceForDaysRented(physicalProduct, 9)
+          const expectedPrice = rentalService.calculateUnadjustedPriceForDaysRented(
+            physicalProduct,
+            9
+          )
           expect(price).toBe(expectedPrice)
+          expect(appliedMinimum).toBe(false)
+          expect(adjustedForPreviousMinimum).toBe(true)
         })
 
         it("If they held it for exactly 12 days in the previous billing cycle, do not adjust the current charge", async () => {
@@ -2038,16 +2077,29 @@ describe("Rental Service", () => {
             invoiceId: previousInvoiceId,
             productId: physicalProduct.id,
             daysRented: 12,
+            price: rentalService.calculateUnadjustedPriceForDaysRented(
+              physicalProduct,
+              12
+            ),
           })
 
-          const price = await rentalService.calculatePriceForDaysRented({
+          const {
+            price,
+            appliedMinimum,
+            adjustedForPreviousMinimum,
+          } = await rentalService.calculatePriceForDaysRented({
             customer: testCustomer,
             product: physicalProduct,
             daysRented: 14,
           })
 
-          const expectedPrice = computePriceForDaysRented(physicalProduct, 14)
+          const expectedPrice = rentalService.calculateUnadjustedPriceForDaysRented(
+            physicalProduct,
+            14
+          )
           expect(price).toBe(expectedPrice)
+          expect(appliedMinimum).toBe(false)
+          expect(adjustedForPreviousMinimum).toBe(false)
         })
       })
 
@@ -2059,14 +2111,23 @@ describe("Rental Service", () => {
             daysRented: 15,
           })
 
-          const price = await rentalService.calculatePriceForDaysRented({
+          const {
+            price,
+            appliedMinimum,
+            adjustedForPreviousMinimum,
+          } = await rentalService.calculatePriceForDaysRented({
             customer: testCustomer,
             product: physicalProduct,
             daysRented: 3,
           })
 
-          const expectedPrice = computePriceForDaysRented(physicalProduct, 3)
+          const expectedPrice = rentalService.calculateUnadjustedPriceForDaysRented(
+            physicalProduct,
+            3
+          )
           expect(price).toBe(expectedPrice)
+          expect(appliedMinimum).toBe(false)
+          expect(adjustedForPreviousMinimum).toBe(false)
         })
       })
 
@@ -2078,14 +2139,23 @@ describe("Rental Service", () => {
             daysRented: 0,
           })
 
-          const price = await rentalService.calculatePriceForDaysRented({
+          const {
+            price,
+            appliedMinimum,
+            adjustedForPreviousMinimum,
+          } = await rentalService.calculatePriceForDaysRented({
             customer: testCustomer,
             product: physicalProduct,
             daysRented: 3,
           })
 
-          const expectedPrice = computePriceForDaysRented(physicalProduct, 12)
+          const expectedPrice = rentalService.calculateUnadjustedPriceForDaysRented(
+            physicalProduct,
+            12
+          )
           expect(price).toBe(expectedPrice)
+          expect(appliedMinimum).toBe(true)
+          expect(adjustedForPreviousMinimum).toBe(false)
         })
 
         it("If a customer has held an item for more than 12 days, charge them the prorated total", async () => {
@@ -2095,38 +2165,65 @@ describe("Rental Service", () => {
             daysRented: 0,
           })
 
-          const price = await rentalService.calculatePriceForDaysRented({
+          const {
+            price,
+            appliedMinimum,
+            adjustedForPreviousMinimum,
+          } = await rentalService.calculatePriceForDaysRented({
             customer: testCustomer,
             product: physicalProduct,
             daysRented: 18,
           })
 
-          const expectedPrice = computePriceForDaysRented(physicalProduct, 18)
+          const expectedPrice = rentalService.calculateUnadjustedPriceForDaysRented(
+            physicalProduct,
+            18
+          )
           expect(price).toBe(expectedPrice)
+          expect(appliedMinimum).toBe(false)
+          expect(adjustedForPreviousMinimum).toBe(false)
         })
       })
 
       describe("Previous rental invoice where we have no line item for the given product", () => {
         it("If a customer has held an item for less than or equal to 12 days, apply the minimum", async () => {
-          const price = await rentalService.calculatePriceForDaysRented({
+          const {
+            price,
+            appliedMinimum,
+            adjustedForPreviousMinimum,
+          } = await rentalService.calculatePriceForDaysRented({
             customer: testCustomer,
             product: physicalProduct,
             daysRented: 3,
           })
 
-          const expectedPrice = computePriceForDaysRented(physicalProduct, 12)
+          const expectedPrice = rentalService.calculateUnadjustedPriceForDaysRented(
+            physicalProduct,
+            12
+          )
           expect(price).toBe(expectedPrice)
+          expect(appliedMinimum).toBe(true)
+          expect(adjustedForPreviousMinimum).toBe(false)
         })
 
         it("If a customer has held an item for more than 12 days, charge them the prorated total", async () => {
-          const price = await rentalService.calculatePriceForDaysRented({
+          const {
+            price,
+            appliedMinimum,
+            adjustedForPreviousMinimum,
+          } = await rentalService.calculatePriceForDaysRented({
             customer: testCustomer,
             product: physicalProduct,
             daysRented: 15,
           })
 
-          const expectedPrice = computePriceForDaysRented(physicalProduct, 15)
+          const expectedPrice = rentalService.calculateUnadjustedPriceForDaysRented(
+            physicalProduct,
+            15
+          )
           expect(price).toBe(expectedPrice)
+          expect(appliedMinimum).toBe(false)
+          expect(adjustedForPreviousMinimum).toBe(false)
         })
       })
     })
@@ -2472,10 +2569,12 @@ const createTestCustomer = async ({
 const addLineItemToInvoice = async ({
   invoiceId,
   productId,
+  price,
   daysRented,
 }: {
   invoiceId: string
   productId: string
+  price?: number
   daysRented: number
 }) => {
   return await prisma.client.rentalInvoice.update({
@@ -2487,7 +2586,7 @@ const addLineItemToInvoice = async ({
             {
               physicalProductId: productId,
               daysRented: daysRented,
-              price: 0,
+              price: price || 0,
               currencyCode: "USD",
             },
           ],
