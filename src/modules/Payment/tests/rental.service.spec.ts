@@ -1993,28 +1993,28 @@ describe("Rental Service", () => {
     describe("Previous rental invoice where we have a line item for the given product", () => {
       let physicalProduct
 
-      describe("We charged the minimum on the last invoice", () => {
-        beforeEach(async () => {
-          await createTestCustomerWithRentalInvoices()
+      beforeEach(async () => {
+        await createTestCustomerWithRentalInvoices()
 
-          physicalProduct = await prisma.client.physicalProduct.findFirst({
-            where: {
-              inventoryStatus: "Reservable",
-            },
-            select: {
-              id: true,
-              productVariant: {
-                select: {
-                  product: {
-                    select: {
-                      computedRentalPrice: true,
-                    },
+        physicalProduct = await prisma.client.physicalProduct.findFirst({
+          where: {
+            inventoryStatus: "Reservable",
+          },
+          select: {
+            id: true,
+            productVariant: {
+              select: {
+                product: {
+                  select: {
+                    computedRentalPrice: true,
                   },
                 },
               },
             },
-          })
+          },
         })
+      })
+      describe("We charged the minimum on the last invoice", () => {
         it("If they held it for less than 12 days in the previous billing cycle, adjust the current charge for the difference in days", async () => {
           // e.g if they held it for 7 days in the last cycle, and 14 days in this cycle, only charge them for 14-5 or 9 days.
           await addLineItemToInvoice({
@@ -2027,7 +2027,6 @@ describe("Rental Service", () => {
             customer: testCustomer,
             product: physicalProduct,
             daysRented: 14,
-            includeMinimumCharge: true,
           })
 
           const expectedPrice = computePriceForDaysRented(physicalProduct, 9)
@@ -2046,7 +2045,6 @@ describe("Rental Service", () => {
             customer: testCustomer,
             product: physicalProduct,
             daysRented: 14,
-            includeMinimumCharge: true,
           })
 
           const expectedPrice = computePriceForDaysRented(physicalProduct, 14)
@@ -2066,7 +2064,6 @@ describe("Rental Service", () => {
             customer: testCustomer,
             product: physicalProduct,
             daysRented: 3,
-            includeMinimumCharge: true,
           })
 
           const expectedPrice = computePriceForDaysRented(physicalProduct, 3)
@@ -2086,7 +2083,6 @@ describe("Rental Service", () => {
             customer: testCustomer,
             product: physicalProduct,
             daysRented: 3,
-            includeMinimumCharge: true,
           })
 
           const expectedPrice = computePriceForDaysRented(physicalProduct, 12)
@@ -2104,7 +2100,6 @@ describe("Rental Service", () => {
             customer: testCustomer,
             product: physicalProduct,
             daysRented: 18,
-            includeMinimumCharge: true,
           })
 
           const expectedPrice = computePriceForDaysRented(physicalProduct, 18)
@@ -2118,7 +2113,6 @@ describe("Rental Service", () => {
             customer: testCustomer,
             product: physicalProduct,
             daysRented: 3,
-            includeMinimumCharge: true,
           })
 
           const expectedPrice = computePriceForDaysRented(physicalProduct, 12)
@@ -2130,7 +2124,6 @@ describe("Rental Service", () => {
             customer: testCustomer,
             product: physicalProduct,
             daysRented: 15,
-            includeMinimumCharge: true,
           })
 
           const expectedPrice = computePriceForDaysRented(physicalProduct, 15)
