@@ -2035,7 +2035,6 @@ describe("Rental Service", () => {
         })
 
         it("If they held it for exactly 12 days in the previous billing cycle, do not adjust the current charge", async () => {
-          // e.g if they held it for 7 days in the last cycle, and 14 days in this cycle, only charge them for 14-5 or 9 days.
           await addLineItemToInvoice({
             invoiceId: previousInvoiceId,
             productId: physicalProduct.id,
