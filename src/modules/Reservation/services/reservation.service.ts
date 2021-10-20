@@ -326,7 +326,7 @@ export class ReservationService {
       this.error.setUserContext(customerWithData.user)
       this.error.setExtraContext({ items })
       this.error.captureError(err)
-      console.error(err)
+
       this.logger.error(`Error in post-reservation code`, {
         customerWithData,
         reservation,
