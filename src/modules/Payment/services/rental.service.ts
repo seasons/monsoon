@@ -685,7 +685,11 @@ export class RentalService {
           ...daysRentedMetadata
         } = await this.calcDaysRented(invoice, physicalProduct)
 
-        const price = await this.calculatePriceForDaysRented({
+        const {
+          price,
+          adjustedForPreviousMinimum,
+          appliedMinimum,
+        } = await this.calculatePriceForDaysRented({
           invoice,
           customer: custWithExtraData,
           product: physicalProduct,
@@ -697,6 +701,8 @@ export class RentalService {
           daysRented,
           physicalProduct: { connect: { id: physicalProduct.id } },
           price,
+          appliedMinimum,
+          adjustedForPreviousMinimum,
         }) as Prisma.RentalInvoiceLineItemCreateInput
       })
     )) as any
