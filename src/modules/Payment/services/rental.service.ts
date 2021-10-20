@@ -27,7 +27,7 @@ export const SENT_PACKAGE_CUSHION = 3 // TODO: Set as an env var
 
 type LineItemToDescriptionLineItem = Pick<
   RentalInvoiceLineItem,
-  "daysRented" | "name"
+  "daysRented" | "name" | "appliedMinimum" | "adjustedForPreviousMinimum"
 > & {
   physicalProduct: {
     productVariant: {
@@ -1302,7 +1302,18 @@ export class RentalService {
     const displaySize = lineItem.physicalProduct.productVariant.displayShort
     const monthlyRentalPrice =
       lineItem.physicalProduct.productVariant.product.computedRentalPrice
-    return `${productName} (${displaySize}) for ${lineItem.daysRented} days at \$${monthlyRentalPrice} per mo.`
+
+    let text = `${productName} (${displaySize}) for ${lineItem.daysRented} days at \$${monthlyRentalPrice} per mo.`
+
+    if (lineItem.appliedMinimum) {
+      text += ` Applied minimum charge for 12 days.`
+    }
+
+    if (lineItem.adjustedForPreviousMinimum) {
+      text += ` Adjusted for previous minimum charge. `
+    }
+
+    return text
   }
 
   private isProcessingLineItem(lineItem: Pick<RentalInvoiceLineItem, "name">) {
