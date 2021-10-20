@@ -899,7 +899,7 @@ describe("Rental Service", () => {
             daysRented: 9,
             rentalStartedAt: timeUtils.xDaysAgoISOString(9),
             rentalEndedAt: now,
-            price: 3200,
+            price: 3200, // expect a minimum charge of 12 days
           },
           [reservationThreeSUIDs[0]]: {
             daysRented: 0,
