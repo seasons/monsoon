@@ -687,6 +687,7 @@ export class RentalService {
         } = await this.calcDaysRented(invoice, physicalProduct)
 
         const price = await this.calculatePriceForDaysRented({
+          invoice,
           customer: custWithExtraData,
           product: physicalProduct,
           daysRented,
@@ -786,10 +787,12 @@ export class RentalService {
   }
 
   async calculatePriceForDaysRented({
+    invoice,
     customer,
     product,
     daysRented,
   }: {
+    invoice: Pick<RentalInvoice, "id">
     customer: Pick<Customer, "id">
     product: Pick<PhysicalProduct, "id"> & {
       productVariant: {
@@ -808,6 +811,9 @@ export class RentalService {
           customer: { id: customer.id },
         },
         status: "Billed",
+        NOT: {
+          id: invoice.id,
+        },
       },
       select: {
         billingStartAt: true,
@@ -840,7 +846,11 @@ export class RentalService {
     )
 
     // Apply minimum if needed
-    if (!previousInvoice || previousLineItem?.price === 0) {
+    if (
+      !previousInvoice ||
+      (previousInvoice && !previousLineItem) ||
+      previousLineItem?.price === 0
+    ) {
       const adjustedDaysRented = Math.max(
         daysNeededForMinimumCharge,
         daysRented
@@ -945,6 +955,7 @@ export class RentalService {
       )
 
       const rentalPriceForDaysUntilToday = this.calculatePriceForDaysRented({
+        invoice: currentInvoice,
         product: product,
         customer: { id: customerId },
         daysRented,
