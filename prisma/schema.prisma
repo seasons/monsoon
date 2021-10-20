@@ -1422,6 +1422,7 @@ enum ReservationPhysicalProductStatus {
   ReturnProcessed
   ResetEarly
   Hold
+  Returned
   Lost
 }
 
