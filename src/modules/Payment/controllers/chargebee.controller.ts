@@ -97,7 +97,9 @@ export class ChargebeeController {
         li => li.entity_id === plan.planID
       )
 
-      if (isPlanPayment) {
+      const notOnNewPlan =
+        plan.planID !== "access-monthly" && plan.planID !== "access-yearly"
+      if (isPlanPayment && notOnNewPlan) {
         const existingCredits = prismaCustomer.membership.creditBalance ?? 0
         const newCredits = Math.round(
           prismaCustomer.membership.plan.price * 1.15
