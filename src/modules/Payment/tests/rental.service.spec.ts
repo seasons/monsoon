@@ -2610,6 +2610,7 @@ const addToBagAndReserveForCustomer = async (
           shippingLabel: { select: { trackingNumber: true } },
         },
       },
+      shippingMethod: { select: { code: true } },
     },
   })
   await setPackageAmount(r.sentPackage.id, UPS_GROUND_FEE)

@@ -76,6 +76,7 @@ export const CREATE_RENTAL_INVOICE_LINE_ITEMS_INVOICE_SELECT = Prisma.validator<
         },
       },
       sentPackage: { select: { amount: true } },
+      shippingMethod: { select: { code: true } },
     },
     orderBy: { createdAt: "asc" },
   },
@@ -695,7 +696,7 @@ export class RentalService {
           ...daysRentedMetadata
         } = await this.calcDaysRented(invoice, physicalProduct)
 
-        const defaultPrice = this.calculatePriceForDaysRented({
+        const defaultPrice = await this.calculatePriceForDaysRented({
           customer: custWithExtraData,
           product: physicalProduct,
           daysRented,
