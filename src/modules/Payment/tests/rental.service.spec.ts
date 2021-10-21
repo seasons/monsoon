@@ -1,7 +1,9 @@
+import { EmailService } from "@app/modules/Email/services/email.service"
 import { PushNotificationService } from "@app/modules/PushNotification/services/pushNotification.service"
 import { ReservationService } from "@app/modules/Reservation"
 import { TimeUtilsService } from "@app/modules/Utils/services/time.service"
 import { UtilsService } from "@app/modules/Utils/services/utils.service"
+import { EmailServiceMock } from "@app/modules/Utils/tests/emailService.mock"
 import { PrismaService } from "@app/prisma/prisma.service"
 import { Test, TestingModule } from "@nestjs/testing"
 import {
@@ -250,6 +252,7 @@ describe("Rental Service", () => {
   beforeAll(async () => {
     const moduleBuilder = await Test.createTestingModule(PAYMENT_MODULE_DEF)
     moduleBuilder.overrideProvider(PaymentService).useClass(PaymentServiceMock)
+    moduleBuilder.overrideProvider(EmailService).useClass(EmailServiceMock)
 
     moduleRef = await moduleBuilder.compile()
 
