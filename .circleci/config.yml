@@ -76,6 +76,10 @@ jobs:
           pkg-manager: yarn
 
       - run:
+          name: Build
+          command: yarn tsc
+
+      - run:
           name: Initialize monsoon$dev schema
           command: yarn prisma migrate deploy
 
