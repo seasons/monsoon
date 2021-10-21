@@ -1,8 +1,10 @@
+import { APP_MODULE_DEF } from "@app/app.module"
+import { INestApplication } from "@nestjs/common"
+import { Test } from "@nestjs/testing"
 import request from "supertest"
 
 import * as queryMap from "./complete.queryMap.json"
 
-const server = "http://localhost:4000/"
 let token = "Bearer "
 
 // NOTE - not in queryMap but required for reservation flow
@@ -43,6 +45,19 @@ const variableMap = {
 }
 
 describe("INTEGRATION TEST", () => {
+  let app: INestApplication
+  let server
+
+  beforeAll(async () => {
+    // Create the test module and initalize the app
+    const moduleRef = await Test.createTestingModule(APP_MODULE_DEF).compile()
+
+    app = moduleRef.createNestApplication()
+    await app.init()
+
+    server = app.getHttpServer()
+  })
+
   it("LogIn", done => {
     request(server)
       .post("/graphql")
