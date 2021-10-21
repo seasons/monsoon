@@ -40,8 +40,18 @@ jobs:
           command: node bin/cli.js spp local staging -f
 
       - run:
+          name: Install JUnit coverage reporter
+          command: yarn add --dev jest-junit
+
+      - run:
           name: Run unit tests
           command: yarn test --verbose
+
+      - store_test_results:
+          path: ./reports/junit/
+
+      - store_artifacts:
+          path: ./reports/junit
 
   test-integration:
     machine:
