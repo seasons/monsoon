@@ -24,6 +24,16 @@ export interface SubscriptionData {
   planID: string
 }
 
+const GRANDFATHERED_PLAN_IDS = [
+  "essential",
+  "essential-1",
+  "essential-2",
+  "essential-6",
+  "all-access",
+  "all-access-1",
+  "all-access-2",
+]
+
 @Injectable()
 export class SubscriptionService {
   constructor(
@@ -142,6 +152,7 @@ export class SubscriptionService {
         where: { id: membership.id },
         data: {
           plan: { connect: { planID } },
+          grandfathered: GRANDFATHERED_PLAN_IDS.includes(planID),
         },
       })
     } catch (e) {
@@ -417,6 +428,9 @@ export class SubscriptionService {
       },
       membership: {
         create: {
+          grandfathered: GRANDFATHERED_PLAN_IDS.includes(
+            subscriptionData.planID
+          ),
           subscriptionId: subscriptionData.subscriptionId,
           giftId: giftID,
           plan: { connect: { planID: subscriptionData.planID } },
