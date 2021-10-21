@@ -1,9 +1,10 @@
 import { EmailService } from "@app/modules/Email/services/email.service"
 import { PushNotificationService } from "@app/modules/PushNotification/services/pushNotification.service"
 import { ReservationService } from "@app/modules/Reservation"
+import { EmailServiceMock } from "@app/modules/Utils/mocks/emailService.mock"
+import { ShippoMock } from "@app/modules/Utils/mocks/shippo.mock"
 import { TimeUtilsService } from "@app/modules/Utils/services/time.service"
 import { UtilsService } from "@app/modules/Utils/services/utils.service"
-import { EmailServiceMock } from "@app/modules/Utils/tests/emailService.mock"
 import { PrismaService } from "@app/prisma/prisma.service"
 import { Test, TestingModule } from "@nestjs/testing"
 import {
@@ -266,6 +267,7 @@ describe("Rental Service", () => {
       PushNotificationService
     )
 
+    jest.mock("shippo", () => new ShippoMock())
     jest
       .spyOn<any, any>(chargebee.subscription, "add_charge_at_term_end")
       .mockReturnValue(
