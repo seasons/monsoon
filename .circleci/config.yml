@@ -23,7 +23,7 @@ jobs:
 
       - docker/install-docker
 
-      - docker/install-docker-compose
+      # - docker/install-docker-compose
 
       - run:
           name: Start up docker containers
