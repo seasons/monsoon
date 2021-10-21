@@ -30,6 +30,10 @@ jobs:
           command: docker-compose up -d
 
       - run:
+          name: Initialize monsoon$dev schema
+          command: yarn prisma migrate deploy
+
+      - run:
           name: Install postgres tools
           command: sudo apt update && sudo apt install postgresql
 
