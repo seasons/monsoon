@@ -30,6 +30,10 @@ jobs:
           command: docker-compose up -d
 
       - run:
+          name: Install postgres tools
+          command: sudo apt update && sudo apt install postgresql
+
+      - run:
           name: Clone staging data into local Postgres DB
           command: node bin/cli.js spp local staging -f
 
