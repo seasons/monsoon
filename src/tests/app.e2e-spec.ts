@@ -32,13 +32,6 @@ const variableMap = {
   GetBrands: {
     orderBy: "id_DESC",
   },
-  PauseSubscription: {
-    subscriptionID: "",
-    pauseType: "WithoutItems",
-  },
-  ResumeSubscription: {
-    subscriptionID: "",
-  },
   updateShippingAddress: {
     name: "Bobby Tables",
     city: "Brooklyn",
@@ -152,11 +145,6 @@ describe("INTEGRATION TEST", () => {
         expect(res.body.data.me.customer.invoices).toBeInstanceOf(Object)
         expect(res.body.data.me.customer.membership).toBeInstanceOf(Object)
         expect(res.body.data.me.customer.membership.plan).toBeInstanceOf(Object)
-
-        variableMap.PauseSubscription.subscriptionID =
-          res.body.data.me.customer.membership.subscriptionId
-        variableMap.ResumeSubscription.subscriptionID =
-          res.body.data.me.customer.membership.subscriptionId
 
         done()
       })
@@ -488,113 +476,65 @@ describe("INTEGRATION TEST", () => {
   //   })
   // })
 
-  it("PauseSubscription", done => {
-    request(server)
-      .post("/graphql")
-      .send({
-        operationName: "PauseSubscription",
-        query: queryMap.PauseSubscription,
-        variables: variableMap.PauseSubscription,
-      })
-      .set("Accept", "/")
-      .set("application", "spring")
-      .set("authorization", token)
-      .expect("Content-Type", /json/)
-      .expect(200)
-      .end(function (err, res) {
-        if (err) return done(err)
+  // it("updateShippingAddress", done => {
+  //   request(server)
+  //     .post("/graphql")
+  //     .send({
+  //       operationName: "updateShippingAddress",
+  //       query: queryMap.updateShippingAddress,
+  //       variables: variableMap.updateShippingAddress,
+  //     })
+  //     .set("Accept", "/")
+  //     .set("application", "spring")
+  //     .set("authorization", token)
+  //     .expect("Content-Type", /json/)
+  //     .expect(200)
+  //     .end(function (err, res) {
+  //       if (err) return done(err)
 
-        expect(res.body).toBeInstanceOf(Object)
-        expect(res.body.data).toBeInstanceOf(Object)
-        expect(res.body.data.pauseSubscription).toBeTruthy()
+  //       expect(res.body).toBeInstanceOf(Object)
+  //       expect(res.body.data).toBeInstanceOf(Object)
+  //       expect(res.body.data.addCustomerDetails).toBeInstanceOf(Object)
+  //       expect(res.body.data.addCustomerDetails.id.length).toBeGreaterThan(10)
 
-        done()
-      })
-  })
+  //       done()
+  //     })
+  // })
 
-  it("ResumeSubscription", done => {
-    request(server)
-      .post("/graphql")
-      .send({
-        operationName: "ResumeSubscription",
-        query: queryMap.ResumeSubscription,
-        variables: variableMap.ResumeSubscription,
-      })
-      .set("Accept", "/")
-      .set("application", "spring")
-      .set("authorization", token)
-      .expect("Content-Type", /json/)
-      .expect(200)
-      .end(function (err, res) {
-        if (err) return done(err)
+  // it("New Shipping address is saved", done => {
+  //   request(server)
+  //     .post("/graphql")
+  //     .send({
+  //       operationName: "GetCustomer",
+  //       query: queryMap.GetCustomer,
+  //     })
+  //     .set("Accept", "/")
+  //     .set("application", "spring")
+  //     .set("authorization", token)
+  //     .expect("Content-Type", /json/)
+  //     .expect(200)
+  //     .end(function (err, res) {
+  //       if (err) return done(err)
 
-        expect(res.body).toBeInstanceOf(Object)
-        expect(res.body.data).toBeInstanceOf(Object)
-        expect(res.body.data.resumeSubscription).toBeTruthy()
+  //       expect(res.body).toBeInstanceOf(Object)
+  //       expect(res.body.data).toBeInstanceOf(Object)
+  //       expect(res.body.data.me).toBeInstanceOf(Object)
+  //       expect(res.body.data.me.customer).toBeInstanceOf(Object)
+  //       expect(res.body.data.me.customer.detail).toBeInstanceOf(Object)
+  //       expect(res.body.data.me.customer.detail.shippingAddress).toBeInstanceOf(
+  //         Object
+  //       )
 
-        done()
-      })
-  })
+  //       const address = res.body.data.me.customer.detail.shippingAddress
+  //       const expected = variableMap.updateShippingAddress
 
-  it("updateShippingAddress", done => {
-    request(server)
-      .post("/graphql")
-      .send({
-        operationName: "updateShippingAddress",
-        query: queryMap.updateShippingAddress,
-        variables: variableMap.updateShippingAddress,
-      })
-      .set("Accept", "/")
-      .set("application", "spring")
-      .set("authorization", token)
-      .expect("Content-Type", /json/)
-      .expect(200)
-      .end(function (err, res) {
-        if (err) return done(err)
+  //       expect(address.address1).toBe(expected.address1)
+  //       expect(address.address2).toBe(expected.address2)
+  //       expect(address.city).toBe(expected.city)
+  //       expect(address.state).toBe(expected.state)
+  //       expect(address.zipCode).toBe(expected.zipCode)
 
-        expect(res.body).toBeInstanceOf(Object)
-        expect(res.body.data).toBeInstanceOf(Object)
-        expect(res.body.data.addCustomerDetails).toBeInstanceOf(Object)
-        expect(res.body.data.addCustomerDetails.id.length).toBeGreaterThan(10)
-
-        done()
-      })
-  })
-
-  it("New Shipping address is saved", done => {
-    request(server)
-      .post("/graphql")
-      .send({
-        operationName: "GetCustomer",
-        query: queryMap.GetCustomer,
-      })
-      .set("Accept", "/")
-      .set("application", "spring")
-      .set("authorization", token)
-      .expect("Content-Type", /json/)
-      .expect(200)
-      .end(function (err, res) {
-        if (err) return done(err)
-
-        expect(res.body).toBeInstanceOf(Object)
-        expect(res.body.data).toBeInstanceOf(Object)
-        expect(res.body.data.me).toBeInstanceOf(Object)
-        expect(res.body.data.me.customer).toBeInstanceOf(Object)
-        expect(res.body.data.me.customer.detail).toBeInstanceOf(Object)
-        expect(res.body.data.me.customer.detail.shippingAddress).toBeInstanceOf(
-          Object
-        )
-
-        const address = res.body.data.me.customer.detail.shippingAddress
-        const expected = variableMap.updateShippingAddress
-
-        expect(address.address1).toBe(expected.address1)
-        expect(address.address2).toBe(expected.address2)
-        expect(address.city).toBe(expected.city)
-        expect(address.state).toBe(expected.state)
-        expect(address.zipCode).toBe(expected.zipCode)
-
-        done()
-      })
-  })
+  //       done()
+  //     })
+  // })
 })
