@@ -10,7 +10,7 @@ const addToBagMutation = `mutation addToBag($item: ID!) {\n  addToBag(item: $ite
 // Query variables mapped to queryMap keys
 const variableMap = {
   LogIn: {
-    email: "integration_test_ci_1@seasons.nyc",
+    email: "integration_test_ci@seasons.nyc",
     password: "Seasons2020",
   },
   GetProductsByTag: {
