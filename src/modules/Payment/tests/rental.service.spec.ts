@@ -1,5 +1,8 @@
+import { EmailService } from "@app/modules/Email/services/email.service"
 import { PushNotificationService } from "@app/modules/PushNotification/services/pushNotification.service"
 import { ReservationService } from "@app/modules/Reservation"
+import { EmailServiceMock } from "@app/modules/Utils/mocks/emailService.mock"
+import { ShippoMock } from "@app/modules/Utils/mocks/shippo.mock"
 import { TimeUtilsService } from "@app/modules/Utils/services/time.service"
 import { UtilsService } from "@app/modules/Utils/services/utils.service"
 import { PrismaService } from "@app/prisma/prisma.service"
@@ -250,6 +253,7 @@ describe("Rental Service", () => {
   beforeAll(async () => {
     const moduleBuilder = await Test.createTestingModule(PAYMENT_MODULE_DEF)
     moduleBuilder.overrideProvider(PaymentService).useClass(PaymentServiceMock)
+    moduleBuilder.overrideProvider(EmailService).useClass(EmailServiceMock)
 
     moduleRef = await moduleBuilder.compile()
 
@@ -263,6 +267,7 @@ describe("Rental Service", () => {
       PushNotificationService
     )
 
+    jest.mock("shippo", () => new ShippoMock())
     jest
       .spyOn<any, any>(chargebee.subscription, "add_charge_at_term_end")
       .mockReturnValue(

@@ -64,13 +64,17 @@ type Mutation {
   updateResumeDate(date: DateTime): Boolean @hasRole(roles: [Customer])
   removeScheduledPause(subscriptionID: String!): Boolean
     @hasRole(roles: [Customer])
+    @deprecated(reason: "Moved to pause-less plan structure")
   pauseSubscription(
     subscriptionID: String!
     pauseType: PauseType
     reasonID: ID
-  ): Boolean @hasRole(roles: [Customer])
+  ): Boolean
+    @hasRole(roles: [Customer])
+    @deprecated(reason: "Moved to pause-less plan structure")
   resumeSubscription(subscriptionID: String!, date: DateTime): Boolean
     @hasRole(roles: [Customer])
+    @deprecated(reason: "Moved to pause-less plan structure")
   refundInvoice(input: RefundInvoiceInput): Boolean! @hasRole(roles: [Admin])
   checkCoupon(couponID: String!): Coupon
 }
