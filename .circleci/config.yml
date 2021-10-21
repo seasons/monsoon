@@ -45,7 +45,7 @@ jobs:
 
       - run:
           name: Run unit tests
-          command: yarn test --verbose
+          command: yarn test
 
       - store_test_results:
           path: ./reports/junit/
