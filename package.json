@@ -35,10 +35,10 @@
     "start": "concurrently -k -n 'TSC,TS-NODE' -c 'gray.dim,blue.dim' 'yarn tsc -w' 'yarn start:server'",
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
-    "test:e2e:ci": "jest --config ./jest-e2e.json --runInBand --reporters=default --reporters=jest-junit",
+    "test:e2e:ci": "jest --config ./jest-e2e.json --runInBand --reporters=default --reporters=jest-junit --detectOpenHandles  --forceExit --verbose",
     "test:e2e": "jest --config ./jest-e2e.json",
     "test:watch": "jest --watch",
-    "test": "TEST=true jest --runInBand --detectOpenHandles --forceExit --verbose"
+    "test": "TEST=true jest --detectOpenHandles --forceExit --verbose"
   },
   "dependencies": {
     "@apollo/gateway": "0.16.9",

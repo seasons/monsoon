@@ -54,6 +54,10 @@ describe("Core applications flows", () => {
     server = bootstrap.server
   })
 
+  afterAll(async () => {
+    app.close()
+  })
+
   it("LogIn", done => {
     request(server)
       .post("/graphql")
