@@ -1,11 +1,8 @@
-import { APP_MODULE_DEF } from "@app/app.module"
-import { INestApplication } from "@nestjs/common"
-import { Test } from "@nestjs/testing"
+import { bootstrapServer } from "@app/index"
+import { INestApplication, Logger } from "@nestjs/common"
 import request from "supertest"
 
 import * as queryMap from "./complete.queryMap.json"
-
-let token = "Bearer "
 
 // NOTE - not in queryMap but required for reservation flow
 const addToBagMutation = `mutation addToBag($item: ID!) {\n  addToBag(item: $item) {\n    id\n    productVariant {\n      id\n      reservable\n      reserved\n      nonReservable\n    }\n    status\n  }\n}\n`
@@ -13,7 +10,7 @@ const addToBagMutation = `mutation addToBag($item: ID!) {\n  addToBag(item: $ite
 // Query variables mapped to queryMap keys
 const variableMap = {
   LogIn: {
-    email: "integration_test_ci@seasons.nyc",
+    email: "integration_test_ci_1@seasons.nyc",
     password: "Seasons2020",
   },
   GetProductsByTag: {
@@ -44,18 +41,17 @@ const variableMap = {
   },
 }
 
-describe("INTEGRATION TEST", () => {
+describe("Core applications flows", () => {
+  let logger = new Logger("Integration Tests")
   let app: INestApplication
   let server
+  let token = "Bearer "
 
   beforeAll(async () => {
     // Create the test module and initalize the app
-    const moduleRef = await Test.createTestingModule(APP_MODULE_DEF).compile()
-
-    app = moduleRef.createNestApplication()
-    await app.init()
-
-    server = app.getHttpServer()
+    let bootstrap = await bootstrapServer(4354)
+    app = bootstrap.app
+    server = bootstrap.server
   })
 
   it("LogIn", done => {
@@ -71,13 +67,17 @@ describe("INTEGRATION TEST", () => {
       .expect("Content-Type", /json/)
       .expect(200)
       .end(function (err, res) {
+        ;``
         if (err) return done(err)
+
+        console.log("LogIn", JSON.stringify(res.body, null, 2))
 
         expect(res.body).toBeInstanceOf(Object)
         expect(res.body.data).toBeInstanceOf(Object)
         expect(res.body.data.login).toBeInstanceOf(Object)
         expect(res.body.data.login.customer).toBeInstanceOf(Object)
         expect(res.body.data.login.user).toBeInstanceOf(Object)
+        expect(res.body.data.login.user.email).toEqual(variableMap.LogIn.email)
         expect(res.body.data.login.token.length).toBeGreaterThan(100)
 
         token += res.body.data.login.token
@@ -101,9 +101,11 @@ describe("INTEGRATION TEST", () => {
       .end(function (err, res) {
         if (err) return done(err)
 
+        console.log("GetCustomer", JSON.stringify(res.body, null, 2))
+
         expect(res.body).toBeInstanceOf(Object)
         expect(res.body.data).toBeInstanceOf(Object)
-        expect(res.body.data.me).toBeInstanceOf(Object)
+        expect(res.body.data.me.user).not.toBeNull()
 
         done()
       })
@@ -123,6 +125,8 @@ describe("INTEGRATION TEST", () => {
       .expect(200)
       .end(function (err, res) {
         if (err) return done(err)
+
+        console.log("GetUserPreferences", JSON.stringify(res.body, null, 2))
 
         expect(res.body).toBeInstanceOf(Object)
         expect(res.body.data).toBeInstanceOf(Object)
@@ -153,6 +157,8 @@ describe("INTEGRATION TEST", () => {
       .end(function (err, res) {
         if (err) return done(err)
 
+        console.log("GetMembershipInfo", JSON.stringify(res.body, null, 2))
+
         expect(res.body).toBeInstanceOf(Object)
         expect(res.body.data).toBeInstanceOf(Object)
         expect(res.body.data.me).toBeInstanceOf(Object)
@@ -179,6 +185,8 @@ describe("INTEGRATION TEST", () => {
       .expect(200)
       .end(function (err, res) {
         if (err) return done(err)
+
+        console.log("GetUser", JSON.stringify(res.body, null, 2))
 
         expect(res.body).toBeInstanceOf(Object)
         expect(res.body.data).toBeInstanceOf(Object)
@@ -211,6 +219,8 @@ describe("INTEGRATION TEST", () => {
       .end(function (err, res) {
         if (err) return done(err)
 
+        console.log("BeamsData", JSON.stringify(res.body, null, 2))
+
         expect(res.body).toBeInstanceOf(Object)
         expect(res.body.data).toBeInstanceOf(Object)
         expect(res.body.data.me).toBeInstanceOf(Object)
@@ -235,6 +245,8 @@ describe("INTEGRATION TEST", () => {
       .expect(200)
       .end(function (err, res) {
         if (err) return done(err)
+
+        // console.log("GetProductsByTag", JSON.stringify(res.body, null, 2))
 
         expect(res.body).toBeInstanceOf(Object)
         expect(res.body.data).toBeInstanceOf(Object)
@@ -278,6 +290,8 @@ describe("INTEGRATION TEST", () => {
       .expect(200)
       .end(function (err, res) {
         if (err) return done(err)
+
+        // console.log("GetBrands", JSON.stringify(res.body, null, 2))
 
         expect(res.body).toBeInstanceOf(Object)
         expect(res.body.data).toBeInstanceOf(Object)
