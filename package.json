@@ -38,7 +38,7 @@
     "test:e2e:ci": "jest --config ./src/tests/jest-e2e.json --runInBand --reporters=default --reporters=jest-junit",
     "test:e2e": "jest --config ./src/tests/jest-e2e.json",
     "test:watch": "jest --watch",
-    "test": "TEST=true jest --watchAll=false"
+    "test": "TEST=true jest --runInBand --detectOpenHandles --forceExit --verbose"
   },
   "dependencies": {
     "@apollo/gateway": "0.16.9",
