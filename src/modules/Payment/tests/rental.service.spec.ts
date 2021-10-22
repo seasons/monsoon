@@ -3,6 +3,7 @@ import { PushNotificationService } from "@app/modules/PushNotification/services/
 import { ReservationService } from "@app/modules/Reservation"
 import { EmailServiceMock } from "@app/modules/Utils/mocks/emailService.mock"
 import { ShippoMock } from "@app/modules/Utils/mocks/shippo.mock"
+import { TestUtilsService } from "@app/modules/Utils/services/test.service"
 import { TimeUtilsService } from "@app/modules/Utils/services/time.service"
 import { UtilsService } from "@app/modules/Utils/services/utils.service"
 import { PrismaService } from "@app/prisma/prisma.service"
@@ -240,6 +241,7 @@ let timeUtils: TimeUtilsService
 let cleanupFuncs = []
 let testCustomer: any
 let moduleRef: TestingModule
+let testUtils: TestUtilsService
 
 const testCustomerSelect = Prisma.validator<Prisma.CustomerSelect>()({
   id: true,
@@ -262,6 +264,7 @@ describe("Rental Service", () => {
     utils = moduleRef.get<UtilsService>(UtilsService)
     timeUtils = moduleRef.get<TimeUtilsService>(TimeUtilsService)
     reservationService = moduleRef.get<ReservationService>(ReservationService)
+    testUtils = moduleRef.get<TestUtilsService>(TestUtilsService)
 
     const notificationService = moduleRef.get<PushNotificationService>(
       PushNotificationService
@@ -323,7 +326,7 @@ describe("Rental Service", () => {
 
   describe("Calculate Days Rented", () => {
     beforeEach(async () => {
-      const { cleanupFunc, customer } = await createTestCustomer({
+      const { cleanupFunc, customer } = await testUtils.createTestCustomer({
         select: testCustomerSelect,
       })
       cleanupFuncs.push(cleanupFunc)
@@ -806,7 +809,7 @@ describe("Rental Service", () => {
       let reservationThree
 
       beforeAll(async () => {
-        const { cleanupFunc, customer } = await createTestCustomer({
+        const { cleanupFunc, customer } = await testUtils.createTestCustomer({
           select: testCustomerSelect,
         })
         cleanupFuncs.push(cleanupFunc)
@@ -1062,7 +1065,7 @@ describe("Rental Service", () => {
 
     describe("Processing Edge cases", () => {
       beforeEach(async () => {
-        const { cleanupFunc, customer } = await createTestCustomer({
+        const { cleanupFunc, customer } = await testUtils.createTestCustomer({
           select: testCustomerSelect,
         })
         cleanupFuncs.push(cleanupFunc)
@@ -1246,7 +1249,7 @@ describe("Rental Service", () => {
       let expectedResultsBySUIDOrName
 
       beforeAll(async () => {
-        const { cleanupFunc, customer } = await createTestCustomer({
+        const { cleanupFunc, customer } = await testUtils.createTestCustomer({
           select: testCustomerSelect,
         })
         cleanupFuncs.push(cleanupFunc)
@@ -1360,7 +1363,7 @@ describe("Rental Service", () => {
       let expectedResultsBySUIDOrName
 
       beforeAll(async () => {
-        const { cleanupFunc, customer } = await createTestCustomer({
+        const { cleanupFunc, customer } = await testUtils.createTestCustomer({
           select: testCustomerSelect,
         })
         cleanupFuncs.push(cleanupFunc)
@@ -1478,7 +1481,7 @@ describe("Rental Service", () => {
             )
           )
 
-        const { cleanupFunc, customer } = await createTestCustomer({
+        const { cleanupFunc, customer } = await testUtils.createTestCustomer({
           select: testCustomerSelect,
         })
         cleanupFuncs.push(cleanupFunc)
@@ -1548,7 +1551,7 @@ describe("Rental Service", () => {
             throw "Create Rental Invoice Line Items Test Error"
           })
 
-        const { cleanupFunc, customer } = await createTestCustomer({
+        const { cleanupFunc, customer } = await testUtils.createTestCustomer({
           select: testCustomerSelect,
         })
         cleanupFuncs.push(cleanupFunc)
@@ -1606,7 +1609,7 @@ describe("Rental Service", () => {
     })
 
     it("Charges them immediately if their subscription is set to cancelled", async () => {
-      const { customer } = await createTestCustomer({
+      const { customer } = await testUtils.createTestCustomer({
         select: testCustomerSelect,
       })
       testCustomer = customer
@@ -1634,7 +1637,7 @@ describe("Rental Service", () => {
     })
 
     it("Charges them immediately if their subscription is set to non_renewing", async () => {
-      const { customer } = await createTestCustomer({
+      const { customer } = await testUtils.createTestCustomer({
         select: testCustomerSelect,
       })
       testCustomer = customer
@@ -1663,7 +1666,7 @@ describe("Rental Service", () => {
     })
 
     it("Charges them immediately if their subscription nextBillingAt is more than 2 days from now", async () => {
-      const { customer } = await createTestCustomer({
+      const { customer } = await testUtils.createTestCustomer({
         select: testCustomerSelect,
       })
       testCustomer = customer
@@ -1700,7 +1703,7 @@ describe("Rental Service", () => {
 
       describe("Line items were successfully created the first time through", () => {
         beforeAll(async () => {
-          const { customer } = await createTestCustomer({
+          const { customer } = await testUtils.createTestCustomer({
             select: testCustomerSelect,
           })
           testCustomer = customer
@@ -1785,7 +1788,7 @@ describe("Rental Service", () => {
 
       describe("Line items were not successfully created the first time through", () => {
         beforeAll(async () => {
-          const { customer } = await createTestCustomer({
+          const { customer } = await testUtils.createTestCustomer({
             select: testCustomerSelect,
           })
           testCustomer = customer
@@ -1866,7 +1869,7 @@ describe("Rental Service", () => {
         let chargebeeDeleteUnbilledChargeSpy
 
         beforeAll(async () => {
-          const { customer } = await createTestCustomer({
+          const { customer } = await testUtils.createTestCustomer({
             select: testCustomerSelect,
           })
           testCustomer = customer
@@ -1949,7 +1952,7 @@ describe("Rental Service", () => {
       previousInvoiceId = cuid()
       currentInvoiceId = cuid()
 
-      const { cleanupFunc, customer } = await createTestCustomer({
+      const { cleanupFunc, customer } = await testUtils.createTestCustomer({
         create: {
           membership: {
             create: {
@@ -2327,7 +2330,7 @@ describe("Rental Service", () => {
     let marchSeventh2021
 
     beforeAll(async () => {
-      const { cleanupFunc, customer } = await createTestCustomer({
+      const { cleanupFunc, customer } = await testUtils.createTestCustomer({
         select: testCustomerSelect,
       })
       cleanupFuncs.push(cleanupFunc)
@@ -2575,70 +2578,6 @@ describe("Rental Service", () => {
     })
   })
 })
-
-const createTestCustomer = async ({
-  create = {},
-  select = { id: true },
-}: {
-  create?: Partial<Prisma.CustomerCreateInput>
-  select?: Prisma.CustomerSelect
-}) => {
-  const chargebeeSubscriptionId = utils.randomString()
-  const defaultCreateData = {
-    status: "Active",
-    user: {
-      create: {
-        auth0Id: utils.randomString(),
-        email: utils.randomString() + "@seasons.nyc",
-        firstName: utils.randomString(),
-        lastName: utils.randomString(),
-      },
-    },
-    detail: {
-      create: {
-        shippingAddress: {
-          create: {
-            address1: "55 Washington St Ste 736",
-            city: "Brooklyn",
-            state: "NY",
-            zipCode: "11201",
-          },
-        },
-      },
-    },
-    membership: {
-      create: {
-        subscriptionId: chargebeeSubscriptionId,
-        plan: { connect: { planID: "access-monthly" } },
-        rentalInvoices: {
-          create: {
-            billingStartAt: timeUtils.xDaysAgoISOString(30),
-            billingEndAt: new Date(),
-          },
-        },
-        subscription: {
-          create: {
-            planID: "access-monthly",
-            subscriptionId: chargebeeSubscriptionId,
-            currentTermStart: timeUtils.xDaysAgoISOString(1),
-            currentTermEnd: timeUtils.xDaysFromNowISOString(1),
-            nextBillingAt: timeUtils.xDaysFromNowISOString(1),
-            status: "Active",
-            planPrice: 2000,
-          },
-        },
-      },
-    },
-  }
-  const createData = merge(defaultCreateData, create)
-  const customer = await prisma.client.customer.create({
-    data: createData,
-    select: merge(select, { id: true }),
-  })
-  const cleanupFunc = async () =>
-    prisma.client.customer.delete({ where: { id: customer.id } })
-  return { cleanupFunc, customer }
-}
 
 const addLineItemToInvoice = async ({
   invoiceId,

@@ -64,6 +64,7 @@ describe("Shippo Controller", () => {
 
   afterAll(async () => {
     await Promise.all(cleanupFuncs.map(a => a()))
+    app.close()
   })
 
   it("attaches package transit events to reservations", async () => {
