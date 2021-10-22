@@ -139,19 +139,17 @@ export class ChargebeeController {
       )
 
       if (isTraditionalPlanPayment) {
-        const existingCredits = prismaCustomer.membership.creditBalance ?? 0
         const planLineItem = content.invoice.line_items.find(
           a => a.entity_type === "plan"
         )
         const newCredits = Math.round(planLineItem.amount * 1.15)
-        const totalPromotionalCredits = existingCredits + newCredits
 
         await this.prisma.client.customerMembership.update({
           where: {
             id: prismaCustomer.membership.id,
           },
           data: {
-            creditBalance: totalPromotionalCredits,
+            creditBalance: { increment: newCredits },
           },
         })
       }
