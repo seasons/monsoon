@@ -5,15 +5,22 @@ import { PrismaService } from "../../prisma/prisma.service"
 const run = async () => {
   const ps = new PrismaService()
 
-  const invoiceId = "cktt8xz7s9298q6uvwyrsnrut"
-  const x = await ps.client.rentalInvoice.findUnique({
-    where: { id: invoiceId },
-    select: {
-      status: true,
-      lineItems: { select: { price: true, name: true, comment: true } },
-      membership: { select: { customer: { select: { user: true } } } },
-    },
-  })
-  console.dir(x, { depth: null })
+  const newReservationPhysicalProduct = await ps.client.reservationPhysicalProduct.create(
+    {
+      data: {
+        isNew: true,
+        // physicalProduct: {
+        //   connect:{
+        //     id: 'ck2zee3vr0ynl0734waawy9yw'
+        //   },
+        // },
+        physicalProductId: "ck2zee3vr0ynl0734waawy9yw",
+      },
+      select: {
+        id: true,
+      },
+    }
+  )
+  console.dir(newReservationPhysicalProduct, { depth: null })
 }
 run()

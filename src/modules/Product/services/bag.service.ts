@@ -188,6 +188,11 @@ export class BagService {
             stored: true,
           },
         },
+        reservationPhysicalProduct: {
+          select: {
+            id: true,
+          },
+        },
         customer: {
           select: {
             id: true,
@@ -222,6 +227,7 @@ export class BagService {
         orderBy: { createdAt: "desc" },
       }
     )
+    const oldReservationPhysicalProduct = oldBagItem.reservationPhysicalProduct
 
     let newPhysicalProduct = await this.prisma.client.physicalProduct.findUnique(
       {
@@ -267,46 +273,50 @@ export class BagService {
     }
 
     const oldPhysicalProduct = oldBagItem.physicalProduct
-
-    promises.push(
-      this.prisma.client.reservation.update({
-        where: {
-          id: lastReservation.id,
-        },
-        data: {
-          products: {
-            disconnect: {
-              id: oldPhysicalProduct.id,
-            },
+    if (lastReservation.newProducts) {
+      promises.push(
+        this.prisma.client.reservation.update({
+          where: {
+            id: lastReservation.id,
           },
-          newProducts: {
-            disconnect: {
-              id: oldPhysicalProduct.id,
+          data: {
+            products: {
+              disconnect: {
+                id: oldPhysicalProduct.id,
+              },
             },
-          },
-          sentPackage: {
-            update: {
-              items: {
-                disconnect: {
-                  id: oldPhysicalProduct.id,
+            newProducts: {
+              disconnect: {
+                id: oldPhysicalProduct.id,
+              },
+            },
+            sentPackage: {
+              update: {
+                items: {
+                  disconnect: {
+                    id: oldPhysicalProduct.id,
+                  },
                 },
               },
             },
           },
-        },
-      })
-    )
-    promises.push(
-      this.prisma.client.rentalInvoice.update({
-        where: { id: activeRentalInvoice.id },
-        data: {
-          products: {
-            disconnect: { id: oldPhysicalProduct.id },
-            connect: { id: newPhysicalProduct.id },
+        })
+      )
+    }
+
+    if (lastReservation.newProducts) {
+      promises.push(
+        this.prisma.client.rentalInvoice.update({
+          where: { id: activeRentalInvoice.id },
+          data: {
+            products: {
+              disconnect: { id: oldPhysicalProduct.id },
+              connect: { id: newPhysicalProduct.id },
+            },
           },
-        },
-      })
-    )
+        })
+      )
+    }
 
     const oldPhysicalProductNewInventoryStatus = !!oldPhysicalProduct.warehouseLocation
       ? "Reservable"
@@ -337,6 +347,17 @@ export class BagService {
     promises.push(
       this.prisma.client.bagItem.delete({ where: { id: oldBagItemID } })
     )
+
+    if (oldReservationPhysicalProduct) {
+      promises.push(
+        this.prisma.client.reservationPhysicalProduct.delete({
+          where: {
+            id: oldBagItem.reservationPhysicalProduct.id,
+          },
+        })
+      )
+    }
+
     const newProductVariantID = newPhysicalProduct.productVariant.id
     const [
       productVariantsCountsUpdatePromises,
@@ -352,6 +373,22 @@ export class BagService {
       connect: { id: newPhysicalProductID },
     }
 
+    const newReservationPhysicalProduct = await this.prisma.client.reservationPhysicalProduct.create(
+      {
+        data: {
+          isNew: true,
+          physicalProduct: {
+            connect: {
+              id: newPhysicalProductID,
+            },
+          },
+        },
+        select: {
+          id: true,
+        },
+      }
+    )
+
     promises.push(
       this.prisma.client.reservation.update({
         where: {
@@ -363,6 +400,11 @@ export class BagService {
           sentPackage: {
             update: {
               items: newPhysicalProductIDConnect,
+            },
+          },
+          reservationPhysicalProducts: {
+            connect: {
+              id: newReservationPhysicalProduct.id,
             },
           },
         },
@@ -385,6 +427,11 @@ export class BagService {
           },
           productVariant: {
             connect: { id: newProductVariantID },
+          },
+          reservationPhysicalProduct: {
+            connect: {
+              id: newReservationPhysicalProduct.id,
+            },
           },
           physicalProduct: newPhysicalProductIDConnect,
           status: "Reserved",
