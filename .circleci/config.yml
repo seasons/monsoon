@@ -45,7 +45,7 @@ jobs:
 
       - run:
           name: Run unit tests
-          command: yarn test
+          command: yarn test:ci
           environment:
             JEST_JUNIT_OUTPUT_DIR: ./reports/junit/
 
