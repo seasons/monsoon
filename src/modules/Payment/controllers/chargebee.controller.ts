@@ -92,18 +92,27 @@ export class ChargebeeController {
     })
 
     if (prismaCustomer?.membership?.grandfathered) {
-      const plan = prismaCustomer.membership.plan
-      const isPlanPayment = content.invoice.line_items.some(
-        li => li.entity_id === plan.planID
+      const traditionalPlans = [
+        "essential-1",
+        "essential-2",
+        "essential",
+        "essential-6",
+        "all-access-1",
+        "all-access-2",
+        "all-access",
+      ]
+
+      const isTraditionalPlanPayment = content.invoice.line_items.some(
+        li =>
+          li.entity_type === "plan" && traditionalPlans.includes(li.entity_id)
       )
 
-      const notOnNewPlan =
-        plan.planID !== "access-monthly" && plan.planID !== "access-yearly"
-      if (isPlanPayment && notOnNewPlan) {
+      if (isTraditionalPlanPayment) {
         const existingCredits = prismaCustomer.membership.creditBalance ?? 0
-        const newCredits = Math.round(
-          prismaCustomer.membership.plan.price * 1.15
+        const planLineItem = content.invoice.line_items.find(
+          a => a.entity_type === "plan"
         )
+        const newCredits = Math.round(planLineItem.amount * 1.15)
         const totalPromotionalCredits = existingCredits + newCredits
 
         await this.prisma.client.customerMembership.update({
