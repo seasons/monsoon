@@ -12,6 +12,7 @@ import { pick } from "lodash"
 
 import { PaymentService } from "../services/payment.service"
 import { RentalService } from "../services/rental.service"
+import { GRANDFATHERED_PLAN_IDS } from "../services/subscription.service"
 
 export type ChargebeeEvent = {
   content: any
@@ -131,19 +132,10 @@ export class ChargebeeController {
     })
 
     if (prismaCustomer?.membership?.grandfathered) {
-      const traditionalPlans = [
-        "essential-1",
-        "essential-2",
-        "essential",
-        "essential-6",
-        "all-access-1",
-        "all-access-2",
-        "all-access",
-      ]
-
       const isTraditionalPlanPayment = content.invoice.line_items.some(
         li =>
-          li.entity_type === "plan" && traditionalPlans.includes(li.entity_id)
+          li.entity_type === "plan" &&
+          GRANDFATHERED_PLAN_IDS.includes(li.entity_id)
       )
 
       if (isTraditionalPlanPayment) {
