@@ -23,8 +23,6 @@ jobs:
 
       - docker/install-docker
 
-      # - docker/install-docker-compose
-
       - run:
           name: Start up docker containers
           command: docker-compose up -d
@@ -42,8 +40,20 @@ jobs:
           command: node bin/cli.js spp local staging -f
 
       - run:
+          name: Install JUnit coverage reporter
+          command: yarn add --dev jest-junit
+
+      - run:
           name: Run unit tests
-          command: yarn test --verbose
+          command: yarn test
+          environment:
+            JEST_JUNIT_OUTPUT_DIR: ./reports/junit/
+
+      - store_test_results:
+          path: ./reports/junit/
+
+      - store_artifacts:
+          path: ./reports/junit
 
   test-integration:
     machine:
@@ -68,6 +78,10 @@ jobs:
           pkg-manager: yarn
 
       - run:
+          name: Build
+          command: yarn tsc
+
+      - run:
           name: Initialize monsoon$dev schema
           command: yarn prisma migrate deploy
 
@@ -88,20 +102,11 @@ jobs:
           command: yarn add --dev jest-junit
 
       - run:
-          name: Start server locally to run integration tests against
-          command: yarn ci
-
-      - run:
-          name: Wait for server to spin up
-          command: sleep 100
-
-      - run:
           name: Run integration test suite
           command: yarn test:e2e:ci
           environment:
             JEST_JUNIT_OUTPUT_DIR: ./reports/junit/
 
-      # https://circleci.com/docs/2.0/collect-test-data/#jest
       - store_test_results:
           path: ./reports/junit/
 

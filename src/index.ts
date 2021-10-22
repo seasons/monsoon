@@ -36,8 +36,9 @@ function handleErrors(logger) {
   }
 }
 
-async function bootstrap() {
+export const addMiddlewares = async server => {
   const cors = await createCorsMiddleware(readClient)
+
   const nestWinstonLogger = createNestWinstonLogger()
   const expressWinstonHandler = createExpressWinstonHandler(
     nestWinstonLogger.logger
@@ -56,14 +57,28 @@ async function bootstrap() {
     httpContext.middleware
   )
 
-  const app = await NestFactory.create(AppModule, new ExpressAdapter(server), {
+  return {
     logger: nestWinstonLogger,
+  }
+}
+
+export async function bootstrapServer(port = parseInt(process.env.PORT)) {
+  const { logger } = await addMiddlewares(server)
+
+  const app = await NestFactory.create(AppModule, new ExpressAdapter(server), {
+    logger,
   })
 
   app.enableShutdownHooks()
 
-  await app.listen(process.env.PORT ? process.env.PORT : 4000, () =>
-    console.log(`🚀 Server ready at ${process.env.PORT || 4000}`)
+  await app.listen(port ? port : 4000, () =>
+    console.log(`🚀 Server ready at ${port || 4000}`)
   )
+
+  return {
+    app,
+    server,
+  }
 }
-bootstrap()
+
+bootstrapServer()

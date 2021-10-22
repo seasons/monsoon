@@ -22,8 +22,6 @@ type TrackingEvent =
   | "Opened Checkout"
   | "Subscribed"
   | "Reserved Items"
-  | "Paused Subscription"
-  | "Resumed Subscription"
   | "Entered Active Admin Queue"
   | "Exited Active Admin Queue"
   | "Triaged"
