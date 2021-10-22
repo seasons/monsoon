@@ -21,7 +21,7 @@ export interface SubscriptionData {
   planID: string
 }
 
-const GRANDFATHERED_PLAN_IDS = [
+export const GRANDFATHERED_PLAN_IDS = [
   "essential",
   "essential-1",
   "essential-2",
