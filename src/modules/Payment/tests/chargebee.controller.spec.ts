@@ -5,15 +5,17 @@ import { Test } from "@nestjs/testing"
 import request from "supertest"
 
 import { PAYMENT_MODULE_DEF } from "../payment.module"
-import { getPaymentSucceededEvent } from "./data/chargebee"
+import { getPaymentSucceededEvent } from "./data/paymentSucceeded"
 import { Customer } from ".prisma/client"
 
+let testCustomer: any
+let prisma: PrismaService
+
 describe("Chargebee Controller", () => {
-  let testCustomer: any
   let app: INestApplication
   let testUtils: TestUtilsService
-  let prisma: PrismaService
-  let server
+  let testServer
+  let customerWithData
 
   beforeAll(async () => {
     const moduleRef = await Test.createTestingModule(
@@ -25,11 +27,16 @@ describe("Chargebee Controller", () => {
 
     app = moduleRef.createNestApplication()
     await app.init()
+    testServer = request(app.getHttpServer())
   })
 
   beforeEach(async () => {
     const { customer } = await testUtils.createTestCustomer({
-      select: { id: true, membership: { select: { creditBalance: true } } },
+      select: {
+        id: true,
+        user: { select: { id: true } },
+        membership: { select: { creditBalance: true } },
+      },
     })
     testCustomer = customer
   })
@@ -39,34 +46,163 @@ describe("Chargebee Controller", () => {
   })
 
   describe("Grandfathered credits", () => {
-    it("If a grandfathered customer pays an invoice without any membership dues, we do not add credits to their account", () => {
-      expect(0).toBe(1)
-    })
-    it("If a grandfathered customer pays membership dues for a traditional plan, we add credits to their account", () => {
-      expect(0).toBe(1)
-    })
+    const sendPaymentSucceededEvent = async event => {
+      await testServer.post("/chargebee_events").send(event)
+    }
 
-    it("If a grandfathered customer pays membership dues for an access plan, we do not add credits to their account", async () => {
-      const paymentSucceededEvent = getPaymentSucceededEvent(testCustomer.id)
+    beforeEach(async () => {
       expect(testCustomer.membership.creditBalance).toBe(0)
+    })
 
-      await request(app.getHttpServer())
-        .post("/chargebee_events")
-        .send(paymentSucceededEvent)
-
-      const customerWithData = await prisma.client.customer.findUnique({
-        where: { id: testCustomer.id },
-        select: { membership: { select: { creditBalance: true } } },
+    describe("Grandfathered customers", () => {
+      beforeEach(async () => {
+        await setGrandfatheredOnCustomer(true)
       })
-      expect(customerWithData.membership.creditBalance).toBe(0)
+      it("If a grandfathered customer pays an invoice without any membership dues, we do not add credits to their account", async () => {
+        const paymentSucceededEvent = getPaymentSucceededEvent(
+          testCustomer.user.id,
+          "adhoc"
+        )
+        sendPaymentSucceededEvent(paymentSucceededEvent)
+
+        customerWithData = await getCustWithData()
+        expect(customerWithData.membership.creditBalance).toBe(0)
+      })
+
+      describe("If a grandfathered customer pays membership dues for a traditional plan, we add credits to their account", () => {
+        it("Essential 1", async () => {
+          const paymentSucceededEvent = getPaymentSucceededEvent(
+            testCustomer.user.id,
+            "essential-1"
+          )
+          await sendPaymentSucceededEvent(paymentSucceededEvent)
+
+          const customerWithData = await getCustWithData()
+          expect(customerWithData.membership.creditBalance).toBe(7475)
+        })
+        it("Essential 2", async () => {
+          const paymentSucceededEvent = getPaymentSucceededEvent(
+            testCustomer.user.id,
+            "essential-2"
+          )
+          await sendPaymentSucceededEvent(paymentSucceededEvent)
+
+          const customerWithData = await getCustWithData()
+          expect(customerWithData.membership.creditBalance).toBe(10925)
+        })
+        it("Essential", async () => {
+          const paymentSucceededEvent = getPaymentSucceededEvent(
+            testCustomer.user.id,
+            "essential"
+          )
+          await sendPaymentSucceededEvent(paymentSucceededEvent)
+
+          const customerWithData = await getCustWithData()
+          expect(customerWithData.membership.creditBalance).toBe(14375)
+        })
+        it("Essential 6", async () => {
+          const paymentSucceededEvent = getPaymentSucceededEvent(
+            testCustomer.user.id,
+            "essential-6"
+          )
+          await sendPaymentSucceededEvent(paymentSucceededEvent)
+
+          const customerWithData = await getCustWithData()
+          expect(customerWithData.membership.creditBalance).toBe(24725)
+        })
+        it("All Access 1", async () => {
+          const paymentSucceededEvent = getPaymentSucceededEvent(
+            testCustomer.user.id,
+            "all-access-1"
+          )
+          await sendPaymentSucceededEvent(paymentSucceededEvent)
+
+          const customerWithData = await getCustWithData()
+          expect(customerWithData.membership.creditBalance).toBe(12075)
+        })
+        it("All Access 2", async () => {
+          const paymentSucceededEvent = getPaymentSucceededEvent(
+            testCustomer.user.id,
+            "all-access-2"
+          )
+          await sendPaymentSucceededEvent(paymentSucceededEvent)
+
+          const customerWithData = await getCustWithData()
+          expect(customerWithData.membership.creditBalance).toBe(16675)
+        })
+        it("All Access", async () => {
+          const paymentSucceededEvent = getPaymentSucceededEvent(
+            testCustomer.user.id,
+            "all-access"
+          )
+          await sendPaymentSucceededEvent(paymentSucceededEvent)
+
+          const customerWithData = await getCustWithData()
+          expect(customerWithData.membership.creditBalance).toBe(20125)
+        })
+      })
+
+      it("If a grandfathered customer pays membership dues for an access-monthly plan, we do not add credits to their account", async () => {
+        const paymentSucceededEvent = getPaymentSucceededEvent(
+          testCustomer.user.id,
+          "access-monthly"
+        )
+
+        await sendPaymentSucceededEvent(paymentSucceededEvent)
+        customerWithData = await getCustWithData()
+        expect(customerWithData.membership.creditBalance).toBe(0)
+      })
+
+      it("If a grandfathered customer pays membership dues for an access-yearly plan, we do not add credits to their account", async () => {
+        const paymentSucceededEvent = getPaymentSucceededEvent(
+          testCustomer.user.id,
+          "access-yearly"
+        )
+
+        await sendPaymentSucceededEvent(paymentSucceededEvent)
+        customerWithData = await getCustWithData()
+        expect(customerWithData.membership.creditBalance).toBe(0)
+      })
+
+      it("If a grandfathered customer gets a discount on a traditional plan membership renewal fee, we reduce their promotional credits accodingly", async () => {
+        const paymentSucceededEvent = getPaymentSucceededEvent(
+          testCustomer.user.id,
+          "essential",
+          5500 // discount from 12500
+        )
+        await sendPaymentSucceededEvent(paymentSucceededEvent)
+        customerWithData = await getCustWithData()
+        expect(customerWithData.membership.creditBalance).toBe(6325) // 5500 * 1.15
+      })
     })
 
-    it("If a non-grandfathered customer pays membership dues for a traditional plan, we do not add credits to their account", () => {
-      expect(0).toBe(1)
-    })
+    describe("Non grandfathered customers", () => {
+      beforeEach(async () => {
+        setGrandfatheredOnCustomer(false)
+      })
 
-    it("If a non-grandfathered customer pays membership dues for an access plan, we do not add credits to their account", () => {
-      expect(0).toBe(1)
+      it("If a non-grandfathered customer pays membership dues for a traditional plan, we do not add credits to their account", async () => {
+        const paymentSucceededEvent = getPaymentSucceededEvent(
+          testCustomer.user.id,
+          "essential"
+        )
+
+        await sendPaymentSucceededEvent(paymentSucceededEvent)
+
+        customerWithData = await getCustWithData()
+        expect(customerWithData.membership.creditBalance).toBe(0)
+      })
+
+      it("If a non-grandfathered customer pays membership dues for an access plan, we do not add credits to their account", async () => {
+        const paymentSucceededEvent = getPaymentSucceededEvent(
+          testCustomer.user.id,
+          "access-monthly"
+        )
+
+        await sendPaymentSucceededEvent(paymentSucceededEvent)
+        customerWithData = await getCustWithData()
+        expect(customerWithData.membership.creditBalance).toBe(0)
+      })
     })
   })
 
@@ -75,4 +211,20 @@ describe("Chargebee Controller", () => {
       expect(0).toBe(1)
     })
   })
+
+  // TODO: Add tests for a customer moving from grandfathered plan to new plan setting grandfathered to false immediately.
 })
+
+const setGrandfatheredOnCustomer = async (grandfathered: boolean) => {
+  await prisma.client.customer.update({
+    where: { id: testCustomer.id },
+    data: { membership: { update: { grandfathered } } },
+  })
+}
+
+const getCustWithData = async () => {
+  return await prisma.client.customer.findUnique({
+    where: { id: testCustomer.id },
+    select: { membership: { select: { creditBalance: true } } },
+  })
+}
