@@ -447,7 +447,7 @@ export class EmailService {
     })
 
     const msg = {
-      from: { email: "membership@seasons.nyc", name: "Seasons NYC" },
+      from: { email: "membership@seasons.nyc", name: "Seasons" },
       to,
       bcc: "emails@seasons.nyc",
       subject: subject,
