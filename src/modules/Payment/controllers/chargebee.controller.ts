@@ -1,3 +1,4 @@
+import { WinstonLogger } from "@app/lib/logger"
 import { SegmentService } from "@app/modules/Analytics/services/segment.service"
 import { EmailService } from "@app/modules/Email/services/email.service"
 import { ErrorService } from "@app/modules/Error/services/error.service"
@@ -6,6 +7,7 @@ import { UtilsService } from "@app/modules/Utils/services/utils.service"
 import { PrismaService } from "@app/prisma/prisma.service"
 import { Body, Controller, Logger, Post } from "@nestjs/common"
 import { CustomerStatus } from "@prisma/client"
+import chargebee from "chargebee"
 import { pick } from "lodash"
 
 import { PaymentService } from "../services/payment.service"
@@ -29,10 +31,13 @@ const CHARGEBEE_SUBSCRIPTION_CREATED = "subscription_created"
 const CHARGEBEE_SUBSCRIPTION_CANCELLED = "subscription_cancelled"
 const CHARGEBEE_PAYMENT_SUCCEEDED = "payment_succeeded"
 const CHARGEBEE_PAYMENT_FAILED = "payment_failed"
+const CHARGEBEE_PROMOTIONAL_CREDITS_ADDED = "promotional_credits_added"
 
 @Controller("chargebee_events")
 export class ChargebeeController {
-  private readonly logger = new Logger(ChargebeeController.name)
+  private readonly logger = (new Logger(
+    ChargebeeController.name
+  ) as unknown) as WinstonLogger
 
   constructor(
     private readonly payment: PaymentService,
@@ -66,6 +71,40 @@ export class ChargebeeController {
       case CHARGEBEE_PAYMENT_FAILED:
         await this.chargebeePaymentFailed(body.content)
         break
+      case CHARGEBEE_PROMOTIONAL_CREDITS_ADDED:
+        await this.creditsAdded(body.content)
+        break
+    }
+  }
+
+  private async creditsAdded(content: any) {
+    const { promotional_credit, customer: chargebeeCustomer } = content
+
+    const prismaCustomer = await this.prisma.client.customer.findFirst({
+      where: { user: { id: chargebeeCustomer.id } },
+      select: { id: true },
+    })
+    try {
+      await chargebee.promotional_credit
+        .deduct({
+          customer_id: chargebeeCustomer.id,
+          amount: promotional_credit.amount,
+          description: "Automatically move to internal system",
+        })
+        .request()
+      await this.prisma.client.customer.update({
+        where: { id: prismaCustomer.id },
+        data: {
+          membership: {
+            update: { creditBalance: { increment: promotional_credit.amount } },
+          },
+        },
+      })
+    } catch (err) {
+      this.logger.error(
+        "Unable to handle promotional credits added in chargebee controller",
+        { error: err, content }
+      )
     }
   }
 

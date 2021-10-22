@@ -57,7 +57,6 @@ export const getPaymentSucceededEvent = (
   }
   event.content.invoice.line_items[0].customer_id = customerId
 
-  // TODO: override amount if needed
   if (!!chargeAmount) {
     event.content.invoice.line_items[0].amount = chargeAmount
   }

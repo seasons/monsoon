@@ -2,11 +2,12 @@ import { TestUtilsService } from "@app/modules/Utils/services/test.service"
 import { PrismaService } from "@app/prisma/prisma.service"
 import { INestApplication } from "@nestjs/common"
 import { Test } from "@nestjs/testing"
+import chargebee from "chargebee"
 import request from "supertest"
 
 import { PAYMENT_MODULE_DEF } from "../payment.module"
+import { getPromotionalCreditsAddedEvent } from "./data/creditsAdded"
 import { getPaymentSucceededEvent } from "./data/paymentSucceeded"
-import { Customer } from ".prisma/client"
 
 let testCustomer: any
 let prisma: PrismaService
@@ -16,6 +17,10 @@ describe("Chargebee Controller", () => {
   let testUtils: TestUtilsService
   let testServer
   let customerWithData
+
+  const sendEvent = async event => {
+    await testServer.post("/chargebee_events").send(event)
+  }
 
   beforeAll(async () => {
     const moduleRef = await Test.createTestingModule(
@@ -46,10 +51,6 @@ describe("Chargebee Controller", () => {
   })
 
   describe("Grandfathered credits", () => {
-    const sendPaymentSucceededEvent = async event => {
-      await testServer.post("/chargebee_events").send(event)
-    }
-
     beforeEach(async () => {
       expect(testCustomer.membership.creditBalance).toBe(0)
     })
@@ -63,7 +64,7 @@ describe("Chargebee Controller", () => {
           testCustomer.user.id,
           "adhoc"
         )
-        sendPaymentSucceededEvent(paymentSucceededEvent)
+        sendEvent(paymentSucceededEvent)
 
         customerWithData = await getCustWithData()
         expect(customerWithData.membership.creditBalance).toBe(0)
@@ -75,7 +76,7 @@ describe("Chargebee Controller", () => {
             testCustomer.user.id,
             "essential-1"
           )
-          await sendPaymentSucceededEvent(paymentSucceededEvent)
+          await sendEvent(paymentSucceededEvent)
 
           const customerWithData = await getCustWithData()
           expect(customerWithData.membership.creditBalance).toBe(7475)
@@ -85,7 +86,7 @@ describe("Chargebee Controller", () => {
             testCustomer.user.id,
             "essential-2"
           )
-          await sendPaymentSucceededEvent(paymentSucceededEvent)
+          await sendEvent(paymentSucceededEvent)
 
           const customerWithData = await getCustWithData()
           expect(customerWithData.membership.creditBalance).toBe(10925)
@@ -95,7 +96,7 @@ describe("Chargebee Controller", () => {
             testCustomer.user.id,
             "essential"
           )
-          await sendPaymentSucceededEvent(paymentSucceededEvent)
+          await sendEvent(paymentSucceededEvent)
 
           const customerWithData = await getCustWithData()
           expect(customerWithData.membership.creditBalance).toBe(14375)
@@ -105,7 +106,7 @@ describe("Chargebee Controller", () => {
             testCustomer.user.id,
             "essential-6"
           )
-          await sendPaymentSucceededEvent(paymentSucceededEvent)
+          await sendEvent(paymentSucceededEvent)
 
           const customerWithData = await getCustWithData()
           expect(customerWithData.membership.creditBalance).toBe(24725)
@@ -115,7 +116,7 @@ describe("Chargebee Controller", () => {
             testCustomer.user.id,
             "all-access-1"
           )
-          await sendPaymentSucceededEvent(paymentSucceededEvent)
+          await sendEvent(paymentSucceededEvent)
 
           const customerWithData = await getCustWithData()
           expect(customerWithData.membership.creditBalance).toBe(12075)
@@ -125,7 +126,7 @@ describe("Chargebee Controller", () => {
             testCustomer.user.id,
             "all-access-2"
           )
-          await sendPaymentSucceededEvent(paymentSucceededEvent)
+          await sendEvent(paymentSucceededEvent)
 
           const customerWithData = await getCustWithData()
           expect(customerWithData.membership.creditBalance).toBe(16675)
@@ -135,7 +136,7 @@ describe("Chargebee Controller", () => {
             testCustomer.user.id,
             "all-access"
           )
-          await sendPaymentSucceededEvent(paymentSucceededEvent)
+          await sendEvent(paymentSucceededEvent)
 
           const customerWithData = await getCustWithData()
           expect(customerWithData.membership.creditBalance).toBe(20125)
@@ -148,7 +149,7 @@ describe("Chargebee Controller", () => {
           "access-monthly"
         )
 
-        await sendPaymentSucceededEvent(paymentSucceededEvent)
+        await sendEvent(paymentSucceededEvent)
         customerWithData = await getCustWithData()
         expect(customerWithData.membership.creditBalance).toBe(0)
       })
@@ -159,7 +160,7 @@ describe("Chargebee Controller", () => {
           "access-yearly"
         )
 
-        await sendPaymentSucceededEvent(paymentSucceededEvent)
+        await sendEvent(paymentSucceededEvent)
         customerWithData = await getCustWithData()
         expect(customerWithData.membership.creditBalance).toBe(0)
       })
@@ -170,7 +171,7 @@ describe("Chargebee Controller", () => {
           "essential",
           5500 // discount from 12500
         )
-        await sendPaymentSucceededEvent(paymentSucceededEvent)
+        await sendEvent(paymentSucceededEvent)
         customerWithData = await getCustWithData()
         expect(customerWithData.membership.creditBalance).toBe(6325) // 5500 * 1.15
       })
@@ -187,7 +188,7 @@ describe("Chargebee Controller", () => {
           "essential"
         )
 
-        await sendPaymentSucceededEvent(paymentSucceededEvent)
+        await sendEvent(paymentSucceededEvent)
 
         customerWithData = await getCustWithData()
         expect(customerWithData.membership.creditBalance).toBe(0)
@@ -199,7 +200,7 @@ describe("Chargebee Controller", () => {
           "access-monthly"
         )
 
-        await sendPaymentSucceededEvent(paymentSucceededEvent)
+        await sendEvent(paymentSucceededEvent)
         customerWithData = await getCustWithData()
         expect(customerWithData.membership.creditBalance).toBe(0)
       })
@@ -207,12 +208,23 @@ describe("Chargebee Controller", () => {
   })
 
   describe("Miscellaneous credits created on chargebee", () => {
-    it("Adds the credits internally and deducts them from Chargebee", () => {
-      expect(0).toBe(1)
+    it("Adds the credits internally and deducts them from Chargebee", async () => {
+      const chargebeeDeductCreditsSpy = jest
+        .spyOn<any, any>(chargebee.promotional_credit, "deduct")
+        .mockReturnValue({
+          request: () => null,
+        })
+
+      expect(testCustomer.membership.creditBalance).toBe(0)
+
+      const event = getPromotionalCreditsAddedEvent(testCustomer.user.id, 1700)
+      await sendEvent(event)
+
+      customerWithData = await getCustWithData()
+      expect(customerWithData.membership.creditBalance).toBe(1700)
+      expect(chargebeeDeductCreditsSpy).toHaveBeenCalledTimes(1)
     })
   })
-
-  // TODO: Add tests for a customer moving from grandfathered plan to new plan setting grandfathered to false immediately.
 })
 
 const setGrandfatheredOnCustomer = async (grandfathered: boolean) => {
