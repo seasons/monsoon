@@ -97,7 +97,16 @@ export class ChargebeeController {
         where: { id: prismaCustomer.id },
         data: {
           membership: {
-            update: { creditBalance: { increment: promotional_credit.amount } },
+            update: {
+              creditBalance: { increment: promotional_credit.amount },
+              creditUpdateHistory: {
+                create: {
+                  amount: promotional_credit.amount,
+                  reason:
+                    "Automatic transfer of credits added on chargebee to internal system.",
+                },
+              },
+            },
           },
         },
       })
