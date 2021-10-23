@@ -120,3 +120,7 @@ FAILURE MODES AND CORRECTION STEPS
     -> Remove all undue credits from Chargebee without adding back to prisma
     -> If credits have been applied towards an invoice already, charge them for that invoice
 */
+
+/*
+TODO: Add a failure mode for more credits having been applied than should have ever been created. Case study: Scott Baretta. 
+*/
