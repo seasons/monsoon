@@ -115,6 +115,7 @@ export class ChargebeeController {
       where: { user: { id: chargebeeCustomerID } },
       select: {
         id: true,
+        user: { select: { id: true } },
         membership: {
           select: {
             id: true,
@@ -150,6 +151,12 @@ export class ChargebeeController {
           },
           data: {
             creditBalance: { increment: newCredits },
+            creditUpdateHistory: {
+              create: {
+                amount: newCredits,
+                reason: `Grandfathered customer paid subscription dues on ${planLineItem.description} plan`,
+              },
+            },
           },
         })
       }
