@@ -1256,14 +1256,20 @@ export class RentalService {
       .add({
         customer_id: prismaUserId,
         amount: totalCreditsApplied,
-        description: `Grandfathered ${prismaCustomer.membership.plan.planID} credits`,
+        description: `Grandfathered ${prismaCustomer.membership.plan.planID} credits applied towards rental charges`,
       })
       .request()
 
     await this.prisma.client.customerMembership.update({
       where: { id: prismaCustomer.membership.id },
       data: {
-        creditBalance: existingCreditBalance - totalCreditsApplied,
+        creditBalance: { decrement: totalCreditsApplied },
+        creditUpdateHistory: {
+          create: {
+            amount: -1 * totalCreditsApplied,
+            reason: "Transferred to chargebee to apply towards rental charges",
+          },
+        },
       },
     })
 
