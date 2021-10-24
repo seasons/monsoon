@@ -1,11 +1,11 @@
 import { Customer, User } from "@app/decorators"
-import { Select } from "@app/decorators/select.decorator"
 import { Loader } from "@app/modules/DataLoader/decorators/dataloader.decorator"
 import { UtilsService } from "@app/modules/Utils/services/utils.service"
 import { PrismaDataLoader } from "@app/prisma/prisma.loader"
 import { PrismaService } from "@app/prisma/prisma.service"
 import { ImageSize } from "@modules/Image/image.types.d"
 import { ImageService } from "@modules/Image/services/image.service"
+import { ShippingMethodFieldsResolver } from "@modules/Shipping/fields/shippingMethod.fields.resolver"
 import { Args, Parent, ResolveField, Resolver } from "@nestjs/graphql"
 import { Prisma } from "@prisma/client"
 import { head } from "lodash"
@@ -20,6 +20,50 @@ export class ReservationFieldsResolver {
     private readonly imageService: ImageService,
     private readonly prisma: PrismaService
   ) {}
+
+  @ResolveField()
+  async adminMessage(@Parent() parent) {
+    // No dataloader needed since this field should only ever be called on a single reservation at a time
+    const reservationWithData = await this.prisma.client.reservation.findUnique(
+      {
+        where: { id: parent.id },
+        select: {
+          createdAt: true,
+          previousReservationWasPacked: true,
+          status: true,
+          customer: { select: { id: true } },
+          reservationNumber: true,
+        },
+      }
+    )
+    const previousReservation = await this.prisma.client.reservation.findFirst({
+      where: {
+        customer: { id: reservationWithData.customer.id },
+        createdAt: { lt: reservationWithData.createdAt },
+      },
+      orderBy: { createdAt: "desc" },
+      select: { status: true, reservationNumber: true },
+    })
+
+    const reservationInProcessing = [
+      "Queued",
+      "Picked",
+      "Packed",
+      "Hold",
+    ].includes(reservationWithData.status)
+    if (previousReservation?.status === "Hold" && reservationInProcessing) {
+      return "PreviousReservationOnHold"
+    }
+
+    if (
+      reservationInProcessing &&
+      reservationWithData.previousReservationWasPacked
+    ) {
+      return "PartiallyPacked"
+    }
+
+    return "None"
+  }
 
   @ResolveField()
   async returnAt(
@@ -155,5 +199,31 @@ export class ReservationFieldsResolver {
       customer,
       filterBy: args?.filterBy,
     })
+  }
+
+  @ResolveField()
+  async pickupWindow(
+    @Parent() reservation,
+    @Loader({
+      params: {
+        model: "Reservation",
+        select: Prisma.validator<Prisma.ReservationSelect>()({
+          id: true,
+          pickupWindowId: true,
+        }),
+      },
+    })
+    reservationLoader
+  ) {
+    const reservationWithPickupWindowId = await reservationLoader.load(
+      reservation.id
+    )
+    const pickupWindowId = reservationWithPickupWindowId.pickupWindowId
+
+    const timeWindow = ShippingMethodFieldsResolver.getTimeWindow(
+      pickupWindowId
+    )
+
+    return timeWindow
   }
 }

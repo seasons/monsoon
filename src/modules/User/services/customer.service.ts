@@ -37,14 +37,6 @@ type TriageCustomerResult = {
   waitlistReason?: InAdmissableReason
 }
 
-type CustomerWithUser = Customer & {
-  detail: CustomerDetail & {
-    shippingAddress: Location
-  }
-  user: User
-  admissions: CustomerAdmissionsData
-}
-
 type UpdateCustomerAdmissionsDataInput = TriageCustomerResult & {
   customer: any
   dryRun: boolean
@@ -52,12 +44,6 @@ type UpdateCustomerAdmissionsDataInput = TriageCustomerResult & {
   allAccessEnabled?: boolean
 }
 
-const shippingOptionsData = JSON.parse(
-  fs.readFileSync(
-    process.cwd() + "/src/modules/Shipping/shippingOptionsData.json",
-    "utf-8"
-  )
-)
 @Injectable()
 export class CustomerService {
   triageCustomerSelect = Prisma.validator<Prisma.CustomerSelect>()({
@@ -95,8 +81,7 @@ export class CustomerService {
     private readonly email: EmailService,
     private readonly pushNotification: PushNotificationService,
     private readonly sms: SMSService,
-    private readonly utils: UtilsService,
-    private readonly queryUtils: QueryUtilsService
+    private readonly utils: UtilsService
   ) {}
 
   async setCustomerPrismaStatus(user: User, status: CustomerStatus) {
@@ -108,69 +93,10 @@ export class CustomerService {
     })
   }
 
-  async addCustomerLocationShippingOptions(
-    destinationState,
-    shippingAddressID
-  ) {
-    const shippingMethods = await this.prisma.client.shippingMethod.findMany()
-    const warehouseLocation = await this.prisma.client.location.findUnique({
-      where: {
-        slug:
-          process.env.SEASONS_CLEANER_LOCATION_SLUG ||
-          "seasons-cleaners-official",
-      },
-    })
-
-    const originState = warehouseLocation.state
-    const shippingOptions = []
-    const abbreviatedDestState = this.utils.abbreviateState(destinationState)
-
-    for (const method of shippingMethods) {
-      const stateData =
-        shippingOptionsData[method.code].from[originState].to[
-          abbreviatedDestState
-        ]
-
-      const existingShippingOptions = await this.prisma.client.shippingOption.findMany(
-        {
-          where: {
-            originId: warehouseLocation.id,
-            destinationId: shippingAddressID,
-            shippingMethodId: method.id,
-          },
-        }
-      )
-
-      const existingShippingOption = head(existingShippingOptions)
-
-      if (existingShippingOption) {
-        shippingOptions.push(existingShippingOption)
-      } else {
-        const shippingOption = await this.prisma.client.shippingOption.create({
-          data: {
-            origin: { connect: { id: warehouseLocation.id } },
-            destination: { connect: { id: shippingAddressID } },
-            shippingMethod: { connect: { id: method.id } },
-            externalCost: stateData.price,
-            averageDuration: stateData.averageDuration,
-          },
-        })
-
-        shippingOptions.push(shippingOption)
-      }
-    }
-
-    return await this.prisma.client.location.update({
-      where: { id: shippingAddressID },
-      data: {
-        shippingOptions: {
-          set: shippingOptions.map(s => ({ id: s.id })),
-        },
-      },
-    })
-  }
-
   async addCustomerDetails({ details, status }, customer, user, select) {
+    let data = { ...details }
+
+    // Handle shipping address payload
     const groupedKeys = ["name", "address1", "address2", "city", "state"]
     const isUpdatingShippingAddress =
       details.shippingAddress?.create &&
@@ -178,14 +104,14 @@ export class CustomerService {
         groupedKeys.includes(key)
       )
     if (isUpdatingShippingAddress) {
-      const {
-        name,
-        address1: street1,
-        city,
-        state,
-        zipCode: zip,
-      } = details.shippingAddress.create
-      if (!(street1 && city && state && zip)) {
+      const addressCreateData = details.shippingAddress.create
+      const name = addressCreateData.name?.trim()
+      const address1 = addressCreateData.address1?.trim()
+      const address2 = addressCreateData.address2?.trim()
+      const city = addressCreateData.city?.trim()
+      const state = addressCreateData.state?.trim()
+      const zip = addressCreateData.zipCode?.trim()
+      if (!(address1 && city && state && zip)) {
         throw new Error(
           "Missing a required field. Expected address1, city, state, and zipCode."
         )
@@ -194,7 +120,8 @@ export class CustomerService {
         isValid: shippingAddressIsValid,
       } = await this.shipping.shippoValidateAddress({
         name,
-        street1,
+        street1: address1,
+        street2: address2,
         city,
         state,
         zip,
@@ -203,6 +130,14 @@ export class CustomerService {
         throw new Error("Shipping address is invalid")
       }
 
+      data.shippingAddress.create = {
+        name,
+        address1,
+        address2,
+        city,
+        state,
+        zipCode: zip,
+      }
       if (!!state && state.length > 2) {
         const abbreviatedState = this.utils.abbreviateState(state)
         if (abbreviatedState) {
@@ -211,6 +146,11 @@ export class CustomerService {
           throw new Error("Shipping address state is invalid")
         }
       }
+    }
+
+    if (details?.signupLikedProducts?.connect?.length > 0) {
+      const productIDs = details?.signupLikedProducts?.connect.map(p => p.id)
+      await this.addLikedSignUpProductsToBagItems(productIDs, customer)
     }
 
     const detail = await this.prisma.client.customerDetail.findFirst({
@@ -232,7 +172,7 @@ export class CustomerService {
     })
 
     await this.prisma.client.customerDetail.update({
-      data: details,
+      data: data,
       where: {
         id: detail.id,
       },
@@ -243,8 +183,6 @@ export class CustomerService {
       if (!state) {
         throw new Error("State missing in shipping address update")
       }
-
-      this.addCustomerLocationShippingOptions(state, detail.shippingAddress.id)
     }
 
     // If a status was passed, update the customer status in prisma
@@ -510,6 +448,56 @@ export class CustomerService {
     })
   }
 
+  async updateCreditBalance({
+    membershipId,
+    amount,
+    reason,
+    customerId,
+  }: {
+    membershipId: string
+    amount: number
+    reason: string
+    customerId: string
+  }) {
+    const promises = []
+
+    const adminUser = await this.prisma.client.customer.findUnique({
+      where: {
+        id: customerId,
+      },
+      select: {
+        id: true,
+        userId: true,
+      },
+    })
+
+    promises.push(
+      this.prisma.client.customerMembership.update({
+        where: {
+          id: membershipId,
+        },
+        data: {
+          creditUpdateHistory: {
+            create: {
+              amount: amount,
+              reason: reason,
+              adminUser: {
+                connect: {
+                  id: adminUser.userId,
+                },
+              },
+            },
+          },
+          creditBalance: { increment: amount },
+        },
+      })
+    )
+
+    const results = await this.prisma.client.$transaction(promises)
+    const updatedCustomerMembership = results.pop()
+    return !!updatedCustomerMembership
+  }
+
   async triageCustomer(
     where: Prisma.CustomerWhereUniqueInput,
     application: ApplicationType,
@@ -766,6 +754,79 @@ export class CustomerService {
       })
       this.segment.identify(customer.user.id, admissionsUpsertData)
     }
+  }
+
+  private async addLikedSignUpProductsToBagItems(productIDs, customer) {
+    const createManyData = []
+
+    const customerDetails = await this.prisma.client.customerDetail.findMany({
+      where: { customer: { id: customer.id } },
+      select: {
+        topSizes: true,
+        waistSizes: true,
+      },
+    })
+
+    const customerDetail = head(customerDetails)
+
+    const productsWithPhysicalProductData = await this.prisma.client.product.findMany(
+      {
+        where: {
+          id: { in: productIDs },
+        },
+        select: {
+          id: true,
+          type: true,
+          variants: {
+            select: {
+              id: true,
+              displayShort: true,
+              reservable: true,
+              physicalProducts: {
+                select: {
+                  id: true,
+                  inventoryStatus: true,
+                },
+              },
+            },
+          },
+        },
+      }
+    )
+
+    for (const p of productsWithPhysicalProductData) {
+      let fittingVariant
+      const waistSizesToString = customerDetail.waistSizes.map(size =>
+        size.toString()
+      )
+      if (p.type === "Top") {
+        fittingVariant = p.variants.find(v =>
+          customerDetail.topSizes.includes(v.displayShort)
+        )
+      } else if (p.type === "Bottom") {
+        fittingVariant = p.variants.find(v =>
+          waistSizesToString.includes(v.displayShort)
+        )
+      }
+      const variant = fittingVariant ?? p.variants[0]
+      const availablePhysicalProduct = variant.physicalProducts.find(
+        pp => pp.inventoryStatus === "Reservable"
+      )
+      const physicalProduct =
+        availablePhysicalProduct ?? variant.physicalProducts[0]
+
+      createManyData.push({
+        customerId: customer.id,
+        productVariantId: variant.id,
+        physicalProductId: physicalProduct.id,
+        status: "Added",
+        saved: true,
+      })
+    }
+
+    await this.prisma.client.bagItem.createMany({
+      data: createManyData,
+    })
   }
 
   private shouldUpdateCustomerAdmissionsData(

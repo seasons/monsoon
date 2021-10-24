@@ -38,66 +38,6 @@ export class PaymentService {
     private readonly paymentUtils: PaymentUtilsService
   ) {}
 
-  async addShippingCharge(customer, shippingCode) {
-    try {
-      const customerWithShippingData = await this.prisma.client.customer.findUnique(
-        {
-          where: {
-            id: customer.id,
-          },
-          select: {
-            membership: true,
-            detail: {
-              select: {
-                id: true,
-                shippingAddress: {
-                  select: {
-                    shippingOptions: {
-                      select: {
-                        id: true,
-                        shippingMethod: true,
-                        externalCost: true,
-                      },
-                    },
-                  },
-                },
-              },
-            },
-          },
-        }
-      )
-
-      const { membership, detail } = customerWithShippingData
-
-      const subscriptionID = membership.subscriptionId
-      const shippingOptions = detail?.shippingAddress?.shippingOptions
-      const shippingOption = shippingOptions.find(
-        option => option.shippingMethod.code === shippingCode
-      )
-      const externalCost = shippingOption.externalCost
-
-      if (externalCost !== 0) {
-        await chargebee.invoice
-          .charge_addon({
-            subscription_id: subscriptionID,
-            addon_id: shippingOption.shippingMethod.code?.toLowerCase(),
-            addon_unit_price: externalCost,
-            addon_quantity: 1,
-          })
-          .request()
-      }
-
-      return {
-        shippingOption,
-      }
-    } catch (e) {
-      this.error.setExtraContext({ shippingCode })
-      this.error.setExtraContext(customer, "customer")
-      this.error.captureError(e)
-      throw e
-    }
-  }
-
   async processPayment({ planID, paymentMethodID, billing }) {
     const billingAddress = {
       first_name: billing.user.firstName || "",

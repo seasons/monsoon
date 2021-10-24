@@ -7,7 +7,7 @@ import { ShopifyModule } from "@modules/Shopify/shopify.module"
 import { SlackModule } from "@modules/Slack/slack.module"
 import { UserModule } from "@modules/User/user.module"
 import { UtilsModule } from "@modules/Utils/utils.module"
-import { Module } from "@nestjs/common"
+import { Module, forwardRef } from "@nestjs/common"
 import { PrismaModule } from "@prisma1/prisma.module"
 
 import { AnalyticsModule } from "../Analytics/analytics.module"
@@ -17,6 +17,7 @@ import { ProductModule } from "../Product/product.module"
 import { SearchModule } from "../Search/search.module"
 import { SMSModule } from "../SMS/sms.module"
 import { AdmissionsScheduledJobs } from "./services/admissions.job.service"
+import { BillingScheduledJobs } from "./services/billing.job.service"
 import { DataScheduledJobs } from "./services/data.job.service"
 import { LogsScheduledJobs } from "./services/logs.job.service"
 import { MarketingScheduledJobs } from "./services/marketing.job.service"
@@ -55,7 +56,8 @@ import { SubscriptionsScheduledJobs } from "./services/subscriptions.job.service
     ShopifyScheduledJobs,
     LogsScheduledJobs,
     ProductScheduledJobs,
+    BillingScheduledJobs,
   ],
-  exports: [DataScheduledJobs],
+  exports: [DataScheduledJobs, BillingScheduledJobs],
 })
 export class CronModule {}

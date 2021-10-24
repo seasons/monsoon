@@ -4,6 +4,7 @@ import { BagService } from "@app/modules/Product/services/bag.service"
 import { ProductVariantService } from "@app/modules/Product/services/productVariant.service"
 import { ShopifyService } from "@app/modules/Shopify/services/shopify.service"
 import { ProductUtilsService } from "@app/modules/Utils/services/product.utils.service"
+import { UtilsService } from "@app/modules/Utils/services/utils.service"
 import { ShippingService } from "@modules/Shipping/services/shipping.service"
 import { Injectable } from "@nestjs/common"
 import {
@@ -68,7 +69,8 @@ export class OrderService {
     private readonly error: ErrorService,
     private readonly bag: BagService,
     private readonly productUtils: ProductUtilsService,
-    private readonly productVariant: ProductVariantService
+    private readonly productVariant: ProductVariantService,
+    private readonly utils: UtilsService
   ) {
     this.outerwearCategories = this.productUtils.getCategoryAndAllChildren(
       { slug: "outerwear" },
@@ -1007,7 +1009,7 @@ export class OrderService {
       line1: location?.address1,
       line2: location?.address2,
       city: location?.city,
-      state_code: location?.state,
+      state_code: this.utils.abbreviateState(location?.state),
       zip: location?.zipCode,
       country: location?.country || "US",
     }

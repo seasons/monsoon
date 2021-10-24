@@ -148,6 +148,7 @@ type Query {
     first: Int
     last: Int
   ): [ProductRequest]! @cacheControl(maxAge: 0)
+  signupPersonalDetailsProducts: [Product!] @cacheControl(maxAge: 120)
   tags(
     where: TagWhereInput
     orderBy: TagOrderByInput
@@ -210,6 +211,7 @@ type BagItem {
   customer: Customer!
   isSwappable: Boolean!
   productVariant: ProductVariant!
+  physicalProduct: PhysicalProduct
   position: Int
   saved: Boolean
   status: BagItemStatus!

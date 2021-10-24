@@ -29,7 +29,7 @@ type Query {
 
 type Mutation {
   reserveItems(
-    items: [ID!]!
+    items: [ID!]
     options: ReserveItemsOptions
     shippingCode: ShippingCode
   ): Reservation @hasRole(roles: [Customer])
@@ -79,6 +79,12 @@ type ReservationFeedback {
   createdAt: DateTime!
   updatedAt: DateTime!
   respondedAt: DateTime
+}
+
+enum ShippingCode {
+  UPSGround
+  UPSSelect
+  Pickup
 }
 
 enum ReservationLineItemRecordType {
@@ -215,6 +221,14 @@ input ProductStateInput {
 
 input ReserveItemsOptions {
   dryRun: Boolean
+  timeWindowID: ID
+  pickupDate: DateTime
+}
+
+enum ReservationAdminMessage {
+  PreviousReservationOnHold
+  PartiallyPacked
+  None
 }
 
 type Reservation @cacheControl(maxAge: 0) {
@@ -251,8 +265,12 @@ type Reservation @cacheControl(maxAge: 0) {
   returnedAt: DateTime
   createdAt: DateTime!
   updatedAt: DateTime!
+  pickupDate: DateTime
+  pickupWindowId: String
+  pickupWindow: TimeWindow
   adminLogs: [AdminActionLog!]! @hasRole(roles: [Admin])
   shippingOption: ShippingOption
+  adminMessage: ReservationAdminMessage! @hasRole(roles: [Admin])
 }
 
 type AdminActionLog {

@@ -41,10 +41,8 @@ enum DeleteBagItemType {
 }
 
 type Mutation {
-  swapBagItem(
-    oldItemID: ID!
-    physicalProductWhere: PhysicalProductWhereUniqueInput!
-  ): BagItem! @hasRole(roles: [Admin])
+  swapBagItem(oldItemID: ID!, seasonsUID: String!): BagItem!
+    @hasRole(roles: [Admin])
   addToBag(
     item: ID!
     customerID: ID
@@ -77,6 +75,11 @@ type Mutation {
   updateNotificationBarReceipt(
     notification: NotificationBarReceiptUpdateInput
   ): CustomerNotificationBarReceipt @hasRole(roles: [Customer])
+  updateCreditBalance(
+    membershipId: ID!
+    amount: Int!
+    reason: String!
+  ): Boolean @hasRole(roles: [Admin])
 }
 
 input AddressInput {
@@ -105,7 +108,12 @@ enum OnboardingStep {
   SetShippingAddress
 }
 
-# isSwapped nowhere in sight
+enum CustomerIOSAppStatus {
+  UpToDate
+  Outdated
+  NoRecord
+}
+
 type Customer {
   id: ID!
   user: User!
@@ -153,6 +161,7 @@ type Customer {
   createdAt: DateTime!
   updatedAt: DateTime!
   grandfathered: Boolean!
+  iOSAppStatus: CustomerIOSAppStatus
 }
 
 input NotificationBarReceiptUpdateInput {
@@ -165,6 +174,7 @@ type CustomerMembership {
   id: ID!
   subscriptionId: String!
   plan: PaymentPlan
+  currentBalance: Int
   creditBalance: Int
   adjustedCreditBalance: Int
   currentRentalInvoice: RentalInvoice
@@ -179,4 +189,16 @@ type CustomerMembership {
     last: Int
   ): [PauseRequest!]
   subscription: CustomerMembershipSubscriptionData
+  creditUpdateHistory: [CreditBalanceUpdateLog!]
+}
+
+type CreditBalanceUpdateLog {
+  id: ID!
+  membership: CustomerMembership
+  membershipId: ID!
+  amount: Int
+  reason: String
+  adminUser: User
+  adminUserId: ID!
+  createdAt: DateTime
 }

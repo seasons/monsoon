@@ -1,12 +1,12 @@
 import { APP_MODULE_DEF } from "@app/app.module"
 import { PushNotificationService } from "@app/modules/PushNotification"
 import { TestUtilsService } from "@app/modules/Utils/services/test.service"
+import { PrismaService } from "@app/prisma/prisma.service"
 import { INestApplication } from "@nestjs/common"
 import { Test } from "@nestjs/testing"
 import { Reservation } from "@prisma/client"
 import request from "supertest"
 
-import { PrismaService } from "../../../prisma/prisma.service"
 import {
   TRANSACTION_ID_ONE,
   TRANSACTION_ID_ONE_EVENTS,
@@ -64,6 +64,7 @@ describe("Shippo Controller", () => {
 
   afterAll(async () => {
     await Promise.all(cleanupFuncs.map(a => a()))
+    app.close()
   })
 
   it("attaches package transit events to reservations", async () => {

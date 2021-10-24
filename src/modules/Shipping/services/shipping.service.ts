@@ -1,7 +1,9 @@
 import { PrismaService } from "@app/prisma/prisma.service"
 import { UtilsService } from "@modules/Utils/services/utils.service"
 import { Injectable } from "@nestjs/common"
-import { Customer, ShippingCode, User } from "@prisma/client"
+import { Customer, Package, ShippingCode, User } from "@prisma/client"
+import { ApolloError } from "apollo-server"
+import { pick, startCase, toLower } from "lodash"
 import shippo from "shippo"
 
 import {
@@ -165,6 +167,12 @@ export class ShippingService {
     }, shippingBagWeight)
   }
 
+  async voidLabel(shipment: Pick<Package, "transactionID">) {
+    return await this.shippo.refund.create({
+      transaction: shipment.transactionID,
+    })
+  }
+
   async shippoValidateAddress(address: CoreShippoAddressFields) {
     const result = await this.shippo.address.create({
       ...address,
@@ -174,35 +182,61 @@ export class ShippingService {
 
     const validationResults = result.validation_results
 
-    // Patchwork case for invalid city/state/zip combo, pending
-    // response from shippo about why their validator doesn't properly
-    // handle this case
+    // equality without regard for case or trailing whitespace
+    const fuzzyEquals = (x: string, y: string) =>
+      x?.toLowerCase().trim() === y?.toLowerCase().trim()
+
     const isValid = result.validation_results.is_valid
-    const streetMatches =
-      address.street1 === result.street1 ||
-      `${address.street1} ${address.street2}` === result.street1
+
+    const streetFuzzyMatches = (original, result) => {
+      const basicallyEqual = fuzzyEquals(original.street1, result.street1)
+      const equalOnceStreetsCombined = fuzzyEquals(
+        `${original.street1} ${original.street2}`,
+        result.street1
+      )
+      return basicallyEqual || equalOnceStreetsCombined
+    }
+
+    const streetMatches = streetFuzzyMatches(address, result)
+    const stateMatches =
+      fuzzyEquals(address.state, result.state) ||
+      fuzzyEquals(
+        this.utilsService.abbreviateState(address.state),
+        result.state
+      )
+    // check startsWith because shippo returns zips with extensions
+    const zipMatches = result.zip.startsWith(address.zip)
+    const cityMatches = fuzzyEquals(address.city, result.city)
 
     const needToSuggestAddress =
-      !streetMatches ||
-      address.city !== result.city ||
-      address.state !== result.state ||
-      // check startsWith because shippo returns zips with extensions
-      !result.zip.startsWith(address.zip)
-    // FIXME: Turn off error for now until we fix existing accounts and harvest supports error
-    // if (isValid && needToSuggestAddress) {
-    //   // Clients rely on exact copy of error message to power
-    //   // suggested address flow
-    //   throw new ApolloError("Need to Suggest Address", "400", {
-    //     suggestedAddress: pick(result, [
-    //       "city",
-    //       "country",
-    //       "state",
-    //       "street1",
-    //       "street2",
-    //       "zip",
-    //     ]),
-    //   })
-    // }
+      !streetMatches || !cityMatches || !stateMatches || !zipMatches
+    if (isValid && needToSuggestAddress) {
+      // Clients rely on exact copy of error message to power
+      // suggested address flow
+      const suggestedAddress = {
+        ...pick(result, [
+          "city",
+          "country",
+          "state",
+          "street2",
+          "zip",
+          "street1",
+        ]),
+      }
+      throw new ApolloError("Need to Suggest Address", "400", {
+        suggestedAddress,
+        failureMode: !streetMatches
+          ? "Street mismatch"
+          : !cityMatches
+          ? "City mismatch"
+          : !stateMatches
+          ? "State mismatch"
+          : !zipMatches
+          ? "Zip mismatch"
+          : "",
+        originalAddress: address,
+      })
+    }
     const message = validationResults?.messages?.[0]
 
     return {

@@ -1,3 +1,4 @@
+import { WinstonLogger } from "@app/lib/logger"
 import { SegmentService } from "@app/modules/Analytics/services/segment.service"
 import { EmailService } from "@app/modules/Email/services/email.service"
 import { ErrorService } from "@app/modules/Error/services/error.service"
@@ -11,10 +12,18 @@ import { pick } from "lodash"
 
 import { PaymentService } from "../services/payment.service"
 import { RentalService } from "../services/rental.service"
+import { GRANDFATHERED_PLAN_IDS } from "../services/subscription.service"
 
 export type ChargebeeEvent = {
   content: any
   event_type: string
+}
+
+export type RentalInvoiceWithCustomerID = {
+  id: string
+  membership: {
+    customerId: string
+  }
 }
 
 // For a full list of webhook types, see https://apidocs.chargebee.com/docs/api/events#event_types
@@ -23,13 +32,13 @@ const CHARGEBEE_SUBSCRIPTION_CREATED = "subscription_created"
 const CHARGEBEE_SUBSCRIPTION_CANCELLED = "subscription_cancelled"
 const CHARGEBEE_PAYMENT_SUCCEEDED = "payment_succeeded"
 const CHARGEBEE_PAYMENT_FAILED = "payment_failed"
-const CHARGEBEE_PROMOTIONAL_CREDITS_DEDUCTED = "promotional_credits_deducted"
 const CHARGEBEE_PROMOTIONAL_CREDITS_ADDED = "promotional_credits_added"
-const CHARGEBEE_INVOICE_GENERATED = "invoice_generated"
 
 @Controller("chargebee_events")
 export class ChargebeeController {
-  private readonly logger = new Logger(ChargebeeController.name)
+  private readonly logger = (new Logger(
+    ChargebeeController.name
+  ) as unknown) as WinstonLogger
 
   constructor(
     private readonly payment: PaymentService,
@@ -55,7 +64,6 @@ export class ChargebeeController {
         break
       case CHARGEBEE_CUSTOMER_CHANGED:
         await this.chargebeeCustomerChanged(body.content)
-        await this.updatePromotionalCreditBalance(body.content.customer.id)
         break
       case CHARGEBEE_PAYMENT_SUCCEEDED:
         await this.chargebeePaymentSucceeded(body.content)
@@ -64,51 +72,49 @@ export class ChargebeeController {
       case CHARGEBEE_PAYMENT_FAILED:
         await this.chargebeePaymentFailed(body.content)
         break
-      case CHARGEBEE_PROMOTIONAL_CREDITS_DEDUCTED:
       case CHARGEBEE_PROMOTIONAL_CREDITS_ADDED:
-        await this.updatePromotionalCreditBalance(
-          body.content.customer.id,
-          true
-        )
-        break
-      case CHARGEBEE_INVOICE_GENERATED:
-        await this.updatePromotionalCreditBalance(
-          body.content.invoice.customer_id
-        )
+        await this.creditsAdded(body.content)
         break
     }
   }
 
-  private async updatePromotionalCreditBalance(
-    chargebeeCustomerID: string,
-    forceUpdate = false
-  ) {
+  private async creditsAdded(content: any) {
+    const { promotional_credit, customer: chargebeeCustomer } = content
+
     const prismaCustomer = await this.prisma.client.customer.findFirst({
-      where: { user: { id: chargebeeCustomerID } },
-      select: {
-        id: true,
-        membership: {
-          select: {
-            grandfathered: true,
-            id: true,
+      where: { user: { id: chargebeeCustomer.id } },
+      select: { id: true },
+    })
+    try {
+      await chargebee.promotional_credit
+        .deduct({
+          customer_id: chargebeeCustomer.id,
+          amount: promotional_credit.amount,
+          description: "Automatically move to internal system",
+        })
+        .request()
+      await this.prisma.client.customer.update({
+        where: { id: prismaCustomer.id },
+        data: {
+          membership: {
+            update: {
+              creditBalance: { increment: promotional_credit.amount },
+              creditUpdateHistory: {
+                create: {
+                  amount: promotional_credit.amount,
+                  reason:
+                    "Automatic transfer of credits added on chargebee to internal system.",
+                },
+              },
+            },
           },
         },
-      },
-    })
-
-    if (prismaCustomer?.membership?.grandfathered || forceUpdate) {
-      const chargebeeCustomer = await chargebee.customer
-        .retrieve(chargebeeCustomerID)
-        .request()
-
-      await this.prisma.client.customerMembership.update({
-        where: {
-          id: prismaCustomer.membership.id,
-        },
-        data: {
-          creditBalance: chargebeeCustomer.customer.promotional_credits,
-        },
       })
+    } catch (err) {
+      this.logger.error(
+        "Unable to handle promotional credits added in chargebee controller",
+        { error: err, content }
+      )
     }
   }
 
@@ -118,10 +124,12 @@ export class ChargebeeController {
       where: { user: { id: chargebeeCustomerID } },
       select: {
         id: true,
+        user: { select: { id: true } },
         membership: {
           select: {
             id: true,
             grandfathered: true,
+            creditBalance: true,
             plan: {
               select: {
                 planID: true,
@@ -134,39 +142,33 @@ export class ChargebeeController {
     })
 
     if (prismaCustomer?.membership?.grandfathered) {
-      let totalPromotionalCredits
-      const plan = prismaCustomer.membership.plan
-      const isPlanPayment = content.invoice.line_items.some(
-        li => li.entity_id === plan.planID
+      const isTraditionalPlanPayment = content.invoice.line_items.some(
+        li =>
+          li.entity_type === "plan" &&
+          GRANDFATHERED_PLAN_IDS.includes(li.entity_id)
       )
 
-      if (isPlanPayment) {
-        // Add promotional credits if this is a plan payment
-        const credits = Math.round(prismaCustomer.membership.plan.price * 1.15)
-        const addCreditsPayload = await chargebee.promotional_credit
-          .add({
-            customer_id: chargebeeCustomerID,
-            amount: credits,
-            description: `Grandfathered ${prismaCustomer.membership.plan.planID} credits`,
-          })
-          .request()
-        totalPromotionalCredits = addCreditsPayload.customer.promotional_credits
-      } else {
-        // If not a plan payment update the customers creditBalance without adding
-        const chargebeeCustomer = await chargebee.customer
-          .retrieve(chargebeeCustomerID)
-          .request()
-        totalPromotionalCredits = chargebeeCustomer.customer.promotional_credits
-      }
+      if (isTraditionalPlanPayment) {
+        const planLineItem = content.invoice.line_items.find(
+          a => a.entity_type === "plan"
+        )
+        const newCredits = Math.round(planLineItem.amount * 1.15)
 
-      await this.prisma.client.customerMembership.update({
-        where: {
-          id: prismaCustomer.membership.id,
-        },
-        data: {
-          creditBalance: totalPromotionalCredits,
-        },
-      })
+        await this.prisma.client.customerMembership.update({
+          where: {
+            id: prismaCustomer.membership.id,
+          },
+          data: {
+            creditBalance: { increment: newCredits },
+            creditUpdateHistory: {
+              create: {
+                amount: newCredits,
+                reason: `Grandfathered customer paid subscription dues on ${planLineItem.description} plan`,
+              },
+            },
+          },
+        })
+      }
     }
   }
 
@@ -202,6 +204,13 @@ export class ChargebeeController {
         data: { status: newStatus },
       })
       await this.email.sendReturnToGoodStandingEmail(custWithData.user)
+    }
+
+    const invoice = await this.rental.initFirstRentalInvoice(custWithData.id)
+    if (invoice) {
+      await this.rental.updateEstimatedTotal(
+        invoice as RentalInvoiceWithCustomerID
+      )
     }
 
     let isRecurringSubscription =

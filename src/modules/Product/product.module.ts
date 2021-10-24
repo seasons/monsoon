@@ -48,7 +48,7 @@ export const ProductModuleDef = {
     ShippingModule,
     SearchModule,
     UtilsModule,
-    UserModule,
+    forwardRef(() => UserModule),
     forwardRef(() => ReservationModule),
   ],
   providers: [
