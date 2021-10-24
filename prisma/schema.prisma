@@ -758,8 +758,8 @@ model CreditBalanceUpdateLog {
   membership   CustomerMembership @relation(fields: [membershipId], references: [id])
   amount       Int
   reason       String
-  adminUser    User               @relation(fields: [adminUserId], references: [id])
-  adminUserId  String             @map("user") @db.VarChar(30)
+  adminUser    User?              @relation(fields: [adminUserId], references: [id])
+  adminUserId  String?            @map("user") @db.VarChar(30)
   createdAt    DateTime           @default(now())
 }
 

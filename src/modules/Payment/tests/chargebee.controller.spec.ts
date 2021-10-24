@@ -80,6 +80,14 @@ describe("Chargebee Controller", () => {
 
           const customerWithData = await getCustWithData()
           expect(customerWithData.membership.creditBalance).toBe(7475)
+
+          const latestCreditBalanceUpdateLog =
+            customerWithData.membership.creditUpdateHistory?.[0]
+          expect(latestCreditBalanceUpdateLog).toBeDefined()
+          expect(latestCreditBalanceUpdateLog.amount).toBe(7475)
+          expect(latestCreditBalanceUpdateLog.reason).toBe(
+            "Grandfathered customer paid subscription dues on Essential 1 plan"
+          )
         })
         it("Essential 2", async () => {
           const paymentSucceededEvent = getPaymentSucceededEvent(
@@ -90,6 +98,14 @@ describe("Chargebee Controller", () => {
 
           const customerWithData = await getCustWithData()
           expect(customerWithData.membership.creditBalance).toBe(10925)
+
+          const latestCreditBalanceUpdateLog =
+            customerWithData.membership.creditUpdateHistory?.[0]
+          expect(latestCreditBalanceUpdateLog).toBeDefined()
+          expect(latestCreditBalanceUpdateLog.amount).toBe(10925)
+          expect(latestCreditBalanceUpdateLog.reason).toBe(
+            "Grandfathered customer paid subscription dues on Essential 2 plan"
+          )
         })
         it("Essential", async () => {
           const paymentSucceededEvent = getPaymentSucceededEvent(
@@ -100,6 +116,14 @@ describe("Chargebee Controller", () => {
 
           const customerWithData = await getCustWithData()
           expect(customerWithData.membership.creditBalance).toBe(14375)
+
+          const latestCreditBalanceUpdateLog =
+            customerWithData.membership.creditUpdateHistory?.[0]
+          expect(latestCreditBalanceUpdateLog).toBeDefined()
+          expect(latestCreditBalanceUpdateLog.amount).toBe(14375)
+          expect(latestCreditBalanceUpdateLog.reason).toBe(
+            "Grandfathered customer paid subscription dues on Essential plan"
+          )
         })
         it("Essential 6", async () => {
           const paymentSucceededEvent = getPaymentSucceededEvent(
@@ -110,6 +134,14 @@ describe("Chargebee Controller", () => {
 
           const customerWithData = await getCustWithData()
           expect(customerWithData.membership.creditBalance).toBe(24725)
+
+          const latestCreditBalanceUpdateLog =
+            customerWithData.membership.creditUpdateHistory?.[0]
+          expect(latestCreditBalanceUpdateLog).toBeDefined()
+          expect(latestCreditBalanceUpdateLog.amount).toBe(24725)
+          expect(latestCreditBalanceUpdateLog.reason).toBe(
+            "Grandfathered customer paid subscription dues on Essential 6 plan"
+          )
         })
         it("All Access 1", async () => {
           const paymentSucceededEvent = getPaymentSucceededEvent(
@@ -120,6 +152,14 @@ describe("Chargebee Controller", () => {
 
           const customerWithData = await getCustWithData()
           expect(customerWithData.membership.creditBalance).toBe(12075)
+
+          const latestCreditBalanceUpdateLog =
+            customerWithData.membership.creditUpdateHistory?.[0]
+          expect(latestCreditBalanceUpdateLog).toBeDefined()
+          expect(latestCreditBalanceUpdateLog.amount).toBe(12075)
+          expect(latestCreditBalanceUpdateLog.reason).toBe(
+            "Grandfathered customer paid subscription dues on All Access 1 plan"
+          )
         })
         it("All Access 2", async () => {
           const paymentSucceededEvent = getPaymentSucceededEvent(
@@ -130,6 +170,14 @@ describe("Chargebee Controller", () => {
 
           const customerWithData = await getCustWithData()
           expect(customerWithData.membership.creditBalance).toBe(16675)
+
+          const latestCreditBalanceUpdateLog =
+            customerWithData.membership.creditUpdateHistory?.[0]
+          expect(latestCreditBalanceUpdateLog).toBeDefined()
+          expect(latestCreditBalanceUpdateLog.amount).toBe(16675)
+          expect(latestCreditBalanceUpdateLog.reason).toBe(
+            "Grandfathered customer paid subscription dues on All Access 2 plan"
+          )
         })
         it("All Access", async () => {
           const paymentSucceededEvent = getPaymentSucceededEvent(
@@ -140,6 +188,14 @@ describe("Chargebee Controller", () => {
 
           const customerWithData = await getCustWithData()
           expect(customerWithData.membership.creditBalance).toBe(20125)
+
+          const latestCreditBalanceUpdateLog =
+            customerWithData.membership.creditUpdateHistory?.[0]
+          expect(latestCreditBalanceUpdateLog).toBeDefined()
+          expect(latestCreditBalanceUpdateLog.amount).toBe(20125)
+          expect(latestCreditBalanceUpdateLog.reason).toBe(
+            "Grandfathered customer paid subscription dues on All Access plan"
+          )
         })
       })
 
@@ -223,6 +279,14 @@ describe("Chargebee Controller", () => {
       customerWithData = await getCustWithData()
       expect(customerWithData.membership.creditBalance).toBe(1700)
       expect(chargebeeDeductCreditsSpy).toHaveBeenCalledTimes(1)
+
+      const latestCreditBalanceUpdateLog =
+        customerWithData.membership.creditUpdateHistory?.[0]
+      expect(latestCreditBalanceUpdateLog).toBeDefined()
+      expect(latestCreditBalanceUpdateLog.amount).toBe(1700)
+      expect(latestCreditBalanceUpdateLog.reason).toBe(
+        "Automatic transfer of credits added on chargebee to internal system."
+      )
     })
   })
 })
@@ -237,6 +301,17 @@ const setGrandfatheredOnCustomer = async (grandfathered: boolean) => {
 const getCustWithData = async () => {
   return await prisma.client.customer.findUnique({
     where: { id: testCustomer.id },
-    select: { membership: { select: { creditBalance: true } } },
+    select: {
+      membership: {
+        select: {
+          creditBalance: true,
+          creditUpdateHistory: {
+            orderBy: { createdAt: "desc" },
+            take: 1,
+            select: { amount: true, reason: true },
+          },
+        },
+      },
+    },
   })
 }
