@@ -92,10 +92,12 @@ export class AdmissionsService {
       },
     })
     const now = moment()
-    const emailsSentPastWeek = emailsSent.filter(a => {
-      const numDaysSinceEmailSent = now.diff(moment(a.createdAt), "days")
-      return numDaysSinceEmailSent <= 6 // 0-6 is 7 days
-    })
+    const emailsSentPastWeek = emailsSent
+      .filter(a => {
+        const numDaysSinceEmailSent = now.diff(moment(a.createdAt), "days")
+        return numDaysSinceEmailSent <= 6 // 0-6 is 7 days
+      })
+      .filter(b => !!b.user) // somehow there are records with a null user. probably from some one-off problem.
 
     // Find new users activated
     const welcomeEmailsSentPastWeek = emailsSentPastWeek.filter(

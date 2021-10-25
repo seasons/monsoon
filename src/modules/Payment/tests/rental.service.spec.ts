@@ -1,4 +1,9 @@
+import { EmailService } from "@app/modules/Email/services/email.service"
+import { PushNotificationService } from "@app/modules/PushNotification/services/pushNotification.service"
 import { ReservationService } from "@app/modules/Reservation"
+import { EmailServiceMock } from "@app/modules/Utils/mocks/emailService.mock"
+import { ShippoMock } from "@app/modules/Utils/mocks/shippo.mock"
+import { TestUtilsService } from "@app/modules/Utils/services/test.service"
 import { TimeUtilsService } from "@app/modules/Utils/services/time.service"
 import { UtilsService } from "@app/modules/Utils/services/utils.service"
 import { PrismaService } from "@app/prisma/prisma.service"
@@ -11,6 +16,7 @@ import {
   ShippingCode,
 } from "@prisma/client"
 import chargebee from "chargebee"
+import cuid from "cuid"
 import { head, merge } from "lodash"
 import moment from "moment"
 
@@ -235,6 +241,7 @@ let timeUtils: TimeUtilsService
 let cleanupFuncs = []
 let testCustomer: any
 let moduleRef: TestingModule
+let testUtils: TestUtilsService
 
 const testCustomerSelect = Prisma.validator<Prisma.CustomerSelect>()({
   id: true,
@@ -248,6 +255,7 @@ describe("Rental Service", () => {
   beforeAll(async () => {
     const moduleBuilder = await Test.createTestingModule(PAYMENT_MODULE_DEF)
     moduleBuilder.overrideProvider(PaymentService).useClass(PaymentServiceMock)
+    moduleBuilder.overrideProvider(EmailService).useClass(EmailServiceMock)
 
     moduleRef = await moduleBuilder.compile()
 
@@ -256,7 +264,13 @@ describe("Rental Service", () => {
     utils = moduleRef.get<UtilsService>(UtilsService)
     timeUtils = moduleRef.get<TimeUtilsService>(TimeUtilsService)
     reservationService = moduleRef.get<ReservationService>(ReservationService)
+    testUtils = moduleRef.get<TestUtilsService>(TestUtilsService)
 
+    const notificationService = moduleRef.get<PushNotificationService>(
+      PushNotificationService
+    )
+
+    jest.mock("shippo", () => new ShippoMock())
     jest
       .spyOn<any, any>(chargebee.subscription, "add_charge_at_term_end")
       .mockReturnValue(
@@ -296,11 +310,23 @@ describe("Rental Service", () => {
       .mockReturnValue(
         new ChargeBeeMock(ChargebeeMockFunction.DeleteUnbilledCharge)
       )
+
+    jest
+      .spyOn(rentalService, "updateEstimatedTotal")
+      .mockImplementation(() => null)
+
+    jest
+      .spyOn(reservationService, "removeRestockNotifications")
+      .mockImplementation(() => null)
+
+    jest
+      .spyOn(notificationService, "pushNotifyUsers")
+      .mockImplementation(() => null)
   })
 
   describe("Calculate Days Rented", () => {
     beforeEach(async () => {
-      const { cleanupFunc, customer } = await createTestCustomer({
+      const { cleanupFunc, customer } = await testUtils.createTestCustomer({
         select: testCustomerSelect,
       })
       cleanupFuncs.push(cleanupFunc)
@@ -783,7 +809,7 @@ describe("Rental Service", () => {
       let reservationThree
 
       beforeAll(async () => {
-        const { cleanupFunc, customer } = await createTestCustomer({
+        const { cleanupFunc, customer } = await testUtils.createTestCustomer({
           select: testCustomerSelect,
         })
         cleanupFuncs.push(cleanupFunc)
@@ -881,7 +907,7 @@ describe("Rental Service", () => {
             daysRented: 9,
             rentalStartedAt: timeUtils.xDaysAgoISOString(9),
             rentalEndedAt: now,
-            price: 2403,
+            price: 3204, // expect a minimum charge of 12 days
           },
           [reservationThreeSUIDs[0]]: {
             daysRented: 0,
@@ -1039,7 +1065,7 @@ describe("Rental Service", () => {
 
     describe("Processing Edge cases", () => {
       beforeEach(async () => {
-        const { cleanupFunc, customer } = await createTestCustomer({
+        const { cleanupFunc, customer } = await testUtils.createTestCustomer({
           select: testCustomerSelect,
         })
         cleanupFuncs.push(cleanupFunc)
@@ -1223,7 +1249,7 @@ describe("Rental Service", () => {
       let expectedResultsBySUIDOrName
 
       beforeAll(async () => {
-        const { cleanupFunc, customer } = await createTestCustomer({
+        const { cleanupFunc, customer } = await testUtils.createTestCustomer({
           select: testCustomerSelect,
         })
         cleanupFuncs.push(cleanupFunc)
@@ -1337,7 +1363,7 @@ describe("Rental Service", () => {
       let expectedResultsBySUIDOrName
 
       beforeAll(async () => {
-        const { cleanupFunc, customer } = await createTestCustomer({
+        const { cleanupFunc, customer } = await testUtils.createTestCustomer({
           select: testCustomerSelect,
         })
         cleanupFuncs.push(cleanupFunc)
@@ -1455,7 +1481,7 @@ describe("Rental Service", () => {
             )
           )
 
-        const { cleanupFunc, customer } = await createTestCustomer({
+        const { cleanupFunc, customer } = await testUtils.createTestCustomer({
           select: testCustomerSelect,
         })
         cleanupFuncs.push(cleanupFunc)
@@ -1525,7 +1551,7 @@ describe("Rental Service", () => {
             throw "Create Rental Invoice Line Items Test Error"
           })
 
-        const { cleanupFunc, customer } = await createTestCustomer({
+        const { cleanupFunc, customer } = await testUtils.createTestCustomer({
           select: testCustomerSelect,
         })
         cleanupFuncs.push(cleanupFunc)
@@ -1583,7 +1609,7 @@ describe("Rental Service", () => {
     })
 
     it("Charges them immediately if their subscription is set to cancelled", async () => {
-      const { customer } = await createTestCustomer({
+      const { customer } = await testUtils.createTestCustomer({
         select: testCustomerSelect,
       })
       testCustomer = customer
@@ -1611,7 +1637,7 @@ describe("Rental Service", () => {
     })
 
     it("Charges them immediately if their subscription is set to non_renewing", async () => {
-      const { customer } = await createTestCustomer({
+      const { customer } = await testUtils.createTestCustomer({
         select: testCustomerSelect,
       })
       testCustomer = customer
@@ -1640,7 +1666,7 @@ describe("Rental Service", () => {
     })
 
     it("Charges them immediately if their subscription nextBillingAt is more than 2 days from now", async () => {
-      const { customer } = await createTestCustomer({
+      const { customer } = await testUtils.createTestCustomer({
         select: testCustomerSelect,
       })
       testCustomer = customer
@@ -1677,7 +1703,7 @@ describe("Rental Service", () => {
 
       describe("Line items were successfully created the first time through", () => {
         beforeAll(async () => {
-          const { customer } = await createTestCustomer({
+          const { customer } = await testUtils.createTestCustomer({
             select: testCustomerSelect,
           })
           testCustomer = customer
@@ -1762,7 +1788,7 @@ describe("Rental Service", () => {
 
       describe("Line items were not successfully created the first time through", () => {
         beforeAll(async () => {
-          const { customer } = await createTestCustomer({
+          const { customer } = await testUtils.createTestCustomer({
             select: testCustomerSelect,
           })
           testCustomer = customer
@@ -1843,7 +1869,7 @@ describe("Rental Service", () => {
         let chargebeeDeleteUnbilledChargeSpy
 
         beforeAll(async () => {
-          const { customer } = await createTestCustomer({
+          const { customer } = await testUtils.createTestCustomer({
             select: testCustomerSelect,
           })
           testCustomer = customer
@@ -1915,6 +1941,370 @@ describe("Rental Service", () => {
     })
   })
 
+  describe("Price for items", () => {
+    let previousInvoiceId
+    let currentInvoiceId
+    let physicalProduct
+
+    const createTestCustomerWithRentalInvoices = async (
+      lines?: Prisma.Enumerable<Prisma.RentalInvoiceCreateManyMembershipInput>
+    ) => {
+      previousInvoiceId = cuid()
+      currentInvoiceId = cuid()
+
+      const { cleanupFunc, customer } = await testUtils.createTestCustomer({
+        create: {
+          membership: {
+            create: {
+              subscriptionId: utils.randomString(),
+              plan: { connect: { planID: "access-monthly" } },
+              rentalInvoices: {
+                createMany: {
+                  data: lines || [
+                    {
+                      id: previousInvoiceId,
+                      billingStartAt: timeUtils.xDaysAgoISOString(35),
+                      billingEndAt: timeUtils.xDaysAgoISOString(5),
+                      status: "Billed",
+                    },
+                    {
+                      id: currentInvoiceId,
+                      billingStartAt: timeUtils.xDaysAgoISOString(4),
+                      billingEndAt: new Date(),
+                      status: "Draft",
+                    },
+                  ],
+                },
+              },
+            },
+          },
+        },
+        select: testCustomerSelect,
+      })
+
+      cleanupFuncs.push(cleanupFunc)
+      testCustomer = customer
+    }
+
+    beforeEach(async () => {
+      physicalProduct = await prisma.client.physicalProduct.findFirst({
+        where: {
+          inventoryStatus: "Reservable",
+        },
+        select: {
+          id: true,
+          productVariant: {
+            select: {
+              product: {
+                select: {
+                  computedRentalPrice: true,
+                },
+              },
+            },
+          },
+        },
+      })
+    })
+
+    describe("No previous rental invoice", () => {
+      beforeEach(async () => {
+        await createTestCustomerWithRentalInvoices([
+          {
+            billingStartAt: timeUtils.xDaysAgoISOString(15),
+            billingEndAt: new Date(),
+            status: "Draft",
+          },
+        ])
+      })
+
+      it("If an item was not delivered (held for 0 days) do not apply the minimum", async () => {
+        const {
+          price,
+          appliedMinimum,
+          adjustedForPreviousMinimum,
+        } = await rentalService.calculatePriceForDaysRented({
+          invoice: { id: currentInvoiceId },
+          customer: testCustomer,
+          product: physicalProduct,
+          daysRented: 0,
+        })
+
+        expect(price).toBe(0)
+        expect(appliedMinimum).toBe(false)
+        expect(adjustedForPreviousMinimum).toBe(false)
+      })
+
+      it("If a customer has held an item for less than or equal to 12 days, apply the minimum", async () => {
+        const {
+          price,
+          appliedMinimum,
+          adjustedForPreviousMinimum,
+        } = await rentalService.calculatePriceForDaysRented({
+          invoice: { id: currentInvoiceId },
+          customer: testCustomer,
+          product: physicalProduct,
+          daysRented: 5,
+        })
+
+        const expectedPrice = rentalService.calculateUnadjustedPriceForDaysRented(
+          physicalProduct,
+          12
+        )
+
+        expect(price).toBe(expectedPrice)
+        expect(appliedMinimum).toBe(true)
+        expect(adjustedForPreviousMinimum).toBe(false)
+      })
+
+      it("If a customer has held an item for more than 12 days, charge them the prorated total", async () => {
+        const {
+          price,
+          appliedMinimum,
+          adjustedForPreviousMinimum,
+        } = await rentalService.calculatePriceForDaysRented({
+          invoice: { id: currentInvoiceId },
+          customer: testCustomer,
+          product: physicalProduct,
+          daysRented: 14,
+        })
+
+        const expectedPrice = rentalService.calculateUnadjustedPriceForDaysRented(
+          physicalProduct,
+          14
+        )
+
+        expect(price).toBe(expectedPrice)
+        expect(appliedMinimum).toBe(false)
+        expect(adjustedForPreviousMinimum).toBe(false)
+      })
+    })
+
+    describe("Previous rental invoice where we have a line item for the given product", () => {
+      beforeEach(async () => {
+        await createTestCustomerWithRentalInvoices()
+      })
+
+      describe("We charged the minimum on the last invoice", () => {
+        it("If an item was not delivered (held for 0 days) do not apply the minimum", async () => {
+          const {
+            price,
+            appliedMinimum,
+            adjustedForPreviousMinimum,
+          } = await rentalService.calculatePriceForDaysRented({
+            invoice: { id: currentInvoiceId },
+            customer: testCustomer,
+            product: physicalProduct,
+            daysRented: 0,
+          })
+
+          expect(price).toBe(0)
+          expect(appliedMinimum).toBe(false)
+          expect(adjustedForPreviousMinimum).toBe(false)
+        })
+
+        it("If they held it for less than 12 days in the previous billing cycle, adjust the current charge for the difference in days", async () => {
+          // e.g if they held it for 7 days in the last cycle, and 14 days in this cycle, only charge them for 14-5 or 9 days.
+          await addLineItemToInvoice({
+            physicalProduct,
+            invoiceId: previousInvoiceId,
+            daysRented: 7,
+          })
+
+          const {
+            price,
+            appliedMinimum,
+            adjustedForPreviousMinimum,
+          } = await rentalService.calculatePriceForDaysRented({
+            invoice: { id: currentInvoiceId },
+            customer: testCustomer,
+            product: physicalProduct,
+            daysRented: 14,
+          })
+
+          const expectedPrice = rentalService.calculateUnadjustedPriceForDaysRented(
+            physicalProduct,
+            9
+          )
+          expect(price).toBe(expectedPrice)
+          expect(appliedMinimum).toBe(false)
+          expect(adjustedForPreviousMinimum).toBe(true)
+        })
+
+        it("If they held it for exactly 12 days in the previous billing cycle, do not adjust the current charge", async () => {
+          await addLineItemToInvoice({
+            physicalProduct,
+            invoiceId: previousInvoiceId,
+            daysRented: 12,
+          })
+
+          const {
+            price,
+            appliedMinimum,
+            adjustedForPreviousMinimum,
+          } = await rentalService.calculatePriceForDaysRented({
+            invoice: { id: currentInvoiceId },
+            customer: testCustomer,
+            product: physicalProduct,
+            daysRented: 14,
+          })
+
+          const expectedPrice = rentalService.calculateUnadjustedPriceForDaysRented(
+            physicalProduct,
+            14
+          )
+          expect(price).toBe(expectedPrice)
+          expect(appliedMinimum).toBe(false)
+          expect(adjustedForPreviousMinimum).toBe(false)
+        })
+      })
+
+      describe("We charged more than the minimum the last invoice", () => {
+        it("If an item was not delivered (held for 0 days) do not apply the minimum", async () => {
+          const {
+            price,
+            appliedMinimum,
+            adjustedForPreviousMinimum,
+          } = await rentalService.calculatePriceForDaysRented({
+            invoice: { id: currentInvoiceId },
+            customer: testCustomer,
+            product: physicalProduct,
+            daysRented: 0,
+          })
+
+          expect(price).toBe(0)
+          expect(appliedMinimum).toBe(false)
+          expect(adjustedForPreviousMinimum).toBe(false)
+        })
+
+        it("Charge them for exactly the number of days they held in this billing cycle", async () => {
+          await addLineItemToInvoice({
+            physicalProduct,
+            invoiceId: previousInvoiceId,
+            daysRented: 15,
+          })
+
+          const {
+            price,
+            appliedMinimum,
+            adjustedForPreviousMinimum,
+          } = await rentalService.calculatePriceForDaysRented({
+            invoice: { id: currentInvoiceId },
+            customer: testCustomer,
+            product: physicalProduct,
+            daysRented: 3,
+          })
+
+          const expectedPrice = rentalService.calculateUnadjustedPriceForDaysRented(
+            physicalProduct,
+            3
+          )
+          expect(price).toBe(expectedPrice)
+          expect(appliedMinimum).toBe(false)
+          expect(adjustedForPreviousMinimum).toBe(false)
+        })
+      })
+
+      describe("We charged 0 on the last invoice", () => {
+        it("If a customer has held an item for less than or equal to 12 days, apply the minimum", async () => {
+          await addLineItemToInvoice({
+            physicalProduct,
+            invoiceId: previousInvoiceId,
+            daysRented: 0,
+          })
+
+          const {
+            price,
+            appliedMinimum,
+            adjustedForPreviousMinimum,
+          } = await rentalService.calculatePriceForDaysRented({
+            invoice: { id: currentInvoiceId },
+            customer: testCustomer,
+            product: physicalProduct,
+            daysRented: 3,
+          })
+
+          const expectedPrice = rentalService.calculateUnadjustedPriceForDaysRented(
+            physicalProduct,
+            12
+          )
+          expect(price).toBe(expectedPrice)
+          expect(appliedMinimum).toBe(true)
+          expect(adjustedForPreviousMinimum).toBe(false)
+        })
+
+        it("If a customer has held an item for more than 12 days, charge them the prorated total", async () => {
+          await addLineItemToInvoice({
+            physicalProduct,
+            invoiceId: previousInvoiceId,
+            daysRented: 0,
+          })
+
+          const {
+            price,
+            appliedMinimum,
+            adjustedForPreviousMinimum,
+          } = await rentalService.calculatePriceForDaysRented({
+            invoice: { id: currentInvoiceId },
+            customer: testCustomer,
+            product: physicalProduct,
+            daysRented: 18,
+          })
+
+          const expectedPrice = rentalService.calculateUnadjustedPriceForDaysRented(
+            physicalProduct,
+            18
+          )
+          expect(price).toBe(expectedPrice)
+          expect(appliedMinimum).toBe(false)
+          expect(adjustedForPreviousMinimum).toBe(false)
+        })
+      })
+
+      describe("Previous rental invoice where we have no line item for the given product", () => {
+        it("If a customer has held an item for less than or equal to 12 days, apply the minimum", async () => {
+          const {
+            price,
+            appliedMinimum,
+            adjustedForPreviousMinimum,
+          } = await rentalService.calculatePriceForDaysRented({
+            invoice: { id: currentInvoiceId },
+            customer: testCustomer,
+            product: physicalProduct,
+            daysRented: 3,
+          })
+
+          const expectedPrice = rentalService.calculateUnadjustedPriceForDaysRented(
+            physicalProduct,
+            12
+          )
+          expect(price).toBe(expectedPrice)
+          expect(appliedMinimum).toBe(true)
+          expect(adjustedForPreviousMinimum).toBe(false)
+        })
+
+        it("If a customer has held an item for more than 12 days, charge them the prorated total", async () => {
+          const {
+            price,
+            appliedMinimum,
+            adjustedForPreviousMinimum,
+          } = await rentalService.calculatePriceForDaysRented({
+            invoice: { id: currentInvoiceId },
+            customer: testCustomer,
+            product: physicalProduct,
+            daysRented: 15,
+          })
+
+          const expectedPrice = rentalService.calculateUnadjustedPriceForDaysRented(
+            physicalProduct,
+            15
+          )
+          expect(price).toBe(expectedPrice)
+          expect(appliedMinimum).toBe(false)
+          expect(adjustedForPreviousMinimum).toBe(false)
+        })
+      })
+    })
+  })
   describe("Initialize rental invoice", () => {
     /*
     Creates it correctly the first time around
@@ -1940,7 +2330,7 @@ describe("Rental Service", () => {
     let marchSeventh2021
 
     beforeAll(async () => {
-      const { cleanupFunc, customer } = await createTestCustomer({
+      const { cleanupFunc, customer } = await testUtils.createTestCustomer({
         select: testCustomerSelect,
       })
       cleanupFuncs.push(cleanupFunc)
@@ -2189,86 +2579,35 @@ describe("Rental Service", () => {
   })
 })
 
-const createTestCustomer = async ({
-  create = {},
-  select = { id: true },
+const addLineItemToInvoice = async ({
+  invoiceId,
+  physicalProduct,
+  daysRented,
 }: {
-  create?: Partial<Prisma.CustomerCreateInput>
-  select?: Prisma.CustomerSelect
+  invoiceId: string
+  physicalProduct: { id: string }
+  daysRented: number
 }) => {
-  const upsGroundMethod = await prisma.client.shippingMethod.findFirst({
-    where: { code: "UPSGround" },
-  })
-  const upsSelectMethod = await prisma.client.shippingMethod.findFirst({
-    where: { code: "UPSSelect" },
-  })
-  const chargebeeSubscriptionId = utils.randomString()
-  const defaultCreateData = {
-    status: "Active",
-    user: {
-      create: {
-        auth0Id: utils.randomString(),
-        email: utils.randomString() + "@seasons.nyc",
-        firstName: utils.randomString(),
-        lastName: utils.randomString(),
-      },
-    },
-    detail: {
-      create: {
-        shippingAddress: {
-          create: {
-            address1: "55 Washington St Ste 736",
-            city: "Brooklyn",
-            state: "NY",
-            zipCode: "11201",
-            shippingOptions: {
-              create: [
-                {
-                  shippingMethod: { connect: { id: upsGroundMethod.id } },
-                  externalCost: 10,
-                },
-                {
-                  shippingMethod: { connect: { id: upsSelectMethod.id } },
-                  externalCost: 20,
-                },
-              ],
+  return await prisma.client.rentalInvoice.update({
+    where: { id: invoiceId },
+    data: {
+      lineItems: {
+        createMany: {
+          data: [
+            {
+              physicalProductId: physicalProduct.id,
+              daysRented: daysRented,
+              price: rentalService.calculateUnadjustedPriceForDaysRented(
+                physicalProduct,
+                daysRented
+              ),
+              currencyCode: "USD",
             },
-          },
+          ],
         },
       },
     },
-    membership: {
-      create: {
-        subscriptionId: chargebeeSubscriptionId,
-        plan: { connect: { planID: "access-monthly" } },
-        rentalInvoices: {
-          create: {
-            billingStartAt: timeUtils.xDaysAgoISOString(30),
-            billingEndAt: new Date(),
-          },
-        },
-        subscription: {
-          create: {
-            planID: "access-monthly",
-            subscriptionId: chargebeeSubscriptionId,
-            currentTermStart: timeUtils.xDaysAgoISOString(1),
-            currentTermEnd: timeUtils.xDaysFromNowISOString(1),
-            nextBillingAt: timeUtils.xDaysFromNowISOString(1),
-            status: "Active",
-            planPrice: 2000,
-          },
-        },
-      },
-    },
-  }
-  const createData = merge(defaultCreateData, create)
-  const customer = await prisma.client.customer.create({
-    data: createData,
-    select: merge(select, { id: true }),
   })
-  const cleanupFunc = async () =>
-    prisma.client.customer.delete({ where: { id: customer.id } })
-  return { cleanupFunc, customer }
 }
 
 const setCustomerPlanType = async (
@@ -2300,7 +2639,7 @@ const addToBagAndReserveForCustomer = async (
   numProductsToAdd,
   options: { shippingCode?: ShippingCode } = {}
 ) => {
-  const { shippingCode = null } = options
+  const { shippingCode = "UPSGround" } = options
   const reservedBagItems = await prisma.client.bagItem.findMany({
     where: {
       customer: { id: testCustomer.id },
@@ -2361,11 +2700,11 @@ const addToBagAndReserveForCustomer = async (
     select: { productVariant: { select: { id: true } } },
   })
   const prodVarsToReserve = bagItemsToReserve.map(a => a.productVariant.id)
-  const r = await reservationService.reserveItems(
-    prodVarsToReserve,
+  const r = await reservationService.reserveItems({
+    items: prodVarsToReserve,
     shippingCode,
-    testCustomer as any,
-    {
+    customer: testCustomer as any,
+    select: {
       reservationNumber: true,
       products: { select: { seasonsUID: true } },
       newProducts: { select: { seasonsUID: true } },
@@ -2377,8 +2716,9 @@ const addToBagAndReserveForCustomer = async (
           shippingLabel: { select: { trackingNumber: true } },
         },
       },
-    }
-  )
+      shippingMethod: { select: { code: true } },
+    },
+  })
   await setPackageAmount(r.sentPackage.id, UPS_GROUND_FEE)
   await setPackageAmount(r.returnPackages[0].id, UPS_GROUND_FEE)
   return r

@@ -37,14 +37,6 @@ type TriageCustomerResult = {
   waitlistReason?: InAdmissableReason
 }
 
-type CustomerWithUser = Customer & {
-  detail: CustomerDetail & {
-    shippingAddress: Location
-  }
-  user: User
-  admissions: CustomerAdmissionsData
-}
-
 type UpdateCustomerAdmissionsDataInput = TriageCustomerResult & {
   customer: any
   dryRun: boolean
@@ -52,12 +44,6 @@ type UpdateCustomerAdmissionsDataInput = TriageCustomerResult & {
   allAccessEnabled?: boolean
 }
 
-const shippingOptionsData = JSON.parse(
-  fs.readFileSync(
-    process.cwd() + "/src/modules/Shipping/shippingOptionsData.json",
-    "utf-8"
-  )
-)
 @Injectable()
 export class CustomerService {
   triageCustomerSelect = Prisma.validator<Prisma.CustomerSelect>()({
@@ -95,8 +81,7 @@ export class CustomerService {
     private readonly email: EmailService,
     private readonly pushNotification: PushNotificationService,
     private readonly sms: SMSService,
-    private readonly utils: UtilsService,
-    private readonly queryUtils: QueryUtilsService
+    private readonly utils: UtilsService
   ) {}
 
   async setCustomerPrismaStatus(user: User, status: CustomerStatus) {
@@ -105,68 +90,6 @@ export class CustomerService {
     return await this.prisma.client.customer.update({
       data: { status },
       where: { id: customer.id },
-    })
-  }
-
-  async addCustomerLocationShippingOptions(
-    destinationState,
-    shippingAddressID
-  ) {
-    const shippingMethods = await this.prisma.client.shippingMethod.findMany()
-    const warehouseLocation = await this.prisma.client.location.findUnique({
-      where: {
-        slug:
-          process.env.SEASONS_CLEANER_LOCATION_SLUG ||
-          "seasons-cleaners-official",
-      },
-    })
-
-    const originState = warehouseLocation.state
-    const shippingOptions = []
-    const abbreviatedDestState = this.utils.abbreviateState(destinationState)
-
-    for (const method of shippingMethods) {
-      const stateData =
-        shippingOptionsData[method.code].from[originState].to[
-          abbreviatedDestState
-        ]
-
-      const existingShippingOptions = await this.prisma.client.shippingOption.findMany(
-        {
-          where: {
-            originId: warehouseLocation.id,
-            destinationId: shippingAddressID,
-            shippingMethodId: method.id,
-          },
-        }
-      )
-
-      const existingShippingOption = head(existingShippingOptions)
-
-      if (existingShippingOption) {
-        shippingOptions.push(existingShippingOption)
-      } else {
-        const shippingOption = await this.prisma.client.shippingOption.create({
-          data: {
-            origin: { connect: { id: warehouseLocation.id } },
-            destination: { connect: { id: shippingAddressID } },
-            shippingMethod: { connect: { id: method.id } },
-            externalCost: stateData.price,
-            averageDuration: stateData.averageDuration,
-          },
-        })
-
-        shippingOptions.push(shippingOption)
-      }
-    }
-
-    return await this.prisma.client.location.update({
-      where: { id: shippingAddressID },
-      data: {
-        shippingOptions: {
-          set: shippingOptions.map(s => ({ id: s.id })),
-        },
-      },
     })
   }
 
@@ -260,8 +183,6 @@ export class CustomerService {
       if (!state) {
         throw new Error("State missing in shipping address update")
       }
-
-      this.addCustomerLocationShippingOptions(state, detail.shippingAddress.id)
     }
 
     // If a status was passed, update the customer status in prisma
@@ -525,6 +446,56 @@ export class CustomerService {
       data,
       select: mergedSelect,
     })
+  }
+
+  async updateCreditBalance({
+    membershipId,
+    amount,
+    reason,
+    customerId,
+  }: {
+    membershipId: string
+    amount: number
+    reason: string
+    customerId: string
+  }) {
+    const promises = []
+
+    const adminUser = await this.prisma.client.customer.findUnique({
+      where: {
+        id: customerId,
+      },
+      select: {
+        id: true,
+        userId: true,
+      },
+    })
+
+    promises.push(
+      this.prisma.client.customerMembership.update({
+        where: {
+          id: membershipId,
+        },
+        data: {
+          creditUpdateHistory: {
+            create: {
+              amount: amount,
+              reason: reason,
+              adminUser: {
+                connect: {
+                  id: adminUser.userId,
+                },
+              },
+            },
+          },
+          creditBalance: { increment: amount },
+        },
+      })
+    )
+
+    const results = await this.prisma.client.$transaction(promises)
+    const updatedCustomerMembership = results.pop()
+    return !!updatedCustomerMembership
   }
 
   async triageCustomer(

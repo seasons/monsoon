@@ -229,6 +229,7 @@ enum EmailId {
   UnpaidMembership
   ReturnToGoodStanding
   RecommendedItemsNurture
+  RestockNotification
 }
 
 enum PackageTransitEventStatus {
@@ -295,6 +296,7 @@ enum InAdmissableReason {
 enum ShippingCode {
   UPSGround
   UPSSelect
+  Pickup
 }
 
 enum PhysicalProductDamageType {
@@ -742,7 +744,7 @@ model CustomerMembership {
   planId                   String                              @map("plan") @db.VarChar(30)
   giftId                   String?
   grandfathered            Boolean?                            @default(false)
-  creditBalance            Int                                 @default(0) 
+  creditBalance            Int                                 @default(0)
   currentBalance           Int?
   membershipSubscriptionId String?                             @map("subscription") @db.VarChar(30)
   customer                 Customer                            @relation(fields: [customerId], references: [id])
@@ -750,6 +752,18 @@ model CustomerMembership {
   subscription             CustomerMembershipSubscriptionData? @relation(fields: [membershipSubscriptionId], references: [id])
   pauseRequests            PauseRequest[]
   rentalInvoices           RentalInvoice[]
+  creditUpdateHistory      CreditBalanceUpdateLog[]
+}
+
+model CreditBalanceUpdateLog {
+  id           String             @id @default(cuid()) @db.VarChar(30)
+  membershipId String             @map("membership") @db.VarChar(30)
+  membership   CustomerMembership @relation(fields: [membershipId], references: [id])
+  amount       Int
+  reason       String
+  adminUser    User?              @relation(fields: [adminUserId], references: [id])
+  adminUserId  String?            @map("user") @db.VarChar(30)
+  createdAt    DateTime           @default(now())
 }
 
 model CustomerMembershipSubscriptionData {
@@ -864,32 +878,30 @@ model Launch {
 }
 
 model Location {
-  id                                             String            @id @default(cuid()) @db.VarChar(30)
-  slug                                           String?           @unique
-  name                                           String?
-  company                                        String?
-  description                                    String?
-  address1                                       String?
-  address2                                       String?
-  city                                           String?
-  state                                          String?
-  zipCode                                        String
-  locationType                                   LocationType?
-  lat                                            Float?
-  lng                                            Float?
-  createdAt                                      DateTime          @default(now())
-  updatedAt                                      DateTime          @updatedAt
-  userId                                         String?           @map("user") @db.VarChar(30)
-  country                                        String?
-  user                                           User?             @relation(fields: [userId], references: [id])
-  CustomerDetail                                 CustomerDetail[]
-  FitPic                                         FitPic[]
-  Package_LocationToPackage_fromAddress          Package[]         @relation("LocationToPackage_fromAddress")
-  Package_LocationToPackage_toAddress            Package[]         @relation("LocationToPackage_toAddress")
-  physicalProducts                               PhysicalProduct[]
-  Reservation                                    Reservation[]
-  shippingOptions                                ShippingOption[]  @relation("LocationToShippingOption_destination")
-  ShippingOption_LocationToShippingOption_origin ShippingOption[]  @relation("LocationToShippingOption_origin")
+  id                                    String            @id @default(cuid()) @db.VarChar(30)
+  slug                                  String?           @unique
+  name                                  String?
+  company                               String?
+  description                           String?
+  address1                              String?
+  address2                              String?
+  city                                  String?
+  state                                 String?
+  zipCode                               String
+  locationType                          LocationType?
+  lat                                   Float?
+  lng                                   Float?
+  createdAt                             DateTime          @default(now())
+  updatedAt                             DateTime          @updatedAt
+  userId                                String?           @map("user") @db.VarChar(30)
+  country                               String?
+  user                                  User?             @relation(fields: [userId], references: [id])
+  CustomerDetail                        CustomerDetail[]
+  FitPic                                FitPic[]
+  Package_LocationToPackage_fromAddress Package[]         @relation("LocationToPackage_fromAddress")
+  Package_LocationToPackage_toAddress   Package[]         @relation("LocationToPackage_toAddress")
+  physicalProducts                      PhysicalProduct[]
+  Reservation                           Reservation[]
 }
 
 model Order {
@@ -958,22 +970,24 @@ model RentalInvoice {
 }
 
 model RentalInvoiceLineItem {
-  id                String           @id @default(cuid()) @db.VarChar(30)
-  physicalProductId String?          @map("physicalProduct") @db.VarChar(30)
-  physicalProduct   PhysicalProduct? @relation(fields: [physicalProductId], references: [id])
-  rentalInvoiceId   String           @map("rentalInvoice") @db.VarChar(30)
-  rentalInvoice     RentalInvoice    @relation(fields: [rentalInvoiceId], references: [id])
-  daysRented        Int?
-  rentalStartedAt   DateTime?
-  rentalEndedAt     DateTime?
-  name              String?
-  comment           String?
-  taxRate           Float?
-  taxName           String?
-  taxPercentage     Float?
-  taxPrice          Int?
-  price             Int
-  currencyCode      String
+  id                         String           @id @default(cuid()) @db.VarChar(30)
+  physicalProductId          String?          @map("physicalProduct") @db.VarChar(30)
+  physicalProduct            PhysicalProduct? @relation(fields: [physicalProductId], references: [id])
+  rentalInvoiceId            String           @map("rentalInvoice") @db.VarChar(30)
+  rentalInvoice              RentalInvoice    @relation(fields: [rentalInvoiceId], references: [id])
+  daysRented                 Int?
+  rentalStartedAt            DateTime?
+  rentalEndedAt              DateTime?
+  name                       String?
+  comment                    String?
+  taxRate                    Float?
+  taxName                    String?
+  taxPercentage              Float?
+  taxPrice                   Int?
+  price                      Int
+  currencyCode               String
+  appliedMinimum             Boolean?         @default(false)
+  adjustedForPreviousMinimum Boolean?         @default(false)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -1366,16 +1380,18 @@ model Reservation {
   sentPackageId                String?                      @map("sentPackage") @db.VarChar(30)
   returnedPackageId            String?                      @map("returnedPackage") @db.VarChar(30)
   receiptId                    String?                      @map("receipt") @db.VarChar(30)
+  pickupDate                   DateTime?
+  pickupWindowId               String?
+  shippingMethodId             String?                      @map("shippingMethod") @db.VarChar(30)
+  shippingMethod               ShippingMethod?              @relation(fields: [shippingMethodId], references: [id])
   phase                        ReservationPhase
   statusUpdatedAt              DateTime?
-  shippingOptionId             String?                      @map("shippingOption") @db.VarChar(30)
   customer                     Customer?                    @relation(fields: [customerId], references: [id])
   lastLocation                 Location?                    @relation(fields: [lastLocationId], references: [id])
   receipt                      ReservationReceipt?          @relation(fields: [receiptId], references: [id])
   returnedPackage              Package?                     @relation("PackageToReservation_returnedPackage", fields: [returnedPackageId], references: [id])
   returnPackages               Package[]                    @relation("PackageToReservationReturnPackages")
   sentPackage                  Package?                     @relation("PackageToReservation_sentPackage", fields: [sentPackageId], references: [id])
-  shippingOption               ShippingOption?              @relation(fields: [shippingOptionId], references: [id])
   user                         User?                        @relation(fields: [userId], references: [id])
   lineItems                    OrderLineItem[]
   packageEvents                PackageTransitEvent[]
@@ -1463,11 +1479,14 @@ model ReservationPhysicalProduct {
 
   reservationId                    String?      @map("reservation") @db.VarChar(30)
   reservation                      Reservation? @relation(fields: [id], references: [id])
-
   bagItem                          BagItem?
 
   createdAt                        DateTime @default(now())
   updatedAt                        DateTime @updatedAt
+  shippingMethodId                 String?         @map("shippingMethod") @db.VarChar(30)
+  shippingMethod                   ShippingMethod? @relation(fields: [shippingMethodId], references: [id])
+
+  pickupWindowId                   String?
 }
 
 model ReservationFeedback {
@@ -1511,29 +1530,14 @@ model Season {
 }
 
 model ShippingMethod {
-  id              String           @id @default(cuid()) @db.VarChar(30)
-  code            ShippingCode
-  displayText     String
-  createdAt       DateTime         @default(now())
-  updatedAt       DateTime         @updatedAt
-  shippingOptions ShippingOption[]
-}
-
-model ShippingOption {
-  id               String          @id @default(cuid()) @db.VarChar(30)
-  externalCost     Int?
-  averageDuration  Int?
-  createdAt        DateTime        @default(now())
-  updatedAt        DateTime        @updatedAt
-  destinationId    String?         @map("destination") @db.VarChar(30)
-  originId         String?         @map("origin") @db.VarChar(30)
-  shippingMethodId String?         @map("shippingMethod") @db.VarChar(30)
-  destination      Location?       @relation("LocationToShippingOption_destination", fields: [destinationId], references: [id])
-  origin           Location?       @relation("LocationToShippingOption_origin", fields: [originId], references: [id])
-  shippingMethod   ShippingMethod? @relation(fields: [shippingMethodId], references: [id])
-  reservations     Reservation[]
-
-  @@unique([originId, destinationId, shippingMethodId])
+  id                          String                       @id @default(cuid()) @db.VarChar(30)
+  code                        ShippingCode                 @unique
+  displayText                 String
+  position                    Int                          @default(0)
+  createdAt                   DateTime                     @default(now())
+  updatedAt                   DateTime                     @updatedAt
+  reservations                Reservation[]
+  reservationPhysicalProducts ReservationPhysicalProduct[]
 }
 
 model ShopifyProductVariant {
@@ -1666,6 +1670,7 @@ model User {
   smsReceipts                   SmsReceipt[]
   userPushNotificationInterests UserPushNotificationInterest[]
   pushNotifications             PushNotificationReceipt[]      @relation("UserToPushNotificationReceipts")
+  creditUpdateHistory           CreditBalanceUpdateLog[]
 }
 
 model UserDeviceData {

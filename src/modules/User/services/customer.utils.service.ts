@@ -9,15 +9,14 @@ export class CustomerUtilsService {
 
   constructor(private readonly prisma: PrismaService) {
     // Cache latest ios app version
-    try {
-      const authenticatedURL = `https://${process.env.GITHUB_ACCESS_TOKEN}@raw.githubusercontent.com/seasons/harvest/production/package.json`
-      const response = got(authenticatedURL).then(response => {
+
+    const authenticatedURL = `https://${process.env.GITHUB_ACCESS_TOKEN}@raw.githubusercontent.com/seasons/harvest/production/package.json`
+    const response = got(authenticatedURL)
+      .then(response => {
         const packageJSON = JSON.parse(response.body)
         this.latestIOSAppVersion = packageJSON["version"]
       })
-    } catch (err) {
-      // noop
-    }
+      .catch(error => {})
   }
 
   getMaxIOSAppVersion() {

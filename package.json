@@ -35,9 +35,10 @@
     "start": "concurrently -k -n 'TSC,TS-NODE' -c 'gray.dim,blue.dim' 'yarn tsc -w' 'yarn start:server'",
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
-    "test:e2e:ci": "jest --config ./src/tests/jest-e2e.json --runInBand --reporters=default --reporters=jest-junit",
-    "test:e2e": "jest --config ./src/tests/jest-e2e.json",
+    "test:e2e:ci": "jest --config ./jest-e2e.json --runInBand --reporters=default --reporters=jest-junit --detectOpenHandles  --forceExit --verbose",
+    "test:e2e": "jest --config ./jest-e2e.json",
     "test:watch": "jest --watch",
+    "test:ci": "TEST=true jest  --reporters=default --reporters=jest-junit --detectOpenHandles --forceExit --verbose",
     "test": "TEST=true jest"
   },
   "dependencies": {
@@ -58,7 +59,7 @@
     "@prisma/binding-argument-transform": "0.3.1",
     "@prisma/client": "2.26.0",
     "@pusher/push-notifications-server": "1.2.0",
-    "@seasons/wind": "2.6.7",
+    "@seasons/wind": "2.6.9",
     "@sendgrid/mail": "6.4.0",
     "@sentry/node": "5.10.2",
     "@sentry/types": "5.10.0",

@@ -34,7 +34,7 @@ export class ReservationMutationsResolver {
 
   @Mutation()
   async reserveItems(
-    @Args() { shippingCode },
+    @Args() { shippingCode, options },
     @User() user,
     @Customer() customer,
     @Select({
@@ -52,12 +52,16 @@ export class ReservationMutationsResolver {
       select: { productVariant: { select: { id: true } } },
     })
     const productVariantIDs = itemsToReserve.map(a => a.productVariant.id)
-    const returnData = await this.reservation.reserveItems(
-      productVariantIDs,
+    const returnData = await this.reservation.reserveItems({
+      items: productVariantIDs,
+      pickupTime: {
+        date: options?.pickupDate,
+        timeWindowID: options?.timeWindowID,
+      },
       shippingCode,
       customer,
-      select
-    )
+      select,
+    })
 
     // Track the selection
     this.segment.track(user.id, "Reserved Items", {
@@ -97,12 +101,12 @@ export class ReservationMutationsResolver {
     })
 
     const items = custWithData.bagItems.map(a => a.productVariant.id)
-    const returnData = await this.reservation.reserveItems(
+    const returnData = await this.reservation.reserveItems({
       items,
       shippingCode,
-      custWithData,
-      select
-    )
+      customer: custWithData,
+      select,
+    })
 
     // Track the selection
     this.segment.track(custWithData.user.id, "Reserved Items", {

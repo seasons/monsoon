@@ -6125,6 +6125,7 @@ enum EmailId {
   UnpaidMembership
   ReturnToGoodStanding
   RecommendedItemsNurture
+  RestockNotification
 }
 
 type EmailReceipt {

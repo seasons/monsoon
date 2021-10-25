@@ -217,6 +217,16 @@ export class BagService {
         },
       },
     })
+    const customerID = oldBagItem.customer.id
+    const activeRentalInvoice = await this.prisma.client.rentalInvoice.findFirst(
+      {
+        where: {
+          membership: { customer: { id: customerID } },
+          status: "Draft",
+        },
+        orderBy: { createdAt: "desc" },
+      }
+    )
 
     let newPhysicalProduct = await this.prisma.client.physicalProduct.findUnique(
       {
@@ -233,7 +243,7 @@ export class BagService {
       }
     )
     const promises = []
-    const customerID = oldBagItem.customer.id
+
     const newItemAlreadyInBag = oldBagItem.customer.bagItems
       .map(a => a.productVariant.id)
       .includes(newPhysicalProduct.productVariant.id)
@@ -287,6 +297,17 @@ export class BagService {
                 },
               },
             },
+          },
+        },
+      })
+    )
+    promises.push(
+      this.prisma.client.rentalInvoice.update({
+        where: { id: activeRentalInvoice.id },
+        data: {
+          products: {
+            disconnect: { id: oldPhysicalProduct.id },
+            connect: { id: newPhysicalProduct.id },
           },
         },
       })

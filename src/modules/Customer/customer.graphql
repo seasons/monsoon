@@ -75,6 +75,11 @@ type Mutation {
   updateNotificationBarReceipt(
     notification: NotificationBarReceiptUpdateInput
   ): CustomerNotificationBarReceipt @hasRole(roles: [Customer])
+  updateCreditBalance(
+    membershipId: ID!
+    amount: Int!
+    reason: String!
+  ): Boolean @hasRole(roles: [Admin])
 }
 
 input AddressInput {
@@ -184,4 +189,16 @@ type CustomerMembership {
     last: Int
   ): [PauseRequest!]
   subscription: CustomerMembershipSubscriptionData
+  creditUpdateHistory: [CreditBalanceUpdateLog!]
+}
+
+type CreditBalanceUpdateLog {
+  id: ID!
+  membership: CustomerMembership
+  membershipId: ID!
+  amount: Int
+  reason: String
+  adminUser: User
+  adminUserId: ID!
+  createdAt: DateTime
 }

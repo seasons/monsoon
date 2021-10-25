@@ -202,4 +202,5 @@ type User {
   pushNotificationStatus: PushNotificationStatus!
   pushNotification: UserPushNotification
   beamsToken: String!
+  creditUpdateHistory: [CreditBalanceUpdateLog]
 }
