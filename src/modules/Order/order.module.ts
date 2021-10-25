@@ -14,7 +14,7 @@ import { OrderMutationsResolver } from "./mutations/order.mutations.resolver"
 import { OrderQueriesResolver } from "./queries/order.queries.resolver"
 import { OrderService } from "./services/order.service"
 
-@Module({
+export const ORDER_MODULE_DEF = {
   imports: [
     PrismaModule,
     ProductModule,
@@ -33,5 +33,6 @@ import { OrderService } from "./services/order.service"
     OrderService,
   ],
   exports: [OrderService],
-})
+}
+@Module(ORDER_MODULE_DEF)
 export class OrderModule {}

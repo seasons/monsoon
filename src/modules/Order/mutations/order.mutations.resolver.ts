@@ -38,7 +38,6 @@ export class OrderMutationsResolver {
         draftOrder = await this.order.buyUsedCreateDraftedOrder({
           productVariantID,
           customer,
-          user,
           select,
         })
       }
@@ -82,7 +81,6 @@ export class OrderMutationsResolver {
         submittedOrder = await this.order.buyUsedSubmitOrder({
           order,
           customer,
-          user,
           select,
         })
       }
