@@ -80,6 +80,7 @@ type PhysicalProduct @cacheControl(maxAge: 0) {
   dateReceived: DateTime
   unitCost: Float
   price: PhysicalProductPrice
+  recoupmentPercentage: Float
   reports(
     where: PhysicalProductQualityReportWhereInput
     orderBy: PhysicalProductQualityReportOrderByInput

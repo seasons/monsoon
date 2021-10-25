@@ -83,4 +83,45 @@ export class PhysicalProductFieldsResolver {
   ) {
     return reservationsLoader.load(physicalProduct.id)
   }
+
+  @ResolveField()
+  async recoupmentPercentage(
+    @Parent() physicalProduct,
+    @Loader({
+      params: {
+        model: "PhysicalProduct",
+        select: Prisma.validator<Prisma.PhysicalProductSelect>()({
+          id: true,
+          amountRecouped: true,
+          unitCost: true,
+          productVariant: {
+            select: {
+              id: true,
+              product: {
+                select: {
+                  wholesalePrice: true,
+                },
+              },
+            },
+          },
+        }),
+      },
+    })
+    physicalProductsLoader: PrismaDataLoader<any>
+  ) {
+    const loadedPhysicalProduct = await physicalProductsLoader.load(
+      physicalProduct.id
+    )
+
+    const amountAccrued = loadedPhysicalProduct.amountRecouped / 100 || 0
+    const wholesalePrice =
+      loadedPhysicalProduct.unitCost ||
+      loadedPhysicalProduct.productVariant.product.wholesalePrice
+    const recoupmentPercentage = (
+      (amountAccrued / wholesalePrice) *
+      100
+    ).toFixed(2)
+
+    return recoupmentPercentage
+  }
 }

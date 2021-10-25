@@ -59,7 +59,7 @@ const fetchAllPaidInvoices = async (offset: string) => {
 }
 
 const getReservationHistory = async () => {
-  const customerIdToInvoices = await fetchAllPaidInvoices("")
+  // const customerIdToInvoices = await fetchAllPaidInvoices("")
 
   const reservations = await ps.client.reservation.findMany({
     select: {
@@ -110,7 +110,7 @@ const getReservationHistory = async () => {
   const productsToAmountAccrued = {}
 
   for (let reservation of reservations) {
-    const invoicesForCustomer = customerIdToInvoices[reservation.customer.id]
+    // const invoicesForCustomer = customerIdToInvoices[reservation.customer.id]
 
     for (let product of reservation.products) {
       const amountAccrued = productsToAmountAccrued[product.id] || 0
@@ -174,34 +174,7 @@ const getReservationHistory = async () => {
 
 const getInvoices = async () => {
   await getReservationHistory()
-
-  // 1. get users/customers
-  // const customers = await ps.client.customer.findMany({
-  //   select: {
-  //     id: true,
-  //     user: { select: { id: true } },
-  //   },
-  // })
-
-  // console.log("\n\n customers:", customers)
-
-  // 2. build map
-
-  // 3. get resys
-
   return
 }
 
 getInvoices()
-
-// 2. Correlate with reservation history
-// ****************************************************************
-// Invoice > via customer_id >> Reservation >> PhysicalProduct
-// ****************************************************************
-
-// 3. Calculate recoupment for PhysicalProduct
-// ****************************************************************
-// RECOUPMENT = SUM(ALL_PAYMENTS_TO_DATE) / PRODUCT_WHOLESALE_PRICE
-// ****************************************************************
-
-// 4. Update recoupment in DB
