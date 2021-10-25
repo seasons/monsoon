@@ -1085,6 +1085,7 @@ model PhysicalProduct {
   dateOrdered                  DateTime?
   dateReceived                 DateTime?
   unitCost                     Float?
+  amountRecouped               Int?
   barcoded                     Boolean?                       @default(value: false)
   priceId                      String?                        @map("price") @db.VarChar(30)
   packedAt                     DateTime?
@@ -1390,13 +1391,13 @@ model Reservation {
   returnPackages               Package[]                    @relation("PackageToReservationReturnPackages")
   sentPackage                  Package?                     @relation("PackageToReservation_sentPackage", fields: [sentPackageId], references: [id])
   user                         User?                        @relation(fields: [userId], references: [id])
+  rentalInvoice                RentalInvoice[]              @relation("RentalInvoiceToReservations")
   lineItems                    OrderLineItem[]
   packageEvents                PackageTransitEvent[]
   feedback                     ReservationFeedback?
   products                     PhysicalProduct[]            @relation("ReservationToAllProducts")
   newProducts                  PhysicalProduct[]            @relation("ReservationToNewProducts")
   returnedProducts             PhysicalProduct[]            @relation("ReservationToReturnedProducts")
-  rentalInvoice                RentalInvoice[]              @relation("RentalInvoiceToReservations")
   purchasedProducts            PhysicalProduct[]            @relation("ReservationToPurchasedProducts")
   reservationPhysicalProducts  ReservationPhysicalProduct[]
 }

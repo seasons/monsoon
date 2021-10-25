@@ -1,9 +1,9 @@
 import { ChargeBee, _invoice } from "chargebee-typescript"
+import { head } from "lodash"
 
 import { PrismaService } from "../prisma/prisma.service"
 
 const ps = new PrismaService()
-const allPaidInvoices: any[] = []
 
 // 1. Get invoices from Chargebee
 const chargebee = new ChargeBee()
@@ -21,10 +21,12 @@ const handleChargebeeResult = (error: Error, result: any) => {
 }
 
 // Since we need to paginate to get all invoices, this is a recursive function
+const invoices = []
 const fetchAllPaidInvoices = async (offset: string) => {
   const result = await chargebee.invoice
     .list({
       limit: 100,
+
       offset,
       status: { in: ["paid"] },
       "sort_by[asc]": "date",
@@ -35,72 +37,153 @@ const fetchAllPaidInvoices = async (offset: string) => {
     const entry = result?.list[i]
 
     const invoice: any = entry?.invoice
-    allPaidInvoices.push(invoice)
+    invoices.push(invoice)
   }
 
   if (result.next_offset && result.next_offset !== "") {
     await fetchAllPaidInvoices(result.next_offset)
   }
+
+  const customerIdToInvoices = {}
+
+  for (let invoice of invoices) {
+    const customerId = invoice.customer_id
+
+    if (customerId) {
+      customerIdToInvoices[customerId] = customerIdToInvoices[customerId] || []
+      customerIdToInvoices[customerId].push(invoice)
+    }
+  }
+
+  return customerIdToInvoices
 }
 
-const getResyHistoryForInvoices = async () => {
-  const customers = await ps.client.customer.findMany({
+const getReservationHistory = async () => {
+  const customerIdToInvoices = await fetchAllPaidInvoices("")
+
+  const reservations = await ps.client.reservation.findMany({
     select: {
       id: true,
-      user: true,
+      createdAt: true,
+      customer: {
+        select: {
+          id: true,
+        },
+      },
+      products: {
+        select: {
+          id: true,
+          productVariant: {
+            select: {
+              id: true,
+              product: {
+                select: {
+                  id: true,
+                  wholesalePrice: true,
+                },
+              },
+            },
+          },
+        },
+      },
+      rentalInvoice: {
+        where: {
+          status: "Billed",
+        },
+        select: {
+          id: true,
+          billingStartAt: true,
+          billingEndAt: true,
+          status: true,
+          lineItems: {
+            select: {
+              id: true,
+              physicalProductId: true,
+              price: true,
+            },
+          },
+        },
+      },
     },
   })
 
-  console.log("\n\n customers:", customers)
+  const productsToAmountAccrued = {}
 
-  // const resys = await ps.client.customer.findMany({
-  //   where: { user: { in: allPaidInvoices.map(a => a.customer_id) } },
-  //   select: {
-  //     id: true,
-  //     reservations: {
-  //       select: {
-  //         id: true,
-  //         reservationNumber: true,
-  //         status: true,
-  //         receipt: {
-  //           select: {
-  //             id: true,
-  //           },
-  //         },
-  //         products: {
-  //           select: {
-  //             id: true,
-  //           },
-  //         },
-  //         rentalInvoice: {
-  //           select: {
-  //             id: true,
-  //           },
-  //         },
-  //       },
-  //     },
-  //   },
-  // })
+  for (let reservation of reservations) {
+    const invoicesForCustomer = customerIdToInvoices[reservation.customer.id]
 
-  // console.log("\n\n RESY:", resys)
+    for (let product of reservation.products) {
+      const amountAccrued = productsToAmountAccrued[product.id] || 0
+
+      // Depending on the plan, update the amount accrued
+      let chargeForReservation = 3000
+
+      if (reservation.rentalInvoice) {
+        const invoice = head(reservation.rentalInvoice)
+        if (invoice) {
+          const lineItem = invoice.lineItems.find(
+            lineItem => lineItem.physicalProductId === product.id
+          )
+
+          if (lineItem) {
+            chargeForReservation = lineItem.price
+          }
+        }
+      }
+
+      productsToAmountAccrued[product.id] = amountAccrued + chargeForReservation
+    }
+  }
+
+  const physicalProducts = await ps.client.physicalProduct.findMany({
+    where: {
+      id: {
+        in: Object.keys(productsToAmountAccrued),
+      },
+    },
+    select: {
+      id: true,
+      seasonsUID: true,
+      unitCost: true,
+    },
+  })
+
+  for (let physicalProduct of physicalProducts) {
+    const amountAccrued = productsToAmountAccrued[physicalProduct.id] / 100 || 0
+    const recoupmentPercentage = (
+      (amountAccrued / physicalProduct.unitCost) *
+      100
+    ).toFixed(2)
+
+    await ps.client.physicalProduct.update({
+      where: {
+        id: physicalProduct.id,
+      },
+      data: {
+        amountRecouped: productsToAmountAccrued[physicalProduct.id],
+      },
+    })
+
+    console.log(`${physicalProduct.seasonsUID}: ${recoupmentPercentage}%`)
+  }
+
+  // console.log(productsToAmountAccrued)
 
   return
 }
 
 const getInvoices = async () => {
-  // await fetchAllPaidInvoices("")
-
-  // await getResyHistoryForInvoices()
+  await getReservationHistory()
 
   // 1. get users/customers
-  const customers = await ps.client.customer.findMany({
-    select: {
-      id: true,
-      user: { select: { id: true } },
-    },
-  })
+  // const customers = await ps.client.customer.findMany({
+  //   select: {
+  //     id: true,
+  //     user: { select: { id: true } },
+  //   },
+  // })
 
-  console.log("\n\n customers:", customers)
+  // console.log("\n\n customers:", customers)
 
   // 2. build map
 
