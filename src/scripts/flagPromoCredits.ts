@@ -404,6 +404,7 @@ const printFlags = async (ps: PrismaService, flags) => {
     "ckjt4s4qh0s6a0729i6rnu1hz", // Krischan Singh
     "ck68fll2tm2o207775mbenhrn", // Justin P Ollivierre
     "ck576lgrie73407346ff3u2p7", // Adam Fraser
+    "ckufsl3qz15260872eri8jny9j3o", // Marc Asuncion
   ]
 
   const knownToBeInProcess = [
@@ -449,4 +450,11 @@ FAILURE MODES AND CORRECTION STEPS
 // Add a more explicit failure mode for receiving promotional credits in response to access-monthly payment
 // Add a failure mode for having been given ad hoc credits prior to the migration (0ct 1, 2021) and not being grandfathered
 // TODO: Add a failure mode for having promotional credits apply towards a grandfathered plan while still receiving promotional credits
+*/
+
+/*
+Case to look at https://seasons.chargebee.com/customers/61973235/details#promotional-credits
+
+He seems to have gotten initial credits, but then none afterwards. He also had promotional credits apply towards membership charges.
+
 */
