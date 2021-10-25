@@ -140,11 +140,66 @@ describe("Buy Used", () => {
       expect(bagItemAfterOrder).toBeUndefined()
     })
 
-    it("If a customer is buying an item he does not have reseved, we give him anny available (resevable) unit", async () => {
-      expect(0).toBe(1)
-      // create a draft order
-      // submit the order
-      // ensure the item on the order was reservable before we placed the order, and that it's not an any reserved bag item
+    it("If a customer is buying an item he does not have reseved, we give him any reservable unit", async () => {
+      const reservableProductVariant = await prisma.client.productVariant.findFirst(
+        {
+          where: {
+            reservable: { gte: 1 },
+            physicalProducts: {
+              some: {
+                price: { buyUsedEnabled: true, buyUsedPrice: { gt: 0 } },
+              },
+            },
+          },
+          select: {
+            id: true,
+          },
+        }
+      )
+      const draftOrder = (await order.buyUsedCreateDraftedOrder({
+        productVariantID: reservableProductVariant.id,
+        customer: testCustomer,
+        select: {
+          id: true,
+          lineItems: { select: { id: true, recordType: true, recordID: true } },
+        },
+      })) as any
+
+      const physicalProductToBePurchasedId = draftOrder.lineItems.find(
+        a => a.recordType === "PhysicalProduct"
+      ).recordID
+      const physicalProductBeforePurchase = await prisma.client.physicalProduct.findUnique(
+        {
+          where: { id: physicalProductToBePurchasedId },
+          select: { inventoryStatus: true },
+        }
+      )
+      const reservedBagItemsWithPhysicalProduct = await prisma.client.bagItem.findMany(
+        {
+          where: {
+            physicalProduct: { id: physicalProductToBePurchasedId },
+            status: "Reserved",
+          },
+        }
+      )
+      expect(physicalProductBeforePurchase.inventoryStatus).toBe("Reservable")
+      expect(reservedBagItemsWithPhysicalProduct.length).toBe(0)
+
+      const submittedOrder = (await order.buyUsedSubmitOrder({
+        order: draftOrder,
+        customer: testCustomer,
+        select: {
+          lineItems: { select: { id: true, recordType: true, recordID: true } },
+        },
+      })) as any
+
+      const physicalProductAfterPurchase = await prisma.client.physicalProduct.findUnique(
+        {
+          where: { id: physicalProductToBePurchasedId },
+          select: { inventoryStatus: true },
+        }
+      )
+      expect(physicalProductAfterPurchase.inventoryStatus).toBe("Offloaded")
     })
   })
 })
