@@ -110,7 +110,7 @@ describe("Buy Used", () => {
 
       const reservedPhysicalProduct = reservationWithData.products[0]
       const physicalProductOrderLineItem = submittedOrder.lineItems.find(
-        a => a.id === reservedPhysicalProduct.id
+        a => a.recordID === reservedPhysicalProduct.id
       )
       expect(physicalProductOrderLineItem).toBeDefined()
 
@@ -137,10 +137,10 @@ describe("Buy Used", () => {
       const bagItemAfterOrder = await prisma.client.bagItem.findUnique({
         where: { id: bagItem.id },
       })
-      expect(bagItemAfterOrder).toBeUndefined()
+      expect(bagItemAfterOrder).toBeNull()
     })
 
-    it("If a customer is buying an item he does not have reseved, we give him any reservable unit", async () => {
+    it("If a customer is buying an item he does not have reserved, we give him any reservable unit", async () => {
       const reservableProductVariant = await prisma.client.productVariant.findFirst(
         {
           where: {

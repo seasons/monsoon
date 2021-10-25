@@ -139,6 +139,12 @@ export class OrderService {
             id: true,
             status: true,
             productVariant: { select: { id: true } },
+            physicalProduct: {
+              select: {
+                id: true,
+                price: { select: { buyUsedEnabled: true, buyUsedPrice: true } },
+              },
+            },
           },
         },
       },
@@ -162,15 +168,11 @@ export class OrderService {
 
     const shipping = packages?.sentRate
 
-    const physicalProduct = productVariant?.physicalProducts.find(
-      physicalProduct =>
-        physicalProduct.price &&
-        physicalProduct.price.buyUsedEnabled &&
-        ((physicalProduct.inventoryStatus === "Reserved" &&
-          isProductVariantReserved) ||
-          physicalProduct.inventoryStatus === "Reservable" ||
-          physicalProduct.inventoryStatus === "Stored")
-    ) as (PhysicalProduct & { price: PhysicalProductPrice }) | null
+    const physicalProduct = this.getPhysicalProductForOrder(
+      productVariant,
+      isProductVariantReserved,
+      customerWithData
+    )
 
     const productName = (productVariant?.product as any)?.name
 
@@ -196,7 +198,7 @@ export class OrderService {
         recordID: physicalProduct.id,
         recordType: "PhysicalProduct",
         needShipping: !isProductVariantReserved,
-        price: physicalProduct?.price?.buyUsedPrice,
+        price: physicalProduct.price.buyUsedPrice,
         currencyCode: "USD",
       },
       !isProductVariantReserved
@@ -1057,5 +1059,48 @@ export class OrderService {
     )
       ? "PC040111"
       : "PC040000"
+  }
+
+  private getPhysicalProductForOrder(
+    productVariant: Pick<ProductVariant, "id"> & {
+      physicalProducts: Array<
+        Pick<PhysicalProduct, "inventoryStatus" | "id"> & {
+          price: Pick<PhysicalProductPrice, "buyUsedEnabled" | "buyUsedPrice">
+        }
+      >
+    },
+    isProductVariantReserved: boolean,
+    customerWithData: {
+      bagItems: Array<
+        Pick<BagItem, "status"> & {
+          productVariant: Pick<ProductVariant, "id">
+        } & {
+          physicalProduct: Pick<PhysicalProduct, "id"> & {
+            price: Pick<PhysicalProductPrice, "buyUsedEnabled" | "buyUsedPrice">
+          }
+        }
+      >
+    }
+  ) {
+    if (isProductVariantReserved) {
+      const bagItem = customerWithData.bagItems.find(
+        a =>
+          a.productVariant.id === productVariant.id && a.status === "Reserved"
+      )
+      if (!bagItem) {
+        throw "Expected reserved bag item"
+      }
+      return bagItem.physicalProduct
+    } else {
+      const physicalProduct = productVariant.physicalProducts.find(
+        physicalProduct =>
+          physicalProduct?.price?.buyUsedEnabled &&
+          physicalProduct.inventoryStatus === "Reservable"
+      )
+      if (!physicalProduct) {
+        throw "Could not find reservable unit to sell"
+      }
+      return physicalProduct
+    }
   }
 }
