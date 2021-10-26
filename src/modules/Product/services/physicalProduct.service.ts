@@ -232,16 +232,139 @@ export class PhysicalProductService {
       }
     )
 
+    const physProdsBeforeUpdate = await this.prisma.client.physicalProduct.findMany(
+      {
+        where: {
+          id: {
+            in: ids,
+          },
+        },
+        select: {
+          id: true,
+          seasonsUID: true,
+          inventoryStatus: true,
+          productStatus: true,
+          warehouseLocation: { select: { barcode: true } },
+          productVariant: {
+            select: {
+              id: true,
+              reservable: true,
+              reserved: true,
+              offloaded: true,
+              nonReservable: true,
+              stored: true,
+              product: {
+                select: {
+                  id: true,
+                  slug: true,
+                  name: true,
+                  images: {
+                    select: {
+                      url: true,
+                      id: true,
+                    },
+                  },
+                  brand: { select: { id: true, name: true } },
+                  variants: {
+                    select: {
+                      id: true,
+                      displayShort: true,
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      }
+    )
+
+    const productVariants = physProdsBeforeUpdate.map(
+      a =>
+        (a?.productVariant as unknown) as Pick<
+          ProductVariant,
+          "reservable" | "id"
+        > & {
+          product: Pick<Product, "id" | "slug" | "name"> & {
+            brand: Pick<Brand, "name">
+          }
+        }
+    )
+    let newData = {
+      warehouseLocationId: {
+        connect: {
+          id: warehouseLocation.id,
+        },
+      },
+      locationId: {
+        connect: {
+          slug:
+            process.env.SEASONS_CLEANER_LOCATION_SLUG ||
+            "seasons-cleaners-official",
+        },
+      },
+    }
+
+    const reservable = productVariants.map(a => a.reservable)
+
+    // If the physical product is being stowed and there are currently no reservable units, notify users
+    const products = productVariants?.map(a => a.product)
+
+    const notifyUsersIfNeeded = reservable.map(async (num, index) => {
+      if (num === 0) {
+        const product = productVariants[index].product
+        const notifications = await this.prisma.client.productNotification.findMany(
+          {
+            where: {
+              productVariant: {
+                id: productVariants[index].id,
+              },
+            },
+            select: {
+              id: true,
+              customer: {
+                select: {
+                  id: true,
+                  user: { select: { id: true, email: true } },
+                },
+              },
+            },
+          }
+        )
+
+        const emails = notifications.map(notif => notif.customer?.user?.email)
+        // Send the notification
+        const notification = async () => {
+          await this.pushNotification.pushNotifyUsers({
+            emails,
+            pushNotifID: "ProductRestock",
+            vars: {
+              id: product?.id,
+              slug: product?.slug,
+              productName: product?.name,
+              brandName: product?.brand?.name,
+            },
+          })
+
+          await this.emails.sendRestockNotificationEmails(emails, product)
+        }
+        return notification()
+      }
+    })
+
     const stowedProducts = await this.prisma.client.physicalProduct.updateMany({
       where: {
         id: {
           in: ids,
         },
       },
-      data: {
-        warehouseLocationId: warehouseLocation.id,
-      },
+      data: newData[0],
     })
+
+    notifyUsersIfNeeded.forEach(async a => {
+      return a
+    })
+
     return stowedProducts.count > 0
   }
 
