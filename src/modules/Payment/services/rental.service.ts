@@ -1256,7 +1256,8 @@ export class RentalService {
       .add({
         customer_id: prismaUserId,
         amount: totalCreditsApplied,
-        description: `Grandfathered ${prismaCustomer.membership.plan.planID} credits applied towards rental charges`,
+        // (MONSOON_IGNORE) tells the chargebee webhook to not automatically move these credits to prisma.
+        description: `(MONSOON_IGNORE) Grandfathered ${prismaCustomer.membership.plan.planID} credits applied towards rental charges`,
       })
       .request()
 

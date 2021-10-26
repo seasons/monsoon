@@ -1,8 +1,14 @@
-export const getPromotionalCreditsAddedEvent = (customerId, amount) => {
+export const getPromotionalCreditsAddedEvent = (
+  customerId,
+  amount,
+  description
+) => {
   const event = { ...PROMOTIONAL_CREDITS_ADDED_TEMPLATE }
   event.content.customer.id = customerId
   event.content.promotional_credit.customer_id = customerId
   event.content.promotional_credit.amount = amount
+
+  event.content.promotional_credit.description = description
 
   return event
 }

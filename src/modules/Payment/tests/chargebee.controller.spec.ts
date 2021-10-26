@@ -281,7 +281,11 @@ describe("Chargebee Controller", () => {
 
       expect(testCustomer.membership.creditBalance).toBe(0)
 
-      const event = getPromotionalCreditsAddedEvent(testCustomer.user.id, 1700)
+      const event = getPromotionalCreditsAddedEvent(
+        testCustomer.user.id,
+        1700,
+        "Grandfathered essential credits"
+      )
       await sendEvent(event)
 
       customerWithData = await getCustWithData()
@@ -295,6 +299,32 @@ describe("Chargebee Controller", () => {
       expect(latestCreditBalanceUpdateLog.reason).toBe(
         "Automatic transfer of credits added on chargebee to internal system."
       )
+      chargebeeDeductCreditsSpy.mockClear()
+    })
+
+    it("If the description includes (MONSOON_IGNORE), leaves them on Chargebee", async () => {
+      const chargebeeDeductCreditsSpy = jest
+        .spyOn<any, any>(chargebee.promotional_credit, "deduct")
+        .mockReturnValue({
+          request: () => null,
+        })
+
+      expect(testCustomer.membership.creditBalance).toBe(0)
+
+      const event = getPromotionalCreditsAddedEvent(
+        testCustomer.user.id,
+        1700,
+        "(MONSOON_IGNORE) Grandfathered credits applied towards rental charges"
+      )
+      await sendEvent(event)
+
+      customerWithData = await getCustWithData()
+      expect(customerWithData.membership.creditBalance).toBe(0)
+      expect(chargebeeDeductCreditsSpy).toHaveBeenCalledTimes(0)
+
+      const latestCreditBalanceUpdateLog =
+        customerWithData.membership.creditUpdateHistory?.[0]
+      expect(latestCreditBalanceUpdateLog).toBeUndefined()
     })
   })
 
