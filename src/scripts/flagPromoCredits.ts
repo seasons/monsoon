@@ -88,6 +88,7 @@ const run = async () => {
     creditsGroupedByChargebeeCustomerId,
     invoicesGroupedByChargebeeCustomerId
   )
+  // const generalFlags = []
 
   const allFlags = [...specificFlags, ...generalFlags]
   await printFlags(allFlags, {
@@ -238,6 +239,21 @@ const processSpecificFlags = async (
     const sortedCreditDescriptions = sortedCredits.map(a => a.description)
     const invoices = invoicesGroupedByChargebeeCustomerId[chargebeeCustomerId]
 
+    // If we moved rental charge credits back to prisma before they had a chance to get applied, flag it
+    const automaticMoveLogIndex = sortedCredits.findIndex(a =>
+      a.description.includes("Automatically move to internal system")
+    )
+    if (automaticMoveLogIndex > 0) {
+      const logBeforeAutomaticMove = sortedCredits[automaticMoveLogIndex - 1]
+      if (logBeforeAutomaticMove.description.includes("rental charges")) {
+        flags.push({
+          failureMode: "Automatically moved rental credits",
+          id: chargebeeCustomerId,
+        })
+        continue
+      }
+    }
+
     // flag if a grandfathered customer had promo credits apply towards a membership due
     const receivedInitialCredits = sortedCredits.some(a =>
       a.description.includes("Initial grandfathering")
@@ -267,21 +283,6 @@ const processSpecificFlags = async (
         id: chargebeeCustomerId,
       })
       continue
-    }
-
-    // If we moved rental charge credits back to prisma before they had a chance to get applied, flag it
-    const automaticMoveLogIndex = sortedCredits.findIndex(a =>
-      a.description.includes("Automatically move to internal system")
-    )
-    if (automaticMoveLogIndex > 0) {
-      const logBeforeAutomaticMove = sortedCredits[automaticMoveLogIndex - 1]
-      if (logBeforeAutomaticMove.description.includes("rental charges")) {
-        flags.push({
-          failureMode: "Automatically moved rental credits",
-          id: chargebeeCustomerId,
-        })
-        continue
-      }
     }
 
     // Flag: Received initial credits but then switched to an access plan before 10.01.
@@ -606,6 +607,7 @@ const printFlags = async (
     "cke4gnnde182r0741dy126ka7", // Craig Brown
     "cki3cnvai1j860706v1kgkpuz", // Sade Young
     "ckmqaw4jv0if90788ybyrn55b", // Jared Hirsh
+    "cksotj9f64427572eyl1n4bu21k", // Griffin Corbin
   ]
   const inProcess = [
     "cksrs1j3n13574712fty3eyx01fm", // Thomas Doe
