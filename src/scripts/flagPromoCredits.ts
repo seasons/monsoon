@@ -260,7 +260,7 @@ const processSpecificFlags = async (
 
     // If the credit is too large, flag it
     // Inspied by Justin P Olivierre, who received a $1160 credit: https://seasons.chargebee.com/customers/14345261/details#promotional-credits
-    // We choose 22500 as the threshold because the highest known "expected" credit to be added is 27814, in response to an essential-6 charge
+    // We choose 27814 as the threshold because the highest known "expected" credit to be added is 27814, in response to an essential-6 charge
     if (sortedCredits.some(a => a.type === "increment" && a.amount > 27814)) {
       flags.push({
         failureMode: "Excessive credit added",
@@ -473,20 +473,15 @@ const getCorrectCreditUsageHistory = (
 
   const formattedLogs = validUsageLogs
     .map(a => {
-      const invoiceId = a.description.slice(-4)
-      const invoice = invoices.find(a => a.id === invoiceId)
-      const creditsErroneouslyApplied = getAmountIncorrectlyCreditedTowardGrandfatheredPlanCharge(
-        invoice
-      )
+      // const invoiceId = a.description.slice(-4)
+      // const invoice = invoices.find(a => a.id === invoiceId)
+      // const creditsErroneouslyApplied = getAmountIncorrectlyCreditedTowardGrandfatheredPlanCharge(
+      //   invoice
+      // )
       return {
         date: timeUtils.dateFromUTCTimestamp(a.created_at, "seconds"),
-        amount: Math.round(a.amount - creditsErroneouslyApplied),
-        description:
-          creditsErroneouslyApplied > 0
-            ? `${a.description} (${formatPrice(
-                creditsErroneouslyApplied
-              )} towards membership due. Amount substracted from total)`
-            : a.description,
+        amount: Math.round(a.amount),
+        description: a.description,
       }
     })
     .filter(a => a.amount > 0)
@@ -587,7 +582,7 @@ const printFlags = async (
     "ckge5lxmd0gax0718iloxyoht", // Zeff Zenarosa
     "ckghedkkh0ax70773rqr0dvb7", // Jeremy Leung
     "ckknj14uv15610781wrfk109m", // Jerin Varghese"
-    "ckhpk6xpc1qet07729p88svng", // Dale Stephens
+    "ckhpk6xpc1qet07729p88svng", // Dale Stephensredit Usage History
     "ckh1fn5db04s107823ugb9ae8",
     "ckgiijpvx16kj07732mrx2qxr",
     "ck386iul21mc90765tfo7i64j",
@@ -602,6 +597,8 @@ const printFlags = async (
     "ckstgi9es10627912f1k4ozdc8u2", // Martys Smith
     "cksdmtn5i1382622eu335p09r2b", // Peter Smith
     "ckqe4gxco04qo074835ik8ych", // Matthew Neal
+    "ckjvof9x103p10715wv8kb03h", // Steven Almeas
+    "ckk03lh0o0mtm07666lplhgyb", // Michael Morado
   ]
   const knownToBeInProcess = [
     "cksrs1j3n13574712fty3eyx01fm", // Thomas Doe
