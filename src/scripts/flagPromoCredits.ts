@@ -88,6 +88,7 @@ const run = async () => {
     creditsGroupedByChargebeeCustomerId,
     invoicesGroupedByChargebeeCustomerId
   )
+  // const generalFlags = []
 
   const allFlags = [...specificFlags, ...generalFlags]
   await printFlags(allFlags, {
@@ -238,6 +239,21 @@ const processSpecificFlags = async (
     const sortedCreditDescriptions = sortedCredits.map(a => a.description)
     const invoices = invoicesGroupedByChargebeeCustomerId[chargebeeCustomerId]
 
+    // If we moved rental charge credits back to prisma before they had a chance to get applied, flag it
+    const automaticMoveLogIndex = sortedCredits.findIndex(a =>
+      a.description.includes("Automatically move to internal system")
+    )
+    if (automaticMoveLogIndex > 0) {
+      const logBeforeAutomaticMove = sortedCredits[automaticMoveLogIndex - 1]
+      if (logBeforeAutomaticMove.description.includes("rental charges")) {
+        flags.push({
+          failureMode: "Automatically moved rental credits",
+          id: chargebeeCustomerId,
+        })
+        continue
+      }
+    }
+
     // flag if a grandfathered customer had promo credits apply towards a membership due
     const receivedInitialCredits = sortedCredits.some(a =>
       a.description.includes("Initial grandfathering")
@@ -267,21 +283,6 @@ const processSpecificFlags = async (
         id: chargebeeCustomerId,
       })
       continue
-    }
-
-    // If we moved rental charge credits back to prisma before they had a chance to get applied, flag it
-    const automaticMoveLogIndex = sortedCredits.findIndex(a =>
-      a.description.includes("Automatically move to internal system")
-    )
-    if (automaticMoveLogIndex > 0) {
-      const logBeforeAutomaticMove = sortedCredits[automaticMoveLogIndex - 1]
-      if (logBeforeAutomaticMove.description.includes("rental charges")) {
-        flags.push({
-          failureMode: "Automatically moved rental credits",
-          id: chargebeeCustomerId,
-        })
-        continue
-      }
     }
 
     // Flag: Received initial credits but then switched to an access plan before 10.01.
@@ -558,7 +559,6 @@ const printFlags = async (
   }
 ) => {
   const uniqueFlags = uniq(flags, a => a.id)
-  console.log(`*** TOTAL UNIQUE FLAGS : ${uniqueFlags.length} ***\n`)
   const reconciled = [
     "ckoxwxih404yp0544brb8xgs1", // Lamarr Nanton
     "cksq66als339522fwvbhchva94",
@@ -607,6 +607,30 @@ const printFlags = async (
     "cke4gnnde182r0741dy126ka7", // Craig Brown
     "cki3cnvai1j860706v1kgkpuz", // Sade Young
     "ckmqaw4jv0if90788ybyrn55b", // Jared Hirsh
+    "cksotj9f64427572eyl1n4bu21k", // Griffin Corbin
+    "ckhy1fmdm0b5z0737qfa5hwxl", // Harden Kernoodle
+    "ckt7h9lke8347012ev7gsubfxzj", // Shadi Jurdi
+    "cktnpu66w3927232hwwg9uq27ag", // Lui X
+    "ckti1z24j4428652ful9ytmryig", // Conor Holihan
+    "ckt010fhy2041072e46chnoxz60", // Samuel Light
+    "cktxinqwu6166452gzygq8uz307", // Rahem Batts
+    "cknypeyfw1q160711x5nd31u4", // Michael Morikawa
+    "ckhpjjh2c1di4077240dqhoqa", // Kunaal Ary
+    "ckms18v0213on07793g9tw4ix", // Jen Astrup
+    "cko29es0w5l7j0758mbztzw06", // David Guzman
+    "ckol8nny0004q0722supb4glo", // Joseph Medina
+    "ckorccnk905sz05981mhi3bwy", // Diego Frausto
+    "ckovi9btj076p0559kpdq5tcx", // Jonathan Gold
+    "ckp5uc6dw0qrb0508unludox2", // Jason Lundy
+    "ckp70vndj00210508ehfeh6ic", // Andrew Goh
+    "ckphkl2nm1dd80743beapdniq", // Dean Dalmacio
+    "ckppqxasl3f1p07348d8rxg6s", // Jorge Guiza
+    "ckqj0h6f223r40732744blspp", // Steve Test
+    "ckqxxzwrs164558622vz6i6j8nct", // Brent Elrod
+    "ckr2z329j6939682uoltpbfal50", // Derek Wright
+    "ckjz3w2cg389907471a2wcdnd", // Oren Schauble
+    "ckodazw0516mq0710twve1mo0", // John Sese
+    "cksls2r3q2862212fvuvzn2d2rk", // Dean Daneluzzi
   ]
   const inProcess = [
     "cksrs1j3n13574712fty3eyx01fm", // Thomas Doe
@@ -616,6 +640,8 @@ const printFlags = async (
   const filteredUniqueFlags = uniqueFlags
     .filter(a => !reconciled.includes(a.id))
     .filter(b => !inProcess.includes(b.id))
+
+  console.log(`*** TOTAL UNIQUE FLAGS : ${filteredUniqueFlags.length} ***\n`)
   const filteredFlagsByReason = groupBy(filteredUniqueFlags, a => a.failureMode)
   for (const failureMode of Object.keys(filteredFlagsByReason)) {
     console.log(
@@ -719,7 +745,7 @@ const printFlags = async (
         console.log(
           `**Total Expected: ${formatPrice(
             adjustedTotal
-          )} ${adjustmentDetail}**`
+          )} ${adjustmentDetail}**\n`
         )
         console.log(
           `**Total Present: Chargebee ${formatPrice(
