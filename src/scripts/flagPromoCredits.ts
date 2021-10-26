@@ -560,6 +560,11 @@ const printFlags = async (
 ) => {
   const uniqueFlags = uniq(flags, a => a.id)
   const reconciled = [
+    "cknuehqpc36gq0718ez11drsp",
+    "ckrfnfgyg6627672cso191hjr3o", // Enmanuel Peralta
+    "ckjox8d4i0t8607529l3qxl2y",
+    "ckoztiw4l000h05111nsjetqd",
+    "ckslrwerc2686792ez2xgmbc41u", // Shane Cordileone
     "ckoxwxih404yp0544brb8xgs1", // Lamarr Nanton
     "cksq66als339522fwvbhchva94",
     "ck68f2mxrltgl0777a3vnfx8z",
