@@ -366,9 +366,11 @@ const processSpecificFlags = async (
       })
       .reduce((acc, curval) => curval.amount + acc, 0)
 
-    const totalCreditsDeductedOnChargebee = credits
-      .filter(a => a.type === "decrement")
-      .reduce((acc, curval) => curval.amount + acc, 0)
+    const validUsageLogs = getValidCreditUsageLogs(credits)
+    const totalCreditsDeductedOnChargebee = validUsageLogs.reduce(
+      (acc, curval) => curval.amount + acc,
+      0
+    )
 
     if (totalValidCreditsCreatedOnChargebee < totalCreditsDeductedOnChargebee) {
       flags.push({
@@ -602,6 +604,7 @@ const printFlags = async (
   ]
   const knownToBeInProcess = [
     "cksrs1j3n13574712fty3eyx01fm", // Thomas Doe
+    "ckbnyur5b5eud0719qqol2pu2", // Abael Solomon
   ]
 
   const filteredUniqueFlags = uniqueFlags
