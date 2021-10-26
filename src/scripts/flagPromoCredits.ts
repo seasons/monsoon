@@ -628,6 +628,8 @@ const printFlags = async (
     "ckqxxzwrs164558622vz6i6j8nct", // Brent Elrod
     "ckr2z329j6939682uoltpbfal50", // Derek Wright
     "ckjz3w2cg389907471a2wcdnd", // Oren Schauble
+    "ckodazw0516mq0710twve1mo0", // John Sese
+    "cksls2r3q2862212fvuvzn2d2rk", // Dean Daneluzzi
   ]
   const inProcess = [
     "cksrs1j3n13574712fty3eyx01fm", // Thomas Doe
@@ -742,7 +744,7 @@ const printFlags = async (
         console.log(
           `**Total Expected: ${formatPrice(
             adjustedTotal
-          )} ${adjustmentDetail}**`
+          )} ${adjustmentDetail}**\n`
         )
         console.log(
           `**Total Present: Chargebee ${formatPrice(
