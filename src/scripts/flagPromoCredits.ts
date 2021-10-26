@@ -560,6 +560,22 @@ const printFlags = async (
 ) => {
   const uniqueFlags = uniq(flags, a => a.id)
   const reconciled = [
+    "ckicldabs0467071988bg0zc8",
+    "ckhvd476c18ng0712rlz5pz5h",
+    "ck59shrno9lrr0762jn4j9l0n",
+    "ckp1ppsmk006p0584ovci2jkf",
+    "ckspcif2p6810982fwvd7r0pa9c",
+    "ckju2wql227mj0729v244j0jz",
+    "ckhvzdqhy2alf0712ffb0ubd2",
+    "ckodazw0516mq0710twve1mo0",
+    "ckk5qc30e0jsd0793z0oenbeg",
+    "ckhwoiura11070746d8ftbwfg",
+    "ckmp3a74o0tp60790fka1ccmv",
+    "ckq3dn3je013s0762t4w115ah",
+    "ckcdb5fon0q2p0731tfsfggkf",
+    "ckqctn1ri0k570733vq9e98tj",
+    "ckmji01xg29e30764yms8y7jb",
+    "ckq10bnkf1iwh0792w7j8p2gr",
     "cknuehqpc36gq0718ez11drsp",
     "ckrfnfgyg6627672cso191hjr3o", // Enmanuel Peralta
     "ckjox8d4i0t8607529l3qxl2y",
