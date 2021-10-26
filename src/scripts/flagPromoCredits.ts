@@ -85,7 +85,8 @@ const run = async () => {
     creditsGroupedByChargebeeCustomerId,
     invoicesGroupedByChargebeeCustomerId
   )
-  //
+
+  console.log(` **** AUDIT DONE ****`)
 }
 
 const calculateProperPromotionalCreditBalanceForAllCustomers = async (
