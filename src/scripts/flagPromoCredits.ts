@@ -559,7 +559,7 @@ const printFlags = async (
 ) => {
   const uniqueFlags = uniq(flags, a => a.id)
   console.log(`*** TOTAL UNIQUE FLAGS : ${uniqueFlags.length} ***\n`)
-  const knownNonFlags = [
+  const reconciled = [
     "cksq66als339522fwvbhchva94",
     "ck68f2mxrltgl0777a3vnfx8z",
     "ck8p84yrm12dz07230kyeggwq",
@@ -603,8 +603,9 @@ const printFlags = async (
     "ckk03lh0o0mtm07666lplhgyb", // Michael Morado
     "ckdqrhyhl1hf40751q77husqy", // Dustin Zuber
     "cki0jre9j1nhu07858o8nxg6u", // Maryah Greene
+    "cke4gnnde182r0741dy126ka7", // Craig Brown
   ]
-  const knownToBeInProcess = [
+  const inProcess = [
     "cksrs1j3n13574712fty3eyx01fm", // Thomas Doe
     "ckbnyur5b5eud0719qqol2pu2", // Abael Solomon
     "cki3cnvai1j860706v1kgkpuz", // Sade Young
@@ -612,8 +613,8 @@ const printFlags = async (
   ]
 
   const filteredUniqueFlags = uniqueFlags
-    .filter(a => !knownNonFlags.includes(a.id))
-    .filter(b => !knownToBeInProcess.includes(b.id))
+    .filter(a => !reconciled.includes(a.id))
+    .filter(b => !inProcess.includes(b.id))
   const filteredFlagsByReason = groupBy(filteredUniqueFlags, a => a.failureMode)
   for (const failureMode of Object.keys(filteredFlagsByReason)) {
     console.log(
