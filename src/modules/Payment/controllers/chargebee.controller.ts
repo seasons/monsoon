@@ -81,40 +81,42 @@ export class ChargebeeController {
   private async creditsAdded(content: any) {
     const { promotional_credit, customer: chargebeeCustomer } = content
 
-    const prismaCustomer = await this.prisma.client.customer.findFirst({
-      where: { user: { id: chargebeeCustomer.id } },
-      select: { id: true },
-    })
-    try {
-      await chargebee.promotional_credit
-        .deduct({
-          customer_id: chargebeeCustomer.id,
-          amount: promotional_credit.amount,
-          description: "Automatically move to internal system",
-        })
-        .request()
-      await this.prisma.client.customer.update({
-        where: { id: prismaCustomer.id },
-        data: {
-          membership: {
-            update: {
-              creditBalance: { increment: promotional_credit.amount },
-              creditUpdateHistory: {
-                create: {
-                  amount: promotional_credit.amount,
-                  reason:
-                    "Automatic transfer of credits added on chargebee to internal system.",
+    if (!promotional_credit.description.includes("MONSOON_IGNORE")) {
+      const prismaCustomer = await this.prisma.client.customer.findFirst({
+        where: { user: { id: chargebeeCustomer.id } },
+        select: { id: true },
+      })
+      try {
+        await chargebee.promotional_credit
+          .deduct({
+            customer_id: chargebeeCustomer.id,
+            amount: promotional_credit.amount,
+            description: "Automatically move to internal system",
+          })
+          .request()
+        await this.prisma.client.customer.update({
+          where: { id: prismaCustomer.id },
+          data: {
+            membership: {
+              update: {
+                creditBalance: { increment: promotional_credit.amount },
+                creditUpdateHistory: {
+                  create: {
+                    amount: promotional_credit.amount,
+                    reason:
+                      "Automatic transfer of credits added on chargebee to internal system.",
+                  },
                 },
               },
             },
           },
-        },
-      })
-    } catch (err) {
-      this.logger.error(
-        "Unable to handle promotional credits added in chargebee controller",
-        { error: err, content }
-      )
+        })
+      } catch (err) {
+        this.logger.error(
+          "Unable to handle promotional credits added in chargebee controller",
+          { error: err, content }
+        )
+      }
     }
   }
 
