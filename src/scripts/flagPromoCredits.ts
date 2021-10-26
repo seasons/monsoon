@@ -601,6 +601,7 @@ const printFlags = async (
     "ckqe4gxco04qo074835ik8ych", // Matthew Neal
     "ckjvof9x103p10715wv8kb03h", // Steven Almeas
     "ckk03lh0o0mtm07666lplhgyb", // Michael Morado
+    "ckdqrhyhl1hf40751q77husqy", // Dustin Zuber
   ]
   const knownToBeInProcess = [
     "cksrs1j3n13574712fty3eyx01fm", // Thomas Doe
