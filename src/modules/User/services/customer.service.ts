@@ -471,6 +471,19 @@ export class CustomerService {
       },
     })
 
+    const customerCreditBalance = await this.prisma.client.customerMembership.findUnique(
+      {
+        where: {
+          id: membershipId,
+        },
+        select: {
+          creditBalance: true,
+        },
+      }
+    )
+
+    const updatedCreditBalance = customerCreditBalance.creditBalance + amount
+
     promises.push(
       this.prisma.client.customerMembership.update({
         where: {
@@ -486,6 +499,7 @@ export class CustomerService {
                   id: adminUser.userId,
                 },
               },
+              balance: updatedCreditBalance,
             },
           },
           creditBalance: { increment: amount },

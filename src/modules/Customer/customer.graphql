@@ -200,5 +200,6 @@ type CreditBalanceUpdateLog {
   reason: String
   adminUser: User
   adminUserId: ID!
+  balance: Int
   createdAt: DateTime
 }
