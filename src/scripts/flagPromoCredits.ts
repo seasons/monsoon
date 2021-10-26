@@ -634,10 +634,11 @@ const printFlags = async (
     "ckbnyur5b5eud0719qqol2pu2", // Abael Solomon
   ]
 
-  console.log(`*** TOTAL UNIQUE FLAGS : ${uniqueFlags.length} ***\n`)
   const filteredUniqueFlags = uniqueFlags
     .filter(a => !reconciled.includes(a.id))
     .filter(b => !inProcess.includes(b.id))
+
+  console.log(`*** TOTAL UNIQUE FLAGS : ${filteredUniqueFlags.length} ***\n`)
   const filteredFlagsByReason = groupBy(filteredUniqueFlags, a => a.failureMode)
   for (const failureMode of Object.keys(filteredFlagsByReason)) {
     console.log(
