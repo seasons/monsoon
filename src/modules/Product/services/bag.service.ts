@@ -1,9 +1,6 @@
-import { Customer } from "@app/decorators"
-import { ErrorService } from "@app/modules/Error/services/error.service"
-import { StatementsService } from "@app/modules/Utils/services/statements.service"
 import { UtilsService } from "@app/modules/Utils/services/utils.service"
 import { Injectable } from "@nestjs/common"
-import { BagItem, BagItemStatus, InventoryStatus, Prisma } from "@prisma/client"
+import { BagItem, InventoryStatus, Prisma } from "@prisma/client"
 import { PrismaService } from "@prisma1/prisma.service"
 import { ApolloError } from "apollo-server"
 
@@ -16,9 +13,7 @@ export class BagService {
     private readonly prisma: PrismaService,
     private readonly reservationService: ReservationService,
     private readonly productVariantService: ProductVariantService,
-    private readonly utils: UtilsService,
-    private readonly error: ErrorService,
-    private readonly statements: StatementsService
+    private readonly utils: UtilsService
   ) {}
 
   async addToBag(

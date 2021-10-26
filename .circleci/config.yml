@@ -40,6 +40,10 @@ jobs:
           command: node bin/cli.js spp local staging -f
 
       - run:
+          name: Apply any needed migrations
+          command: yarn prisma migrate deploy
+
+      - run:
           name: Install JUnit coverage reporter
           command: yarn add --dev jest-junit
 
@@ -92,6 +96,10 @@ jobs:
       - run:
           name: Clone staging data into local Postgres DB
           command: node bin/cli.js spp local staging -f
+
+      - run:
+          name: Apply any needed migrations
+          command: yarn prisma migrate deploy
 
       - run:
           name: Generate user for integration test

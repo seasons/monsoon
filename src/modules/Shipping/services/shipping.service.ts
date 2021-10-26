@@ -89,7 +89,6 @@ export class ShippingService {
 
   async createBuyUsedShippingLabel(
     productVariantId: string,
-    user: User,
     customer: Customer
   ): Promise<ShippoTransaction> {
     const shipmentWeight = await this.calcShipmentWeightFromProductVariantIDs([
