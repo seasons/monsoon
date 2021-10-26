@@ -560,6 +560,12 @@ const printFlags = async (
 ) => {
   const uniqueFlags = uniq(flags, a => a.id)
   const reconciled = [
+    "ck2iepyjk001g0799jq9sjpwz",
+    "ckju5lfcf29j30729n3n9kabs",
+    "ck561f4hxj0tn0704ihksk6zp",
+    "ck2hz5jjc003n0799wljleiag",
+    "ckq8eq4v50ztb0757otlb49ca",
+    "ckq9jhprp2xwc0739rnsydpyu",
     "ckicldabs0467071988bg0zc8",
     "ckhvd476c18ng0712rlz5pz5h",
     "ck59shrno9lrr0762jn4j9l0n",
