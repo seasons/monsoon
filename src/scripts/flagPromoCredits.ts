@@ -559,7 +559,6 @@ const printFlags = async (
   }
 ) => {
   const uniqueFlags = uniq(flags, a => a.id)
-  console.log(`*** TOTAL UNIQUE FLAGS : ${uniqueFlags.length} ***\n`)
   const reconciled = [
     "cksq66als339522fwvbhchva94",
     "ck68f2mxrltgl0777a3vnfx8z",
@@ -608,12 +607,14 @@ const printFlags = async (
     "cki3cnvai1j860706v1kgkpuz", // Sade Young
     "ckmqaw4jv0if90788ybyrn55b", // Jared Hirsh
     "cksotj9f64427572eyl1n4bu21k", // Griffin Corbin
+    "ckhy1fmdm0b5z0737qfa5hwxl", // Harden Kernoodle
   ]
   const inProcess = [
     "cksrs1j3n13574712fty3eyx01fm", // Thomas Doe
     "ckbnyur5b5eud0719qqol2pu2", // Abael Solomon
   ]
 
+  console.log(`*** TOTAL UNIQUE FLAGS : ${uniqueFlags.length} ***\n`)
   const filteredUniqueFlags = uniqueFlags
     .filter(a => !reconciled.includes(a.id))
     .filter(b => !inProcess.includes(b.id))
