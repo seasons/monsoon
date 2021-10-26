@@ -608,6 +608,9 @@ const printFlags = async (
     "ckmqaw4jv0if90788ybyrn55b", // Jared Hirsh
     "cksotj9f64427572eyl1n4bu21k", // Griffin Corbin
     "ckhy1fmdm0b5z0737qfa5hwxl", // Harden Kernoodle
+    "ckt7h9lke8347012ev7gsubfxzj", // Shadi Jurdi
+    "cktnpu66w3927232hwwg9uq27ag", // Lui X
+    "ckti1z24j4428652ful9ytmryig", // Conor Holihan
   ]
   const inProcess = [
     "cksrs1j3n13574712fty3eyx01fm", // Thomas Doe
