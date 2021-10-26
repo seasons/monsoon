@@ -232,6 +232,17 @@ export class PhysicalProductService {
       }
     )
 
+    const location = await this.prisma.client.location.findUnique({
+      where: {
+        slug:
+          process.env.SEASONS_CLEANER_LOCATION_SLUG ||
+          "seasons-cleaners-official",
+      },
+      select: {
+        id: true,
+      },
+    })
+
     const physProdsBeforeUpdate = await this.prisma.client.physicalProduct.findMany(
       {
         where: {
@@ -290,27 +301,14 @@ export class PhysicalProductService {
           }
         }
     )
-    let newData = {
-      warehouseLocationId: {
-        connect: {
-          id: warehouseLocation.id,
-        },
-      },
-      locationId: {
-        connect: {
-          slug:
-            process.env.SEASONS_CLEANER_LOCATION_SLUG ||
-            "seasons-cleaners-official",
-        },
-      },
-    }
 
     const reservable = productVariants.map(a => a.reservable)
 
     // If the physical product is being stowed and there are currently no reservable units, notify users
     const products = productVariants?.map(a => a.product)
 
-    const notifyUsersIfNeeded = reservable.map(async (num, index) => {
+    const notifyUsersIfNeeded = []
+    reservable.forEach(async (num, index) => {
       if (num === 0) {
         const product = productVariants[index].product
         const notifications = await this.prisma.client.productNotification.findMany(
@@ -334,7 +332,7 @@ export class PhysicalProductService {
 
         const emails = notifications.map(notif => notif.customer?.user?.email)
         // Send the notification
-        const notification = async () => {
+        notifyUsersIfNeeded.push(
           await this.pushNotification.pushNotifyUsers({
             emails,
             pushNotifID: "ProductRestock",
@@ -345,12 +343,31 @@ export class PhysicalProductService {
               brandName: product?.brand?.name,
             },
           })
-
+        )
+        notifyUsersIfNeeded.push(
           await this.emails.sendRestockNotificationEmails(emails, product)
-        }
-        return notification()
+        )
       }
     })
+
+    const validateWarehousePromises = []
+
+    physProdsBeforeUpdate.forEach(physProd => {
+      if (physProd.inventoryStatus === "Stored") {
+        throw new Error(
+          `Cannot stow ${physProd.seasonsUID} due to inventory status being Stored. 
+          Use single item stow for this item`
+        )
+      }
+
+      validateWarehousePromises.push(
+        this.validateWarehouseLocationConstraints(physProd, {
+          barcode: warehouseLocation.barcode,
+        })
+      )
+    })
+
+    Promise.all(validateWarehousePromises)
 
     const stowedProducts = await this.prisma.client.physicalProduct.updateMany({
       where: {
@@ -358,12 +375,15 @@ export class PhysicalProductService {
           in: ids,
         },
       },
-      data: newData[0],
+      data: {
+        warehouseLocationId: warehouseLocation.id,
+        locationId: location.id,
+        productStatus: "Clean",
+        inventoryStatus: "Reservable",
+      },
     })
 
-    notifyUsersIfNeeded.forEach(async a => {
-      return a
-    })
+    Promise.all(notifyUsersIfNeeded)
 
     return stowedProducts.count > 0
   }
