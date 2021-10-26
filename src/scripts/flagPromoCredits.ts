@@ -604,12 +604,12 @@ const printFlags = async (
     "ckdqrhyhl1hf40751q77husqy", // Dustin Zuber
     "cki0jre9j1nhu07858o8nxg6u", // Maryah Greene
     "cke4gnnde182r0741dy126ka7", // Craig Brown
+    "cki3cnvai1j860706v1kgkpuz", // Sade Young
+    "ckmqaw4jv0if90788ybyrn55b", // Jared Hirsh
   ]
   const inProcess = [
     "cksrs1j3n13574712fty3eyx01fm", // Thomas Doe
     "ckbnyur5b5eud0719qqol2pu2", // Abael Solomon
-    "cki3cnvai1j860706v1kgkpuz", // Sade Young
-    "ckmqaw4jv0if90788ybyrn55b", // Jared Hirsh
   ]
 
   const filteredUniqueFlags = uniqueFlags
