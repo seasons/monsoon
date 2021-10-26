@@ -611,6 +611,10 @@ const printFlags = async (
     "ckt7h9lke8347012ev7gsubfxzj", // Shadi Jurdi
     "cktnpu66w3927232hwwg9uq27ag", // Lui X
     "ckti1z24j4428652ful9ytmryig", // Conor Holihan
+    "ckt010fhy2041072e46chnoxz60", // Samuel Light
+    "cktxinqwu6166452gzygq8uz307", // Rahem Batts
+    "cknypeyfw1q160711x5nd31u4", // Michael Morikawa
+    "ckhpjjh2c1di4077240dqhoqa", // Kunaal Ary
   ]
   const inProcess = [
     "cksrs1j3n13574712fty3eyx01fm", // Thomas Doe
