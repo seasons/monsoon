@@ -607,6 +607,8 @@ const printFlags = async (
   const knownToBeInProcess = [
     "cksrs1j3n13574712fty3eyx01fm", // Thomas Doe
     "ckbnyur5b5eud0719qqol2pu2", // Abael Solomon
+    "cki3cnvai1j860706v1kgkpuz", // Sade Young
+    "ckmqaw4jv0if90788ybyrn55b", // Jared Hirsh
   ]
 
   const filteredUniqueFlags = uniqueFlags
