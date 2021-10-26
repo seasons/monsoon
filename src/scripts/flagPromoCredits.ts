@@ -685,8 +685,32 @@ const printFlags = async (
           creditsGroupedByChargebeeCustomerId,
           flag.id
         )
+        const invoicesWithCreditsAppliedTowardGrandfatheredPlan = getInvoicesWithCreditsAppliedTowardGrandfatheredPlan(
+          invoicesGroupedByChargebeeCustomerId[flag.id],
+          timeUtils
+        )
+        const totalCreditsWeNeverShouldHaveCreated = invoicesWithCreditsAppliedTowardGrandfatheredPlan.reduce(
+          (acc, curval) => {
+            const creditsErroneouslyApplied = getAmountIncorrectlyCreditedTowardGrandfatheredPlanCharge(
+              curval
+            )
+            return acc + creditsErroneouslyApplied * 1.15
+          },
+          0
+        )
+        const adjustedTotal =
+          totalCreated - totalUsage - totalCreditsWeNeverShouldHaveCreated
+        const nonAdjustedTotal = totalCreated - totalUsage
+        const adjustmentDetail =
+          adjustedTotal !== nonAdjustedTotal
+            ? `(${formatPrice(nonAdjustedTotal)}- ${formatPrice(
+                totalCreditsWeNeverShouldHaveCreated
+              )} for credits erroneously given towards membership dues)`
+            : ""
         console.log(
-          `**Total Expected: ${formatPrice(totalCreated - totalUsage)}**\n`
+          `**Total Expected: ${formatPrice(
+            adjustedTotal
+          )} ${adjustmentDetail}**`
         )
         console.log(
           `**Total Present: Chargebee ${formatPrice(
@@ -696,10 +720,6 @@ const printFlags = async (
           )}**\n`
         )
 
-        const invoicesWithCreditsAppliedTowardGrandfatheredPlan = getInvoicesWithCreditsAppliedTowardGrandfatheredPlan(
-          invoicesGroupedByChargebeeCustomerId[flag.id],
-          timeUtils
-        )
         if (invoicesWithCreditsAppliedTowardGrandfatheredPlan.length > 0) {
           console.log(
             `*Invoices with Credits applied toward grandfathered plan charge*`
