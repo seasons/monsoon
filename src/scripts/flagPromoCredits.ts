@@ -1,7 +1,8 @@
 import "module-alias/register"
 
+import { format } from "path"
+
 import chargebee from "chargebee"
-import { coerceInputValue } from "graphql"
 import { groupBy, orderBy, uniq } from "lodash"
 
 import { GRANDFATHERED_PLAN_IDS } from "../modules/Payment/services/subscription.service"
@@ -34,6 +35,7 @@ const run = async () => {
     ;({ next_offset: offset, list } = await chargebee.promotional_credit
       .list({
         limit: 100,
+        // "customer_id[is]": "ckp7gh0if17wv0546azukj783",
         ...(offset === "start" ? {} : { offset }),
       })
       .request())
@@ -51,6 +53,7 @@ const run = async () => {
     ;({ next_offset: offset, list } = await chargebee.invoice
       .list({
         limit: 100,
+        // "customer_id[is]": "ckp7gh0if17wv0546azukj783",
         ...(offset === "start" ? {} : { offset }),
       })
       .request())
@@ -71,7 +74,7 @@ const run = async () => {
 
   // SPECIFIC FLAGS
 
-  await processSpecificFlags(
+  const specificFlags = await processSpecificFlags(
     ps,
     timeUtils,
     creditsGroupedByChargebeeCustomerId,
@@ -79,13 +82,20 @@ const run = async () => {
   )
 
   console.log("\n\n")
-  await calculateProperPromotionalCreditBalanceForAllCustomers(
+  const generalFlags = await calculateProperPromotionalCreditBalanceForAllCustomers(
     ps,
     timeUtils,
     creditsGroupedByChargebeeCustomerId,
     invoicesGroupedByChargebeeCustomerId
   )
 
+  const allFlags = [...specificFlags, ...generalFlags]
+  await printFlags(allFlags, {
+    ps,
+    timeUtils,
+    creditsGroupedByChargebeeCustomerId,
+    invoicesGroupedByChargebeeCustomerId,
+  })
   console.log(` **** AUDIT DONE ****`)
 }
 
@@ -105,6 +115,7 @@ const calculateProperPromotionalCreditBalanceForAllCustomers = async (
         { user: { id: { in: userIdsWithCreditHistoryOnChargebee } } },
         { membership: { creditBalance: { gt: 0 } } },
       ],
+      // user: { id: "ckp7gh0if17wv0546azukj783" },
     },
     select: {
       user: { select: { id: true } },
@@ -120,6 +131,7 @@ const calculateProperPromotionalCreditBalanceForAllCustomers = async (
     ;({ next_offset: offset, list } = await chargebee.customer
       .list({
         limit: 100,
+        // "customer_id[is]": "ckp7gh0if17wv0546azukj783",
         ...(offset === "start" ? {} : { offset }),
       })
       .request())
@@ -162,84 +174,26 @@ const calculateProperPromotionalCreditBalanceForAllCustomers = async (
     }
 
     // Does not include membership renewal-based promotional credits
-    const mostValidCreditsCreatedOnChargebeeMetadata = []
     const mostValidCreditsCreatedOnChargebee =
-      chargebeeCreditLogs
-        ?.filter(a => a.type === "increment")
-        ?.filter(a => {
-          const initialCreditCreation = a.description.includes(
-            "Initial grandfathering"
-          )
-          const teamMemberAddedIt = a.done_by?.includes("seasons.nyc")
-          const createdDuringReturn = a.description.includes(
-            "Returned while deleting the invoice"
-          )
-          const createdDuringCreditNote = a.description.includes(
-            "Returned while creating the Credit Note"
-          )
-          const isValid =
-            initialCreditCreation ||
-            createdDuringReturn ||
-            createdDuringCreditNote ||
-            teamMemberAddedIt
-          if (isValid) {
-            mostValidCreditsCreatedOnChargebeeMetadata.push({
-              validBecause: initialCreditCreation
-                ? "Initial Credit Creation"
-                : createdDuringReturn
-                ? "Created on Return"
-                : createdDuringCreditNote
-                ? "Created on Credit Note"
-                : teamMemberAddedIt
-                ? "Team Member Added"
-                : null,
-              creditsAdded: Math.round(a.amount),
-            })
-          }
-          return isValid
-        })
-        ?.reduce((acc, curval) => Math.round(curval.amount + acc), 0) || 0
-    const membershipRenewalCreditsMetadata = []
+      getValidNonMembeshipRenewalCreditCreationLogs(
+        chargebeeCreditLogs
+      )?.reduce((acc, curval) => Math.round(curval.amount + acc), 0) || 0
     const membeshipRenewalPromotionalCredits = Math.round(
-      invoices.reduce((acc, curval) => {
-        const chargeDate = timeUtils.dateFromUTCTimestamp(
-          curval.date,
-          "seconds"
-        )
-        const isAfterSeptemberTwenty = timeUtils.isLaterDate(
-          chargeDate,
-          new Date(2021, 8, 20)
-        )
-        if (!isAfterSeptemberTwenty) {
-          return acc
-        }
-        if (curval.status !== "paid") {
-          return acc
-        }
-        const grandfatheredPlanCharge = curval.line_items.find(a =>
-          GRANDFATHERED_PLAN_IDS.includes(a.entity_id)
-        )
-        if (grandfatheredPlanCharge) {
-          const creditsAdded = grandfatheredPlanCharge.amount * 1.15
-          membershipRenewalCreditsMetadata.push({
-            invoiceNumber: curval.id,
-            date: timeUtils.dateFromUTCTimestamp(curval.date, "seconds"),
-            planId: grandfatheredPlanCharge.entity_id,
-            creditsAdded: Math.round(creditsAdded),
-          })
-          return acc + creditsAdded
-        }
-
-        return Math.round(acc)
-      }, 0)
+      getMembershipRenewalCreditCreations(invoices, timeUtils).reduce(
+        (acc, curval) =>
+          acc +
+          curval.line_items.find(b =>
+            GRANDFATHERED_PLAN_IDS.includes(b.entity_id)
+          ).amount *
+            1.15,
+        0
+      )
     )
     const totalCreditsAppliedTowardsInvoices =
-      chargebeeCreditLogs
-        ?.filter(a => a.type === "decrement")
-        ?.filter(b => {
-          return b.description.includes("Applied to the invoice")
-        })
-        ?.reduce((acc, curval) => acc + curval.amount, 0) || 0
+      getValidCreditUsageLogs(chargebeeCreditLogs)?.reduce(
+        (acc, curval) => acc + curval.amount,
+        0
+      ) || 0
     const totalCreditsCreated = Math.round(
       membeshipRenewalPromotionalCredits + mostValidCreditsCreatedOnChargebee
     )
@@ -250,24 +204,23 @@ const calculateProperPromotionalCreditBalanceForAllCustomers = async (
         failureMode:
           "Current credit balance not equal to expected credit balance",
         id: cust.user.id,
-        meta: {
-          totalCreditsCreated,
-          membeshipRenewalPromotionalCredits: Math.round(
-            membeshipRenewalPromotionalCredits
-          ),
-          membershipRenewalCreditsMetadata,
-          mostValidCreditsCreatedOnChargebee,
-          mostValidCreditsCreatedOnChargebeeMetadata,
-          expectedCredits,
-          totalCreditsAppliedTowardsInvoices,
-          creditBalance: cust.membership.creditBalance,
-        },
+        // meta: {
+        //   totalCreditsCreated,
+        //   membeshipRenewalPromotionalCredits: Math.round(
+        //     membeshipRenewalPromotionalCredits
+        //   ),
+        //   membershipRenewalCreditsMetadata,
+        //   mostValidCreditsCreatedOnChargebee,
+        //   expectedCredits,
+        //   totalCreditsAppliedTowardsInvoices,
+        //   creditBalance: cust.membership.creditBalance,
+        // },
       })
       continue
     }
   }
 
-  await printFlags(ps, flags)
+  return flags
 }
 
 const processSpecificFlags = async (
@@ -289,31 +242,9 @@ const processSpecificFlags = async (
     const receivedInitialCredits = sortedCredits.some(a =>
       a.description.includes("Initial grandfathering")
     )
-    const invoicesWithCreditsAppliedTowardGrandfatheredPlan = invoices.filter(
-      a => {
-        const grandfatheredPlanCharge = a.line_items.find(a =>
-          GRANDFATHERED_PLAN_IDS.includes(a.entity_id)
-        )
-        const includesGrandFatheredPlanCharge = !!grandfatheredPlanCharge // TODO:
-        if (!includesGrandFatheredPlanCharge) {
-          return false
-        }
-
-        const chargeDate = timeUtils.dateFromUTCTimestamp(a.date, "seconds")
-        const isAfterSeptemberTwenty = timeUtils.isLaterDate(
-          chargeDate,
-          new Date(2021, 8, 20)
-        )
-        if (!isAfterSeptemberTwenty) {
-          return false
-        }
-
-        const creditsAppliedTowardPlanCharge =
-          grandfatheredPlanCharge.discount_amount > 0 &&
-          grandfatheredPlanCharge.discount_amount >
-            grandfatheredPlanCharge.item_level_discount_amount
-        return creditsAppliedTowardPlanCharge
-      }
+    const invoicesWithCreditsAppliedTowardGrandfatheredPlan = getInvoicesWithCreditsAppliedTowardGrandfatheredPlan(
+      invoices,
+      timeUtils
     )
     if (
       receivedInitialCredits &&
@@ -322,8 +253,9 @@ const processSpecificFlags = async (
       flags.push({
         failureMode: "Applied credits to a grandfathered plan charge",
         id: chargebeeCustomerId,
-        meta: { invoicesWithCreditsAppliedTowardGrandfatheredPlan },
+        // meta: { invoicesWithCreditsAppliedTowardGrandfatheredPlan },
       })
+      continue
     }
 
     // If the credit is too large, flag it
@@ -335,6 +267,21 @@ const processSpecificFlags = async (
         id: chargebeeCustomerId,
       })
       continue
+    }
+
+    // If we moved rental charge credits back to prisma before they had a chance to get applied, flag it
+    const automaticMoveLogIndex = sortedCredits.findIndex(a =>
+      a.description.includes("Automatically move to internal system")
+    )
+    if (automaticMoveLogIndex > 0) {
+      const logBeforeAutomaticMove = sortedCredits[automaticMoveLogIndex - 1]
+      if (logBeforeAutomaticMove.description.includes("rental charges")) {
+        flags.push({
+          failureMode: "Automatically moved rental credits",
+          id: chargebeeCustomerId,
+        })
+        continue
+      }
     }
 
     // Flag: Received initial credits but then switched to an access plan before 10.01.
@@ -460,13 +407,161 @@ const processSpecificFlags = async (
       }
     }
   }
-  await printFlags(ps, flags)
+
+  return flags
 }
 async function sleep(ms) {
   return new Promise(resolve => setTimeout(resolve, ms))
 }
 
-const printFlags = async (ps: PrismaService, flags) => {
+const getCorrectCreditCreationHistory = (
+  chargebeeCustomerId,
+  timeUtils: TimeUtilsService,
+  creditsGroupedByChargebeeCustomerId,
+  invoicesGroupedByChargebeeCustomerId
+) => {
+  const chargebeeCreditLogs =
+    creditsGroupedByChargebeeCustomerId[chargebeeCustomerId]
+  const validNonMembershipRenewalCreditCreationlogs = getValidNonMembeshipRenewalCreditCreationLogs(
+    chargebeeCreditLogs
+  )
+  const formattedValidNonMembershipRenewalCreditCreationlogs = validNonMembershipRenewalCreditCreationlogs.map(
+    a => ({
+      date: timeUtils.dateFromUTCTimestamp(a.created_at, "seconds"),
+      amount: Math.round(a.amount),
+      description: a.description,
+    })
+  )
+
+  const invoices = invoicesGroupedByChargebeeCustomerId[chargebeeCustomerId]
+  const membershipRenewalCreditCreations = getMembershipRenewalCreditCreations(
+    invoices,
+    timeUtils
+  )
+  const formattedMembershipRenewalCreditCreations = membershipRenewalCreditCreations.map(
+    a => {
+      const grandfatheredPlanCharge = a.line_items.find(b =>
+        GRANDFATHERED_PLAN_IDS.includes(b.entity_id)
+      )
+      return {
+        date: timeUtils.dateFromUTCTimestamp(a.date, "seconds"),
+        amount: grandfatheredPlanCharge.amount * 1.15,
+        description: `${grandfatheredPlanCharge.entity_id} Membership Renewal`,
+      }
+    }
+  )
+
+  const sortedCreditCreations = orderBy(
+    [
+      ...formattedMembershipRenewalCreditCreations,
+      ...formattedValidNonMembershipRenewalCreditCreationlogs,
+    ],
+    ["date", "asc"]
+  )
+  return sortedCreditCreations
+}
+
+const getCorrectCreditUsageHistory = (
+  chargebeeCustomerId,
+  timeUtils,
+  creditsGroupedByChargebeeCustomerId,
+  invoicesGroupedByChargebeeCustomerId
+) => {
+  const creditLogs = creditsGroupedByChargebeeCustomerId[chargebeeCustomerId]
+  const invoices = invoicesGroupedByChargebeeCustomerId[chargebeeCustomerId]
+  const validUsageLogs = getValidCreditUsageLogs(creditLogs)
+
+  const formattedLogs = validUsageLogs
+    .map(a => {
+      const invoiceId = a.description.slice(-4)
+      const invoice = invoices.find(a => a.id === invoiceId)
+      const creditsErroneouslyApplied = getAmountIncorrectlyCreditedTowardGrandfatheredPlanCharge(
+        invoice
+      )
+      return {
+        date: timeUtils.dateFromUTCTimestamp(a.created_at, "seconds"),
+        amount: Math.round(a.amount - creditsErroneouslyApplied),
+        description:
+          creditsErroneouslyApplied > 0
+            ? `${a.description} (${formatPrice(
+                creditsErroneouslyApplied
+              )} towards membership due. Amount substracted from total)`
+            : a.description,
+      }
+    })
+    .filter(a => a.amount > 0)
+  const sortedLogs = orderBy(formattedLogs, ["date", "asc"])
+  return sortedLogs
+}
+
+const getValidCreditUsageLogs = chargebeeLogs =>
+  chargebeeLogs
+    ?.filter(a => a.type === "decrement")
+    ?.filter(b => {
+      return b.description.includes("Applied to the invoice")
+    }) || []
+
+const getValidNonMembeshipRenewalCreditCreationLogs = chargebeeLogs => {
+  return (
+    chargebeeLogs
+      ?.filter(a => a.type === "increment")
+      ?.filter(a => {
+        const initialCreditCreation = a.description.includes(
+          "Initial grandfathering"
+        )
+        const teamMemberAddedIt = a.done_by?.includes("seasons.nyc")
+        const createdDuringReturn = a.description.includes(
+          "Returned while deleting the invoice"
+        )
+        const createdDuringCreditNote = a.description.includes(
+          "Returned while creating the Credit Note"
+        )
+        const isValid =
+          initialCreditCreation ||
+          createdDuringReturn ||
+          createdDuringCreditNote ||
+          teamMemberAddedIt
+        return isValid
+      }) || []
+  )
+}
+
+const getMembershipRenewalCreditCreations = (invoices, timeUtils) => {
+  return invoices.filter(curval => {
+    const chargeDate = timeUtils.dateFromUTCTimestamp(curval.date, "seconds")
+    const isAfterSeptemberTwenty = timeUtils.isLaterDate(
+      chargeDate,
+      new Date(2021, 8, 20)
+    )
+    if (!isAfterSeptemberTwenty) {
+      return false
+    }
+    if (curval.status !== "paid") {
+      return false
+    }
+    const grandfatheredPlanCharge = curval.line_items.find(a =>
+      GRANDFATHERED_PLAN_IDS.includes(a.entity_id)
+    )
+    return !!grandfatheredPlanCharge
+  })
+}
+
+const printFlags = async (
+  flags,
+  {
+    ps,
+    timeUtils,
+    creditsGroupedByChargebeeCustomerId,
+    invoicesGroupedByChargebeeCustomerId,
+  }: {
+    ps: PrismaService
+    timeUtils: TimeUtilsService
+    creditsGroupedByChargebeeCustomerId: any
+    invoicesGroupedByChargebeeCustomerId: any
+  }
+) => {
+  const uniqueFlags = uniq(flags, a => a.id)
+  console.log(`*** TOTAL UNIQUE FLAGS : ${uniqueFlags.length} ***\n`)
   const knownNonFlags = [
     "cksq66als339522fwvbhchva94",
     "ck68f2mxrltgl0777a3vnfx8z",
@@ -499,35 +594,234 @@ const printFlags = async (ps: PrismaService, flags) => {
     "ck2zsdm7p01k307481ax71xmr",
     "ckf8meide0e5k0729p5tvrtvy",
     "ckezzcmki04170717s8mdjcvl",
+    "ckqee2xws0gh20748hnuzdn04", // Steve Wernecke
+    "ckp69hkws1f1d0596zdr0esjr", // Zachary Gobst
+    "ckhpqskia2p1m0772khe7izf7", // Christopher Egwuatu
+    "ck2zgc11k12ah073432oz41b6", // Steve Jang
+    "ckp7gh0if17wv0546azukj783", // Michael Berger
+    "ckstgi9es10627912f1k4ozdc8u2", // Martys Smith
+    "cksdmtn5i1382622eu335p09r2b", // Peter Smith
+    "ckqe4gxco04qo074835ik8ych", // Matthew Neal
   ]
   const knownToBeInProcess = [
     "cksrs1j3n13574712fty3eyx01fm", // Thomas Doe
   ]
 
-  const filteredFlags = flags
+  const filteredUniqueFlags = uniqueFlags
     .filter(a => !knownNonFlags.includes(a.id))
     .filter(b => !knownToBeInProcess.includes(b.id))
-  const filteredFlagsByReason = groupBy(filteredFlags, a => a.failureMode)
+  const filteredFlagsByReason = groupBy(filteredUniqueFlags, a => a.failureMode)
   for (const failureMode of Object.keys(filteredFlagsByReason)) {
     console.log(
-      `-- ${failureMode}: ${filteredFlagsByReason[failureMode]?.length || 0}`
+      `-- ** ${failureMode}: ${
+        filteredFlagsByReason[failureMode]?.length || 0
+      } ** -- `
     )
     for (const flag of filteredFlagsByReason[failureMode]) {
-      const prismaUser = await ps.client.user.findUnique({
-        where: { id: flag.id },
-      })
-      console.log(
-        `https://seasons.chargebee.com/customers?view_code=all&Customers.search=${flag.id}`,
-        prismaUser.email
-      )
-      if (flag.meta) {
-        console.dir(flag.meta, { depth: null })
+      try {
+        const prismaUser = await ps.client.user.findUnique({
+          where: { id: flag.id },
+          select: {
+            email: true,
+            firstName: true,
+            lastName: true,
+            customer: {
+              select: {
+                id: true,
+                membership: { select: { creditBalance: true } },
+              },
+            },
+          },
+        })
+        const creditCreationhistory = getCorrectCreditCreationHistory(
+          flag.id,
+          timeUtils,
+          creditsGroupedByChargebeeCustomerId,
+          invoicesGroupedByChargebeeCustomerId
+        )
+        const creditUsageHistory = getCorrectCreditUsageHistory(
+          flag.id,
+          timeUtils,
+          creditsGroupedByChargebeeCustomerId,
+          invoicesGroupedByChargebeeCustomerId
+        )
+        console.log(`${prismaUser.firstName} ${prismaUser.lastName}\n`)
+        console.log(
+          `Chargebee Link: https://seasons.chargebee.com/customers?view_code=all&Customers.search=${flag.id}`
+        )
+        console.log(
+          `Admin Link: https://admin.seasons.nyc/members/${prismaUser.customer.id}/account\n`
+        )
+        console.log(`*Credit Creation History*`)
+        for (const event of creditCreationhistory) {
+          console.log(
+            `${event.date.toLocaleDateString("en-US")}: ${formatPrice(
+              event.amount
+            )} -- ${event.description}`
+          )
+        }
+        const totalCreated = creditCreationhistory.reduce(
+          (acc, curval) => acc + curval.amount,
+          0
+        )
+        console.log(`**Total Created: ${formatPrice(totalCreated)}**\n`)
+        console.log(
+          `*Credit Usage History*${creditUsageHistory.length === 0 ? "\n" : ""}`
+        )
+        for (const event of creditUsageHistory) {
+          console.log(
+            `${event.date.toLocaleDateString("en-US")} -- ${formatPrice(
+              event.amount
+            )} -- ${event.description}`
+          )
+        }
+        const totalUsage = creditUsageHistory.reduce(
+          (acc, curval) => acc + curval.amount,
+          0
+        )
+        console.log(
+          `**Total Usage: ${totalUsage > 0 ? "-" : ""}${formatPrice(
+            totalUsage
+          )}**\n`
+        )
+        const presentChargebeeBalance = getPresentChargebeeCreditBalance(
+          creditsGroupedByChargebeeCustomerId,
+          flag.id
+        )
+        console.log(
+          `**Total Expected: ${formatPrice(totalCreated - totalUsage)}**\n`
+        )
+        console.log(
+          `**Total Present: Chargebee ${formatPrice(
+            presentChargebeeBalance
+          )}, Prisma ${formatPrice(
+            prismaUser.customer.membership?.creditBalance
+          )}**\n`
+        )
+
+        const invoicesWithCreditsAppliedTowardGrandfatheredPlan = getInvoicesWithCreditsAppliedTowardGrandfatheredPlan(
+          invoicesGroupedByChargebeeCustomerId[flag.id],
+          timeUtils
+        )
+        if (invoicesWithCreditsAppliedTowardGrandfatheredPlan.length > 0) {
+          console.log(
+            `*Invoices with Credits applied toward grandfathered plan charge*`
+          )
+          for (const problematicInvoice of invoicesWithCreditsAppliedTowardGrandfatheredPlan) {
+            const creditsErroneouslyApplied = getAmountIncorrectlyCreditedTowardGrandfatheredPlanCharge(
+              problematicInvoice
+            )
+            console.log(
+              `Invoice ${problematicInvoice.id}: ${formatPrice(
+                creditsErroneouslyApplied
+              )}. https://seasons.chargebee.com/d/invoices/${
+                problematicInvoice.id
+              }`
+            )
+          }
+        }
+        const erroneousTransfer = getErroneousAutomaticCreditsMoveInfo(
+          creditsGroupedByChargebeeCustomerId,
+          flag.id
+        )
+        if (!!erroneousTransfer) {
+          console.log(
+            `\nErroneously moved back ${formatPrice(
+              erroneousTransfer.amount
+            )} in credits intended for rental charges`
+          )
+        }
         console.log("\n")
+      } catch (err) {
+        console.log(err)
       }
     }
   }
 }
 
+const getPresentChargebeeCreditBalance = (
+  creditsGroupedByChargebeeCustomerId,
+  chargebeeCustomerId
+) => {
+  const creditLogs = creditsGroupedByChargebeeCustomerId[chargebeeCustomerId]
+  return Math.round(
+    creditLogs.reduce(
+      (acc, curval) =>
+        curval.type === "increment" ? acc + curval.amount : acc - curval.amount,
+      0
+    )
+  )
+}
+
+const getErroneousAutomaticCreditsMoveInfo = (
+  creditsGroupedByChargebeeCustomerId,
+  chargebeeCustomerId
+) => {
+  const credits = creditsGroupedByChargebeeCustomerId[chargebeeCustomerId]
+  const sortedCredits = orderBy(credits, ["created_at", "desc"])
+  const automaticMoveLogIndex = sortedCredits.findIndex(a =>
+    a.description.includes("Automatically move to internal system")
+  )
+  if (automaticMoveLogIndex > 0) {
+    const logBeforeAutomaticMove = sortedCredits[automaticMoveLogIndex - 1]
+    if (logBeforeAutomaticMove.description.includes("rental charges")) {
+      return {
+        amount: logBeforeAutomaticMove.amount,
+      }
+    }
+  }
+
+  return null
+}
+
+const getInvoicesWithCreditsAppliedTowardGrandfatheredPlan = (
+  invoices,
+  timeUtils
+) => {
+  const membershipRenewalInvoices = getMembershipRenewalCreditCreations(
+    invoices,
+    timeUtils
+  )
+  return membershipRenewalInvoices.filter(a => {
+    const totalCreditsAppliedOnPlanCharge = getAmountIncorrectlyCreditedTowardGrandfatheredPlanCharge(
+      a
+    )
+    return totalCreditsAppliedOnPlanCharge > 0
+  })
+}
+
+const getAmountIncorrectlyCreditedTowardGrandfatheredPlanCharge = invoice => {
+  const grandfatheredPlanCharge = invoice.line_items.find(a =>
+    GRANDFATHERED_PLAN_IDS.includes(a.entity_id)
+  )
+  if (!grandfatheredPlanCharge) {
+    return 0
+  }
+  const nonGrandfatheredPlanCharges = invoice.line_items.filter(
+    a => a.id !== grandfatheredPlanCharge.id
+  )
+  const totalSpentOutsideOfPlanCharge = nonGrandfatheredPlanCharges.reduce(
+    (acc, curval) => acc + curval.amount - curval.item_level_discount_amount,
+    0
+  )
+  const totalPromotionalCreditsApplied =
+    invoice.discounts?.find(a => a.entity_type === "promotional_credits")
+      ?.amount || 0
+  const totalCreditsAppliedOnPlanCharge = Math.max(
+    totalPromotionalCreditsApplied - totalSpentOutsideOfPlanCharge,
+    0
+  )
+  return totalCreditsAppliedOnPlanCharge
+}
+
+const formatPrice = cents => {
+  const dollars = cents / 100
+  const formatter = new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency: "USD",
+  })
+  return formatter.format(dollars)
+}
 run()
 
 /*
@@ -541,7 +835,6 @@ FAILURE MODES AND CORRECTION STEPS
 /*
 // Add a more explicit failure mode for receiving promotional credits in response to access-monthly payment
 // Add a failure mode for having been given ad hoc credits prior to the migration (0ct 1, 2021) and not being grandfathered
-// TODO: Add a failure mode for having promotional credits apply towards a grandfathered plan while still receiving promotional credits
 */
 
 /*
