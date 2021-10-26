@@ -615,6 +615,19 @@ const printFlags = async (
     "cktxinqwu6166452gzygq8uz307", // Rahem Batts
     "cknypeyfw1q160711x5nd31u4", // Michael Morikawa
     "ckhpjjh2c1di4077240dqhoqa", // Kunaal Ary
+    "ckms18v0213on07793g9tw4ix", // Jen Astrup
+    "cko29es0w5l7j0758mbztzw06", // David Guzman
+    "ckol8nny0004q0722supb4glo", // Joseph Medina
+    "ckorccnk905sz05981mhi3bwy", // Diego Frausto
+    "ckovi9btj076p0559kpdq5tcx", // Jonathan Gold
+    "ckp5uc6dw0qrb0508unludox2", // Jason Lundy
+    "ckp70vndj00210508ehfeh6ic", // Andrew Goh
+    "ckphkl2nm1dd80743beapdniq", // Dean Dalmacio
+    "ckppqxasl3f1p07348d8rxg6s", // Jorge Guiza
+    "ckqj0h6f223r40732744blspp", // Steve Test
+    "ckqxxzwrs164558622vz6i6j8nct", // Brent Elrod
+    "ckr2z329j6939682uoltpbfal50", // Derek Wright
+    "ckjz3w2cg389907471a2wcdnd", // Oren Schauble
   ]
   const inProcess = [
     "cksrs1j3n13574712fty3eyx01fm", // Thomas Doe
