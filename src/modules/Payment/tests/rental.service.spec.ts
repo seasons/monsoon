@@ -1089,7 +1089,7 @@ describe("Rental Service", () => {
               30 - lineItem.daysRented
             }`
             const cleaningLineItem = lineItemsBySUIDOrName[cleaningFeeName]
-            console.log(cleaningFeeName, cleaningLineItem)
+
             expect(cleaningLineItem.price).toBe(
               expectedResultsBySUIDOrName[cleaningFeeName].price
             )
