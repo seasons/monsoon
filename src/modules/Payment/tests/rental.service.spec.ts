@@ -800,6 +800,7 @@ describe("Rental Service", () => {
 
   describe("Create Rental Invoice Line Items", () => {
     describe("Properly creates line items for an invoice with 3 reservations and 4 products", () => {
+      let lineItems
       let lineItemsBySUIDOrName
       let expectedResultsBySUIDOrName
       let lineItemsPhysicalProductSUIDs
@@ -862,7 +863,7 @@ describe("Rental Service", () => {
             select: CREATE_RENTAL_INVOICE_LINE_ITEMS_INVOICE_SELECT,
           }
         )
-        const lineItems = await rentalService.createRentalInvoiceLineItems(
+        lineItems = await rentalService.createRentalInvoiceLineItems(
           rentalInvoiceWithUpdatedPrices
         )
 
@@ -892,24 +893,28 @@ describe("Rental Service", () => {
 
         expectedResultsBySUIDOrName = {
           [initialReservationProductSUIDs[0]]: {
+            id: initialReservationProductSUIDs[0],
             daysRented: 23,
             rentalStartedAt: timeUtils.xDaysAgoISOString(23),
             rentalEndedAt: now,
             price: 2300,
           },
           [initialReservationProductSUIDs[1]]: {
+            id: initialReservationProductSUIDs[1],
             daysRented: 23,
             rentalStartedAt: timeUtils.xDaysAgoISOString(23),
             rentalEndedAt: now,
             price: 3841,
           },
           [reservationTwoSUIDs[0]]: {
+            id: reservationTwoSUIDs[0],
             daysRented: 9,
             rentalStartedAt: timeUtils.xDaysAgoISOString(9),
             rentalEndedAt: now,
             price: 3204, // expect a minimum charge of 12 days
           },
           [reservationThreeSUIDs[0]]: {
+            id: reservationThreeSUIDs[0],
             daysRented: 0,
             rentalStartedAt: null,
             rentalEndedAt: null,
@@ -953,6 +958,20 @@ describe("Rental Service", () => {
             "Processing"
           )]: {
             price: 550,
+          },
+
+          // Cleaning Fees
+          [createCleaningFeeObjectKey(initialReservationProductSUIDs[0], 7)]: {
+            price: 199,
+          },
+          [createCleaningFeeObjectKey(initialReservationProductSUIDs[1], 7)]: {
+            price: 199,
+          },
+          [createCleaningFeeObjectKey(reservationTwoSUIDs[0], 21)]: {
+            price: 595,
+          },
+          [createCleaningFeeObjectKey(reservationThreeSUIDs[0], 30)]: {
+            price: 850,
           },
         }
       })
@@ -1063,9 +1082,19 @@ describe("Rental Service", () => {
       })
 
       describe("Cleaning Line Items", () => {
-        it("Doesn't charge them extra if they rented an item for the full duration of a billing cycle", () => {})
-
-        it("Charges for remaining cleaning fee based on how many days the item was rented", () => {})
+        it("Charges for remaining cleaning fee based on how many days the item was rented", () => {
+          for (let physicalProductSUID of lineItemsPhysicalProductSUIDs) {
+            const lineItem = lineItemsBySUIDOrName[physicalProductSUID]
+            const cleaningFeeName = `CleaningFee-${physicalProductSUID}-${
+              30 - lineItem.daysRented
+            }`
+            const cleaningLineItem = lineItemsBySUIDOrName[cleaningFeeName]
+            console.log(cleaningFeeName, cleaningLineItem)
+            expect(cleaningLineItem.price).toBe(
+              expectedResultsBySUIDOrName[cleaningFeeName].price
+            )
+          }
+        })
 
         it("Doesn't charge them a cleaning fee if the item duration is 0 days", () => {})
       })
@@ -2854,4 +2883,8 @@ const createProcessingObjectKey = (
   type: "OutboundPackage" | "Processing"
 ) => {
   return "Reservation-" + reservationNumber + "-" + type
+}
+
+const createCleaningFeeObjectKey = (physicalProductSUID, daysRented) => {
+  return "CleaningFee-" + physicalProductSUID + "-" + daysRented
 }

@@ -785,7 +785,9 @@ export class RentalService {
       })
     )
 
-    const cleaningFeesLineItemDatas = await this.calculateCleaningFeesForLineItems(
+    const [
+      cleaningFeesLineItemDatas,
+    ] = await this.calculateCleaningFeesForLineItems(
       lineItemsForPhysicalProductDatas,
       invoice
     )
@@ -807,19 +809,49 @@ export class RentalService {
     return lineItems
   }
 
-  async calculateCleaningFeesForLineItems(lineItemsData, invoice) {
-    console.log(invoice)
+  async calculateCleaningFeesForLineItems(
+    lineItemsData: {
+      daysRented: number
+      physicalProduct: {
+        connect: { id: string }
+      }
+    }[],
+    invoice: {
+      id: string
+      billingStartAt: Date
+      billingEndAt: Date
+    }
+  ): Promise<
+    [
+      {
+        name: string
+        comment: string
+        price: number
+        currencyCode: string
+        rentalInvoice: { connect: { id: string } }
+      }[],
+      {
+        [key: string]: {
+          dryCleaningFee: number
+          numberOfDaysRented: number
+          dailyCleaningFee: number
+          cleaningFeeToCharge: number
+        }
+      }
+    ]
+  > {
     const numberOfDaysInBillingCycle = this.timeUtils.numDaysBetween(
       invoice.billingEndAt,
       invoice.billingStartAt
     )
 
     const cleaningLineItems = []
+    const metadata = {}
 
     for (let lineItem of lineItemsData) {
       const physicalProduct = await this.prisma.client.physicalProduct.findFirst(
         {
-          where: { id: lineItem.physicalProduct.id },
+          where: { id: lineItem.physicalProduct.connect.id },
           select: {
             id: true,
             seasonsUID: true,
@@ -854,17 +886,26 @@ export class RentalService {
       )
 
       if (cleaningFeeToCharge > 0) {
+        const name = `CleaningFee-${physicalProduct.seasonsUID}-${numberOfDaysLeftToCharge}`
+
         cleaningLineItems.push({
-          name: `CleaningFee-${physicalProduct.seasonsUID}`,
+          name,
           comment: `Remainder cleaning Fee for ${physicalProduct.seasonsUID}, based on ${numberOfDaysLeftToCharge} days left in billing cycle`,
           price: cleaningFeeToCharge,
           rentalInvoice: { connect: { id: invoice.id } },
           currencyCode: "USD",
         })
+
+        metadata[name] = {
+          dryCleaningFee,
+          numberOfDaysRented,
+          dailyCleaningFee,
+          cleaningFeeToCharge,
+        }
       }
     }
 
-    return cleaningLineItems
+    return [cleaningLineItems, metadata]
   }
 
   async calculatePriceForDaysRented({
