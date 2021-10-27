@@ -23,7 +23,7 @@ import { ReservationPhysicalProductService } from "./services/reservationPhysica
 
 @Module({
   imports: [
-    EmailModule,
+    forwardRef(() => EmailModule),
     ImageModule,
     PrismaModule,
     forwardRef(() => ProductModule),

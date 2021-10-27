@@ -1,14 +1,20 @@
+import { ReservationService } from "@app/modules/Reservation"
 import { Inject, forwardRef } from "@nestjs/common"
 import {
+  BagItem,
   Customer,
   InventoryStatus,
   PhysicalProductStatus,
+  Reservation,
+  ShippingCode,
   UserPushNotificationInterestType,
 } from "@prisma/client"
 import { Prisma } from "@prisma/client"
 import { PrismaService } from "@prisma1/prisma.service"
 import { merge } from "lodash"
 
+import { TimeUtilsService } from "../../Utils/services/time.service"
+import { UtilsService } from "../../Utils/services/utils.service"
 import {
   CreateTestCustomerInput,
   CreateTestCustomerOutput,
@@ -16,16 +22,18 @@ import {
   CreateTestProductInput,
   CreateTestProductOutput,
   CreateTestProductVariantInput,
-} from "../utils.types.d"
-import { TimeUtilsService } from "./time.service"
-import { UtilsService } from "./utils.service"
+} from "../../Utils/utils.types"
+
+export const UPS_GROUND_FEE = 1000
 
 export class TestUtilsService {
   constructor(
     private readonly prisma: PrismaService,
     @Inject(forwardRef(() => UtilsService))
     private readonly utils: UtilsService,
-    private readonly timeUtils: TimeUtilsService
+    private readonly timeUtils: TimeUtilsService,
+    @Inject(forwardRef(() => ReservationService))
+    private readonly reservation: ReservationService
   ) {}
 
   async createTestReservation({
@@ -306,5 +314,113 @@ export class TestUtilsService {
     return input.physicalProducts.filter(
       pp => pp.inventoryStatus === inventoryStatus
     ).length
+  }
+
+  async addToBagAndReserveForCustomer({
+    customer,
+    numProductsToAdd,
+    options,
+  }: {
+    customer: Customer
+    numProductsToAdd: number
+    options: { shippingCode?: ShippingCode }
+  }): Promise<{ reservation: Reservation; bagItems: BagItem[] }> {
+    const { shippingCode = "UPSGround" } = options
+    const reservedBagItems = await this.prisma.client.bagItem.findMany({
+      where: {
+        customer: { id: customer.id },
+        status: "Reserved",
+        saved: false,
+      },
+      select: {
+        productVariant: {
+          select: { sku: true, product: { select: { id: true } } },
+        },
+      },
+    })
+    const reservedSKUs = reservedBagItems.map(a => a.productVariant.sku)
+    const reservedProductIds = reservedBagItems.map(
+      b => b.productVariant.product.id
+    )
+    let reservableProdVars = []
+    let reservableProductIds = []
+    for (let i = 0; i < numProductsToAdd; i++) {
+      const nextProdVar = await this.prisma.client.productVariant.findFirst({
+        where: {
+          reservable: { gte: 1 },
+          sku: { notIn: reservedSKUs },
+          // Ensure we reserve diff products each time. Needed for some tests
+          product: {
+            id: { notIn: [...reservedProductIds, ...reservableProductIds] },
+          },
+          // We shouldn't need to check this since we're checking counts,
+          // but there's some corrupt data so we do this to circumvent that.
+          physicalProducts: { some: { inventoryStatus: "Reservable" } },
+        },
+        take: numProductsToAdd,
+        select: {
+          id: true,
+          productId: true,
+        },
+      })
+      reservableProdVars.push(nextProdVar)
+      reservableProductIds.push(nextProdVar.productId)
+    }
+
+    let createdBagItems = []
+    for (const prodVar of reservableProdVars) {
+      createdBagItems.push(
+        await this.prisma.client.bagItem.create({
+          data: {
+            customer: { connect: { id: customer.id } },
+            productVariant: { connect: { id: prodVar.id } },
+            status: "Added",
+            saved: false,
+          },
+        })
+      )
+    }
+
+    const bagItemsToReserve = await this.prisma.client.bagItem.findMany({
+      where: {
+        customer: { id: customer.id },
+        status: { in: ["Added", "Reserved"] },
+        saved: false,
+      },
+      select: { productVariant: { select: { id: true } } },
+    })
+    const prodVarsToReserve = bagItemsToReserve.map(a => a.productVariant.id)
+    const r = await this.reservation.reserveItems({
+      items: prodVarsToReserve,
+      shippingCode,
+      customer: customer as any,
+      select: {
+        reservationNumber: true,
+        products: { select: { seasonsUID: true } },
+        newProducts: { select: { seasonsUID: true } },
+        sentPackage: { select: { id: true } },
+        returnPackages: {
+          orderBy: { createdAt: "desc" },
+          select: {
+            id: true,
+            shippingLabel: { select: { trackingNumber: true } },
+          },
+        },
+        shippingMethod: { select: { code: true } },
+      },
+    })
+    const setPackageAmount = async (packageId, amount) => {
+      await this.prisma.client.package.update({
+        where: { id: packageId },
+        data: { amount },
+      })
+    }
+
+    await setPackageAmount(r.sentPackage.id, UPS_GROUND_FEE)
+    await setPackageAmount(r.returnPackages[0].id, UPS_GROUND_FEE)
+    return {
+      reservation: r,
+      bagItems: createdBagItems,
+    }
   }
 }
