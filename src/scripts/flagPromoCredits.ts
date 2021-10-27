@@ -3,11 +3,12 @@ import "module-alias/register"
 import { format } from "path"
 
 import chargebee from "chargebee"
-import { groupBy, orderBy, uniq } from "lodash"
+import { groupBy, orderBy, uniqBy } from "lodash"
 
 import { GRANDFATHERED_PLAN_IDS } from "../modules/Payment/services/subscription.service"
 import { TimeUtilsService } from "../modules/Utils/services/time.service"
 import { PrismaService } from "../prisma/prisma.service"
+import { Prisma } from ".prisma/client"
 
 chargebee.configure({
   site: process.env.CHARGEBEE_SITE,
@@ -27,6 +28,8 @@ const run = async () => {
   const ps = new PrismaService()
   const timeUtils = new TimeUtilsService()
 
+  // const forCustomer = "ck6m9hik66oji0777vlwwuxmh"
+  const forCustomer = null
   const allPromotionalCredits = []
   let offset = "start"
   while (true) {
@@ -35,7 +38,7 @@ const run = async () => {
     ;({ next_offset: offset, list } = await chargebee.promotional_credit
       .list({
         limit: 100,
-        // "customer_id[is]": "ck6m9hik66oji0777vlwwuxmh",
+        ...(forCustomer ? { "customer_id[is]": forCustomer } : {}),
         ...(offset === "start" ? {} : { offset }),
       })
       .request())
@@ -53,7 +56,7 @@ const run = async () => {
     ;({ next_offset: offset, list } = await chargebee.invoice
       .list({
         limit: 100,
-        // "customer_id[is]": "ck6m9hik66oji0777vlwwuxmh",
+        ...(forCustomer ? { "customer_id[is]": forCustomer } : {}),
         ...(offset === "start" ? {} : { offset }),
       })
       .request())
@@ -86,7 +89,8 @@ const run = async () => {
     ps,
     timeUtils,
     creditsGroupedByChargebeeCustomerId,
-    invoicesGroupedByChargebeeCustomerId
+    invoicesGroupedByChargebeeCustomerId,
+    forCustomer
   )
   // const generalFlags = []
 
@@ -104,20 +108,23 @@ const calculateProperPromotionalCreditBalanceForAllCustomers = async (
   ps: PrismaService,
   timeUtils: TimeUtilsService,
   creditsGroupedByChargebeeCustomerId,
-  invoicesGroupedByChargebeeCustomerId
+  invoicesGroupedByChargebeeCustomerId,
+  forCustomer
 ) => {
   const userIdsWithCreditHistoryOnChargebee = Object.keys(
     creditsGroupedByChargebeeCustomerId
   )
+  const where = forCustomer
+    ? { user: { id: forCustomer } }
+    : Prisma.validator<Prisma.CustomerWhereInput>()({
+        OR: [
+          { status: { in: ["Active", "PaymentFailed", "Deactivated"] } },
+          { user: { id: { in: userIdsWithCreditHistoryOnChargebee } } },
+          { membership: { creditBalance: { gt: 0 } } },
+        ],
+      })
   const allRelevantCustomers = await ps.client.customer.findMany({
-    where: {
-      OR: [
-        { status: { in: ["Active", "PaymentFailed", "Deactivated"] } },
-        { user: { id: { in: userIdsWithCreditHistoryOnChargebee } } },
-        { membership: { creditBalance: { gt: 0 } } },
-      ],
-      // user: { id: "ck6m9hik66oji0777vlwwuxmhs" },
-    },
+    where,
     select: {
       user: { select: { id: true } },
       membership: { select: { creditBalance: true } },
@@ -132,7 +139,7 @@ const calculateProperPromotionalCreditBalanceForAllCustomers = async (
     ;({ next_offset: offset, list } = await chargebee.customer
       .list({
         limit: 100,
-        // "customer_id[is]": "ck6m9hik66oji0777vlwwuxmh",
+        ...(forCustomer ? { "customer_id[is]": forCustomer } : {}),
         ...(offset === "start" ? {} : { offset }),
       })
       .request())
@@ -205,17 +212,6 @@ const calculateProperPromotionalCreditBalanceForAllCustomers = async (
         failureMode:
           "Current credit balance not equal to expected credit balance",
         id: cust.user.id,
-        // meta: {
-        //   totalCreditsCreated,
-        //   membeshipRenewalPromotionalCredits: Math.round(
-        //     membeshipRenewalPromotionalCredits
-        //   ),
-        //   membershipRenewalCreditsMetadata,
-        //   mostValidCreditsCreatedOnChargebee,
-        //   expectedCredits,
-        //   totalCreditsAppliedTowardsInvoices,
-        //   creditBalance: cust.membership.creditBalance,
-        // },
       })
       continue
     }
@@ -558,10 +554,10 @@ const printFlags = async (
     invoicesGroupedByChargebeeCustomerId: any
   }
 ) => {
-  const uniqueFlags = uniq(flags, a => a.id)
+  const uniqueFlags = uniqBy(flags, a => a.id)
   const reconciled = [
     "ckhxybiij04m30737ubd8kwmb", // Jesse Samburge
-    "ck6m9hik66oji0777vlwwuxmh", // Samuel Schler
+    // "ck6m9hik66oji0777vlwwuxmh", // Samuel Schler
     "ck2iepyjk001g0799jq9sjpwz",
     "ckju5lfcf29j30729n3n9kabs",
     "ck561f4hxj0tn0704ihksk6zp",
@@ -800,6 +796,30 @@ const printFlags = async (
               }`
             )
           }
+        }
+
+        const invoices = invoicesGroupedByChargebeeCustomerId[flag.id]
+        const adhocInvoicesSinceSept20 = invoices.filter(a => {
+          const invoiceAt = timeUtils.dateFromUTCTimestamp(a.date, "seconds")
+          if (!timeUtils.isLaterDate(invoiceAt, new Date(2021, 8, 20))) {
+            return false
+          }
+          return (
+            a.line_items.length === 1 &&
+            a.line_items.some(b => b.entity_type === "adhoc")
+          )
+        })
+        if (adhocInvoicesSinceSept20.length > 0) {
+          console.log(
+            `*Adhoc invoices since Sept 20*\n${adhocInvoicesSinceSept20
+              .map(
+                invoice =>
+                  `${invoice.id}: ${formatPrice(
+                    invoice.amount_paid
+                  )}. https://seasons.chargebee.com/d/invoices/${invoice.id}`
+              )
+              .join("\n")}`
+          )
         }
         const erroneousTransfer = getErroneousAutomaticCreditsMoveInfo(
           creditsGroupedByChargebeeCustomerId,
