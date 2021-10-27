@@ -482,7 +482,8 @@ export class CustomerService {
       }
     )
 
-    const updatedCreditBalance = customerWithData.creditBalance + amount
+    const updatedCreditBalance =
+      customerWithData.creditBalance + Math.round(amount)
 
     promises.push(
       this.prisma.client.customerMembership.update({
