@@ -28,7 +28,7 @@ const run = async () => {
   const ps = new PrismaService()
   const timeUtils = new TimeUtilsService()
 
-  // const forCustomer = "ckpyh3hd35d9p0758bskfwhuu"
+  // const forCustomer = "ckrxx3e4m245312eurtmr67d97"
   const forCustomer = null
   const allPromotionalCredits = []
   let offset = "start"
@@ -118,7 +118,7 @@ const calculateProperPromotionalCreditBalanceForAllCustomers = async (
     ? { user: { id: forCustomer } }
     : Prisma.validator<Prisma.CustomerWhereInput>()({
         OR: [
-          { status: { in: ["Active", "PaymentFailed", "Deactivated"] } },
+          { status: { in: ["Active", "PaymentFailed"] } },
           { user: { id: { in: userIdsWithCreditHistoryOnChargebee } } },
           { membership: { creditBalance: { gt: 0 } } },
         ],
@@ -579,6 +579,9 @@ const printFlags = async (
 ) => {
   const uniqueFlags = uniqBy(flags, a => a.id)
   const reconciled = [
+    "cksg4zho010371522fw1gasfw4s5", // Andrew Sims
+    "ckr3p5a90334352uyqlcnpou2j", // Seppe Tirabassi
+    "ckrctoz20458651sgm1zunmvo", // David Knowles
     "cksoykvja6662792eyl41zc8vir", // Theodore Nelder
     "cknt0w3dt49hd0771l3n586g4", // Josh Vrabel
     "ckoxfuodb00yv0536d6592wlf", // Josh Bullock
@@ -696,9 +699,22 @@ const printFlags = async (
   const filteredUniqueFlags = uniqueFlags
     .filter(a => !reconciled.includes(a.id))
     .filter(b => !inProcess.includes(b.id))
+  const usersWithStatuses = await ps.client.user.findMany({
+    where: { id: { in: filteredUniqueFlags.map(a => a.id) } },
+    select: { id: true, customer: { select: { status: true } } },
+  })
+  const uniqueFilteredActiveUsers = filteredUniqueFlags.filter(a => {
+    const userWithStatus = usersWithStatuses.find(b => b.id === a.id)
+    return userWithStatus.customer.status !== "Deactivated"
+  })
 
-  console.log(`*** TOTAL UNIQUE FLAGS : ${filteredUniqueFlags.length} ***\n`)
-  const filteredFlagsByReason = groupBy(filteredUniqueFlags, a => a.failureMode)
+  console.log(
+    `*** TOTAL UNIQUE FLAGS : ${uniqueFilteredActiveUsers.length} ***\n`
+  )
+  const filteredFlagsByReason = groupBy(
+    uniqueFilteredActiveUsers,
+    a => a.failureMode
+  )
   for (const failureMode of Object.keys(filteredFlagsByReason)) {
     console.log(
       `-- ** ${failureMode}: ${
