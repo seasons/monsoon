@@ -579,8 +579,13 @@ const printFlags = async (
 ) => {
   const uniqueFlags = uniqBy(flags, a => a.id)
   const reconciled = [
+    "ck76gv7loz3ik0768e0g8tvss", // Emon White
+    "ckp8x4yhr1afn0505qu97bxvu", // Trevor Gray
+    "ckp8arasj18za0500fhho7hyd", // Micah Clark
+    "cko0o08xr25zl0773au9siyv6", // Perico Arcedo
+    "ckp8pxdyw0il80505u50uoohz", // Raquan Cotton
     "ckhxybiij04m30737ubd8kwmb", // Jesse Samburge
-    // "ck6m9hik66oji0777vlwwuxmh", // Samuel Schler
+    "ck6m9hik66oji0777vlwwuxmh", // Samuel Schler
     "ck2iepyjk001g0799jq9sjpwz",
     "ckju5lfcf29j30729n3n9kabs",
     "ck561f4hxj0tn0704ihksk6zp",
