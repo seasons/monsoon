@@ -35,7 +35,7 @@ const run = async () => {
     ;({ next_offset: offset, list } = await chargebee.promotional_credit
       .list({
         limit: 100,
-        // "customer_id[is]": "ckp7gh0if17wv0546azukj783",
+        // "customer_id[is]": "ck6m9hik66oji0777vlwwuxmh",
         ...(offset === "start" ? {} : { offset }),
       })
       .request())
@@ -53,7 +53,7 @@ const run = async () => {
     ;({ next_offset: offset, list } = await chargebee.invoice
       .list({
         limit: 100,
-        // "customer_id[is]": "ckp7gh0if17wv0546azukj783",
+        // "customer_id[is]": "ck6m9hik66oji0777vlwwuxmh",
         ...(offset === "start" ? {} : { offset }),
       })
       .request())
@@ -116,7 +116,7 @@ const calculateProperPromotionalCreditBalanceForAllCustomers = async (
         { user: { id: { in: userIdsWithCreditHistoryOnChargebee } } },
         { membership: { creditBalance: { gt: 0 } } },
       ],
-      // user: { id: "ckp7gh0if17wv0546azukj783" },
+      // user: { id: "ck6m9hik66oji0777vlwwuxmhs" },
     },
     select: {
       user: { select: { id: true } },
@@ -132,7 +132,7 @@ const calculateProperPromotionalCreditBalanceForAllCustomers = async (
     ;({ next_offset: offset, list } = await chargebee.customer
       .list({
         limit: 100,
-        // "customer_id[is]": "ckp7gh0if17wv0546azukj783",
+        // "customer_id[is]": "ck6m9hik66oji0777vlwwuxmh",
         ...(offset === "start" ? {} : { offset }),
       })
       .request())
@@ -560,6 +560,8 @@ const printFlags = async (
 ) => {
   const uniqueFlags = uniq(flags, a => a.id)
   const reconciled = [
+    "ckhxybiij04m30737ubd8kwmb", // Jesse Samburge
+    "ck6m9hik66oji0777vlwwuxmh", // Samuel Schler
     "ck2iepyjk001g0799jq9sjpwz",
     "ckju5lfcf29j30729n3n9kabs",
     "ck561f4hxj0tn0704ihksk6zp",
