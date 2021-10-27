@@ -1,9 +1,12 @@
 import { EmailService } from "@app/modules/Email/services/email.service"
 import { PushNotificationService } from "@app/modules/PushNotification/services/pushNotification.service"
 import { ReservationService } from "@app/modules/Reservation"
+import {
+  TestUtilsService,
+  UPS_GROUND_FEE,
+} from "@app/modules/Test/services/test.service"
 import { EmailServiceMock } from "@app/modules/Utils/mocks/emailService.mock"
 import { ShippoMock } from "@app/modules/Utils/mocks/shippo.mock"
-import { TestUtilsService } from "@app/modules/Utils/services/test.service"
 import { TimeUtilsService } from "@app/modules/Utils/services/time.service"
 import { UtilsService } from "@app/modules/Utils/services/utils.service"
 import { PrismaService } from "@app/prisma/prisma.service"
@@ -28,7 +31,6 @@ import {
 } from "../services/rental.service"
 
 const BASE_PROCESSING_FEE = 550
-const UPS_GROUND_FEE = 1000
 const UPS_SELECT_FEE = 2000
 
 class PaymentServiceMock {
@@ -249,6 +251,19 @@ const testCustomerSelect = Prisma.validator<Prisma.CustomerSelect>()({
   membership: { select: { plan: { select: { tier: true } } } },
   user: true,
 })
+
+const addToBagAndReserveForCustomer = async (
+  numProductsToAdd,
+  options: { shippingCode?: ShippingCode } = {}
+) => {
+  const result = await testUtils.addToBagAndReserveForCustomer({
+    customer: testCustomer,
+    numProductsToAdd,
+    options,
+  })
+  return result.reservation
+}
+
 describe("Rental Service", () => {
   const now = new Date()
 
@@ -2633,95 +2648,6 @@ const setCustomerSubscriptionNextBillingAt = async nextBillingAt => {
       membership: { update: { subscription: { update: { nextBillingAt } } } },
     },
   })
-}
-
-const addToBagAndReserveForCustomer = async (
-  numProductsToAdd,
-  options: { shippingCode?: ShippingCode } = {}
-) => {
-  const { shippingCode = "UPSGround" } = options
-  const reservedBagItems = await prisma.client.bagItem.findMany({
-    where: {
-      customer: { id: testCustomer.id },
-      status: "Reserved",
-      saved: false,
-    },
-    select: {
-      productVariant: {
-        select: { sku: true, product: { select: { id: true } } },
-      },
-    },
-  })
-  const reservedSKUs = reservedBagItems.map(a => a.productVariant.sku)
-  const reservedProductIds = reservedBagItems.map(
-    b => b.productVariant.product.id
-  )
-  let reservableProdVars = []
-  let reservableProductIds = []
-  for (let i = 0; i < numProductsToAdd; i++) {
-    const nextProdVar = await prisma.client.productVariant.findFirst({
-      where: {
-        reservable: { gte: 1 },
-        sku: { notIn: reservedSKUs },
-        // Ensure we reserve diff products each time. Needed for some tests
-        product: {
-          id: { notIn: [...reservedProductIds, ...reservableProductIds] },
-        },
-        // We shouldn't need to check this since we're checking counts,
-        // but there's some corrupt data so we do this to circumvent that.
-        physicalProducts: { some: { inventoryStatus: "Reservable" } },
-      },
-      take: numProductsToAdd,
-      select: {
-        id: true,
-        productId: true,
-      },
-    })
-    reservableProdVars.push(nextProdVar)
-    reservableProductIds.push(nextProdVar.productId)
-  }
-  for (const prodVar of reservableProdVars) {
-    await prisma.client.bagItem.create({
-      data: {
-        customer: { connect: { id: testCustomer.id } },
-        productVariant: { connect: { id: prodVar.id } },
-        status: "Added",
-        saved: false,
-      },
-    })
-  }
-
-  const bagItemsToReserve = await prisma.client.bagItem.findMany({
-    where: {
-      customer: { id: testCustomer.id },
-      status: { in: ["Added", "Reserved"] },
-      saved: false,
-    },
-    select: { productVariant: { select: { id: true } } },
-  })
-  const prodVarsToReserve = bagItemsToReserve.map(a => a.productVariant.id)
-  const r = await reservationService.reserveItems({
-    items: prodVarsToReserve,
-    shippingCode,
-    customer: testCustomer as any,
-    select: {
-      reservationNumber: true,
-      products: { select: { seasonsUID: true } },
-      newProducts: { select: { seasonsUID: true } },
-      sentPackage: { select: { id: true } },
-      returnPackages: {
-        orderBy: { createdAt: "desc" },
-        select: {
-          id: true,
-          shippingLabel: { select: { trackingNumber: true } },
-        },
-      },
-      shippingMethod: { select: { code: true } },
-    },
-  })
-  await setPackageAmount(r.sentPackage.id, UPS_GROUND_FEE)
-  await setPackageAmount(r.returnPackages[0].id, UPS_GROUND_FEE)
-  return r
 }
 
 const setPackageDeliveredAt = async (packageId, numDaysAgo) => {
