@@ -70,7 +70,7 @@ describe("Swap Bag Item", () => {
       const oldProductVariant = await prismaService.client.productVariant.findFirst(
         {
           where: {
-            id: bagItem.productVariant.id,
+            id: bagItem.productVariantId,
           },
           select: {
             reservable: true,
@@ -98,29 +98,360 @@ describe("Swap Bag Item", () => {
       )
     }) //check
 
-    it("old bag item has been deleted", () => {}) //check
+    it("old bag item has been deleted", async () => {
+      const newPhysicalProduct = await prismaService.client.physicalProduct.findFirst(
+        {
+          where: {
+            inventoryStatus: "Reservable",
+          },
+        }
+      )
 
-    it("old reservationPhysicalProduct has been deleted", () => {}) //check
+      await bagService.swapBagItem(bagItem.id, newPhysicalProduct.seasonsUID, {
+        id: true,
+        productVariant: {
+          select: {
+            reserved: true,
+            reservable: true,
+          },
+        },
+      })
 
-    it("inventory status for old physicalProduct has been updated to reservable", () => {}) //check
+      const oldBagItem = await prismaService.client.bagItem.findUnique({
+        where: {
+          id: bagItem.id,
+        },
+      })
 
-    //new bag item tests
-    it("new bag item product variant counts have been updated", () => {}) //check
-
-    it("new bag item has been upserted", () => {
-      //test to see if the correct productVariant, physicalProduct, reservationPhysProd, customer has been connected
+      expect(oldBagItem).toBe(null)
     }) //check
 
-    it("new ReservationPhysicalProduct has been created", () => {}) //check
+    it("old reservationPhysicalProduct has been deleted", async () => {
+      const newPhysicalProduct = await prismaService.client.physicalProduct.findFirst(
+        {
+          where: {
+            inventoryStatus: "Reservable",
+          },
+        }
+      )
 
-    it("inventory status for new physicalProduct has been updated to reserved", () => {}) //check
+      const oldBagItem = await prismaService.client.bagItem.findUnique({
+        where: {
+          id: bagItem.id,
+        },
+        select: {
+          reservationPhysicalProductId: true,
+        },
+      })
 
-    it("rentalInvoice resPhysProds array has been updated", () => {})
+      await bagService.swapBagItem(bagItem.id, newPhysicalProduct.seasonsUID, {
+        id: true,
+        productVariant: {
+          select: {
+            reserved: true,
+            reservable: true,
+          },
+        },
+      })
 
-    it("reservation's reservationPhysProds array has been updated", () => {}) //check
+      const oldReservationPhysicalProduct = await prismaService.client.reservationPhysicalProduct.findUnique(
+        {
+          where: {
+            id: oldBagItem.reservationPhysicalProductId,
+          },
+        }
+      )
+
+      expect(oldReservationPhysicalProduct).toBe(null)
+    }) //check
+
+    it("inventory status for old physicalProduct has been updated to reservable", async () => {
+      const newPhysicalProduct = await prismaService.client.physicalProduct.findFirst(
+        {
+          where: {
+            inventoryStatus: "Reservable",
+          },
+        }
+      )
+
+      const oldBagItem = await prismaService.client.bagItem.findUnique({
+        where: {
+          id: bagItem.id,
+        },
+        select: {
+          physicalProduct: {
+            select: {
+              id: true,
+              inventoryStatus: true,
+            },
+          },
+        },
+      })
+
+      await bagService.swapBagItem(bagItem.id, newPhysicalProduct.seasonsUID, {
+        id: true,
+        productVariant: {
+          select: {
+            reserved: true,
+            reservable: true,
+          },
+        },
+      })
+
+      const oldPhysicalProduct = await prismaService.client.physicalProduct.findUnique(
+        {
+          where: {
+            id: oldBagItem.physicalProduct.id,
+          },
+        }
+      )
+
+      expect(oldPhysicalProduct.inventoryStatus).toBe("Reservable")
+    }) //check
+
+    //new bag item tests
+    it("new bag item product variant counts have been updated", async () => {
+      const newPhysicalProduct = await prismaService.client.physicalProduct.findFirst(
+        {
+          where: {
+            inventoryStatus: "Reservable",
+          },
+          select: {
+            seasonsUID: true,
+            productVariant: {
+              select: {
+                id: true,
+                reservable: true,
+                reserved: true,
+              },
+            },
+          },
+        }
+      )
+
+      const result = await bagService.swapBagItem(
+        bagItem.id,
+        newPhysicalProduct.seasonsUID,
+        {
+          id: true,
+          productVariant: {
+            select: {
+              reserved: true,
+              reservable: true,
+            },
+          },
+        }
+      )
+
+      expect(newPhysicalProduct.productVariant.reservable).toBe(
+        result.productVariant.reservable + 1
+      )
+    }) //check
+
+    it("new bag item has been upserted", async () => {
+      //test to see if the correct productVariant, physicalProduct, reservationPhysProd, customer has been connected
+      const newPhysicalProduct = await prismaService.client.physicalProduct.findFirst(
+        {
+          where: {
+            inventoryStatus: "Reservable",
+          },
+        }
+      )
+
+      const result = await bagService.swapBagItem(
+        bagItem.id,
+        newPhysicalProduct.seasonsUID,
+        {
+          id: true,
+          productVariant: {
+            select: {
+              reserved: true,
+              reservable: true,
+            },
+          },
+        }
+      )
+
+      expect(!!result).toBe(true)
+    }) //check
+
+    it("new ReservationPhysicalProduct has been created", async () => {
+      const newPhysicalProduct = await prismaService.client.physicalProduct.findFirst(
+        {
+          where: {
+            inventoryStatus: "Reservable",
+          },
+        }
+      )
+
+      const result = await bagService.swapBagItem(
+        bagItem.id,
+        newPhysicalProduct.seasonsUID,
+        {
+          id: true,
+          productVariant: {
+            select: {
+              reserved: true,
+              reservable: true,
+            },
+          },
+        }
+      )
+
+      expect(!!result.reservationPhysicalProduct).toBe(true)
+    }) //check
+
+    it("inventory status for new physicalProduct has been updated to reserved", async () => {
+      const newPhysicalProduct = await prismaService.client.physicalProduct.findFirst(
+        {
+          where: {
+            inventoryStatus: "Reservable",
+          },
+        }
+      )
+
+      const result = await bagService.swapBagItem(
+        bagItem.id,
+        newPhysicalProduct.seasonsUID,
+        {
+          id: true,
+          productVariant: {
+            select: {
+              reserved: true,
+              reservable: true,
+            },
+          },
+        }
+      )
+
+      expect(!!result.physicalProduct.status).toBe("Reserved")
+    }) //check
+
+    it("rentalInvoice resPhysProds array has been updated", async () => {
+      const newPhysicalProduct = await prismaService.client.physicalProduct.findFirst(
+        {
+          where: {
+            inventoryStatus: "Reservable",
+          },
+        }
+      )
+
+      const result = await bagService.swapBagItem(
+        bagItem.id,
+        newPhysicalProduct.seasonsUID,
+        {
+          id: true,
+          productVariant: {
+            select: {
+              reserved: true,
+              reservable: true,
+            },
+          },
+        }
+      )
+      const rentalInvoice = await prismaService.client.rentalInvoice.findFirst({
+        where: {
+          reservationPhysicalProducts: {
+            some: {
+              id: {
+                contains: result.reservationPhysicalProduct.id,
+                not: {
+                  contains: bagItem.reservationPhysicalProduct.id,
+                },
+              },
+            },
+          },
+        },
+      })
+
+      expect(!!rentalInvoice).toBe(true)
+    })
+
+    it("reservation's reservationPhysProds array has been updated", async () => {
+      const newPhysicalProduct = await prismaService.client.physicalProduct.findFirst(
+        {
+          where: {
+            inventoryStatus: "Reservable",
+          },
+        }
+      )
+
+      const result = await bagService.swapBagItem(
+        bagItem.id,
+        newPhysicalProduct.seasonsUID,
+        {
+          id: true,
+          productVariant: {
+            select: {
+              reserved: true,
+              reservable: true,
+            },
+          },
+        }
+      )
+
+      const reservation = await prismaService.client.reservation.findFirst({
+        where: {
+          reservationPhysicalProducts: {
+            some: {
+              id: {
+                contains: result.reservationPhysicalProduct.id,
+                not: {
+                  contains: bagItem.reservationPhysicalProduct.id,
+                },
+              },
+            },
+          },
+        },
+      })
+
+      expect(!!reservation).toBe(true)
+    }) //check
   })
 
   describe("Properly swaps item that has already been picked", () => {
-    it("inventory status for old physicalProduct has been updated to nonreservable", () => {})
+    it("inventory status for old physicalProduct has been updated to nonreservable", async () => {
+      const newPhysicalProduct = await prismaService.client.physicalProduct.findFirst(
+        {
+          where: {
+            inventoryStatus: "Reservable",
+          },
+        }
+      )
+
+      const oldBagItem = await prismaService.client.bagItem.findUnique({
+        where: {
+          id: bagItem.id,
+        },
+        select: {
+          physicalProduct: {
+            select: {
+              id: true,
+              inventoryStatus: true,
+            },
+          },
+        },
+      })
+
+      await bagService.swapBagItem(bagItem.id, newPhysicalProduct.seasonsUID, {
+        id: true,
+        productVariant: {
+          select: {
+            reserved: true,
+            reservable: true,
+          },
+        },
+      })
+
+      const oldPhysicalProduct = await prismaService.client.physicalProduct.findUnique(
+        {
+          where: {
+            id: oldBagItem.physicalProduct.id,
+          },
+        }
+      )
+
+      expect(oldPhysicalProduct.inventoryStatus).toBe("NonReservable")
+    })
   })
 })

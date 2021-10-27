@@ -144,9 +144,6 @@ export class ReservationService {
       throw new Error(`Only Active customers can place a reservation`)
     }
 
-    const timeWindow = ShippingMethodFieldsResolver.getTimeWindow(
-      pickupTime.timeWindowID
-    )
     // Validate address and provide suggested one if needed
     const {
       isValid: shippingAddressIsValid,
