@@ -761,6 +761,7 @@ model CreditBalanceUpdateLog {
   adminUser    User?              @relation(fields: [adminUserId], references: [id])
   adminUserId  String?            @map("user") @db.VarChar(30)
   createdAt    DateTime           @default(now())
+  balance      Int?
 }
 
 model CustomerMembershipSubscriptionData {
@@ -1667,7 +1668,7 @@ model User {
   smsReceipts                   SmsReceipt[]
   userPushNotificationInterests UserPushNotificationInterest[]
   pushNotifications             PushNotificationReceipt[]      @relation("UserToPushNotificationReceipts")
-  creditUpdateHistory           CreditBalanceUpdateLog[]
+  creditBalanceUpdates         CreditBalanceUpdateLog[]
 }
 
 model UserDeviceData {
