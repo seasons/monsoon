@@ -1668,7 +1668,7 @@ model User {
   smsReceipts                   SmsReceipt[]
   userPushNotificationInterests UserPushNotificationInterest[]
   pushNotifications             PushNotificationReceipt[]      @relation("UserToPushNotificationReceipts")
-  creditBalancesUpdated         CreditBalanceUpdateLog[]
+  creditBalanceUpdates         CreditBalanceUpdateLog[]
 }
 
 model UserDeviceData {
