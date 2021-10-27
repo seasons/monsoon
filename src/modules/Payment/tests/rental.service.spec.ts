@@ -1061,6 +1061,14 @@ describe("Rental Service", () => {
           expect(lineItemsBySUIDOrName[id].taxName).toBe(null)
         }
       })
+
+      describe("Cleaning Line Items", () => {
+        it("Doesn't charge them extra if they rented an item for the full duration of a billing cycle", () => {})
+
+        it("Charges for remaining cleaning fee based on how many days the item was rented", () => {})
+
+        it("Doesn't charge them a cleaning fee if the item duration is 0 days", () => {})
+      })
     })
 
     describe("Processing Edge cases", () => {

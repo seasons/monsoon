@@ -42,6 +42,7 @@ export const CREATE_RENTAL_INVOICE_LINE_ITEMS_INVOICE_SELECT = Prisma.validator<
 >()({
   id: true,
   billingStartAt: true,
+  billingEndAt: true,
   products: {
     select: {
       id: true,
@@ -112,6 +113,14 @@ export const CREATE_RENTAL_INVOICE_LINE_ITEMS_INVOICE_SELECT = Prisma.validator<
   status: true,
   lineItems: { select: { id: true } },
 })
+
+const rentalInvoiceArgs = Prisma.validator<Prisma.RentalInvoiceArgs>()({
+  select: CREATE_RENTAL_INVOICE_LINE_ITEMS_INVOICE_SELECT,
+})
+
+type InvoiceWithLineItems = Prisma.RentalInvoiceGetPayload<
+  typeof rentalInvoiceArgs
+>
 @Injectable()
 export class RentalService {
   private readonly logger = (new Logger(
@@ -143,7 +152,7 @@ export class RentalService {
     lostInPhase: true,
   })
 
-  async processInvoice(invoice, onError = err => null) {
+  async processInvoice(invoice: InvoiceWithLineItems, onError = err => null) {
     let chargebeeInvoices, chargePromises
     let promises = []
     let lineItems = invoice.lineItems
@@ -642,7 +651,7 @@ export class RentalService {
   }
 
   async createRentalInvoiceLineItems(
-    invoice: Pick<RentalInvoice, "id" | "billingStartAt"> & {
+    invoice: Pick<RentalInvoice, "id" | "billingStartAt" | "billingEndAt"> & {
       reservations: (Pick<Reservation, "createdAt"> & {
         reservationNumber: number
         returnPackages: Array<
@@ -776,11 +785,17 @@ export class RentalService {
       })
     )
 
+    const cleaningFeesLineItemDatas = await this.calculateCleaningFeesForLineItems(
+      lineItemsForPhysicalProductDatas,
+      invoice
+    )
+
     const lineItemDatas = [
       ...lineItemsForPhysicalProductDatas,
       ...newReservationOutboundPackageLineItemDatas,
       ...inboundPackagesLineItemDatas,
       ...baseProcessingFeeLineItemDatas,
+      ...cleaningFeesLineItemDatas,
     ]
     const lineItemPromises = lineItemDatas.map(data =>
       this.prisma.client.rentalInvoiceLineItem.create({
@@ -790,6 +805,66 @@ export class RentalService {
     const lineItems = await this.prisma.client.$transaction(lineItemPromises)
 
     return lineItems
+  }
+
+  async calculateCleaningFeesForLineItems(lineItemsData, invoice) {
+    console.log(invoice)
+    const numberOfDaysInBillingCycle = this.timeUtils.numDaysBetween(
+      invoice.billingEndAt,
+      invoice.billingStartAt
+    )
+
+    const cleaningLineItems = []
+
+    for (let lineItem of lineItemsData) {
+      const physicalProduct = await this.prisma.client.physicalProduct.findFirst(
+        {
+          where: { id: lineItem.physicalProduct.id },
+          select: {
+            id: true,
+            seasonsUID: true,
+            productVariant: {
+              select: {
+                product: {
+                  select: {
+                    id: true,
+                    category: {
+                      select: {
+                        dryCleaningFee: true,
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        }
+      )
+
+      const dryCleaningFee =
+        physicalProduct.productVariant.product.category.dryCleaningFee
+      const numberOfDaysRented = lineItem.daysRented
+
+      const numberOfDaysLeftToCharge =
+        numberOfDaysInBillingCycle - numberOfDaysRented
+      const dailyCleaningFee = dryCleaningFee / numberOfDaysInBillingCycle
+
+      const cleaningFeeToCharge = Math.ceil(
+        numberOfDaysLeftToCharge * dailyCleaningFee
+      )
+
+      if (cleaningFeeToCharge > 0) {
+        cleaningLineItems.push({
+          name: `CleaningFee-${physicalProduct.seasonsUID}`,
+          comment: `Remainder cleaning Fee for ${physicalProduct.seasonsUID}, based on ${numberOfDaysLeftToCharge} days left in billing cycle`,
+          price: cleaningFeeToCharge,
+          rentalInvoice: { connect: { id: invoice.id } },
+          currencyCode: "USD",
+        })
+      }
+    }
+
+    return cleaningLineItems
   }
 
   async calculatePriceForDaysRented({
