@@ -579,6 +579,8 @@ const printFlags = async (
 ) => {
   const uniqueFlags = uniqBy(flags, a => a.id)
   const reconciled = [
+    "cksoykvja6662792eyl41zc8vir", // Theodore Nelder
+    "cknt0w3dt49hd0771l3n586g4", // Josh Vrabel
     "ck76gv7loz3ik0768e0g8tvss", // Emon White
     "ckp8x4yhr1afn0505qu97bxvu", // Trevor Gray
     "ckp8arasj18za0500fhho7hyd", // Micah Clark

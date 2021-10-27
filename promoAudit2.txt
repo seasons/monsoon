@@ -2,9 +2,9 @@ Debugger attached.
 
 
 
-*** TOTAL UNIQUE FLAGS : 134 ***
+*** TOTAL UNIQUE FLAGS : 133 ***
 
--- ** Applied credits to a grandfathered plan charge: 91 ** -- 
+-- ** Applied credits to a grandfathered plan charge: 90 ** -- 
 josh bullock
 
 Chargebee Link: https://seasons.chargebee.com/customers?view_code=all&Customers.search=ckoxfuodb00yv0536d6592wlf
@@ -13,16 +13,17 @@ Admin Link: https://admin.seasons.nyc/members/ckoxfuogf1vy5051361ukltpn/account
 *Credit Creation History*
 9/20/2021: $9.97 -- Initial grandfathering promotional credit. Plan: essential-1 at price 6500 with 4 days left in term.
 9/24/2021: $74.75 -- essential-1 Membership Renewal
-**Total Created: $84.72**
+10/24/2021: $74.75 -- essential-1 Membership Renewal
+**Total Created: $159.47**
 
 *Credit Usage History*
 9/24/2021 -- $9.97 -- Applied to the invoice # 6179
 10/26/2021 -- $74.75 -- Applied to the invoice # 7188
 **Total Usage: -$84.72**
 
-**Total Expected: -$11.47 ($0.00- $11.47 for credits erroneously given towards membership dues)**
+**Total Expected: $63.28 ($74.75- $11.47 for credits erroneously given towards membership dues)**
 
-**Total Present: Chargebee $0.00, Prisma $0.00**
+**Total Present: Chargebee $0.00, Prisma $63.28**
 
 *Invoices with Credits applied toward grandfathered plan charge*
 Invoice 6179: $9.97. https://seasons.chargebee.com/d/invoices/6179
@@ -1943,29 +1944,6 @@ Admin Link: https://admin.seasons.nyc/members/ckp06bd9u0ntd0596xtgw0ahk/account
 Invoice 6124: $9.58. https://seasons.chargebee.com/d/invoices/6124
 
 
-Josh Vrabel
-
-Chargebee Link: https://seasons.chargebee.com/customers?view_code=all&Customers.search=cknt0w3dt49hd0771l3n586g4
-Admin Link: https://admin.seasons.nyc/members/cknt0w4l249j90771p5lqkef0/account
-
-*Credit Creation History*
-9/20/2021: $9.58 -- Initial grandfathering promotional credit. Plan: essential at price 12500 with 2 days left in term.
-9/22/2021: $143.75 -- essential Membership Renewal
-10/22/2021: $143.75 -- essential Membership Renewal
-**Total Created: $297.08**
-
-*Credit Usage History*
-9/22/2021 -- $9.58 -- Applied to the invoice # 6111
-**Total Usage: -$9.58**
-
-**Total Expected: $276.48 ($287.50- $11.02 for credits erroneously given towards membership dues)**
-
-**Total Present: Chargebee $0.00, Prisma $151.75**
-
-*Invoices with Credits applied toward grandfathered plan charge*
-Invoice 6111: $9.58. https://seasons.chargebee.com/d/invoices/6111
-
-
 Felipe Gaytan
 
 Chargebee Link: https://seasons.chargebee.com/customers?view_code=all&Customers.search=ck8c20pcy8c0e0758ee2scg89
@@ -2671,26 +2649,6 @@ Admin Link: https://admin.seasons.nyc/members/ckhh20knl0frd0778jii12r57/account
 
 
 
-Maria Montgomery
-
-Chargebee Link: https://seasons.chargebee.com/customers?view_code=all&Customers.search=ckcp88wnp1ipt0740piinrz3c
-Admin Link: https://admin.seasons.nyc/members/ckcp88wqk1iqo0740i2formei/account
-
-*Credit Creation History*
-9/20/2021: $143.75 -- essential Membership Renewal
-9/20/2021: $143.75 -- Initial grandfathering promotional credit. Plan: essential at price 12500 with 30 days left in term.
-**Total Created: $287.50**
-
-*Credit Usage History*
-10/20/2021 -- $117.58 -- Applied to the invoice # 6854
-**Total Usage: -$117.58**
-
-**Total Expected: $169.92 **
-
-**Total Present: Chargebee $0.00, Prisma $26.17**
-
-
-
 Kyle Wons
 
 Chargebee Link: https://seasons.chargebee.com/customers?view_code=all&Customers.search=ckf302epx0ddq0764k7k2a3cn
@@ -2708,6 +2666,47 @@ Admin Link: https://admin.seasons.nyc/members/ckf302f3d0del0764fry77t1n/account
 **Total Expected: $263.54 **
 
 **Total Present: Chargebee $84.00, Prisma $179.54**
+
+
+
+Diego Lopez
+
+Chargebee Link: https://seasons.chargebee.com/customers?view_code=all&Customers.search=ckfyi7tdy078e0781ffql9z75
+Admin Link: https://admin.seasons.nyc/members/ckfyi7th307990781gak0820e/account
+
+*Credit Creation History*
+9/20/2021: $143.75 -- essential Membership Renewal
+9/20/2021: $143.75 -- Initial grandfathering promotional credit. Plan: essential at price 12500 with 30 days left in term.
+10/20/2021: $143.75 -- essential Membership Renewal
+**Total Created: $431.25**
+
+*Credit Usage History*
+10/20/2021 -- $86.78 -- Applied to the invoice # 6869
+**Total Usage: -$86.78**
+
+**Total Expected: $344.47 **
+
+**Total Present: Chargebee $0.00, Prisma $200.72**
+
+
+
+Maria Montgomery
+
+Chargebee Link: https://seasons.chargebee.com/customers?view_code=all&Customers.search=ckcp88wnp1ipt0740piinrz3c
+Admin Link: https://admin.seasons.nyc/members/ckcp88wqk1iqo0740i2formei/account
+
+*Credit Creation History*
+9/20/2021: $143.75 -- essential Membership Renewal
+9/20/2021: $143.75 -- Initial grandfathering promotional credit. Plan: essential at price 12500 with 30 days left in term.
+**Total Created: $287.50**
+
+*Credit Usage History*
+10/20/2021 -- $117.58 -- Applied to the invoice # 6854
+**Total Usage: -$117.58**
+
+**Total Expected: $169.92 **
+
+**Total Present: Chargebee $0.00, Prisma $26.17**
 
 
 
@@ -2771,96 +2770,7 @@ Admin Link: https://admin.seasons.nyc/members/ck2zc5u9q0nuj0734vnin6b86/account
 
 
 
-Diego Lopez
-
-Chargebee Link: https://seasons.chargebee.com/customers?view_code=all&Customers.search=ckfyi7tdy078e0781ffql9z75
-Admin Link: https://admin.seasons.nyc/members/ckfyi7th307990781gak0820e/account
-
-*Credit Creation History*
-9/20/2021: $143.75 -- essential Membership Renewal
-9/20/2021: $143.75 -- Initial grandfathering promotional credit. Plan: essential at price 12500 with 30 days left in term.
-10/20/2021: $143.75 -- essential Membership Renewal
-**Total Created: $431.25**
-
-*Credit Usage History*
-10/20/2021 -- $86.78 -- Applied to the invoice # 6869
-**Total Usage: -$86.78**
-
-**Total Expected: $344.47 **
-
-**Total Present: Chargebee $0.00, Prisma $200.72**
-
-
-
 -- ** Nonzero promotional credit balance with no upcoming charges: 8 ** -- 
-Katherine Wu
-
-Chargebee Link: https://seasons.chargebee.com/customers?view_code=all&Customers.search=ck2gmwefs06k70757lcw0zih0
-Admin Link: https://admin.seasons.nyc/members/ck2gmwegw06kf0757letuqnb2/account
-
-*Credit Creation History*
-9/20/2021: $101.01 -- Initial grandfathering promotional credit. Plan: essential at price 15500 with 17 days left in term.
-10/7/2021: $178.25 -- essential Membership Renewal
-10/11/2021: $98.56 -- Returned while creating the Credit Note # TEST-CN-1019
-**Total Created: $377.82**
-
-*Credit Usage History*
-10/7/2021 -- $98.56 -- Applied to the invoice # 6454
-**Total Usage: -$98.56**
-
-**Total Expected: $279.26 **
-
-**Total Present: Chargebee $98.56, Prisma $146.20**
-
-
-
-Andrew Vitale
-
-Chargebee Link: https://seasons.chargebee.com/customers?view_code=all&Customers.search=ckcrwk6ni1e3z0794gmpevmvw
-Admin Link: https://admin.seasons.nyc/members/ckcrwk6sj1e4u0794pd2h4r8r/account
-
-*Credit Creation History*
-9/20/2021: $98.33 -- Initial grandfathering promotional credit. Plan: essential-2 at price 9500 with 27 days left in term.
-10/1/2021: $15.00 -- Lost package
-10/17/2021: $109.25 -- essential-2 Membership Renewal
-10/19/2021: $25.70 -- Returned while creating the Credit Note # cn_AzZdOjSmLaIVkHGpg
-**Total Created: $248.28**
-
-*Credit Usage History*
-10/17/2021 -- $40.37 -- Applied to the invoice # 6739
-10/19/2021 -- $18.15 -- Applied to the invoice # 6851
-10/20/2021 -- $110.00 -- (On Prisma) Changed plans 
-**Total Usage: -$168.52**
-
-**Total Expected: $79.76 **
-
-**Total Present: Chargebee $7.55, Prisma $72.21**
-
-
-
-Robert Kelly
-
-Chargebee Link: https://seasons.chargebee.com/customers?view_code=all&Customers.search=ckccdv2kd1gct0756t9dlp8yj
-Admin Link: https://admin.seasons.nyc/members/ckccdv2n31gdb0756mjr2k225/account
-
-*Credit Creation History*
-9/20/2021: $91.04 -- Initial grandfathering promotional credit. Plan: essential at price 12500 with 19 days left in term.
-9/30/2021: $12.57 -- Returned while creating the Credit Note # TEST-CN-989
-10/9/2021: $143.75 -- essential Membership Renewal
-10/19/2021: $2.29 -- Returned while creating the Credit Note # TEST-CN-1034
-**Total Created: $249.65**
-
-*Credit Usage History*
-9/29/2021 -- $91.04 -- Applied to the invoice # 6278
-10/9/2021 -- $12.57 -- Applied to the invoice # 6482
-**Total Usage: -$103.61**
-
-**Total Expected: $146.04 **
-
-**Total Present: Chargebee $2.29, Prisma $143.75**
-
-
-
 Sanoop Desai
 
 Chargebee Link: https://seasons.chargebee.com/customers?view_code=all&Customers.search=ck8m6ogjn3s9o0738gte7f2ax
@@ -2959,6 +2869,74 @@ Admin Link: https://admin.seasons.nyc/members/ckcrw6yl21dil0794w59otuo1/account
 **Total Expected: $50.93 **
 
 **Total Present: Chargebee $124.67, Prisma $70.78**
+
+
+
+Andrew Vitale
+
+Chargebee Link: https://seasons.chargebee.com/customers?view_code=all&Customers.search=ckcrwk6ni1e3z0794gmpevmvw
+Admin Link: https://admin.seasons.nyc/members/ckcrwk6sj1e4u0794pd2h4r8r/account
+
+*Credit Creation History*
+9/20/2021: $98.33 -- Initial grandfathering promotional credit. Plan: essential-2 at price 9500 with 27 days left in term.
+10/1/2021: $15.00 -- Lost package
+10/17/2021: $109.25 -- essential-2 Membership Renewal
+10/19/2021: $25.70 -- Returned while creating the Credit Note # cn_AzZdOjSmLaIVkHGpg
+**Total Created: $248.28**
+
+*Credit Usage History*
+10/17/2021 -- $40.37 -- Applied to the invoice # 6739
+10/19/2021 -- $18.15 -- Applied to the invoice # 6851
+10/20/2021 -- $110.00 -- (On Prisma) Changed plans 
+**Total Usage: -$168.52**
+
+**Total Expected: $79.76 **
+
+**Total Present: Chargebee $7.55, Prisma $72.21**
+
+
+
+Katherine Wu
+
+Chargebee Link: https://seasons.chargebee.com/customers?view_code=all&Customers.search=ck2gmwefs06k70757lcw0zih0
+Admin Link: https://admin.seasons.nyc/members/ck2gmwegw06kf0757letuqnb2/account
+
+*Credit Creation History*
+9/20/2021: $101.01 -- Initial grandfathering promotional credit. Plan: essential at price 15500 with 17 days left in term.
+10/7/2021: $178.25 -- essential Membership Renewal
+10/11/2021: $98.56 -- Returned while creating the Credit Note # TEST-CN-1019
+**Total Created: $377.82**
+
+*Credit Usage History*
+10/7/2021 -- $98.56 -- Applied to the invoice # 6454
+**Total Usage: -$98.56**
+
+**Total Expected: $279.26 **
+
+**Total Present: Chargebee $98.56, Prisma $146.20**
+
+
+
+Robert Kelly
+
+Chargebee Link: https://seasons.chargebee.com/customers?view_code=all&Customers.search=ckccdv2kd1gct0756t9dlp8yj
+Admin Link: https://admin.seasons.nyc/members/ckccdv2n31gdb0756mjr2k225/account
+
+*Credit Creation History*
+9/20/2021: $91.04 -- Initial grandfathering promotional credit. Plan: essential at price 12500 with 19 days left in term.
+9/30/2021: $12.57 -- Returned while creating the Credit Note # TEST-CN-989
+10/9/2021: $143.75 -- essential Membership Renewal
+10/19/2021: $2.29 -- Returned while creating the Credit Note # TEST-CN-1034
+**Total Created: $249.65**
+
+*Credit Usage History*
+9/29/2021 -- $91.04 -- Applied to the invoice # 6278
+10/9/2021 -- $12.57 -- Applied to the invoice # 6482
+**Total Usage: -$103.61**
+
+**Total Expected: $146.04 **
+
+**Total Present: Chargebee $2.29, Prisma $143.75**
 
 
 
