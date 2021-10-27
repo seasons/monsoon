@@ -558,7 +558,7 @@ const printFlags = async (
   const reconciled = [
     "ckp8pxdyw0il80505u50uoohz", // Raquan Cotton
     "ckhxybiij04m30737ubd8kwmb", // Jesse Samburge
-    // "ck6m9hik66oji0777vlwwuxmh", // Samuel Schler
+    "ck6m9hik66oji0777vlwwuxmh", // Samuel Schler
     "ck2iepyjk001g0799jq9sjpwz",
     "ckju5lfcf29j30729n3n9kabs",
     "ck561f4hxj0tn0704ihksk6zp",
