@@ -28,7 +28,7 @@ const run = async () => {
   const ps = new PrismaService()
   const timeUtils = new TimeUtilsService()
 
-  // const forCustomer = "ck6m9hik66oji0777vlwwuxmh"
+  // const forCustomer = "ckpyh3hd35d9p0758bskfwhuu"
   const forCustomer = null
   const allPromotionalCredits = []
   let offset = "start"
@@ -182,31 +182,36 @@ const calculateProperPromotionalCreditBalanceForAllCustomers = async (
     }
 
     // Does not include membership renewal-based promotional credits
-    const mostValidCreditsCreatedOnChargebee =
-      getValidNonMembeshipRenewalCreditCreationLogs(
-        chargebeeCreditLogs
-      )?.reduce((acc, curval) => Math.round(curval.amount + acc), 0) || 0
-    const membeshipRenewalPromotionalCredits = Math.round(
-      getMembershipRenewalCreditCreations(invoices, timeUtils).reduce(
-        (acc, curval) =>
-          acc +
-          curval.line_items.find(b =>
-            GRANDFATHERED_PLAN_IDS.includes(b.entity_id)
-          ).amount *
-            1.15,
-        0
-      )
+    const prismaUser: UserWithData = await getUserWithData(ps, cust.user.id)
+    const prismaCreditCreations = prismaUser.customer.membership.creditUpdateHistory.filter(
+      a => a.amount > 0
     )
-    const totalCreditsAppliedTowardsInvoices =
-      getValidCreditUsageLogs(chargebeeCreditLogs)?.reduce(
-        (acc, curval) => acc + curval.amount,
-        0
-      ) || 0
-    const totalCreditsCreated = Math.round(
-      membeshipRenewalPromotionalCredits + mostValidCreditsCreatedOnChargebee
+    const prismaCreditUsages = prismaUser.customer.membership.creditUpdateHistory
+      .filter(a => a.amount < 0)
+      .map(b => ({ ...b, amount: -b.amount }))
+    const creditCreationhistory = getCorrectCreditCreationHistory(
+      cust.user.id,
+      timeUtils,
+      creditsGroupedByChargebeeCustomerId,
+      invoicesGroupedByChargebeeCustomerId,
+      prismaCreditCreations
     )
-    const expectedCredits =
-      totalCreditsCreated - totalCreditsAppliedTowardsInvoices
+    const creditUsageHistory = getCorrectCreditUsageHistory(
+      cust.user.id,
+      timeUtils,
+      creditsGroupedByChargebeeCustomerId,
+      invoicesGroupedByChargebeeCustomerId,
+      prismaCreditUsages
+    )
+    const totalCreated = creditCreationhistory.reduce(
+      (acc, curval) => acc + curval.amount,
+      0
+    )
+    const totalUsage = creditUsageHistory.reduce(
+      (acc, curval) => acc + curval.amount,
+      0
+    )
+    const expectedCredits = totalCreated - totalUsage
     if (expectedCredits !== cust.membership.creditBalance) {
       flags.push({
         failureMode:
@@ -417,7 +422,8 @@ const getCorrectCreditCreationHistory = (
   chargebeeCustomerId,
   timeUtils: TimeUtilsService,
   creditsGroupedByChargebeeCustomerId,
-  invoicesGroupedByChargebeeCustomerId
+  invoicesGroupedByChargebeeCustomerId,
+  prismaCreditCreations
 ) => {
   const chargebeeCreditLogs =
     creditsGroupedByChargebeeCustomerId[chargebeeCustomerId]
@@ -450,10 +456,17 @@ const getCorrectCreditCreationHistory = (
     }
   )
 
+  const formattedPrismaCreditCreations = prismaCreditCreations.map(a => ({
+    date: a.createdAt,
+    amount: Math.round(a.amount),
+    description: `(On Prisma) ${a.reason}`,
+  }))
+
   const sortedCreditCreations = orderBy(
     [
       ...formattedMembershipRenewalCreditCreations,
       ...formattedValidNonMembershipRenewalCreditCreationlogs,
+      ...formattedPrismaCreditCreations,
     ],
     ["date", "asc"]
   )
@@ -464,7 +477,8 @@ const getCorrectCreditUsageHistory = (
   chargebeeCustomerId,
   timeUtils,
   creditsGroupedByChargebeeCustomerId,
-  invoicesGroupedByChargebeeCustomerId
+  invoicesGroupedByChargebeeCustomerId,
+  prismaCreditUsages
 ) => {
   const creditLogs = creditsGroupedByChargebeeCustomerId[chargebeeCustomerId]
   const invoices = invoicesGroupedByChargebeeCustomerId[chargebeeCustomerId]
@@ -484,7 +498,16 @@ const getCorrectCreditUsageHistory = (
       }
     })
     .filter(a => a.amount > 0)
-  const sortedLogs = orderBy(formattedLogs, ["date", "asc"])
+
+  const formattedPrismaLogs = prismaCreditUsages.map(a => ({
+    date: a.createdAt,
+    amount: Math.round(a.amount),
+    description: `(On Prisma) ${a.reason}`,
+  }))
+  const sortedLogs = orderBy(
+    [...formattedLogs, ...formattedPrismaLogs],
+    ["date", "asc"]
+  )
   return sortedLogs
 }
 
@@ -676,31 +699,27 @@ const printFlags = async (
     )
     for (const flag of filteredFlagsByReason[failureMode]) {
       try {
-        const prismaUser = await ps.client.user.findUnique({
-          where: { id: flag.id },
-          select: {
-            email: true,
-            firstName: true,
-            lastName: true,
-            customer: {
-              select: {
-                id: true,
-                membership: { select: { creditBalance: true } },
-              },
-            },
-          },
-        })
+        const prismaUser: UserWithData = await getUserWithData(ps, flag.id)
+
+        const prismaCreditCreations = prismaUser.customer.membership.creditUpdateHistory.filter(
+          a => a.amount > 0
+        )
+        const prismaCreditUsages = prismaUser.customer.membership.creditUpdateHistory
+          .filter(a => a.amount < 0)
+          .map(b => ({ ...b, amount: -b.amount }))
         const creditCreationhistory = getCorrectCreditCreationHistory(
           flag.id,
           timeUtils,
           creditsGroupedByChargebeeCustomerId,
-          invoicesGroupedByChargebeeCustomerId
+          invoicesGroupedByChargebeeCustomerId,
+          prismaCreditCreations
         )
         const creditUsageHistory = getCorrectCreditUsageHistory(
           flag.id,
           timeUtils,
           creditsGroupedByChargebeeCustomerId,
-          invoicesGroupedByChargebeeCustomerId
+          invoicesGroupedByChargebeeCustomerId,
+          prismaCreditUsages
         )
         console.log(`${prismaUser.firstName} ${prismaUser.lastName}\n`)
         console.log(
@@ -944,3 +963,44 @@ Case to look at https://seasons.chargebee.com/customers/61973235/details#promoti
 He seems to have gotten initial credits, but then none afterwards. He also had promotional credits apply towards membership charges.
 
 */
+
+const getUserWithData = async (ps: PrismaService, userId) => {
+  const prismaUser = await ps.client.user.findUnique({
+    where: { id: userId },
+    select: {
+      email: true,
+      firstName: true,
+      lastName: true,
+      customer: {
+        select: {
+          id: true,
+          membership: {
+            select: {
+              creditBalance: true,
+              creditUpdateHistory: {
+                where: {
+                  adminUser: {
+                    AND: [
+                      { email: { contains: "seasons" } },
+                      { email: { not: { contains: "kieran" } } },
+                      { email: { not: { contains: "oliver" } } },
+                      { email: { not: { contains: "faiyam" } } },
+                    ],
+                  },
+                },
+                select: {
+                  createdAt: true,
+                  amount: true,
+                  reason: true,
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+  })
+  return prismaUser
+}
+
+type UserWithData = Prisma.PromiseReturnType<typeof getUserWithData>
