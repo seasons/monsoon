@@ -1095,8 +1095,6 @@ describe("Rental Service", () => {
             )
           }
         })
-
-        it("Doesn't charge them a cleaning fee if the item duration is 0 days", () => {})
       })
     })
 
