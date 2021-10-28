@@ -82,9 +82,13 @@ describe("Cancel Customer", () => {
           },
         }
       )
-      await bagService.addToBag(reservableProductVariant.id, testCustomer, {
-        id: true,
-      })
+      const bagItem = await bagService.addToBag(
+        reservableProductVariant.id,
+        testCustomer,
+        {
+          id: true,
+        }
+      )
       const reservationWithData = await reservationService.reserveItems({
         items: [reservableProductVariant.id],
         shippingCode: "UPSGround",
@@ -94,6 +98,10 @@ describe("Cancel Customer", () => {
       await setReservationCreatedAt(reservationWithData.id, 25)
       await setPackageDeliveredAt(reservationWithData.sentPackage.id, 23)
       await setReservationStatus(reservationWithData.id, "Delivered")
+
+      await prismaService.client.bagItem.delete({
+        where: { id: bagItem.id },
+      })
 
       await customerService.cancelCustomer(testCustomer.id)
 
@@ -166,9 +174,13 @@ describe("Cancel Customer", () => {
           },
         }
       )
-      await bagService.addToBag(reservableProductVariant.id, testCustomer, {
-        id: true,
-      })
+      const bagItem = await bagService.addToBag(
+        reservableProductVariant.id,
+        testCustomer,
+        {
+          id: true,
+        }
+      )
       const reservationWithData = await reservationService.reserveItems({
         items: [reservableProductVariant.id],
         shippingCode: "UPSGround",
@@ -178,6 +190,10 @@ describe("Cancel Customer", () => {
       await setReservationCreatedAt(reservationWithData.id, 25)
       await setPackageDeliveredAt(reservationWithData.sentPackage.id, 23)
       await setReservationStatus(reservationWithData.id, "Delivered")
+
+      await prismaService.client.bagItem.delete({
+        where: { id: bagItem.id },
+      })
 
       try {
         await customerService.cancelCustomer(testCustomer.id)
