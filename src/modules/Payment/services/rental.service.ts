@@ -42,6 +42,7 @@ export const CREATE_RENTAL_INVOICE_LINE_ITEMS_INVOICE_SELECT = Prisma.validator<
 >()({
   id: true,
   billingStartAt: true,
+  billingEndAt: true,
   products: {
     select: {
       id: true,

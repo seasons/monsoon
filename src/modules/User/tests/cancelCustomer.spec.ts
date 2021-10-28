@@ -57,6 +57,7 @@ describe("Cancel Customer", () => {
           request: async () => ({
             invoice: {
               status: "paid",
+              line_items: [],
             },
           }),
         })
@@ -81,11 +82,9 @@ describe("Cancel Customer", () => {
           },
         }
       )
-      const bagItem = await bagService.addToBag(
-        reservableProductVariant.id,
-        testCustomer,
-        { id: true }
-      )
+      await bagService.addToBag(reservableProductVariant.id, testCustomer, {
+        id: true,
+      })
       const reservationWithData = await reservationService.reserveItems({
         items: [reservableProductVariant.id],
         shippingCode: "UPSGround",
@@ -105,6 +104,7 @@ describe("Cancel Customer", () => {
 
     afterAll(async () => {
       cancelSubscriptionSpy.mockClear()
+      invoiceCreateSpy.mockClear()
     })
 
     it("Does not create another rental invoice", () => {
@@ -216,6 +216,46 @@ describe("Cancel Customer", () => {
 
     it("Does not mark the customer as deactivated in our system", () => {
       expect(customerWithData.status).toBe("Active")
+    })
+  })
+
+  describe("If the customer has a reserved bag item, we throw an error", () => {
+    let expectedError
+    beforeAll(async () => {
+      const { customer } = await createTestCustomer()
+      testCustomer = customer
+
+      const reservableProductVariant = await prismaService.client.productVariant.findFirst(
+        {
+          where: {
+            reservable: { gte: 1 }, // want two because we want to ensure the correct one of two (or more) is picked
+          },
+          select: {
+            id: true,
+          },
+        }
+      )
+      await bagService.addToBag(reservableProductVariant.id, testCustomer, {
+        id: true,
+      })
+      const reservationWithData = await reservationService.reserveItems({
+        items: [reservableProductVariant.id],
+        shippingCode: "UPSGround",
+        customer: testCustomer,
+        select: { id: true, sentPackage: { select: { id: true } } },
+      })
+
+      try {
+        await customerService.cancelCustomer(testCustomer.id)
+      } catch (err) {
+        expectedError = err
+      }
+    })
+
+    it("Throws the proper error", () => {
+      expect(expectedError.message).toBe(
+        "Unable to cancel customer. Has 1 or more reserved items in bag"
+      )
     })
   })
 })
