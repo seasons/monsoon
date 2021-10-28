@@ -596,6 +596,7 @@ const printFlags = async (
 ) => {
   const uniqueFlags = uniqBy(flags, a => a.id)
   const reconciled = [
+    "ckjdscc4m10uw0744a7clh07y", // Ola Dedo
     "ckp8o8bm40shv05396d09me5p", // Michael Vendola
     "ckrnyjip811501311kszw8bcp4p9", // Bryan Pino
     "cko3a5b2h16ch07293kw2fqjm", // Ian William Bauman
