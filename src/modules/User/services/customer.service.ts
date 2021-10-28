@@ -1,21 +1,21 @@
-import fs from "fs"
-
 import { ApplicationType } from "@app/decorators/application.decorator"
+import { WinstonLogger } from "@app/lib/logger"
 import { SegmentService } from "@app/modules/Analytics/services/segment.service"
 import { EmailService } from "@app/modules/Email/services/email.service"
+import {
+  CREATE_RENTAL_INVOICE_LINE_ITEMS_INVOICE_SELECT,
+  RentalService,
+} from "@app/modules/Payment/services/rental.service"
 import { PushNotificationService } from "@app/modules/PushNotification/services/pushNotification.service"
 import { SMSService } from "@app/modules/SMS/services/sms.service"
-import { QueryUtilsService } from "@app/modules/Utils/services/queryUtils.service"
 import { UtilsService } from "@app/modules/Utils/services/utils.service"
 import { ShippingService } from "@modules/Shipping/services/shipping.service"
-import { Inject, Injectable, forwardRef } from "@nestjs/common"
+import { Inject, Injectable, Logger, forwardRef } from "@nestjs/common"
 import {
   Customer,
   CustomerAdmissionsData,
-  CustomerDetail,
   CustomerStatus,
   InAdmissableReason,
-  Location,
   NotificationBarID,
   Prisma,
   UTMData,
@@ -24,6 +24,7 @@ import {
 import { PrismaService } from "@prisma1/prisma.service"
 import * as Sentry from "@sentry/node"
 import { ApolloError } from "apollo-server"
+import chargebee from "chargebee"
 import { defaultsDeep, head, pick } from "lodash"
 import { DateTime } from "luxon"
 
@@ -46,6 +47,10 @@ type UpdateCustomerAdmissionsDataInput = TriageCustomerResult & {
 
 @Injectable()
 export class CustomerService {
+  private readonly logger = (new Logger(
+    `Cron: ${CustomerService.name}`
+  ) as unknown) as WinstonLogger
+
   triageCustomerSelect = Prisma.validator<Prisma.CustomerSelect>()({
     id: true,
     status: true,
@@ -81,8 +86,93 @@ export class CustomerService {
     private readonly email: EmailService,
     private readonly pushNotification: PushNotificationService,
     private readonly sms: SMSService,
-    private readonly utils: UtilsService
+    private readonly utils: UtilsService,
+    private readonly rental: RentalService
   ) {}
+
+  async cancelCustomer(customerID) {
+    const customerWithData = await this.prisma.client.customer.findUnique({
+      where: { id: customerID },
+      select: {
+        bagItems: { select: { status: true } },
+        membership: {
+          select: {
+            subscription: {
+              select: { subscriptionId: true },
+            },
+            rentalInvoices: {
+              where: { status: "Draft" },
+              select: { id: true, billingEndAt: true },
+            },
+          },
+        },
+      },
+    })
+    if (customerWithData.membership.rentalInvoices.length !== 1) {
+      throw new Error("Customer has incorrect number of draft rental invoices")
+    }
+    if (
+      customerWithData.bagItems.filter(a => a.status === "Reserved").length > 0
+    ) {
+      throw new Error(
+        "Unable to cancel customer. Has 1 or more reserved items in bag"
+      )
+    }
+
+    const activeInvoice = customerWithData.membership.rentalInvoices[0]
+    let invoiceDidError = false
+    const oldBillingEndDate = activeInvoice.billingEndAt
+    const invoiceWithData = await this.prisma.client.rentalInvoice.update({
+      where: { id: activeInvoice.id },
+      data: { billingEndAt: new Date() },
+      select: CREATE_RENTAL_INVOICE_LINE_ITEMS_INVOICE_SELECT,
+    })
+    await this.rental.processInvoice(invoiceWithData, {
+      onError: err => {
+        invoiceDidError = true
+        this.logger.error("Rental invoice billing failed", {
+          activeInvoice,
+          error: err,
+        })
+      },
+      forceImmediateCharge: true,
+      createNextInvoice: false,
+    })
+    const invoiceAfterProcessing = await this.prisma.client.rentalInvoice.findUnique(
+      { where: { id: activeInvoice.id }, select: { status: true } }
+    )
+    if (invoiceDidError || invoiceAfterProcessing.status !== "Billed") {
+      await this.prisma.client.rentalInvoice.update({
+        where: { id: activeInvoice.id },
+        data: { billingEndAt: oldBillingEndDate },
+      })
+      throw "Rental invoice billing failed. Unable to cancel customer"
+    }
+
+    try {
+      const subId = customerWithData.membership.subscription.subscriptionId
+      await chargebee.subscription
+        .cancel(subId, {
+          end_of_term: true,
+        })
+        .request()
+      await this.prisma.client.customer.update({
+        where: { id: customerID },
+        data: { status: "Deactivated" },
+      })
+    } catch (err) {
+      this.logger.error("Failed to cancel customer", {
+        activeInvoice,
+        customerWithData,
+        error: err,
+      })
+      throw new Error(
+        "Processed final invoice but failed to cancel customer. Please contact a dev"
+      )
+    }
+
+    return true
+  }
 
   async setCustomerPrismaStatus(user: User, status: CustomerStatus) {
     const customer = await this.auth.getCustomerFromUserID(user.id)

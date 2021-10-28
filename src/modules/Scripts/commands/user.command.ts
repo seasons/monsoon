@@ -340,9 +340,7 @@ export class UserCommands {
           },
         })
 
-        if (["access-monthly", "access-yearly"].includes(planID)) {
-          await this.rental.initFirstRentalInvoice(customer.id)
-        }
+        await this.rental.initFirstRentalInvoice(customer.id)
       }
 
       // Give them a valid admissions record if appropriate

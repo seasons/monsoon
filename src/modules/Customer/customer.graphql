@@ -80,6 +80,7 @@ type Mutation {
     amount: Int!
     reason: String!
   ): Boolean @hasRole(roles: [Admin])
+  cancelCustomer(customerId: ID!): Boolean @hasRole(roles: [Admin])
 }
 
 input AddressInput {
