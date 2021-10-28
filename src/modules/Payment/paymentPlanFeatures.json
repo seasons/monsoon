@@ -1,22 +1,20 @@
 {
   "access-monthly": {
     "included": [
-      "Rental access to over 1,000+ styles",
-      "Free shipping*, dry cleaning, & stylist access",
-      "Access to Discord, our newsletter, & events"
+      "Access — Rental access to over 1,000 styles",
+      "Perks — Free shipping*, dry cleaning & stylist access",
+      "Community — Discord, newsletter & event access",
+      "Discounts — Get $20 off any purchase once a month"
     ],
-    "excluded": [
-      "Preview & vote on upcoming styles",
-      "Early bag resets, 24/7 customer service"
-    ]
+    "excluded": ["Priority — Early bag resets, 24/7 customer service"]
   },
   "access-yearly": {
     "included": [
-      "Rental access to over 1,000+ styles",
-      "Free shipping*, dry cleaning, & stylist access",
-      "Access to Discord, our newsletter * events",
-      "Preview & vote on upcoming styles",
-      "Early bag resets, 24/7 customer service"
+      "Access — Rental access to over 1,000+ styles",
+      "Perks — Free shipping*, dry cleaning & stylist access",
+      "Community — Discord, newsletter & event access",
+      "Discounts — Get $30 off any purchase once a month",
+      "Priority — Early bag resets, 24/7 customer service"
     ],
     "excluded": []
   }
