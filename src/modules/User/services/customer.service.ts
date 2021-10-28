@@ -1,21 +1,21 @@
-import fs from "fs"
-
 import { ApplicationType } from "@app/decorators/application.decorator"
+import { WinstonLogger } from "@app/lib/logger"
 import { SegmentService } from "@app/modules/Analytics/services/segment.service"
 import { EmailService } from "@app/modules/Email/services/email.service"
+import {
+  CREATE_RENTAL_INVOICE_LINE_ITEMS_INVOICE_SELECT,
+  RentalService,
+} from "@app/modules/Payment/services/rental.service"
 import { PushNotificationService } from "@app/modules/PushNotification/services/pushNotification.service"
 import { SMSService } from "@app/modules/SMS/services/sms.service"
-import { QueryUtilsService } from "@app/modules/Utils/services/queryUtils.service"
 import { UtilsService } from "@app/modules/Utils/services/utils.service"
 import { ShippingService } from "@modules/Shipping/services/shipping.service"
-import { Inject, Injectable, forwardRef } from "@nestjs/common"
+import { Inject, Injectable, Logger, forwardRef } from "@nestjs/common"
 import {
   Customer,
   CustomerAdmissionsData,
-  CustomerDetail,
   CustomerStatus,
   InAdmissableReason,
-  Location,
   NotificationBarID,
   Prisma,
   UTMData,
@@ -46,6 +46,10 @@ type UpdateCustomerAdmissionsDataInput = TriageCustomerResult & {
 
 @Injectable()
 export class CustomerService {
+  private readonly logger = (new Logger(
+    `Cron: ${CustomerService.name}`
+  ) as unknown) as WinstonLogger
+
   triageCustomerSelect = Prisma.validator<Prisma.CustomerSelect>()({
     id: true,
     status: true,
@@ -81,8 +85,50 @@ export class CustomerService {
     private readonly email: EmailService,
     private readonly pushNotification: PushNotificationService,
     private readonly sms: SMSService,
-    private readonly utils: UtilsService
+    private readonly utils: UtilsService,
+    private readonly rental: RentalService
   ) {}
+
+  async cancelCustomer(customerID) {
+    const customerWithInvoice = await this.prisma.client.customer.findUnique({
+      where: { id: customerID },
+      select: {
+        membership: {
+          select: {
+            rentalInvoices: {
+              where: { status: "Draft" },
+              select: CREATE_RENTAL_INVOICE_LINE_ITEMS_INVOICE_SELECT,
+            },
+          },
+        },
+      },
+    })
+    if (customerWithInvoice.membership.rentalInvoices.length > 1) {
+      throw "Customer has more than one draft rental invoice"
+    }
+
+    const activeInvoice = customerWithInvoice.membership.rentalInvoices[0]
+    await this.rental.processInvoice(activeInvoice, {
+      onError: err => {
+        this.logger.error("Rental invoice billing failed", {
+          activeInvoice,
+          error: err,
+        })
+      },
+      forceImmediateCharge: true,
+      createNextInvoice: false,
+    })
+    const invoiceAfterProcessing = await this.prisma.client.rentalInvoice.findUnique(
+      { where: { id: activeInvoice.id }, select: { status: true } }
+    )
+    if (invoiceAfterProcessing.status !== "Billed") {
+      throw "Could not process final invoice"
+    }
+
+    // Run rental invoice
+    // Mark for cancellation in prisma
+    // Mark deactivated locally
+  }
 
   async setCustomerPrismaStatus(user: User, status: CustomerStatus) {
     const customer = await this.auth.getCustomerFromUserID(user.id)

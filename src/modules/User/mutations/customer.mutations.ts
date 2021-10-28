@@ -125,4 +125,8 @@ export class CustomerMutationsResolver {
     )
     return data
   }
+  @Mutation()
+  async cancelCustomer(@Args() { customerID }) {
+    return await this.customerService.cancelCustomer(customerID)
+  }
 }
