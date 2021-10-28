@@ -143,7 +143,14 @@ export class RentalService {
     lostInPhase: true,
   })
 
-  async processInvoice(invoice, onError = err => null) {
+  async processInvoice(
+    invoice,
+    {
+      onError = err => null,
+      forceImmediateCharge = false,
+      createNextInvoice = true,
+    } = {}
+  ) {
     let chargebeeInvoices, chargePromises
     let promises = []
     let lineItems = invoice.lineItems
@@ -166,7 +173,9 @@ export class RentalService {
         }
       }
 
-      const chargeResult = await this.chargebeeChargeTab(planID, lineItems)
+      const chargeResult = await this.chargebeeChargeTab(planID, lineItems, {
+        forceImmediateCharge,
+      })
       ;[chargePromises, chargebeeInvoices] = chargeResult
       promises.push(...chargePromises)
       promises.push(
@@ -190,7 +199,7 @@ export class RentalService {
       }
       onError(err)
     } finally {
-      if (invoice.status === "Draft") {
+      if (invoice.status === "Draft" && createNextInvoice) {
         const newRentalInvoicePromise = ((await this.initDraftRentalInvoice(
           invoice.membership.id,
           "promise"
@@ -1083,7 +1092,8 @@ export class RentalService {
 
   private async chargebeeChargeTab(
     planID: string,
-    lineItems: { id: string }[]
+    lineItems: { id: string }[],
+    { forceImmediateCharge = false }
   ) {
     const promises = []
     const invoicesCreated = []
@@ -1157,7 +1167,8 @@ export class RentalService {
 
     const shouldChargeImmediately =
       ["non_renewing", "cancelled"].includes(subscriptionStatus) ||
-      this.timeUtils.isXOrMoreDaysFromNow(nextBillingAt.toISOString(), 2)
+      this.timeUtils.isXOrMoreDaysFromNow(nextBillingAt.toISOString(), 2) ||
+      forceImmediateCharge
 
     if (shouldChargeImmediately) {
       const result = await chargebee.invoice
