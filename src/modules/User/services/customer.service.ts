@@ -24,6 +24,7 @@ import {
 import { PrismaService } from "@prisma1/prisma.service"
 import * as Sentry from "@sentry/node"
 import { ApolloError } from "apollo-server"
+import chargebee from "chargebee"
 import { defaultsDeep, head, pick } from "lodash"
 import { DateTime } from "luxon"
 
@@ -90,11 +91,15 @@ export class CustomerService {
   ) {}
 
   async cancelCustomer(customerID) {
-    const customerWithInvoice = await this.prisma.client.customer.findUnique({
+    const customerWithData = await this.prisma.client.customer.findUnique({
       where: { id: customerID },
       select: {
+        bagItems: { select: { status: true } },
         membership: {
           select: {
+            subscription: {
+              select: { subscriptionId: true },
+            },
             rentalInvoices: {
               where: { status: "Draft" },
               select: CREATE_RENTAL_INVOICE_LINE_ITEMS_INVOICE_SELECT,
@@ -103,13 +108,27 @@ export class CustomerService {
         },
       },
     })
-    if (customerWithInvoice.membership.rentalInvoices.length > 1) {
-      throw "Customer has more than one draft rental invoice"
+    if (customerWithData.membership.rentalInvoices.length !== 1) {
+      throw new Error("Customer has incorrect number of draft rental invoices")
+    }
+    if (
+      customerWithData.bagItems.filter(a => a.status === "Reserved").length > 0
+    ) {
+      throw new Error(
+        "Unable to cancel customer. Has 1 or more reserved items in bag"
+      )
     }
 
-    const activeInvoice = customerWithInvoice.membership.rentalInvoices[0]
+    const activeInvoice = customerWithData.membership.rentalInvoices[0]
+    let invoiceDidError = false
+    const oldBillingEndDate = activeInvoice.billingEndAt
+    await this.prisma.client.rentalInvoice.update({
+      where: { id: activeInvoice.id },
+      data: { billingEndAt: new Date() },
+    })
     await this.rental.processInvoice(activeInvoice, {
       onError: err => {
+        invoiceDidError = true
         this.logger.error("Rental invoice billing failed", {
           activeInvoice,
           error: err,
@@ -121,13 +140,35 @@ export class CustomerService {
     const invoiceAfterProcessing = await this.prisma.client.rentalInvoice.findUnique(
       { where: { id: activeInvoice.id }, select: { status: true } }
     )
-    if (invoiceAfterProcessing.status !== "Billed") {
-      throw "Could not process final invoice"
+    if (invoiceDidError || invoiceAfterProcessing.status !== "Billed") {
+      await this.prisma.client.rentalInvoice.update({
+        where: { id: activeInvoice.id },
+        data: { billingEndAt: oldBillingEndDate },
+      })
+      throw "Rental invoice billing failed. Unable to cancel customer"
     }
 
-    // Run rental invoice
-    // Mark for cancellation in prisma
-    // Mark deactivated locally
+    const subId = customerWithData.membership.subscription
+    try {
+      await chargebee.subscription
+        .cancel_for_items(subId, {
+          end_of_term: true,
+        })
+        .request()
+      await this.prisma.client.customer.update({
+        where: { id: customerID },
+        data: { status: "Deactivated" },
+      })
+    } catch (err) {
+      this.logger.error("Failed to cancel customer", {
+        activeInvoice,
+        customerWithData,
+        error: err,
+      })
+      throw "Processed final invoice but failed to cancel customer. Please contact a dev"
+    }
+
+    return true
   }
 
   async setCustomerPrismaStatus(user: User, status: CustomerStatus) {
