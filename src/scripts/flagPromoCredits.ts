@@ -28,19 +28,20 @@ const run = async () => {
   const ps = new PrismaService()
   const timeUtils = new TimeUtilsService()
 
-  // const forCustomer = "ckrxx3e4m245312eurtmr67d97"
+  // const forCustomer = "ckqmw6ilg1vj90735tqobkzka"
   const forCustomer = null
   const allPromotionalCredits = []
   let offset = "start"
   while (true) {
     sleep(500)
     let list
+    const params = {
+      limit: 100,
+      ...(forCustomer ? { "customer_id[is]": forCustomer } : {}),
+      ...(offset === "start" ? {} : { offset }),
+    }
     ;({ next_offset: offset, list } = await chargebee.promotional_credit
-      .list({
-        limit: 100,
-        ...(forCustomer ? { "customer_id[is]": forCustomer } : {}),
-        ...(offset === "start" ? {} : { offset }),
-      })
+      .list(params)
       .request())
     allPromotionalCredits.push(...list?.map(a => a.promotional_credit))
     if (!offset) {
@@ -139,7 +140,7 @@ const calculateProperPromotionalCreditBalanceForAllCustomers = async (
     ;({ next_offset: offset, list } = await chargebee.customer
       .list({
         limit: 100,
-        ...(forCustomer ? { "customer_id[is]": forCustomer } : {}),
+        ...(forCustomer ? { "id[is]": forCustomer } : {}),
         ...(offset === "start" ? {} : { offset }),
       })
       .request())
@@ -212,7 +213,10 @@ const calculateProperPromotionalCreditBalanceForAllCustomers = async (
       0
     )
     const expectedCredits = totalCreated - totalUsage
-    if (expectedCredits !== cust.membership.creditBalance) {
+    if (
+      expectedCredits !==
+      cust.membership.creditBalance + chargebeeCustomer.promotional_credits
+    ) {
       flags.push({
         failureMode:
           "Current credit balance not equal to expected credit balance",
@@ -226,7 +230,7 @@ const calculateProperPromotionalCreditBalanceForAllCustomers = async (
 }
 
 const processSpecificFlags = async (
-  ps,
+  ps: PrismaService,
   timeUtils,
   creditsGroupedByChargebeeCustomerId,
   invoicesGroupedByChargebeeCustomerId
@@ -235,6 +239,19 @@ const processSpecificFlags = async (
   for (const chargebeeCustomerId of Object.keys(
     creditsGroupedByChargebeeCustomerId
   )) {
+    const prismaCustomer = await ps.client.customer.findFirst({
+      where: { user: { id: chargebeeCustomerId } },
+      select: {
+        membership: { select: { plan: { select: { planID: true } } } },
+      },
+    })
+    if (prismaCustomer.membership.plan.planID?.includes("all-access")) {
+      flags.push({
+        failureMode: "All-Access customer",
+        id: chargebeeCustomerId,
+      })
+      continue
+    }
     const credits = creditsGroupedByChargebeeCustomerId[chargebeeCustomerId]
     const sortedCredits = orderBy(credits, ["created_at", "desc"])
     const sortedCreditDescriptions = sortedCredits.map(a => a.description)
@@ -579,6 +596,8 @@ const printFlags = async (
 ) => {
   const uniqueFlags = uniqBy(flags, a => a.id)
   const reconciled = [
+    "ckqmw6ilg1vj90735tqobkzka", // Joshua Goldstein
+    "ckrlf5hr612858052gzmkhgcr7c4", // Nicolas Lukac
     "cksg4zho010371522fw1gasfw4s5", // Andrew Sims
     "ckr3p5a90334352uyqlcnpou2j", // Seppe Tirabassi
     "ckrctoz20458651sgm1zunmvo", // David Knowles
@@ -1005,7 +1024,6 @@ const getUserWithData = async (ps: PrismaService, userId) => {
                 where: {
                   adminUser: {
                     AND: [
-                      { email: { contains: "seasons" } },
                       { email: { not: { contains: "kieran" } } },
                       { email: { not: { contains: "oliver" } } },
                       { email: { not: { contains: "faiyam" } } },
@@ -1016,6 +1034,7 @@ const getUserWithData = async (ps: PrismaService, userId) => {
                   createdAt: true,
                   amount: true,
                   reason: true,
+                  adminUser: { select: { email: true } },
                 },
               },
             },
