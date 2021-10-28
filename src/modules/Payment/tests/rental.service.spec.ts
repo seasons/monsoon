@@ -962,16 +962,16 @@ describe("Rental Service", () => {
 
           // Cleaning Fees
           [createCleaningFeeObjectKey(initialReservationProductSUIDs[0], 7)]: {
-            price: 199,
+            price: 88,
           },
           [createCleaningFeeObjectKey(initialReservationProductSUIDs[1], 7)]: {
-            price: 199,
+            price: 88,
           },
           [createCleaningFeeObjectKey(reservationTwoSUIDs[0], 21)]: {
-            price: 595,
+            price: 263,
           },
           [createCleaningFeeObjectKey(reservationThreeSUIDs[0], 30)]: {
-            price: 850,
+            price: 375,
           },
         }
       })
