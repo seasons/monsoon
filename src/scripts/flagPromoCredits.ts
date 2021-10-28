@@ -596,9 +596,7 @@ const printFlags = async (
 ) => {
   const uniqueFlags = uniqBy(flags, a => a.id)
   const reconciled = [
-    "ckgap9nt50dak0750yw70mmst", // Arjun Mocherla
-    "ck37yc0q619j40765gmioeeex", // Travis Freeman
-    "ck37j15hg0kx30765k1wui1al", // Nakul Garg
+    "ck2xjt5zx00di0754fsn5ox5s", // Daniel Rakhamimov
     "ckp1zxzjj0gr50557zdfu2qlt", // Mikel Mayo
     "cksrt1tpf14808242fty8sb3kqxu", // Chad Frisbie
     "ckfyi7tdy078e0781ffql9z75", // Diego Lopez
