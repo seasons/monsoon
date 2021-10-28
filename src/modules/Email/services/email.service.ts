@@ -287,7 +287,7 @@ export class EmailService {
       }),
       ...(pickupTime && {
         pickup: {
-          date: pickupTime?.date,
+          date: DateTime.fromISO(pickupTime?.date).toJSDate(),
           timeRange: ShippingMethodFieldsResolver.getTimeWindow(
             pickupTime?.timeWindowID
           )?.display,
