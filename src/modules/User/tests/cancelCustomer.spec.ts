@@ -41,7 +41,7 @@ describe("Cancel Customer", () => {
     reservationService = moduleRef.get<ReservationService>(ReservationService)
 
     cancelSubscriptionSpy = jest
-      .spyOn(chargebee.subscription, "cancel_for_items")
+      .spyOn(chargebee.subscription, "cancel")
       .mockReturnValue({
         request: async () => {
           return {}
