@@ -596,6 +596,9 @@ const printFlags = async (
 ) => {
   const uniqueFlags = uniqBy(flags, a => a.id)
   const reconciled = [
+    "ckqiynuj113wm07322akhn3j8", // Kemdi Opara
+    "ckmxwozr61a7a0704v1so3duh", // Terrence Baker
+    "ckmxu36qv06lu0704i7oa4z9b", // Julian Robinson
     "ckmwkqhns3ws80789v76c04pc", // Azim Damani
     "ckmuu1owi1s4r0739czpoe6tw", // Mandy Magpili
     "ckmnyyw3747q40770lmq776oy", // Christian Thomas
