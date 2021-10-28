@@ -102,7 +102,7 @@ export class CustomerService {
             },
             rentalInvoices: {
               where: { status: "Draft" },
-              select: CREATE_RENTAL_INVOICE_LINE_ITEMS_INVOICE_SELECT,
+              select: { id: true, billingEndAt: true },
             },
           },
         },
@@ -122,11 +122,12 @@ export class CustomerService {
     const activeInvoice = customerWithData.membership.rentalInvoices[0]
     let invoiceDidError = false
     const oldBillingEndDate = activeInvoice.billingEndAt
-    await this.prisma.client.rentalInvoice.update({
+    const invoiceWithData = await this.prisma.client.rentalInvoice.update({
       where: { id: activeInvoice.id },
       data: { billingEndAt: new Date() },
+      select: CREATE_RENTAL_INVOICE_LINE_ITEMS_INVOICE_SELECT,
     })
-    await this.rental.processInvoice(activeInvoice, {
+    await this.rental.processInvoice(invoiceWithData, {
       onError: err => {
         invoiceDidError = true
         this.logger.error("Rental invoice billing failed", {
@@ -148,10 +149,10 @@ export class CustomerService {
       throw "Rental invoice billing failed. Unable to cancel customer"
     }
 
-    const subId = customerWithData.membership.subscription
     try {
+      const subId = customerWithData.membership.subscription.subscriptionId
       await chargebee.subscription
-        .cancel_for_items(subId, {
+        .cancel(subId, {
           end_of_term: true,
         })
         .request()
@@ -165,7 +166,9 @@ export class CustomerService {
         customerWithData,
         error: err,
       })
-      throw "Processed final invoice but failed to cancel customer. Please contact a dev"
+      throw new Error(
+        "Processed final invoice but failed to cancel customer. Please contact a dev"
+      )
     }
 
     return true
