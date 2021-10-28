@@ -596,6 +596,33 @@ const printFlags = async (
 ) => {
   const uniqueFlags = uniqBy(flags, a => a.id)
   const reconciled = [
+    "ckfyi7tdy078e0781ffql9z75", // Diego Lopez
+    "ckcp88wnp1ipt0740piinrz3c", // Maria Montgomery
+    "ck2zc5u8u0nub07341d18sok7", // Luke Beard
+    "ckhqey89646wm0772bfwzgc3o",
+    "ckjwewz6c3eqj0715gtf8mzrr",
+    "ckk2sbs6o0kp30728drfyhks0",
+    "ckk5dyo5348y40749tcqf32in", // Ross Michaels
+    "ckmbhmx270hya0738cm5arf46", // Austin Reid
+    "ckoa1rzt8156k0793ntulifmw", // Dustin Vutera
+    "ckcrw6yf01dhq0794ixojq0ki", // Cameron Herbert
+    "ckcrwk6ni1e3z0794gmpevmvw", // Andrew Vitale
+    "ck5pckprx3y5d0742s1loi188", // Jared Zoneraich
+    "ckccdv2kd1gct0756t9dlp8yj", // Robert Kelly
+    "ckg9omwxu0i3q0749l0jytuld", // Ryan DoyLoo
+    "ckovd5x0x000k05979pqcout3", // Calvin Ngo
+    "ckp8b7r6i01qa0539ig65h77g", // Sumedh
+    "ck5ocaybqccbj0721ykj29uav", // Mike Katz
+    "ck4bp2guo0w5x0781zrvn8l4f", // Carlo Dumandan
+    "ckjwuxctl4j990715vqay2su5", // James Mcknight
+    "cke7pn11803m00742qwrhq7js", // Adrian Zamora
+    "ckcqes3jo1ka4070235hag39s", // Arjun Dhillon
+    "ckpya0cwi2u140758nak1kugu", // Anoop Kansupada
+    "ck3091uh700kd07977q2bdix5", // SoonKyu Park
+    "ckjjegnfs13m60729ip4qjli7", // John Brice
+    "ckgap9nt50dak0750yw70mmst", // Arjun Mocherla
+    "ckggtnsmi0duk07876dppdrge", // Camy Dorolian
+    "ck37yc0q619j40765gmioeeex", // Travis Freeman
     "ck37j15hg0kx30765k1wui1al", // Nakul Garg
     "ckqmw6ilg1vj90735tqobkzka", // Joshua Goldstein
     "ckrlf5hr612858052gzmkhgcr7c4", // Nicolas Lukac
@@ -710,10 +737,12 @@ const printFlags = async (
     "ckjz3w2cg389907471a2wcdnd", // Oren Schauble
     "ckodazw0516mq0710twve1mo0", // John Sese
     "cksls2r3q2862212fvuvzn2d2rk", // Dean Daneluzzi
+    "ckovm3mlj14wx0599d9fr40ci", // Matt Ramoundos
   ]
   const inProcess = [
     "cksrs1j3n13574712fty3eyx01fm", // Thomas Doe
     "ckbnyur5b5eud0719qqol2pu2", // Abael Solomon
+    "ckp6y78f506no05463x9vlwh8", // Joe Chen
   ]
 
   const filteredUniqueFlags = uniqueFlags
@@ -833,7 +862,7 @@ const printFlags = async (
         console.log(
           `**Total Expected: ${formatPrice(
             adjustedTotal
-          )} ${adjustmentDetail}**\n`
+          )}${adjustmentDetail}**\n`
         )
         console.log(
           `**Total Present: Chargebee ${formatPrice(
@@ -874,7 +903,7 @@ const printFlags = async (
         })
         if (adhocInvoicesSinceSept20.length > 0) {
           console.log(
-            `*Adhoc invoices since Sept 20*\n${adhocInvoicesSinceSept20
+            `\n*Adhoc invoices since Sept 20*\n${adhocInvoicesSinceSept20
               .map(
                 invoice =>
                   `${invoice.id}: ${formatPrice(
@@ -895,6 +924,7 @@ const printFlags = async (
             )} in credits intended for rental charges`
           )
         }
+        console.log("\n*Corrective Actions Taken*")
         console.log("\n")
       } catch (err) {
         console.log(err)
