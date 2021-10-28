@@ -311,13 +311,15 @@ export class ReservationService {
     })) as any
 
     // Send confirmation email
-    await this.emails.sendReservationConfirmationEmail(
-      customerWithData.user,
-      newProductVariantsBeingReserved,
+    await this.emails.sendReservationConfirmationEmail({
+      user: customerWithData.user,
+      productsVariantIDs: newProductVariantsBeingReserved,
+      trackingNumber: seasonsToCustomerTransaction.tracking_number,
+      trackingUrl: seasonsToCustomerTransaction.tracking_url_provider,
       reservation,
-      seasonsToCustomerTransaction.tracking_number,
-      seasonsToCustomerTransaction.tracking_url_provider
-    )
+      shippingCode,
+      pickupTime,
+    })
 
     try {
       await this.removeRestockNotifications(items, customer?.id)
