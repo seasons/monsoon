@@ -596,6 +596,26 @@ const printFlags = async (
 ) => {
   const uniqueFlags = uniqBy(flags, a => a.id)
   const reconciled = [
+    "ck8c20pcy8c0e0758ee2scg89",
+    "ckjdpu3mi0b3d0744fs0gtztz",
+    "ckmmaq11124ha07195geaq2ih", // Marcel Florus
+    "ckrdp02sf462951vaih05m7pk", // Brian Frodema
+    "ckhpr9wfh34df0772ab4qm2zv", // Michael Montano
+    "ck55nbnc3cmli07042db294p2", // Timothy O'brien
+    "ck55r3rmvecaw0704zbnr46cg", // Elliot Darvish
+    "ckp06bd69000d05270hmr7n47", // Rony Rothken
+    "ckj0he8an100d0730cfn7vjok", // Gareth West
+    "ckljwxip438j00764psxsaoup", // Jason Wagg
+    "ckswavvml3808672fx0bwb49uld", // Nicolas Zenere
+    "ckp7isydt00140569y7cwof5a", // Satbir Singh
+    "ckd1sjdae0l0u0762e20a0t3t", // Matt Miller
+    "ck36fm0h21col0729kzvwwrnv", // Brian Watson
+    "ck2gyxh13001e0799uq6f6s4c", // Peter Boyce II
+    "ckrblw8m200145uv5bt0ioole", // Jonathan Ganthier
+    "cksqxopqk5648322fty3m8tsncz", // Nav Ro
+    "ckd6ueone09va0767twu43dzr", // Denzel Mooney
+    "cksy9am94645792funso6eplx6", // Patrick Hagerman
+    "ckp1623gw00yr0557wuxm2fzn", // Duval Bodden
     "ckgdtdvec087b0718vxgymdj9", // Maxwell Auth
     "cki63d3r21nnf0746h7nxzxni", // Jack Mellon
     "ckct2q5v91e9b07920igee3kx", // Yosh Karbowniczak
@@ -784,12 +804,13 @@ const printFlags = async (
     "ckodazw0516mq0710twve1mo0", // John Sese
     "cksls2r3q2862212fvuvzn2d2rk", // Dean Daneluzzi
     "ckovm3mlj14wx0599d9fr40ci", // Matt Ramoundos
-  ]
-  const inProcess = [
     "cksrs1j3n13574712fty3eyx01fm", // Thomas Doe
     "ckbnyur5b5eud0719qqol2pu2", // Abael Solomon
-    "ckp6y78f506no05463x9vlwh8", // Joe Chen
+    "ckp6pt4jo1mdk05084ylvzv6g", // Ryan Degraw
+    "ckswnz5xl5198762gumrlkuciyc", // Jefferson Cheng
+    "ckp6y78f506no05463x9vlwh8",
   ]
+  const inProcess = []
 
   const filteredUniqueFlags = uniqueFlags
     .filter(a => !reconciled.includes(a.id))
