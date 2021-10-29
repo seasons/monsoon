@@ -172,7 +172,6 @@ export class ChargebeeController {
             creditUpdateHistory: {
               create: {
                 amount: newCredits,
-                // TODO: Add invoice id to this
                 reason: `Grandfathered customer paid subscription dues on ${planLineItem.description} plan. Invoice #${invoiceId}`,
               },
             },
