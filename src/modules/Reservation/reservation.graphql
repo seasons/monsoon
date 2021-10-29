@@ -270,6 +270,8 @@ type Reservation @cacheControl(maxAge: 0) {
   pickupWindow: TimeWindow
   adminLogs: [AdminActionLog!]! @hasRole(roles: [Admin])
   shippingOption: ShippingOption
+    @deprecated(reason: "Use shippingMethod instead")
+  shippingMethod: ShippingMethod
   adminMessage: ReservationAdminMessage! @hasRole(roles: [Admin])
 }
 

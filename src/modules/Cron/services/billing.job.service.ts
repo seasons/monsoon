@@ -131,11 +131,13 @@ export class BillingScheduledJobs {
 
     for (const invoice of invoicesToHandle) {
       invoicesHandled++
-      await this.rental.processInvoice(invoice, err => {
-        this.logger.error("Rental invoice billing failed", {
-          invoice,
-          error: err,
-        })
+      await this.rental.processInvoice(invoice, {
+        onError: err => {
+          this.logger.error("Rental invoice billing failed", {
+            invoice,
+            error: err,
+          })
+        },
       })
     }
 

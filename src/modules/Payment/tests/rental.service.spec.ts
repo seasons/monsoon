@@ -1760,9 +1760,9 @@ describe("Rental Service", () => {
               select: CREATE_RENTAL_INVOICE_LINE_ITEMS_INVOICE_SELECT,
             }
           )
-          await rentalService.processInvoice(rentalInvoiceToBeBilled, err =>
-            console.log(err)
-          )
+          await rentalService.processInvoice(rentalInvoiceToBeBilled, {
+            onError: err => console.log(err),
+          })
 
           custWithData = (await getCustWithData()) as any
           rentalInvoicesStatuses = custWithData.membership.rentalInvoices.map(
@@ -1907,9 +1907,9 @@ describe("Rental Service", () => {
               select: CREATE_RENTAL_INVOICE_LINE_ITEMS_INVOICE_SELECT,
             }
           )
-          await rentalService.processInvoice(rentalInvoiceToBeBilled, err =>
-            console.log(err)
-          )
+          await rentalService.processInvoice(rentalInvoiceToBeBilled, {
+            onError: err => console.log(err),
+          })
 
           // Next charge. No error being thrown this time
           jest
@@ -1929,9 +1929,9 @@ describe("Rental Service", () => {
               select: CREATE_RENTAL_INVOICE_LINE_ITEMS_INVOICE_SELECT,
             }
           )
-          await rentalService.processInvoice(rentalInvoiceToBeBilled, err =>
-            console.log(err)
-          )
+          await rentalService.processInvoice(rentalInvoiceToBeBilled, {
+            onError: err => console.log(err),
+          })
         })
         it("Deletes unbilled charges on chargebee", () => {
           expect(deleteUnbilledChargesSpy).toHaveBeenCalledTimes(2) // once on initial failure, one on retry
