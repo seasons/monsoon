@@ -965,6 +965,7 @@ model RentalInvoice {
   reservations   Reservation[]           @relation("RentalInvoiceToReservations")
   products       PhysicalProduct[]       @relation("RentalInvoiceToProducts")
   lineItems      RentalInvoiceLineItem[]
+  comment        String?
 }
 
 model RentalInvoiceLineItem {
