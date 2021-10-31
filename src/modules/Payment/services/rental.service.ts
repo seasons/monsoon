@@ -1214,11 +1214,7 @@ export class RentalService {
     return [promises, invoicesCreated]
   }
 
-  private async addPromotionalCredits(
-    prismaUserId,
-    totalInvoiceCharges,
-    invoiceId
-  ) {
+  async addPromotionalCredits(prismaUserId, totalInvoiceCharges, invoiceId) {
     if (!totalInvoiceCharges) {
       return
     }
