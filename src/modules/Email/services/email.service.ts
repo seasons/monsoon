@@ -276,15 +276,13 @@ export class EmailService {
       productsVariantIDs
     )
 
-    const payload = await RenderEmail.reservationConfirmation({
+    const data = {
       products: gridPayload,
       orderNumber: `${reservation.reservationNumber}`,
       trackingNumber,
       trackingURL: trackingUrl,
       id: user.id,
-      ...(shippingCode && {
-        customerWillPickup: shippingCode === ShippingCode.Pickup,
-      }),
+      customerWillPickUp: shippingCode === ShippingCode.Pickup,
       ...(pickupTime && {
         pickup: {
           date: DateTime.fromISO(pickupTime?.date).toJSDate(),
@@ -293,7 +291,9 @@ export class EmailService {
           )?.display,
         },
       }),
-    })
+    }
+
+    const payload = await RenderEmail.reservationConfirmation(data)
     await this.sendPreRenderedTransactionalEmail({
       user,
       payload,
