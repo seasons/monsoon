@@ -3,6 +3,7 @@ import { ErrorService } from "@app/modules/Error/services/error.service"
 import { RentalService } from "@app/modules/Payment/services/rental.service"
 import { ProductVariantService } from "@app/modules/Product/services/productVariant.service"
 import { PushNotificationService } from "@app/modules/PushNotification"
+import { ShippingMethodFieldsResolver } from "@app/modules/Shipping/fields/shippingMethod.fields.resolver"
 import { CustomerUtilsService } from "@app/modules/User/services/customer.utils.service"
 import { UtilsService } from "@app/modules/Utils/services/utils.service"
 import { InventoryStatus, PhysicalProductStatus } from "@app/prisma"
@@ -429,17 +430,6 @@ export class ReservationService {
         detail: {
           select: {
             id: true,
-            shippingAddress: {
-              select: {
-                shippingOptions: {
-                  select: {
-                    id: true,
-                    shippingMethod: true,
-                    externalCost: true,
-                  },
-                },
-              },
-            },
           },
         },
       },
@@ -490,11 +480,6 @@ export class ReservationService {
                       },
                     },
                   },
-                },
-              },
-              shippingOption: {
-                select: {
-                  shippingMethod: true,
                 },
               },
             },

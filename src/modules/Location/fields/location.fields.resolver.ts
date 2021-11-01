@@ -1,11 +1,14 @@
+import { PrismaService } from "@app/prisma/prisma.service"
 import { Parent, ResolveField, Resolver } from "@nestjs/graphql"
-import { sortBy } from "lodash"
 
 import { LocationService } from "../services/location.service"
 
 @Resolver("Location")
 export class LocationFieldsResolver {
-  constructor(private readonly location: LocationService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly location: LocationService
+  ) {}
 
   @ResolveField()
   async weather(@Parent() location) {
@@ -14,6 +17,16 @@ export class LocationFieldsResolver {
 
   @ResolveField()
   async shippingOptions(@Parent() location) {
-    return sortBy(location?.shippingOptions || [], a => a.externalCost)
+    const methods = await this.prisma.client.shippingMethod.findMany({})
+
+    const options = methods.map(method => {
+      return {
+        id: method.id,
+        averageDuration: 3,
+        externalCost: 0,
+        shippingMethod: method,
+      }
+    })
+    return options
   }
 }

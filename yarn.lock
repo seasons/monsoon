@@ -2061,17 +2061,17 @@
     "@angular-devkit/core" "11.2.6"
     "@angular-devkit/schematics" "11.2.6"
 
-"@seasons/wind@2.6.7":
-  version "2.6.7"
-  resolved "https://registry.yarnpkg.com/@seasons/wind/-/wind-2.6.7.tgz#d4c409fbdd2aeb9e11574414d4f0a66c2868ba7a"
-  integrity sha512-8VKngC0H0gEzytJ4hKJeXfKmoaij/JgsS+0jslcZCy4lWs1rQ3KigmdWBBNBDYY6lZi57ZfbKPFHBOwqsfzpGQ==
+"@seasons/wind@2.7.2":
+  version "2.7.2"
+  resolved "https://registry.yarnpkg.com/@seasons/wind/-/wind-2.7.2.tgz#be97764340bfa83a2a492ab305e9ff421a97bea0"
+  integrity sha512-IYILidQ6MHpjO+QH+Xo5K3ynT+IQNWb4MEPh2YOP9oSstwK+HVKMrNZ5+y2xlBNFwipykfMFR8fd5IW1p2pqPg==
   dependencies:
     "@types/node" "^14.0.23"
     child_process "^1.0.2"
     handlebars "^4.7.6"
     lodash "^4.17.21"
+    luxon "^2.0.2"
     mjml "^4.10.3"
-    moment "^2.29.1"
     open "^7.3.0"
     prettier "^2.1.2"
     replace-in-file "^6.1.0"
@@ -10687,6 +10687,11 @@ luxon@1.22.0:
   resolved "https://registry.yarnpkg.com/luxon/-/luxon-1.22.0.tgz#639525c7c69e594953c7b142794466b8ea85b868"
   integrity sha512-3sLvlfbFo+AxVEY3IqxymbumtnlgBwjDExxK60W3d+trrUzErNAz/PfvPT+mva+vEUrdIodeCOs7fB6zHtRSrw==
 
+luxon@^2.0.2:
+  version "2.0.2"
+  resolved "https://registry.yarnpkg.com/luxon/-/luxon-2.0.2.tgz#11f2cd4a11655fdf92e076b5782d7ede5bcdd133"
+  integrity sha512-ZRioYLCgRHrtTORaZX1mx+jtxKtKuI5ZDvHNAmqpUzGqSrR+tL4FVLn/CUGMA3h0+AKD1MAxGI5GnCqR5txNqg==
+
 macos-release@^2.2.0:
   version "2.5.0"
   resolved "https://registry.yarnpkg.com/macos-release/-/macos-release-2.5.0.tgz#067c2c88b5f3fb3c56a375b2ec93826220fa1ff2"
@@ -11397,7 +11402,7 @@ moment@2.26.0:
   resolved "https://registry.yarnpkg.com/moment/-/moment-2.26.0.tgz#5e1f82c6bafca6e83e808b30c8705eed0dcbd39a"
   integrity sha512-oIixUO+OamkUkwjhAVE18rAMfRJNsNe/Stid/gwHSOfHrOtw9EhAY2AHvdKZ/k/MggcYELFCJz/Sn2pL8b8JMw==
 
-"moment@>= 2.9.0", moment@^2.29.1:
+"moment@>= 2.9.0":
   version "2.29.1"
   resolved "https://registry.yarnpkg.com/moment/-/moment-2.29.1.tgz#b2be769fa31940be9eeea6469c075e35006fa3d3"
   integrity sha512-kHmoybcPV8Sqy59DwNDY3Jefr64lK/by/da0ViFcuA4DH0vQg5Q6Ze5VimxkfQNSC+Mls/Kx53s7TjP1RhFEDQ==

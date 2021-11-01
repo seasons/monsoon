@@ -59,6 +59,28 @@ export class CustomerMutationsResolver {
   }
 
   @Mutation()
+  async updateCreditBalance(
+    @Args() { membershipId, amount, reason },
+    @Customer() customer
+  ) {
+    if (reason.length <= 0) {
+      throw new Error(`Must have a reason for updating a credit balance`)
+    }
+
+    if (amount === 0) {
+      throw new Error(`A value greater than 0 must be entered for amount`)
+    }
+    const customerId = customer.id
+
+    return await this.customerService.updateCreditBalance({
+      membershipId,
+      amount,
+      reason,
+      customerId,
+    })
+  }
+
+  @Mutation()
   async triageCustomer(
     @Customer() sessionCustomer,
     @Application() application
@@ -102,5 +124,9 @@ export class CustomerMutationsResolver {
       }
     )
     return data
+  }
+  @Mutation()
+  async cancelCustomer(@Args() { customerId }) {
+    return await this.customerService.cancelCustomer(customerId)
   }
 }

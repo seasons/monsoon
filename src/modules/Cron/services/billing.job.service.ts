@@ -17,8 +17,7 @@ export class BillingScheduledJobs {
 
   constructor(
     private readonly prisma: PrismaService,
-    private readonly rental: RentalService,
-    private readonly error: ErrorService
+    private readonly rental: RentalService
   ) {}
 
   @Cron(CronExpression.EVERY_DAY_AT_4AM)
@@ -132,13 +131,13 @@ export class BillingScheduledJobs {
 
     for (const invoice of invoicesToHandle) {
       invoicesHandled++
-      await this.rental.processInvoice(invoice, err => {
-        this.error.setExtraContext(invoice)
-        this.error.captureError(err)
-        this.logger.error("Rental invoice billing failed", {
-          invoice,
-          error: err,
-        })
+      await this.rental.processInvoice(invoice, {
+        onError: err => {
+          this.logger.error("Rental invoice billing failed", {
+            invoice,
+            error: err,
+          })
+        },
       })
     }
 

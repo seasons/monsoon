@@ -1,13 +1,13 @@
+import { ShippingMethodFieldsResolver } from "@app/modules/Shipping/fields/shippingMethod.fields.resolver"
 import { Injectable } from "@nestjs/common"
-import { Order, ProductVariant } from "@prisma/client"
+import { Order, ShippingCode } from "@prisma/client"
 import RenderEmail from "@seasons/wind"
 import sgMail from "@sendgrid/mail"
+import { DateTime } from "luxon"
 import nodemailer from "nodemailer"
 
-import { EmailId, Product, User } from "../../../prisma"
-import { DateTime } from "../../../prisma/prisma.binding"
+import { EmailId, User } from "../../../prisma"
 import { PrismaService } from "../../../prisma/prisma.service"
-import { UtilsService } from "../../Utils/services/utils.service"
 import {
   EmailUtilsService,
   MonsoonProductGridItem,
@@ -20,7 +20,6 @@ export type EmailUser = Pick<User, "email" | "firstName" | "id">
 export class EmailService {
   constructor(
     private readonly prisma: PrismaService,
-    private readonly utils: UtilsService,
     private readonly emailUtils: EmailUtilsService
   ) {}
 
@@ -253,13 +252,26 @@ export class EmailService {
     })
   }
 
-  async sendReservationConfirmationEmail(
-    user: EmailUser,
-    productsVariantIDs: string[],
-    reservation: { reservationNumber: number },
-    trackingNumber?: string,
+  async sendReservationConfirmationEmail({
+    user,
+    productsVariantIDs,
+    reservation,
+    trackingNumber,
+    trackingUrl,
+    shippingCode,
+    pickupTime,
+  }: {
+    user: EmailUser
+    productsVariantIDs: string[]
+    reservation: { reservationNumber: number }
+    trackingNumber?: string
     trackingUrl?: string
-  ) {
+    shippingCode?: ShippingCode
+    pickupTime?: {
+      date: string
+      timeWindowID?: string
+    }
+  }) {
     const gridPayload = await this.emailUtils.createGridPayloadWithProductVariants(
       productsVariantIDs
     )
@@ -270,6 +282,17 @@ export class EmailService {
       trackingNumber,
       trackingURL: trackingUrl,
       id: user.id,
+      ...(shippingCode && {
+        customerWillPickup: shippingCode === ShippingCode.Pickup,
+      }),
+      ...(pickupTime && {
+        pickup: {
+          date: DateTime.fromISO(pickupTime?.date).toJSDate(),
+          timeRange: ShippingMethodFieldsResolver.getTimeWindow(
+            pickupTime?.timeWindowID
+          )?.display,
+        },
+      }),
     })
     await this.sendPreRenderedTransactionalEmail({
       user,
@@ -287,6 +310,31 @@ export class EmailService {
       payload,
       emailId: "ReturnReminder",
     })
+  }
+
+  async sendRestockNotificationEmails(emails: string[], product) {
+    const payload = await RenderEmail.restockNotification({
+      products: [await this.emailUtils.productToGridPayload(product)],
+    })
+
+    const users = await this.prisma.client.user.findMany({
+      where: {
+        email: { in: emails },
+      },
+      select: {
+        id: true,
+        email: true,
+        firstName: true,
+      },
+    })
+
+    for (const user of users) {
+      await this.sendPreRenderedTransactionalEmail({
+        user,
+        payload,
+        emailId: "RestockNotification",
+      })
+    }
   }
 
   async sendYouCanNowReserveAgainEmail(user: EmailUser) {
@@ -421,7 +469,7 @@ export class EmailService {
     })
 
     const msg = {
-      from: { email: "membership@seasons.nyc", name: "Seasons NYC" },
+      from: { email: "membership@seasons.nyc", name: "Seasons" },
       to,
       bcc: "emails@seasons.nyc",
       subject: subject,

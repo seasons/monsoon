@@ -350,7 +350,7 @@ export class CustomerFieldsResolver {
         user: { select: { verificationStatus: true } },
         detail: {
           select: {
-            height: true,
+            topSizes: true,
             stylePreferences: true,
             shippingAddress: { select: { address1: true } },
           },
@@ -360,7 +360,7 @@ export class CustomerFieldsResolver {
 
     const values = [
       custWithData?.user?.verificationStatus === "Approved",
-      custWithData?.detail?.height !== null,
+      custWithData?.detail?.topSizes?.length > 0,
       custWithData?.detail?.stylePreferences !== null,
       custWithData?.detail?.shippingAddress?.address1 !== null,
     ]

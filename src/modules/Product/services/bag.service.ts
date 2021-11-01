@@ -1,21 +1,16 @@
-import { Customer } from "@app/decorators"
-import { ErrorService } from "@app/modules/Error/services/error.service"
 import { ProductUtilsService } from "@app/modules/Utils/services/product.utils.service"
-import { StatementsService } from "@app/modules/Utils/services/statements.service"
 import { UtilsService } from "@app/modules/Utils/services/utils.service"
 import { Injectable } from "@nestjs/common"
-import { BagItem, BagItemStatus, InventoryStatus, Prisma } from "@prisma/client"
+import { BagItem, InventoryStatus, Prisma } from "@prisma/client"
 import { PrismaService } from "@prisma1/prisma.service"
 import { ApolloError } from "apollo-server"
 
-import { ReservationService } from "../../Reservation/services/reservation.service"
 import { ProductVariantService } from "../services/productVariant.service"
 
 @Injectable()
 export class BagService {
   constructor(
     private readonly prisma: PrismaService,
-    private readonly reservationService: ReservationService,
     private readonly productVariantService: ProductVariantService,
     private readonly utils: UtilsService,
     private readonly productUtils: ProductUtilsService
@@ -131,6 +126,16 @@ export class BagService {
         },
       },
     })
+    const customerID = oldBagItem.customer.id
+    const activeRentalInvoice = await this.prisma.client.rentalInvoice.findFirst(
+      {
+        where: {
+          membership: { customer: { id: customerID } },
+          status: "Draft",
+        },
+        orderBy: { createdAt: "desc" },
+      }
+    )
 
     let newPhysicalProduct = await this.prisma.client.physicalProduct.findUnique(
       {
@@ -147,7 +152,7 @@ export class BagService {
       }
     )
     const promises = []
-    const customerID = oldBagItem.customer.id
+
     const newItemAlreadyInBag = oldBagItem.customer.bagItems
       .map(a => a.productVariant.id)
       .includes(newPhysicalProduct.productVariant.id)
@@ -200,6 +205,17 @@ export class BagService {
                 },
               },
             },
+          },
+        },
+      })
+    )
+    promises.push(
+      this.prisma.client.rentalInvoice.update({
+        where: { id: activeRentalInvoice.id },
+        data: {
+          products: {
+            disconnect: { id: oldPhysicalProduct.id },
+            connect: { id: newPhysicalProduct.id },
           },
         },
       })

@@ -36,8 +36,7 @@ export class ReservationMutationsResolver {
 
   @Mutation()
   async reserveItems(
-    @Args() { shippingCode },
-    @User() user,
+    @Args() { shippingCode, options },
     @Customer() customer,
     @Select({
       withFragment: ENSURE_TRACK_DATA_FRAGMENT,
@@ -45,20 +44,24 @@ export class ReservationMutationsResolver {
     select,
     @Application() application
   ) {
-    const returnData = await this.reserve.reserveItems(
+    const returnData = await this.reserve.reserveItems({
+      pickupTime: {
+        date: options?.pickupDate,
+        timeWindowID: options?.timeWindowID,
+      },
       shippingCode,
       customer,
-      select
-    )
-
-    // Track the selection
-    this.segment.track(user.id, "Reserved Items", {
-      ...pick(user, ["email", "firstName", "lastName"]),
-      reservationID: returnData.id,
-      // productVariantIDs, TODO: Fill this in
-      units: returnData.products.map(a => a.seasonsUID),
-      application,
+      select,
     })
+
+    // TODO: Track the selection
+    // this.segment.track(user.id, "Reserved Items", {
+    //   ...pick(user, ["email", "firstName", "lastName"]),
+    //   reservationID: returnData.id,
+    //   // productVariantIDs, TODO: Fill this in
+    //   units: returnData.products.map(a => a.seasonsUID),
+    //   application,
+    // })
 
     return returnData
   }
@@ -87,20 +90,20 @@ export class ReservationMutationsResolver {
         },
       },
     })
-    const returnData = await this.reserve.reserveItems(
+    const returnData = await this.reserve.reserveItems({
       shippingCode,
-      custWithData,
-      select
-    )
+      customer: custWithData,
+      select,
+    })
 
     // Track the selection
-    this.segment.track(custWithData.user.id, "Reserved Items", {
-      ...pick(custWithData.user, ["email", "firstName", "lastName"]),
-      reservationID: returnData.id,
-      // items, TODO: FIll this in
-      units: returnData.products.map(a => a.seasonsUID),
-      application,
-    })
+    // this.segment.track(custWithData.user.id, "Reserved Items", {
+    //   ...pick(custWithData.user, ["email", "firstName", "lastName"]),
+    //   reservationID: returnData.id,
+    //   // items, TODO: FIll this in
+    //   units: returnData.products.map(a => a.seasonsUID),
+    //   application,
+    // })
 
     return returnData
   }

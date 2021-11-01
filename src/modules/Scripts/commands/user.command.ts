@@ -324,10 +324,6 @@ export class UserCommands {
             detail: { select: { shippingAddress: { select: { id: true } } } },
           },
         })
-        await this.customer.addCustomerLocationShippingOptions(
-          "NY",
-          cust.detail.shippingAddress.id
-        )
 
         await this.prisma.client.billingInfo.create({
           data: {
@@ -344,9 +340,7 @@ export class UserCommands {
           },
         })
 
-        if (["access-monthly", "access-yearly"].includes(planID)) {
-          await this.rental.initFirstRentalInvoice(customer.id)
-        }
+        await this.rental.initFirstRentalInvoice(customer.id)
       }
 
       // Give them a valid admissions record if appropriate

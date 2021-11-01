@@ -1,6 +1,7 @@
 import { PushNotificationService } from "@app/modules/PushNotification/services/pushNotification.service"
 import { StatementsService } from "@app/modules/Utils/services/statements.service"
 import { UtilsService } from "@app/modules/Utils/services/utils.service"
+import { EmailService } from "@modules/Email/services/email.service"
 import { Injectable } from "@nestjs/common"
 import {
   Brand,
@@ -32,13 +33,6 @@ interface OffloadPhysicalProductIfNeededInput {
   offloadNotes: string
 }
 
-interface ValidateWarehouseLocationStructureInput {
-  type: WarehouseLocationType
-  barcode: string
-  locationCode: string
-  itemCode: string
-}
-
 const unstoreErrorMessage =
   "Can not unstore a physical product directly. Must do so from parent product."
 
@@ -51,7 +45,8 @@ export class PhysicalProductService {
     private readonly productService: ProductService,
     private readonly physicalProductUtils: PhysicalProductUtilsService,
     private readonly utils: UtilsService,
-    private readonly statements: StatementsService
+    private readonly statements: StatementsService,
+    private readonly emails: EmailService
   ) {}
 
   async updatePhysicalProduct({
@@ -87,7 +82,19 @@ export class PhysicalProductService {
                   id: true,
                   slug: true,
                   name: true,
+                  images: {
+                    select: {
+                      url: true,
+                      id: true,
+                    },
+                  },
                   brand: { select: { id: true, name: true } },
+                  variants: {
+                    select: {
+                      id: true,
+                      displayShort: true,
+                    },
+                  },
                 },
               },
             },
@@ -139,7 +146,7 @@ export class PhysicalProductService {
         const emails = notifications.map(notif => notif.customer?.user?.email)
 
         // Send the notification
-        notifyUsersIfNeeded = async () =>
+        notifyUsersIfNeeded = async () => {
           await this.pushNotification.pushNotifyUsers({
             emails,
             pushNotifID: "ProductRestock",
@@ -150,6 +157,9 @@ export class PhysicalProductService {
               brandName: product?.brand?.name,
             },
           })
+
+          await this.emails.sendRestockNotificationEmails(emails, product)
+        }
       }
     } else if (
       !!physProdBeforeUpdate.warehouseLocation?.barcode &&
@@ -341,97 +351,6 @@ export class PhysicalProductService {
     })
     return interpretedLogs
   }
-
-  /**
-   * Applies type-specific rules to validate a warehouse location
-   * Throws an error if invalid
-   */
-  async validateWarehouseLocationStructure({
-    type,
-    barcode,
-    locationCode,
-    itemCode,
-  }: ValidateWarehouseLocationStructureInput) {
-    if (!type) {
-      throw new Error("Must include warehouse location type")
-    }
-    if (!barcode) {
-      throw new Error("Must include barcode")
-    }
-
-    // Ensure locationCode and itemCode are what is implied by the barcode
-    const [typePrefix, barcodeLocationCode, barcodeItemCode] = barcode.split(
-      "-"
-    )
-    if (
-      !/^C$|^SR$|^DB$/.test(typePrefix) || // type prefix is C, SR, or DB
-      !/^\w{4}$/.test(barcodeLocationCode) || // locationCode is 4 alphanumeric chars
-      !/^[A-Za-z0-9.]{3,5}$/.test(barcodeItemCode) // barcode is 3-5 alphanumeric chars
-    ) {
-      throw new Error(
-        "Invalid barcode. Must be of form typeprefix-locationcode-itemcode e.g SR-A200-ABES"
-      )
-    }
-    if (barcodeLocationCode !== locationCode) {
-      throw new Error("locationCode must match barcode")
-    }
-    if (barcodeItemCode !== itemCode) {
-      throw new Error("itemCode must match barcode")
-    }
-
-    // Validate the location code
-    const modIndexErrorString =
-      "Must be of form xy where x is in [A-Z] and y is in [100, 110, ..., 990]"
-    if (!this.validModIndexLocationCode(locationCode)) {
-      throw new Error(`Invalid locationcode. ${modIndexErrorString}`)
-    }
-
-    // Validate type-specific details
-    switch (type) {
-      case "Conveyor":
-        if (typePrefix !== "C") {
-          throw new Error(
-            "Conveyer Warehouse Locations barcodes must begin with 'C'"
-          )
-        }
-        // 4 digit number
-        if (!/^\d\d\d\d$/.test(itemCode)) {
-          //
-          throw new Error(
-            "Invalid itemCode. Must be in [0001, 0002, ..., 9999]"
-          )
-        }
-        break
-      case "Rail":
-        if (typePrefix !== "SR") {
-          throw new Error(
-            "Rail Warehouse Locations barcodes must begin with 'SR'"
-          )
-        }
-        const value = parseInt(itemCode.substring(1))
-        if (value < 100 || value > 990) {
-          throw new Error(
-            `Invalid itemcode. Should be a value between A100 and A990`
-          )
-        }
-        break
-      case "Bin":
-        if (typePrefix !== "DB") {
-          throw new Error(
-            "Bin Warehouse Locations barcodes must begin with 'DB'"
-          )
-        }
-        if (!this.validModIndexLocationCode(itemCode)) {
-          throw new Error(`Ivalid itemcode. ${modIndexErrorString}`)
-        }
-        break
-      default:
-        throw new Error(`Invalid type: ${type}`)
-    }
-
-    return true
-  }
-
   /*
   Enforces a variety if rules that need to stay in place whenever we set
   a warehouse location on a physical product

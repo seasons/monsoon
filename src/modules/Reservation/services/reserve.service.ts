@@ -61,11 +61,20 @@ export class ReserveService {
     private readonly productUtils: ProductUtilsService
   ) {}
 
-  async reserveItems(
-    shippingCode: ShippingCode,
-    customer: Pick<Customer, "id">,
-    select: Prisma.ReservationSelect = { id: true }
-  ) {
+  async reserveItems({
+    shippingCode,
+    customer,
+    select,
+    pickupTime,
+  }: {
+    shippingCode: ShippingCode
+    customer: Pick<Customer, "id">
+    select: Prisma.ReservationSelect
+    pickupTime?: {
+      date: string
+      timeWindowID?: string
+    }
+  }) {
     const promises = []
     const customerWithData = await this.prisma.client.customer.findUnique({
       where: { id: customer.id },
@@ -82,12 +91,6 @@ export class ReserveService {
                 city: true,
                 state: true,
                 zipCode: true,
-                shippingOptions: {
-                  select: {
-                    id: true,
-                    shippingMethod: { select: { code: true } },
-                  },
-                },
               },
             },
           },
@@ -317,7 +320,6 @@ export class ReserveService {
     }
 
     // Count check
-    // TODO: Should we pass in the items instead?
     const customerPlanItemCount = customerWithData.membership.plan.itemCount
     if (!!customerPlanItemCount && productVariantIDs > customerPlanItemCount) {
       throw new ApolloError(
@@ -438,13 +440,7 @@ export class ReserveService {
     }
     customer: Pick<Customer, "id"> & {
       detail: {
-        shippingAddress: Pick<Location, "id"> & {
-          shippingOptions: Array<
-            Pick<ShippingOption, "id"> & {
-              shippingMethod: Pick<ShippingMethod, "code">
-            }
-          >
-        }
+        shippingAddress: Pick<Location, "id">
       }
     }
     shipmentWeight: number
@@ -483,17 +479,6 @@ export class ReserveService {
         },
         amount: Math.round(shippoTransaction.rate.amount * 100),
       }
-    }
-
-    let shippingOptionId
-    if (!!shippingCode) {
-      const shippingOption = customer.detail.shippingAddress.shippingOptions.find(
-        a => a.shippingMethod.code === shippingCode
-      )
-      if (!shippingOption) {
-        throw `Shipping option ${shippingCode} not found for customer`
-      }
-      shippingOptionId = shippingOption.id
     }
 
     const customerShippingAddressRecordID = customer.detail.shippingAddress.id
@@ -571,15 +556,15 @@ export class ReserveService {
           slug: process.env.SEASONS_CLEANER_LOCATION_SLUG,
         },
       },
-      ...(!!shippingOptionId
-        ? {
-            shippingOption: {
-              connect: {
-                id: shippingOptionId,
-              },
-            },
-          }
-        : {}),
+      // ...(!!shippingOptionId
+      //   ? {
+      //       shippingOption: {
+      //         connect: {
+      //           id: shippingOptionId,
+      //         },
+      //       },
+      //     }
+      //   : {}),
       shipped: false,
       status: "Queued",
       previousReservationWasPacked: lastReservation?.status === "Packed",

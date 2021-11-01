@@ -1,5 +1,6 @@
 import { Inject, forwardRef } from "@nestjs/common"
 import {
+  Customer,
   InventoryStatus,
   PhysicalProductStatus,
   UserPushNotificationInterestType,
@@ -16,13 +17,15 @@ import {
   CreateTestProductOutput,
   CreateTestProductVariantInput,
 } from "../utils.types.d"
+import { TimeUtilsService } from "./time.service"
 import { UtilsService } from "./utils.service"
 
 export class TestUtilsService {
   constructor(
     private readonly prisma: PrismaService,
     @Inject(forwardRef(() => UtilsService))
-    private readonly utils: UtilsService
+    private readonly utils: UtilsService,
+    private readonly timeUtils: TimeUtilsService
   ) {}
 
   async createTestReservation({
@@ -224,157 +227,69 @@ export class TestUtilsService {
     }
   }
 
-  async createTestCustomer(
-    input: CreateTestCustomerInput,
-    select = {
-      id: true,
-      detail: {
-        select: {
-          shippingAddress: { select: { id: true } },
-        },
-      },
-      user: { select: { id: true } },
-    } as any
-  ): Promise<CreateTestCustomerOutput> {
-    const detail = !!input.detail
-      ? {
-          create: {
-            topSizes: input.detail.topSizes,
-            waistSizes: input.detail.waistSizes,
-            shippingAddress: {
-              create: {
-                zipCode: "10013",
-              },
-            },
-            phoneOS: input.detail?.phoneOS,
-          } as Prisma.CustomerDetailCreateInput,
-        }
-      : {}
-
-    // If there's a membership on the customer, we create it during the initial
-    // call to createCustomer. If there are pauseRequests on it, we create only
-    // the first one. We leave any subsequent pauseRequests for later, so the
-    // createdAt fields are different
-    let membership
-    if (!!input.membership) {
-      membership = {
+  async createTestCustomer({
+    create = {},
+    select = { id: true },
+  }: {
+    create?: Partial<Prisma.CustomerCreateInput>
+    select?: Prisma.CustomerSelect
+  } = {}): Promise<{ cleanupFunc: () => void; customer: any }> {
+    const chargebeeSubscriptionId = this.utils.randomString()
+    const defaultCreateData = {
+      status: "Active",
+      user: {
         create: {
-          subscriptionId: this.utils.randomString(),
-          pauseRequests: { create: input.membership.pauseRequests[0] },
-        },
-      }
-    }
-
-    const createdCustomer = await this.prisma.client.customer.create({
-      data: {
-        status: input.status || "Active",
-        user: {
-          create: {
-            auth0Id: this.utils.randomString(),
-            email: this.utils.randomString() + "@seasons.nyc",
-            firstName: this.utils.randomString(),
-            lastName: this.utils.randomString(),
-          },
-        },
-        detail,
-        membership,
-      },
-      select: {
-        id: true,
-        detail: { select: { shippingAddress: { select: { id: true } } } },
-        user: {
-          select: {
-            id: true,
-          },
+          auth0Id: this.utils.randomString(),
+          email: this.utils.randomString() + "@seasons.nyc",
+          firstName: this.utils.randomString(),
+          lastName: this.utils.randomString(),
         },
       },
-    })
-
-    const defaultPushNotificationInterests = [
-      "General",
-      "Blog",
-      "Bag",
-      "NewProduct",
-    ] as UserPushNotificationInterestType[]
-
-    const pushNotif = await this.prisma.client.userPushNotification.create({
-      data: {
-        interests: {
-          create: defaultPushNotificationInterests.map(type => ({
-            type,
-            value: "",
-            user: { connect: { id: createdCustomer.user.id } },
-            status: true,
-          })),
-        },
-        status: true,
-      },
-    })
-
-    await this.prisma.client.user.update({
-      where: { id: createdCustomer.user.id },
-      data: {
-        pushNotification: {
-          connect: { id: pushNotif.id },
-        },
-      },
-    })
-
-    // If there are additional pause requests, create them in order
-    if (input.membership?.pauseRequests?.length > 1) {
-      for (const pauseRequestCreateInput of input.membership.pauseRequests.slice(
-        1
-      )) {
-        await new Promise(r => setTimeout(r, 2000))
-        await this.prisma.client.customer.update({
-          where: { id: createdCustomer.id },
-          data: {
-            membership: {
-              update: { pauseRequests: { create: pauseRequestCreateInput } },
+      detail: {
+        create: {
+          shippingAddress: {
+            create: {
+              address1: "55 Washington St Ste 736",
+              city: "Brooklyn",
+              state: "NY",
+              zipCode: "11201",
             },
           },
-        })
-        await this.prisma.client.customer.update({
-          where: { id: createdCustomer.id },
-          data: {
-            membership: {
-              update: { pauseRequests: { create: pauseRequestCreateInput } },
+        },
+      },
+      membership: {
+        create: {
+          subscriptionId: chargebeeSubscriptionId,
+          plan: { connect: { planID: "access-monthly" } },
+          creditBalance: 0,
+          rentalInvoices: {
+            create: {
+              billingStartAt: this.timeUtils.xDaysAgoISOString(30),
+              billingEndAt: new Date(),
             },
           },
-        })
-      }
-    }
-
-    const returnedCustomer = await this.prisma.client.customer.findFirst({
-      where: { id: createdCustomer.id },
-      select,
-    })
-
-    const cleanupFunc = async () => {
-      await this.prisma.client.customerAdmissionsData.deleteMany({
-        where: { id: createdCustomer.id },
-      })
-
-      await this.prisma.client.userPushNotificationInterest.deleteMany({
-        where: {
-          user: { id: createdCustomer.user.id },
+          subscription: {
+            create: {
+              planID: "access-monthly",
+              subscriptionId: chargebeeSubscriptionId,
+              currentTermStart: this.timeUtils.xDaysAgoISOString(1),
+              currentTermEnd: this.timeUtils.xDaysFromNowISOString(1),
+              nextBillingAt: this.timeUtils.xDaysFromNowISOString(1),
+              status: "Active",
+              planPrice: 2000,
+            },
+          },
         },
-      })
-
-      await this.prisma.client.userPushNotification.delete({
-        where: { id: pushNotif.id },
-      })
-
-      if (!!createdCustomer.detail?.shippingAddress?.id) {
-        await this.prisma.client.location.delete({
-          where: { id: createdCustomer.detail.shippingAddress.id },
-        })
-      }
-      await this.prisma.client.customer.delete({
-        where: { id: createdCustomer.id },
-      })
+      },
     }
-    return { cleanupFunc, customer: returnedCustomer }
+    const createData = merge(defaultCreateData, create)
+    const customer = await this.prisma.client.customer.create({
+      data: createData,
+      select: merge(select, { id: true }),
+    })
+    const cleanupFunc = async () =>
+      this.prisma.client.customer.delete({ where: { id: customer.id } })
+    return { cleanupFunc, customer }
   }
 
   // returns the number of physical products with the given inventory status
