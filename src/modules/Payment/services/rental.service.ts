@@ -595,7 +595,10 @@ export class RentalService {
           )
           rentalEndedAt = getRentalEndedAt(
             this.getSafeReturnPackageEntryDate(
-              returnPackage.enteredDeliverySystemAt,
+              // there may not be a return package yet, since an item can be
+              // in the returnedProducts array due to the customer filling out the
+              // return flow
+              returnPackage?.enteredDeliverySystemAt,
               returnReservation.returnedAt ||
                 returnReservation.completedAt ||
                 invoiceWithData.billingEndAt
@@ -651,14 +654,13 @@ export class RentalService {
 
   async createRentalInvoiceLineItems(
     invoice: Pick<RentalInvoice, "id" | "billingStartAt"> & {
-      reservations: (Pick<Reservation, "createdAt" | "reservationNumber"> & {
+      reservations: (Pick<Reservation, "createdAt"> & {
+        reservationNumber: number
         returnPackages: Array<
           Pick<Package, "deliveredAt" | "amount"> & {
             items: Array<Pick<PhysicalProduct, "seasonsUID">>
-          }
+          } & { shippingMethod?: Pick<ShippingMethod, "code"> }
         >
-      } & {
-        shippingOption: { shippingMethod: Pick<ShippingMethod, "code"> }
       })[]
       products: (Pick<PhysicalProduct, "id" | "seasonsUID"> & {
         productVariant: {

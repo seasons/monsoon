@@ -9,7 +9,6 @@ import { PrismaService } from "@prisma1/prisma.service"
 import { ApolloError } from "apollo-server"
 import { DateTime } from "luxon"
 
-import { ReservationService } from "../../Reservation/services/reservation.service"
 import { ProductVariantService } from "../services/productVariant.service"
 
 enum BagSectionStatus {
@@ -24,7 +23,6 @@ enum BagSectionStatus {
 export class BagService {
   constructor(
     private readonly prisma: PrismaService,
-    private readonly reservationService: ReservationService,
     private readonly productVariantService: ProductVariantService,
     private readonly utils: UtilsService,
     private readonly productUtils: ProductUtilsService
