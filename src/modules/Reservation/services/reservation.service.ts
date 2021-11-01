@@ -730,6 +730,13 @@ export class ReservationService {
       },
     })
 
+    if (customerWithUser.membership === null) {
+      this.logger.log("Customer without membership trying to reserve", {
+        customer: customerWithUser,
+      })
+      throw new Error("Cannot reserve items without a membership")
+    }
+
     const productSelect = Prisma.validator<Prisma.ProductSelect>()({
       id: true,
       name: true,
