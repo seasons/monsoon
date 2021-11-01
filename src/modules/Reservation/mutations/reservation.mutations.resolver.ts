@@ -58,6 +58,7 @@ export class ReservationMutationsResolver {
     @Args() { shippingCode, options },
     @User() user,
     @Customer() customer,
+    @User() user,
     @Select({
       withFragment: ENSURE_TRACK_DATA_FRAGMENT,
     })
@@ -97,8 +98,7 @@ export class ReservationMutationsResolver {
     @Select({
       withFragment: ENSURE_TRACK_DATA_FRAGMENT,
     })
-    select,
-    @Application() application
+    select
   ) {
     const custWithData = await this.prisma.client.customer.findUnique({
       where: { id: customerID },
@@ -127,7 +127,6 @@ export class ReservationMutationsResolver {
       reservationID: returnData.id,
       // items, TODO: FIll this in
       units: returnData.products.map(a => a.seasonsUID),
-      application,
     })
 
     return returnData

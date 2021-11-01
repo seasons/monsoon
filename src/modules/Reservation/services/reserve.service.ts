@@ -215,13 +215,13 @@ export class ReserveService {
     })) as any
 
     // Send confirmation email
-    // await this.emails.sendReservationConfirmationEmail(
+    // await this.emails.sendReservationConfirmationEmail({
     //   customerWithData.user,
     //   newProductVariantIDs,
     //   reservation,
     //   seasonsToCustomerTransaction.tracking_number,
     //   seasonsToCustomerTransaction.tracking_url_provider
-    // )
+    // })
 
     try {
       await this.productUtils.removeRestockNotifications(
@@ -345,6 +345,7 @@ export class ReserveService {
     return promises
   }
 
+  // TODO: EIther deprcate or update for new logic
   private async updateLastReservation(
     lastReservation: Pick<Reservation, "status" | "id"> & {
       sentPackage: Pick<Package, "transactionID">
