@@ -110,7 +110,7 @@ export class BagService {
   async addToBag(
     itemId,
     customer,
-    select: Prisma.BagItemSelect
+    select: Prisma.BagItemSelect = { id: true }
   ): Promise<Partial<BagItem>> {
     const custWithData = await this.prisma.client.customer.findUnique({
       where: { id: customer.id },

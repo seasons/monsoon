@@ -1,28 +1,17 @@
-import { APP_MODULE_DEF } from "@app/app.module"
 import { PaymentService } from "@app/modules/Payment/services/payment.service"
+import { BagService } from "@app/modules/Product/services/bag.service"
 import { ReservationService } from "@app/modules/Reservation"
 import { ReserveService } from "@app/modules/Reservation/services/reserve.service"
 import { ShippingService } from "@app/modules/Shipping/services/shipping.service"
+import { TestUtilsService } from "@app/modules/Utils/services/test.service"
 import { TimeUtilsService } from "@app/modules/Utils/services/time.service"
 import { UtilsService } from "@app/modules/Utils/services/utils.service"
 import { PrismaService } from "@app/prisma/prisma.service"
 import { Test } from "@nestjs/testing"
-import {
-  PhysicalProduct,
-  Prisma,
-  RentalInvoiceLineItem,
-  ReservationStatus,
-  ShippingCode,
-  ShippingOption,
-} from "@prisma/client"
-import chargebee from "chargebee"
+import { Prisma } from "@prisma/client"
 import { head, merge } from "lodash"
-import moment from "moment"
 
-import {
-  CREATE_RENTAL_INVOICE_LINE_ITEMS_INVOICE_SELECT,
-  RentalService,
-} from "../../Payment/services/rental.service"
+import { CREATE_RENTAL_INVOICE_LINE_ITEMS_INVOICE_SELECT } from "../../Payment/services/rental.service"
 import { RESERVATION_MODULE_DEF } from "../reservation.module"
 
 class PaymentServiceMock {
@@ -32,10 +21,11 @@ class PaymentServiceMock {
 
 let prisma: PrismaService
 let reserveService: ReserveService
-let reservationService: ReservationService
 let shippingService: ShippingService
 let utils: UtilsService
 let timeUtils: TimeUtilsService
+let testUtils: TestUtilsService
+let bagService: BagService
 let testCustomer: any
 
 const reservationSelect = Prisma.validator<Prisma.ReservationSelect>()({
@@ -45,7 +35,9 @@ const reservationSelect = Prisma.validator<Prisma.ReservationSelect>()({
       isNew: true,
       outboundPackage: { select: { id: true } },
       inboundPackage: { select: { id: true } },
-      physicalProduct: { select: { seasonsUID: true, inventoryStatus: true } },
+      physicalProduct: {
+        select: { seasonsUID: true, inventoryStatus: true, id: true },
+      },
     },
   },
   sentPackage: { select: { id: true } },
@@ -84,8 +76,9 @@ describe("Reserve Service", () => {
     utils = moduleRef.get<UtilsService>(UtilsService)
     timeUtils = moduleRef.get<TimeUtilsService>(TimeUtilsService)
     reserveService = moduleRef.get<ReserveService>(ReserveService)
-    reservationService = moduleRef.get<ReservationService>(ReservationService)
     shippingService = moduleRef.get<ShippingService>(ShippingService)
+    testUtils = moduleRef.get<TestUtilsService>(TestUtilsService)
+    bagService = moduleRef.get<BagService>(BagService)
 
     jest
       .spyOn<any, any>(shippingService, "shippoValidateAddress")
@@ -101,15 +94,35 @@ describe("Reserve Service", () => {
     let custWithDataAfterReservation
 
     beforeAll(async () => {
-      const { customer } = await createTestCustomer({
+      const { customer } = await testUtils.createTestCustomer({
         select: testCustomerSelect,
       })
       testCustomer = customer
 
-      bagItemsBeforeReservation = await addToBagForCustomer(2)
-      const productVariantsBeforeReservation = bagItemsBeforeReservation.map(
-        a => a.productVariant
+      const productVariantsBeforeReservation = await prisma.client.productVariant.findMany(
+        {
+          where: { reservable: { gt: 0 } },
+          take: 2,
+          select: {
+            id: true,
+            sku: true,
+            reservable: true,
+            total: true,
+            reserved: true,
+          },
+        }
       )
+      const bagItem1 = await bagService.addToBag(
+        productVariantsBeforeReservation[0].id,
+        customer,
+        { id: true }
+      )
+      const bagItem2 = await bagService.addToBag(
+        productVariantsBeforeReservation[1].id,
+        customer,
+        { id: true }
+      )
+      bagItemsBeforeReservation = [bagItem1, bagItem2]
       productVariantsBeforeReservationBySKU = productVariantsBeforeReservation.reduce(
         (acc, curval) => {
           acc[curval.sku] = curval
@@ -119,11 +132,11 @@ describe("Reserve Service", () => {
       )
       custWithDataBeforeReservation = await getCustWithData()
 
-      reservation = await reserveService.reserveItems(
-        "UPSGround",
-        testCustomer as any,
-        reservationSelect
-      )
+      reservation = await reserveService.reserveItems({
+        shippingCode: "UPSGround",
+        customer: testCustomer as any,
+        select: reservationSelect,
+      })
 
       const productVariantsAfterReservation = await prisma.client.productVariant.findMany(
         {
@@ -137,7 +150,19 @@ describe("Reserve Service", () => {
         where: { id: { in: bagItemsBeforeReservation.map(a => a.id) } },
         select: {
           status: true,
-          reservationPhysicalProduct: { select: { id: true } },
+          productVariant: {
+            select: {
+              sku: true,
+              physicalProducts: { select: { seasonsUID: true } },
+            },
+          },
+          physicalProduct: { select: { seasonsUID: true, id: true } },
+          reservationPhysicalProduct: {
+            select: {
+              id: true,
+              physicalProduct: { select: { seasonsUID: true } },
+            },
+          },
         },
       })
 
@@ -169,7 +194,7 @@ describe("Reserve Service", () => {
       }
     })
 
-    it("Properly updates status on physical products", () => {
+    it("Marks the relevant physical products as Reserved", () => {
       const reservedPhysicalProducts = reservation.reservationPhysicalProducts.map(
         a => a.physicalProduct
       )
@@ -178,46 +203,57 @@ describe("Reserve Service", () => {
       expect(reservedPhysicalProducts[1].inventoryStatus).toBe("Reserved")
     })
 
-    it("Properly updates statuses on bag items", () => {
+    it("Marks the relevant bag items as reserved", () => {
       expect(bagItemsBeforeReservation.length).toBe(2)
       expect(bagItemsAfterReservation.length).toBe(2)
       expect(bagItemsAfterReservation[0].status).toBe("Reserved")
       expect(bagItemsAfterReservation[1].status).toBe("Reserved")
     })
 
-    it("Properly connects and initalizes ReservationPhysicalProducts", () => {
+    it("Creates the ReservationPhysicalProduct records and connects them to the Reservation record", () => {
       const reservationPhysicalProducts =
         reservation.reservationPhysicalProducts
       expect(reservationPhysicalProducts.length).toBe(2)
       expect(reservationPhysicalProducts.every(a => a.isNew)).toBe(true)
       expect(
-        reservationPhysicalProducts.every(
-          a => a.inboundPackage?.id === undefined
-        )
-      ).toBe(true)
-      expect(
-        reservationPhysicalProducts.every(
-          a => a.outboundPackage?.id === undefined
-        )
-      ).toBe(true)
-      expect(
         reservationPhysicalProducts.every(a => !!a.physicalProduct?.id)
       ).toBe(true)
     })
 
-    it("Connects ReservationPhysicalProduct records to BagItems", () => {
+    it("Connects the right ReservationPhysicalProduct and PhysicalProduct to each bag item", () => {
       expect(
         bagItemsAfterReservation.every(a => !!a.reservationPhysicalProduct?.id)
       ).toBe(true)
+      expect(bagItemsAfterReservation.every(a => !!a.physicalProduct?.id)).toBe(
+        true
+      )
+
+      for (const bi of bagItemsAfterReservation) {
+        expect(
+          bi.productVariant.physicalProducts
+            .map(a => a.seasonsUID)
+            .includes(bi.physicalProduct.seasonsUID)
+        ).toBe(true)
+        expect(bi.physicalProduct.seasonsUID).toBe(
+          bi.reservationPhysicalProduct.physicalProduct.seasonsUID
+        )
+      }
     })
 
     it("Properly updates rental invoice for customer", () => {
-      const productsOnRentalInvoiceBeforeReservation =
-        custWithDataBeforeReservation.membership.rentalInvoices[0].products
-      expect(productsOnRentalInvoiceBeforeReservation.length).toBe(0)
-      const productsOnRentalInvoiceAfterResevation =
-        custWithDataAfterReservation.membership.rentalInvoices[0].products
-      expect(productsOnRentalInvoiceAfterResevation.length).toBe(2)
+      const rentalInvoiceBeforeReservation =
+        custWithDataBeforeReservation.membership.rentalInvoices[0]
+      expect(
+        rentalInvoiceBeforeReservation.reservationPhysicalProducts.length
+      ).toBe(0)
+      expect(rentalInvoiceBeforeReservation.reservations.length).toBe(0)
+
+      const rentalInvoiceAfterReservation =
+        custWithDataAfterReservation.membership.rentalInvoices[0]
+      expect(
+        rentalInvoiceAfterReservation.reservationPhysicalProducts.length
+      ).toBe(2)
+      expect(rentalInvoiceAfterReservation.reservations.length).toBe(1)
     })
 
     it("Does not create outbound or inbound packages on initial reserve", () => {
@@ -227,7 +263,7 @@ describe("Reserve Service", () => {
       expect(
         reservation.reservationPhysicalProducts.every(a => !a.inboundPackage)
       ).toBe(true)
-      expect(reservation.sentPackage).toBe(undefined)
+      expect(reservation.sentPackage).toBe(null)
       expect(reservation.returnPackages.length).toBe(0)
     })
   })
@@ -240,149 +276,6 @@ describe("Reserve Service", () => {
 
   */
 })
-
-const createTestCustomer = async ({
-  create = {},
-  select = { id: true },
-}: {
-  create?: Partial<Prisma.CustomerCreateInput>
-  select?: Prisma.CustomerSelect
-} = {}) => {
-  const upsGroundMethod = await prisma.client.shippingMethod.findFirst({
-    where: { code: "UPSGround" },
-  })
-  const upsSelectMethod = await prisma.client.shippingMethod.findFirst({
-    where: { code: "UPSSelect" },
-  })
-  const chargebeeSubscriptionId = utils.randomString()
-  const defaultCreateData = {
-    status: "Active",
-    user: {
-      create: {
-        auth0Id: utils.randomString(),
-        email: utils.randomString() + "@seasons.nyc",
-        firstName: utils.randomString(),
-        lastName: utils.randomString(),
-      },
-    },
-    detail: {
-      create: {
-        shippingAddress: {
-          create: {
-            address1: "55 Washingston St",
-            city: "Brooklyn",
-            state: "NY",
-            zipCode: "11201",
-            shippingOptions: {
-              create: [
-                {
-                  shippingMethod: { connect: { id: upsGroundMethod.id } },
-                  externalCost: 10,
-                },
-                {
-                  shippingMethod: { connect: { id: upsSelectMethod.id } },
-                  externalCost: 20,
-                },
-              ],
-            },
-          },
-        },
-      },
-    },
-    membership: {
-      create: {
-        subscriptionId: chargebeeSubscriptionId,
-        plan: { connect: { planID: "access-monthly" } },
-        rentalInvoices: {
-          create: {
-            billingStartAt: timeUtils.xDaysAgoISOString(30),
-            billingEndAt: new Date(),
-          },
-        },
-        subscription: {
-          create: {
-            planID: "access-monthly",
-            subscriptionId: chargebeeSubscriptionId,
-            currentTermStart: timeUtils.xDaysAgoISOString(1),
-            currentTermEnd: timeUtils.xDaysFromNowISOString(1),
-            nextBillingAt: timeUtils.xDaysFromNowISOString(1),
-            status: "Active",
-            planPrice: 2000,
-          },
-        },
-      },
-    },
-  }
-  const createData = merge(defaultCreateData, create)
-  const customer = await prisma.client.customer.create({
-    data: createData,
-    select: merge(select, { id: true }),
-  })
-  const cleanupFunc = async () =>
-    prisma.client.customer.delete({ where: { id: customer.id } })
-  return { cleanupFunc, customer }
-}
-
-const addToBagForCustomer = async numProductsToAdd => {
-  let bagItemsToReturn = []
-  const reservedBagItems = await prisma.client.bagItem.findMany({
-    where: {
-      customer: { id: testCustomer.id },
-      status: "Reserved",
-      saved: false,
-    },
-    select: {
-      productVariant: {
-        select: { sku: true, product: { select: { id: true } } },
-      },
-    },
-  })
-  const reservedSKUs = reservedBagItems.map(a => a.productVariant.sku)
-  const reservedProductIds = reservedBagItems.map(
-    b => b.productVariant.product.id
-  )
-  let reservableProdVars = []
-  let reservableProductIds = []
-  for (let i = 0; i < numProductsToAdd; i++) {
-    const nextProdVar = await prisma.client.productVariant.findFirst({
-      where: {
-        reservable: { gte: 1 },
-        sku: { notIn: reservedSKUs },
-        // Ensure we reserve diff products each time. Needed for some tests
-        product: {
-          id: { notIn: [...reservedProductIds, ...reservableProductIds] },
-        },
-        // We shouldn't need to check this since we're checking counts,
-        // but there's some corrupt data so we do this to circumvent that.
-        physicalProducts: { some: { inventoryStatus: "Reservable" } },
-      },
-      take: numProductsToAdd,
-      select: {
-        id: true,
-        productId: true,
-      },
-    })
-    reservableProdVars.push(nextProdVar)
-    reservableProductIds.push(nextProdVar.productId)
-  }
-  for (const prodVar of reservableProdVars) {
-    const bi = await prisma.client.bagItem.create({
-      data: {
-        customer: { connect: { id: testCustomer.id } },
-        productVariant: { connect: { id: prodVar.id } },
-        status: "Added",
-        saved: false,
-      },
-      select: {
-        productVariant: {
-          select: { sku: true, total: true, reservable: true, reserved: true },
-        },
-      },
-    })
-    bagItemsToReturn.push(bi)
-  }
-  return bagItemsToReturn
-}
 
 const getCustWithData = async (
   select: Prisma.CustomerSelect = {}
