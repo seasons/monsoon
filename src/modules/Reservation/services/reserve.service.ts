@@ -1,16 +1,9 @@
 import { ErrorService } from "@app/modules/Error/services/error.service"
 import { ProductVariantService } from "@app/modules/Product/services/productVariant.service"
-import { PushNotificationService } from "@app/modules/PushNotification"
-import { CustomerUtilsService } from "@app/modules/User/services/customer.utils.service"
 import { ProductUtilsService } from "@app/modules/Utils/services/product.utils.service"
-import { StatementsService } from "@app/modules/Utils/services/statements.service"
 import { UtilsService } from "@app/modules/Utils/services/utils.service"
-import { InventoryStatus, PhysicalProductStatus } from "@app/prisma"
 import { EmailService } from "@modules/Email/services/email.service"
-import {
-  ShippingService,
-  UPSServiceLevel,
-} from "@modules/Shipping/services/shipping.service"
+import { ShippingService } from "@modules/Shipping/services/shipping.service"
 import { Injectable } from "@nestjs/common"
 import {
   AdminActionLog,
@@ -22,25 +15,16 @@ import {
   PhysicalProduct,
   Prisma,
   PrismaPromise,
-  ProductVariant,
   RentalInvoice,
   Reservation,
-  ReservationFeedback,
   ReservationPhysicalProduct,
-  ReservationStatus,
   ShippingCode,
-  ShippingMethod,
-  ShippingOption,
   WarehouseLocation,
 } from "@prisma/client"
 import { PrismaService } from "@prisma1/prisma.service"
 import { ApolloError } from "apollo-server"
-import chargebee from "chargebee"
 import cuid from "cuid"
-import { intersection, merge } from "lodash"
-import { DateTime } from "luxon"
-
-import { ReservationUtilsService } from "./reservation.utils.service"
+import { merge } from "lodash"
 
 type ReserveItemsPhysicalProduct = Pick<
   PhysicalProduct,
@@ -120,7 +104,7 @@ export class ReserveService {
         productVariant: {
           select: {
             id: true,
-            physicalProducts: { select: { seasonsUID: true } },
+            physicalProducts: { select: { id: true } },
           },
         },
         physicalProduct: {
@@ -187,35 +171,13 @@ export class ReserveService {
       })
     )
 
-    const [
-      seasonsToCustomerTransaction,
-      customerToSeasonsTransaction,
-    ] = await this.shippingService.createReservationShippingLabels(
-      newProductVariantIDs,
-      customer,
-      shippingCode
-    )
-
-    // Update bag items
-    const bagItemPromises = await this.updateBagItemsForReservation(
-      activeBagItemsWithData,
-      physicalProductsBeingReserved
-    )
-    promises.push(...bagItemPromises)
-
     // Create reservation records in prisma
-    const shipmentWeight = await this.shippingService.calcShipmentWeightFromProductVariantIDs(
-      newProductVariantIDs
-    )
     const {
       promises: reservationCreatePromises,
-      datas: { reservationId, reservationPhysicalProductIds },
+      datas: { reservationId, reservationPhysicalProductCreateDatas },
     } = await this.createReservation({
-      seasonsToCustomerTransaction,
-      customerToSeasonsTransaction,
       lastReservation: lastReservationWithData,
       customer: customerWithData,
-      shipmentWeight,
       physicalProductsBeingReserved,
       heldPhysicalProducts,
       shippingCode,
@@ -229,11 +191,20 @@ export class ReserveService {
         data: {
           reservations: { connect: { id: reservationId } },
           reservationPhysicalProducts: {
-            connect: reservationPhysicalProductIds.map(id => ({ id })),
+            connect: reservationPhysicalProductCreateDatas.map(a => ({
+              id: a.id,
+            })),
           },
         },
       })
     )
+
+    // Update bag items
+    const bagItemPromises = await this.updateBagItemsForReservation(
+      activeBagItemsWithData,
+      reservationPhysicalProductCreateDatas
+    )
+    promises.push(...bagItemPromises)
 
     await this.prisma.client.$transaction(promises.flat())
 
@@ -247,13 +218,13 @@ export class ReserveService {
     })) as any
 
     // Send confirmation email
-    await this.emails.sendReservationConfirmationEmail(
-      customerWithData.user,
-      newProductVariantIDs,
-      reservation,
-      seasonsToCustomerTransaction.tracking_number,
-      seasonsToCustomerTransaction.tracking_url_provider
-    )
+    // await this.emails.sendReservationConfirmationEmail(
+    //   customerWithData.user,
+    //   newProductVariantIDs,
+    //   reservation,
+    //   seasonsToCustomerTransaction.tracking_number,
+    //   seasonsToCustomerTransaction.tracking_url_provider
+    // )
 
     try {
       await this.productUtils.removeRestockNotifications(
@@ -333,11 +304,14 @@ export class ReserveService {
     activeBagItemsWithData: Array<
       Pick<BagItem, "status" | "id"> & {
         productVariant: {
-          physicalProducts: Array<Pick<PhysicalProduct, "seasonsUID">>
+          physicalProducts: Array<Pick<PhysicalProduct, "id">>
         }
       }
     >,
-    physicalProductsBeingReserved
+    reservationPhysicalProductCreateDatas: {
+      id: string
+      physicalProductId: string
+    }[]
   ) {
     const promises = []
     const bagItemsToUpdate = activeBagItemsWithData.filter(
@@ -345,18 +319,24 @@ export class ReserveService {
     )
 
     for (const bagItem of bagItemsToUpdate) {
-      const physicalProductToConnect = bagItem.productVariant.physicalProducts.find(
-        a =>
-          physicalProductsBeingReserved
-            .map(a => a.seasonsUID)
-            .includes(a.seasonsUID)
+      const physicalProductIds = bagItem.productVariant.physicalProducts.map(
+        a => a.id
       )
+      const reservationPhysicalProductToConnect = reservationPhysicalProductCreateDatas.find(
+        a => physicalProductIds.includes(a.physicalProductId)
+      )
+
       promises.push(
         this.prisma.client.bagItem.update({
           where: { id: bagItem.id },
           data: {
             physicalProduct: {
-              connect: { seasonsUID: physicalProductToConnect.seasonsUID },
+              connect: {
+                id: reservationPhysicalProductToConnect.physicalProductId,
+              },
+            },
+            reservationPhysicalProduct: {
+              connect: { id: reservationPhysicalProductToConnect.id },
             },
             status: "Reserved",
           },
@@ -426,13 +406,7 @@ export class ReserveService {
     physicalProductsBeingReserved,
     heldPhysicalProducts,
     lastReservation,
-    shippingCode,
-    seasonsToCustomerTransaction,
-    customerToSeasonsTransaction,
-    shipmentWeight,
   }: {
-    seasonsToCustomerTransaction
-    customerToSeasonsTransaction
     lastReservation: Pick<Reservation, "status"> & {
       returnPackages: Array<
         Pick<Package, "id"> & { events: Array<{ id: string }> }
@@ -443,13 +417,18 @@ export class ReserveService {
         shippingAddress: Pick<Location, "id">
       }
     }
-    shipmentWeight: number
     physicalProductsBeingReserved: ReserveItemsPhysicalProduct[]
     heldPhysicalProducts: ReserveItemsPhysicalProduct[]
     shippingCode: ShippingCode | null
   }): Promise<{
     promises: PrismaPromise<Reservation | ReservationPhysicalProduct[]>[]
-    datas: { reservationId: string; reservationPhysicalProductIds: string[] }
+    datas: {
+      reservationId: string
+      reservationPhysicalProductCreateDatas: {
+        id: string
+        physicalProductId: string
+      }[]
+    }
   }> {
     const promises = []
 
@@ -458,43 +437,20 @@ export class ReserveService {
       ...heldPhysicalProducts,
     ]
 
-    const newPhysicalProductSUIDs = allPhysicalProductsInReservation
-      .filter(a => !!a.warehouseLocation?.id)
-      .map(a => a.seasonsUID)
-
     const returnPackagesToCarryOver =
       lastReservation?.returnPackages?.filter(a => a.events.length === 0) || []
-    const createPartialPackageCreateInput = (
-      shippoTransaction
-    ): Partial<Prisma.PackageCreateInput> => {
-      return {
-        transactionID: shippoTransaction.object_id,
-        shippingLabel: {
-          create: {
-            image: shippoTransaction.label_url || "",
-            trackingNumber: shippoTransaction.tracking_number || "",
-            trackingURL: shippoTransaction.tracking_url_provider || "",
-            name: "UPS",
-          },
-        },
-        amount: Math.round(shippoTransaction.rate.amount * 100),
-      }
-    }
 
-    const customerShippingAddressRecordID = customer.detail.shippingAddress.id
     const uniqueReservationNumber = await this.utils.getUniqueReservationNumber()
 
     const reservationId = cuid()
-    const outboundPackageId = cuid()
     const reservationPhysicalProductCreateDatas = allPhysicalProductsInReservation.map(
       physicalProduct =>
         Prisma.validator<
           Prisma.ReservationPhysicalProductUncheckedCreateWithoutReservationInput
         >()({
           id: cuid(),
-          outboundPackageId,
           physicalProductId: physicalProduct.id,
-          isNew: newPhysicalProductSUIDs.includes(physicalProduct.seasonsUID), // TODO: Should always be true, since reservations are now atomic
+          isNew: true,
         })
     )
 
@@ -511,41 +467,7 @@ export class ReserveService {
         },
       },
       phase: "BusinessToCustomer",
-      sentPackage: {
-        create: {
-          id: outboundPackageId,
-          ...createPartialPackageCreateInput(seasonsToCustomerTransaction),
-          weight: shipmentWeight,
-          // TODO: Connect here
-          // reservationPhysicalProductsOnOutboundPackage: {
-          //   connect: reservationPhysicalProductCreateDatas
-          //     .filter(a => a.isNew)
-          //     .map(a => ({ id: a.id })),
-          // },
-          fromAddress: {
-            connect: {
-              slug: process.env.SEASONS_CLEANER_LOCATION_SLUG,
-            },
-          },
-          toAddress: {
-            connect: { id: customerShippingAddressRecordID },
-          },
-        },
-      } as any,
       returnPackages: {
-        create: {
-          ...createPartialPackageCreateInput(customerToSeasonsTransaction),
-          fromAddress: {
-            connect: {
-              id: customerShippingAddressRecordID,
-            },
-          },
-          toAddress: {
-            connect: {
-              slug: process.env.SEASONS_CLEANER_LOCATION_SLUG,
-            },
-          },
-        } as any,
         connect: returnPackagesToCarryOver.map(a => ({
           id: a.id,
         })),
@@ -567,6 +489,7 @@ export class ReserveService {
       //   : {}),
       shipped: false,
       status: "Queued",
+      // TODO: Update this for new world
       previousReservationWasPacked: lastReservation?.status === "Packed",
     })
 
@@ -578,9 +501,7 @@ export class ReserveService {
       promises,
       datas: {
         reservationId: reservationCreateData.id,
-        reservationPhysicalProductIds: reservationPhysicalProductCreateDatas.map(
-          a => a.id
-        ),
+        reservationPhysicalProductCreateDatas,
       },
     }
   }
