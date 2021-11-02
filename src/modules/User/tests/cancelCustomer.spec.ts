@@ -2,6 +2,7 @@ import { create } from "domain"
 
 import { BagService } from "@app/modules/Product/services/bag.service"
 import { ReservationService } from "@app/modules/Reservation"
+import { ReserveService } from "@app/modules/Reservation/services/reserve.service"
 import { USER_MODULE_DEF } from "@app/modules/User/user.module"
 import { TestUtilsService } from "@app/modules/Utils/services/test.service"
 import { TimeUtilsService } from "@app/modules/Utils/services/time.service"
@@ -24,7 +25,7 @@ describe("Cancel Customer", () => {
 
   let customerService: CustomerService
   let bagService: BagService
-  let reservationService: ReservationService
+  let reserveService: ReserveService
   let customerWithData
   let rentalInvoiceAfterCancellation
   let invoiceCreateSpy
@@ -38,7 +39,7 @@ describe("Cancel Customer", () => {
     timeUtils = moduleRef.get<TimeUtilsService>(TimeUtilsService)
     utilsService = moduleRef.get<UtilsService>(UtilsService)
     bagService = moduleRef.get<BagService>(BagService)
-    reservationService = moduleRef.get<ReservationService>(ReservationService)
+    reserveService = moduleRef.get<ReserveService>(ReserveService)
 
     cancelSubscriptionSpy = jest
       .spyOn(chargebee.subscription, "cancel")
@@ -89,8 +90,7 @@ describe("Cancel Customer", () => {
           id: true,
         }
       )
-      const reservationWithData = await reservationService.reserveItems({
-        items: [reservableProductVariant.id],
+      const reservationWithData = await reserveService.reserveItems({
         shippingCode: "UPSGround",
         customer: testCustomer,
         select: { id: true, sentPackage: { select: { id: true } } },
@@ -181,8 +181,7 @@ describe("Cancel Customer", () => {
           id: true,
         }
       )
-      const reservationWithData = await reservationService.reserveItems({
-        items: [reservableProductVariant.id],
+      const reservationWithData = await reserveService.reserveItems({
         shippingCode: "UPSGround",
         customer: testCustomer,
         select: { id: true, sentPackage: { select: { id: true } } },
@@ -254,8 +253,7 @@ describe("Cancel Customer", () => {
       await bagService.addToBag(reservableProductVariant.id, testCustomer, {
         id: true,
       })
-      const reservationWithData = await reservationService.reserveItems({
-        items: [reservableProductVariant.id],
+      const reservationWithData = await reserveService.reserveItems({
         shippingCode: "UPSGround",
         customer: testCustomer,
         select: { id: true, sentPackage: { select: { id: true } } },

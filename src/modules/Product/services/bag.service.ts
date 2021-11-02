@@ -1,3 +1,7 @@
+import { Customer } from "@app/decorators"
+import { ErrorService } from "@app/modules/Error/services/error.service"
+import { ProductUtilsService } from "@app/modules/Utils/services/product.utils.service"
+import { StatementsService } from "@app/modules/Utils/services/statements.service"
 import { UtilsService } from "@app/modules/Utils/services/utils.service"
 import { Injectable } from "@nestjs/common"
 import { BagItem, InventoryStatus, Prisma } from "@prisma/client"
@@ -5,7 +9,6 @@ import { PrismaService } from "@prisma1/prisma.service"
 import { ApolloError } from "apollo-server"
 import { DateTime } from "luxon"
 
-import { ReservationService } from "../../Reservation/services/reservation.service"
 import { ProductVariantService } from "../services/productVariant.service"
 
 enum BagSectionStatus {
@@ -20,9 +23,9 @@ enum BagSectionStatus {
 export class BagService {
   constructor(
     private readonly prisma: PrismaService,
-    private readonly reservationService: ReservationService,
     private readonly productVariantService: ProductVariantService,
-    private readonly utils: UtilsService
+    private readonly utils: UtilsService,
+    private readonly productUtils: ProductUtilsService
   ) {}
 
   async bagSection(status: BagSectionStatus, customer) {
@@ -105,7 +108,7 @@ export class BagService {
   async addToBag(
     itemId,
     customer,
-    select: Prisma.BagItemSelect
+    select: Prisma.BagItemSelect = { id: true }
   ): Promise<Partial<BagItem>> {
     const custWithData = await this.prisma.client.customer.findUnique({
       where: { id: customer.id },
@@ -248,8 +251,7 @@ export class BagService {
 
     const productVariant = oldBagItem.productVariant
     const lastReservation = (await this.utils.getLatestReservation(
-      customerID,
-      undefined
+      customerID
     )) as any
 
     if (!["Queued", "Hold"].includes(lastReservation.status)) {
@@ -402,7 +404,7 @@ export class BagService {
     const results = await this.prisma.client.$transaction(promises.flat())
     const addedBagItem = results.pop()
 
-    await this.reservationService.removeRestockNotifications(
+    await this.productUtils.removeRestockNotifications(
       [newProductVariantID],
       customerID
     )

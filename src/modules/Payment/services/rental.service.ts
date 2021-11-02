@@ -43,6 +43,7 @@ export const CREATE_RENTAL_INVOICE_LINE_ITEMS_INVOICE_SELECT = Prisma.validator<
   id: true,
   billingStartAt: true,
   billingEndAt: true,
+  reservationPhysicalProducts: { select: { id: true } },
   products: {
     select: {
       id: true,
@@ -454,7 +455,7 @@ export class RentalService {
     physicalProduct: Pick<PhysicalProduct, "seasonsUID">,
     options: { upTo?: "today" | "billingEnd" | null } = { upTo: null }
   ) {
-    const invoiceWithData = await this.prisma.client.rentalInvoice.findUnique({
+    const invoiceWithData = await this.prisma.client.rentalInvoice.findFirst({
       where: { id: invoice.id },
       select: {
         billingStartAt: true,
@@ -594,7 +595,10 @@ export class RentalService {
           )
           rentalEndedAt = getRentalEndedAt(
             this.getSafeReturnPackageEntryDate(
-              returnPackage.enteredDeliverySystemAt,
+              // there may not be a return package yet, since an item can be
+              // in the returnedProducts array due to the customer filling out the
+              // return flow
+              returnPackage?.enteredDeliverySystemAt,
               returnReservation.returnedAt ||
                 returnReservation.completedAt ||
                 invoiceWithData.billingEndAt
@@ -650,14 +654,13 @@ export class RentalService {
 
   async createRentalInvoiceLineItems(
     invoice: Pick<RentalInvoice, "id" | "billingStartAt"> & {
-      reservations: (Pick<Reservation, "createdAt" | "reservationNumber"> & {
+      reservations: (Pick<Reservation, "createdAt"> & {
+        reservationNumber: number
         returnPackages: Array<
           Pick<Package, "deliveredAt" | "amount"> & {
             items: Array<Pick<PhysicalProduct, "seasonsUID">>
-          }
+          } & { shippingMethod?: Pick<ShippingMethod, "code"> }
         >
-      } & {
-        shippingOption: { shippingMethod: Pick<ShippingMethod, "code"> }
       })[]
       products: (Pick<PhysicalProduct, "id" | "seasonsUID"> & {
         productVariant: {

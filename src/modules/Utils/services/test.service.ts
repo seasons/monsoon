@@ -67,11 +67,6 @@ export class TestUtilsService {
             id: customer.id,
           },
         },
-        user: {
-          connect: {
-            id: customer.user.id,
-          },
-        },
         phase: "BusinessToCustomer",
         sentPackage: {
           create: {
