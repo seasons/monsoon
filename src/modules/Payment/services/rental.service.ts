@@ -475,6 +475,7 @@ export class RentalService {
       },
       orderBy: { createdAt: "desc" },
       select: {
+        id: true,
         deliveredAt: true,
         reservationOnSentPackage: {
           select: this.rentalReservationSelect,
@@ -993,14 +994,14 @@ export class RentalService {
         { upTo: options.upTo }
       )
 
-      const rentalPriceForDaysUntilToday = this.calculatePriceForDaysRented({
+      const { price } = await this.calculatePriceForDaysRented({
         invoice: currentInvoice,
         product: product,
         customer: { id: customerId },
         daysRented,
       })
 
-      rentalPrices.push(rentalPriceForDaysUntilToday)
+      rentalPrices.push(price)
     }
 
     return rentalPrices.reduce((a, b) => a + b, 0)

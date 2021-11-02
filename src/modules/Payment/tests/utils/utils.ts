@@ -1,13 +1,44 @@
+import { ReservationService } from "@app/modules/Reservation"
+import { TimeUtilsService } from "@app/modules/Utils/services/time.service"
 import { PrismaService } from "@app/prisma/prisma.service"
-import { Customer, Prisma } from "@prisma/client"
+import {
+  Customer,
+  Prisma,
+  ReservationStatus,
+  ShippingCode,
+} from "@prisma/client"
 import { merge } from "lodash"
 import moment from "moment"
 
 import { CREATE_RENTAL_INVOICE_LINE_ITEMS_INVOICE_SELECT } from "../../services/rental.service"
 
-export type TestCustomerWithId = Pick<Customer, "id">
+export const UPS_GROUND_FEE = 1000
+export const UPS_SELECT_FEE = 2000
+const DEFAULT_RESERVATION_ARGS = Prisma.validator<Prisma.ReservationArgs>()({
+  select: {
+    id: true,
+    reservationNumber: true,
+    products: { select: { seasonsUID: true } },
+    newProducts: { select: { seasonsUID: true } },
+    sentPackage: { select: { id: true } },
+    returnPackages: {
+      orderBy: { createdAt: "desc" },
+      select: {
+        id: true,
+        shippingLabel: { select: { trackingNumber: true } },
+      },
+    },
+    shippingMethod: { select: { code: true } },
+  },
+})
 
+export type TestCustomerWithId = Pick<Customer, "id">
 export type PrismaDateUpdateInput = Date | string | null
+export type PrismaOption = { prisma: PrismaService }
+export type TimeUtilsOption = { timeUtils: TimeUtilsService }
+export type TestReservation = Prisma.ReservationGetPayload<
+  typeof DEFAULT_RESERVATION_ARGS
+>
 
 export const getCustWithData = async (
   testCustomer: TestCustomerWithId,
@@ -35,7 +66,7 @@ export const getCustWithData = async (
 export const setCustomerSubscriptionStatus = async (
   testCustomer: TestCustomerWithId,
   status: string,
-  { prisma }: { prisma: PrismaService }
+  { prisma }: PrismaOption
 ) => {
   await prisma.client.customer.update({
     where: { id: testCustomer.id },
@@ -54,12 +85,151 @@ export const expectTimeToEqual = (time, expectedValue) => {
 export const setCustomerSubscriptionNextBillingAt = async (
   testCustomer: TestCustomerWithId,
   nextBillingAt: PrismaDateUpdateInput,
-  { prisma }: { prisma: PrismaService }
+  { prisma }: PrismaOption
 ) => {
   await prisma.client.customer.update({
     where: { id: testCustomer.id },
     data: {
       membership: { update: { subscription: { update: { nextBillingAt } } } },
     },
+  })
+}
+
+export const addToBagAndReserveForCustomer = async (
+  testCustomer: TestCustomerWithId,
+  numProductsToAdd: number,
+  {
+    prisma,
+    reservationService,
+  }: PrismaOption & { reservationService: ReservationService },
+  options: { shippingCode?: ShippingCode } = {}
+) => {
+  const { shippingCode = "UPSGround" } = options
+  const reservedBagItems = await prisma.client.bagItem.findMany({
+    where: {
+      customer: { id: testCustomer.id },
+      status: "Reserved",
+      saved: false,
+    },
+    select: {
+      productVariant: {
+        select: { sku: true, product: { select: { id: true } } },
+      },
+    },
+  })
+  const reservedSKUs = reservedBagItems.map(a => a.productVariant.sku)
+  const reservedProductIds = reservedBagItems.map(
+    b => b.productVariant.product.id
+  )
+  let reservableProdVars = []
+  let reservableProductIds = []
+  for (let i = 0; i < numProductsToAdd; i++) {
+    const nextProdVar = await prisma.client.productVariant.findFirst({
+      where: {
+        reservable: { gte: 1 },
+        sku: { notIn: reservedSKUs },
+        // Ensure we reserve diff products each time. Needed for some tests
+        product: {
+          id: { notIn: [...reservedProductIds, ...reservableProductIds] },
+        },
+        // We shouldn't need to check this since we're checking counts,
+        // but there's some corrupt data so we do this to circumvent that.
+        physicalProducts: { some: { inventoryStatus: "Reservable" } },
+      },
+      take: numProductsToAdd,
+      select: {
+        id: true,
+        productId: true,
+      },
+    })
+    reservableProdVars.push(nextProdVar)
+    reservableProductIds.push(nextProdVar.productId)
+  }
+  for (const prodVar of reservableProdVars) {
+    await prisma.client.bagItem.create({
+      data: {
+        customer: { connect: { id: testCustomer.id } },
+        productVariant: { connect: { id: prodVar.id } },
+        status: "Added",
+        saved: false,
+      },
+    })
+  }
+
+  const bagItemsToReserve = await prisma.client.bagItem.findMany({
+    where: {
+      customer: { id: testCustomer.id },
+      status: { in: ["Added", "Reserved"] },
+      saved: false,
+    },
+    select: { productVariant: { select: { id: true } } },
+  })
+  const prodVarsToReserve = bagItemsToReserve.map(a => a.productVariant.id)
+  const r = await reservationService.reserveItems({
+    items: prodVarsToReserve,
+    shippingCode,
+    customer: testCustomer as any,
+    select: DEFAULT_RESERVATION_ARGS.select,
+  })
+  await setPackageAmount(r.sentPackage.id, UPS_GROUND_FEE, { prisma })
+  await setPackageAmount(r.returnPackages[0].id, UPS_GROUND_FEE, { prisma })
+  return r
+}
+
+export const setPackageAmount = async (
+  packageId,
+  amount,
+  { prisma }: PrismaOption
+) => {
+  await prisma.client.package.update({
+    where: { id: packageId },
+    data: { amount },
+  })
+}
+
+export const setReservationStatus = async (
+  reservationId,
+  status: ReservationStatus,
+  { prisma }: PrismaOption
+) => {
+  await prisma.client.reservation.update({
+    where: { id: reservationId },
+    data: { status },
+  })
+}
+
+export const setReservationCreatedAt = async (
+  reservationId,
+  numDaysAgo,
+  { prisma, timeUtils }: PrismaOption & TimeUtilsOption
+) => {
+  const date = timeUtils.xDaysAgoISOString(numDaysAgo)
+  await prisma.client.reservation.update({
+    where: { id: reservationId },
+    data: { createdAt: date },
+  })
+}
+
+export const setPackageDeliveredAt = async (
+  packageId,
+  numDaysAgo,
+  { prisma, timeUtils }: PrismaOption & TimeUtilsOption
+) => {
+  const deliveredAtDate = timeUtils.xDaysAgoISOString(numDaysAgo)
+  await prisma.client.package.update({
+    where: { id: packageId },
+    data: { deliveredAt: deliveredAtDate },
+  })
+}
+
+export const setPackageEnteredSystemAt = async (
+  packageId,
+  numDaysAgo,
+  { prisma, timeUtils }: PrismaOption & TimeUtilsOption
+) => {
+  const date = timeUtils.xDaysAgoISOString(numDaysAgo)
+  await prisma.client.package.update({
+    where: { id: packageId },
+    data: { enteredDeliverySystemAt: date },
   })
 }
