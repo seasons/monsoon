@@ -160,6 +160,11 @@ export class ReservationService {
 
     const promises = []
 
+    // If we don't have a pickup date & time, default back to UPS Ground
+    if (shippingCode === "Pickup" && (!pickupTime || !pickupTime.date)) {
+      shippingCode = "UPSGround"
+    }
+
     // Do a quick validation on the data
     const customerPlanType = customerWithData.membership.plan.tier
     const numDraftRentalInvoices =
@@ -311,13 +316,15 @@ export class ReservationService {
     })) as any
 
     // Send confirmation email
-    await this.emails.sendReservationConfirmationEmail(
-      customerWithData.user,
-      newProductVariantsBeingReserved,
+    await this.emails.sendReservationConfirmationEmail({
+      user: customerWithData.user,
+      productsVariantIDs: newProductVariantsBeingReserved,
+      trackingNumber: seasonsToCustomerTransaction.tracking_number,
+      trackingUrl: seasonsToCustomerTransaction.tracking_url_provider,
       reservation,
-      seasonsToCustomerTransaction.tracking_number,
-      seasonsToCustomerTransaction.tracking_url_provider
-    )
+      shippingCode,
+      pickupTime,
+    })
 
     try {
       await this.removeRestockNotifications(items, customer?.id)
@@ -727,6 +734,13 @@ export class ReservationService {
         },
       },
     })
+
+    if (customerWithUser.membership === null) {
+      this.logger.log("Customer without membership trying to reserve", {
+        customer: customerWithUser,
+      })
+      throw new Error("Cannot reserve items without a membership")
+    }
 
     const productSelect = Prisma.validator<Prisma.ProductSelect>()({
       id: true,

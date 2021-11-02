@@ -238,7 +238,7 @@ export class TestUtilsService {
   }: {
     create?: Partial<Prisma.CustomerCreateInput>
     select?: Prisma.CustomerSelect
-  }): Promise<{ cleanupFunc: () => void; customer: any }> {
+  } = {}): Promise<{ cleanupFunc: () => void; customer: any }> {
     const chargebeeSubscriptionId = this.utils.randomString()
     const defaultCreateData = {
       status: "Active",
