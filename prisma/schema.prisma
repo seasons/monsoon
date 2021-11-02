@@ -500,20 +500,20 @@ model AdminActionLogInterpretation {
 }
 
 model BagItem {
-  id                String           @id @default(cuid()) @db.VarChar(30)
-  position          Int?
-  saved             Boolean?
-  status            BagItemStatus
-  customerId        String?          @map("customer") @db.VarChar(30)
-  productVariantId  String?          @map("productVariant") @db.VarChar(30)
-  physicalProductId String?          @map("physicalProduct") @db.VarChar(30)
-  reservationPhysicalProductId String?          @map("reservationPhysicalProduct") @db.VarChar(30)
-  createdAt         DateTime         @default(now())
-  updatedAt         DateTime         @updatedAt
-  customer          Customer?        @relation(fields: [customerId], references: [id])
-  productVariant    ProductVariant?  @relation(fields: [productVariantId], references: [id])
-  physicalProduct   PhysicalProduct? @relation(fields: [physicalProductId], references: [id])
-  reservationPhysicalProduct ReservationPhysicalProduct? @relation(fields: [reservationPhysicalProductId], references: [id])
+  id                           String                      @id @default(cuid()) @db.VarChar(30)
+  position                     Int?
+  saved                        Boolean?
+  status                       BagItemStatus
+  customerId                   String?                     @map("customer") @db.VarChar(30)
+  productVariantId             String?                     @map("productVariant") @db.VarChar(30)
+  physicalProductId            String?                     @map("physicalProduct") @db.VarChar(30)
+  reservationPhysicalProductId String?                     @map("reservationPhysicalProduct") @db.VarChar(30)
+  createdAt                    DateTime                    @default(now())
+  updatedAt                    DateTime                    @updatedAt
+  customer                     Customer?                   @relation(fields: [customerId], references: [id])
+  productVariant               ProductVariant?             @relation(fields: [productVariantId], references: [id])
+  physicalProduct              PhysicalProduct?            @relation(fields: [physicalProductId], references: [id])
+  reservationPhysicalProduct   ReservationPhysicalProduct? @relation(fields: [reservationPhysicalProductId], references: [id])
 
   @@unique([productVariantId, customerId])
 }
@@ -1480,7 +1480,7 @@ model ReservationPhysicalProduct {
   reservationId String      @map("reservation") @db.VarChar(30)
   reservation   Reservation @relation(fields: [reservationId], references: [id])
 
-  bagItem          BagItem?
+  bagItem BagItem?
 
   rentalInvoices RentalInvoice[] @relation("RentalInvoiceToReservationPhysicalProducts")
 
@@ -1489,8 +1489,8 @@ model ReservationPhysicalProduct {
 
   pickupWindowId String?
 
-  createdAt      DateTime        @default(now())
-  updatedAt      DateTime        @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
 }
 
