@@ -381,7 +381,7 @@ export class ShippingService {
         `Unexpected servicelevel, shipment type tuple: ${servicelevel}, ${shipmentType}`
       )
     }
-    return Math.floor(rate * (1 - discountPercentage))
+    return Math.round(rate * (1 - discountPercentage))
   }
 
   private async getShippingRate({
@@ -404,7 +404,7 @@ export class ShippingService {
     })
 
     // We'll want to pull that number dynamically from the Shippo API once it's fixed
-    const rawAmount = Math.floor(
+    const rawAmount = Math.round(
       parseFloat(((rate?.amount as unknown) as string) || "0.00")
     )
     const discountedAmount = this.discountShippingRate(
