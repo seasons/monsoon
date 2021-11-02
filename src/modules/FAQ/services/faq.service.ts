@@ -20,7 +20,7 @@ export class FAQService {
           {
             title: "3. Did something not fit?",
             text:
-              "Pack it up and send it back. After we process your return, we’ll reset your bag and you can order something new. Don’t worry, you won’t be charged for any size-related returns as long as you email us and let us know 24 hours after receiving your order.",
+              "Pack it up and send it back. After we process your return, we’ll reset your bag and you can order something new. Don’t worry, you won’t be charged for any size-related returns as long as you email us and let us know 24 hours after receiving your order. Size-related returns are limited to once per month.",
           },
           {
             title: "4. How many items can I have out?",

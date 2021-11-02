@@ -25,7 +25,7 @@ import { AdmissionsService } from "./services/admissions.service"
 import { AuthService } from "./services/auth.service"
 import { CustomerService } from "./services/customer.service"
 
-@Module({
+export const USER_MODULE_DEF = {
   imports: [
     EmailModule,
     PrismaModule,
@@ -61,5 +61,6 @@ import { CustomerService } from "./services/customer.service"
     AdmissionsService,
     CustomerUtilsService,
   ],
-})
+}
+@Module(USER_MODULE_DEF)
 export class UserModule {}

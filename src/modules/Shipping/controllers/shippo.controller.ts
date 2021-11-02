@@ -308,10 +308,10 @@ export class ShippoController {
         where: { id: reservation.id },
         select: {
           id: true,
-          user: true,
+          customer: { select: { user: true } },
         },
       })
-    ).user
+    ).customer.user
 
     const pushNotifID = `Reservation${status}` as PushNotificationID
 

@@ -588,4 +588,31 @@ export class ProductUtilsService {
     )
     return [categoryWithChildren, ...flatten(allChildrenWithData)] as any
   }
+
+  async removeRestockNotifications(items: string[], customerID: string) {
+    const restockNotifications = await this.prisma.client.productNotification.findMany(
+      {
+        where: {
+          customer: {
+            id: customerID,
+          },
+          productVariant: {
+            id: { in: items },
+          },
+        },
+        orderBy: {
+          createdAt: "desc",
+        },
+      }
+    )
+
+    if (restockNotifications?.length > 0) {
+      return await this.prisma.client.productNotification.updateMany({
+        where: { id: { in: restockNotifications.map(notif => notif.id) } },
+        data: {
+          shouldNotify: false,
+        },
+      })
+    }
+  }
 }

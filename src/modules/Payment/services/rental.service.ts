@@ -42,6 +42,8 @@ export const CREATE_RENTAL_INVOICE_LINE_ITEMS_INVOICE_SELECT = Prisma.validator<
 >()({
   id: true,
   billingStartAt: true,
+  billingEndAt: true,
+  reservationPhysicalProducts: { select: { id: true } },
   products: {
     select: {
       id: true,
@@ -143,7 +145,14 @@ export class RentalService {
     lostInPhase: true,
   })
 
-  async processInvoice(invoice, onError = err => null) {
+  async processInvoice(
+    invoice,
+    {
+      onError = err => null,
+      forceImmediateCharge = false,
+      createNextInvoice = true,
+    } = {}
+  ) {
     let chargebeeInvoices, chargePromises
     let promises = []
     let lineItems = invoice.lineItems
@@ -166,7 +175,9 @@ export class RentalService {
         }
       }
 
-      const chargeResult = await this.chargebeeChargeTab(planID, lineItems)
+      const chargeResult = await this.chargebeeChargeTab(planID, lineItems, {
+        forceImmediateCharge,
+      })
       ;[chargePromises, chargebeeInvoices] = chargeResult
       promises.push(...chargePromises)
       promises.push(
@@ -190,7 +201,7 @@ export class RentalService {
       }
       onError(err)
     } finally {
-      if (invoice.status === "Draft") {
+      if (invoice.status === "Draft" && createNextInvoice) {
         const newRentalInvoicePromise = ((await this.initDraftRentalInvoice(
           invoice.membership.id,
           "promise"
@@ -444,7 +455,7 @@ export class RentalService {
     physicalProduct: Pick<PhysicalProduct, "seasonsUID">,
     options: { upTo?: "today" | "billingEnd" | null } = { upTo: null }
   ) {
-    const invoiceWithData = await this.prisma.client.rentalInvoice.findUnique({
+    const invoiceWithData = await this.prisma.client.rentalInvoice.findFirst({
       where: { id: invoice.id },
       select: {
         billingStartAt: true,
@@ -722,7 +733,7 @@ export class RentalService {
         let comment
         if (idx === 0) {
           const usedPremiumShipping =
-            !!r && r.shippingMethod.code === "UPSSelect"
+            !!r && r.shippingMethod?.code === "UPSSelect"
           if (usedPremiumShipping) {
             comment =
               "First reservation of billing cycle. Used premium shipping. Charge full outbound package."
@@ -1084,7 +1095,8 @@ export class RentalService {
 
   private async chargebeeChargeTab(
     planID: string,
-    lineItems: { id: string }[]
+    lineItems: { id: string }[],
+    { forceImmediateCharge = false }
   ) {
     const promises = []
     const invoicesCreated = []
@@ -1158,7 +1170,8 @@ export class RentalService {
 
     const shouldChargeImmediately =
       ["non_renewing", "cancelled"].includes(subscriptionStatus) ||
-      this.timeUtils.isXOrMoreDaysFromNow(nextBillingAt.toISOString(), 2)
+      this.timeUtils.isXOrMoreDaysFromNow(nextBillingAt.toISOString(), 2) ||
+      forceImmediateCharge
 
     if (shouldChargeImmediately) {
       const result = await chargebee.invoice
@@ -1203,11 +1216,7 @@ export class RentalService {
     return [promises, invoicesCreated]
   }
 
-  private async addPromotionalCredits(
-    prismaUserId,
-    totalInvoiceCharges,
-    invoiceId
-  ) {
+  async addPromotionalCredits(prismaUserId, totalInvoiceCharges, invoiceId) {
     if (!totalInvoiceCharges) {
       return
     }
