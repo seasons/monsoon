@@ -112,7 +112,7 @@ type Me @cacheControl(maxAge: 0, scope: PRIVATE) {
   customer: Customer
   activeReservation: Reservation
   bagSections: [BagSection!]
-  bagSection: BagSection
+  bagSection(status: BagSectionStatus): BagSection
   bag(status: BagItemStatus): [BagItem!]
   savedItems: [BagItem!]
   reservationLineItems(
