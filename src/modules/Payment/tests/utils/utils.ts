@@ -3,7 +3,9 @@ import { TimeUtilsService } from "@app/modules/Utils/services/time.service"
 import { PrismaService } from "@app/prisma/prisma.service"
 import {
   Customer,
+  PhysicalProduct,
   Prisma,
+  RentalInvoiceLineItem,
   ReservationStatus,
   ShippingCode,
 } from "@prisma/client"
@@ -233,3 +235,58 @@ export const setPackageEnteredSystemAt = async (
     data: { enteredDeliverySystemAt: date },
   })
 }
+
+export const overridePrices = async (
+  seasonsUIDs,
+  prices,
+  { prisma }: PrismaOption
+) => {
+  if (seasonsUIDs.length !== prices.length) {
+    throw "must pass in same length arrays"
+  }
+  for (const [i, overridePrice] of prices.entries()) {
+    const prodToUpdate = await prisma.client.product.findFirst({
+      where: {
+        variants: {
+          some: {
+            physicalProducts: {
+              some: { seasonsUID: seasonsUIDs[i] },
+            },
+          },
+        },
+      },
+    })
+    await prisma.client.product.update({
+      where: { id: prodToUpdate.id },
+      data: { computedRentalPrice: overridePrice },
+    })
+  }
+}
+
+export const setCustomerPlanType = async (
+  testCustomer: TestCustomerWithId,
+  planID: "access-monthly" | "access-yearly",
+  { prisma }: PrismaOption
+) => {
+  await prisma.client.customer.update({
+    where: { id: testCustomer.id },
+    data: { membership: { update: { plan: { connect: { planID } } } } },
+  })
+}
+
+export const createLineItemHash = (
+  items: (Pick<RentalInvoiceLineItem, "name"> & {
+    physicalProduct: Pick<PhysicalProduct, "seasonsUID">
+  })[]
+) =>
+  items.reduce((acc, curVal) => {
+    return {
+      ...acc,
+      [curVal.physicalProduct?.seasonsUID || curVal.name]: curVal,
+    }
+  }, {})
+
+export const createProcessingObjectKey = (
+  reservationNumber,
+  type: "OutboundPackage" | "Processing"
+) => "Reservation-" + reservationNumber + "-" + type
