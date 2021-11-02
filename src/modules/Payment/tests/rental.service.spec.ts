@@ -1,8 +1,10 @@
 import { EmailService } from "@app/modules/Email/services/email.service"
 import { PushNotificationService } from "@app/modules/PushNotification/services/pushNotification.service"
 import { ReservationService } from "@app/modules/Reservation"
+import { ReserveService } from "@app/modules/Reservation/services/reserve.service"
 import { EmailServiceMock } from "@app/modules/Utils/mocks/emailService.mock"
 import { ShippoMock } from "@app/modules/Utils/mocks/shippo.mock"
+import { ProductUtilsService } from "@app/modules/Utils/services/product.utils.service"
 import { TestUtilsService } from "@app/modules/Utils/services/test.service"
 import { TimeUtilsService } from "@app/modules/Utils/services/time.service"
 import { UtilsService } from "@app/modules/Utils/services/utils.service"
@@ -235,6 +237,7 @@ class ChargeBeeMock {
 
 let prisma: PrismaService
 let rentalService: RentalService
+let reserveService: ReserveService
 let reservationService: ReservationService
 let utils: UtilsService
 let timeUtils: TimeUtilsService
@@ -242,6 +245,7 @@ let cleanupFuncs = []
 let testCustomer: any
 let moduleRef: TestingModule
 let testUtils: TestUtilsService
+let productUtils: ProductUtilsService
 
 const testCustomerSelect = Prisma.validator<Prisma.CustomerSelect>()({
   id: true,
@@ -263,8 +267,10 @@ describe("Rental Service", () => {
     rentalService = moduleRef.get<RentalService>(RentalService)
     utils = moduleRef.get<UtilsService>(UtilsService)
     timeUtils = moduleRef.get<TimeUtilsService>(TimeUtilsService)
+    reserveService = moduleRef.get<ReserveService>(ReserveService)
     reservationService = moduleRef.get<ReservationService>(ReservationService)
     testUtils = moduleRef.get<TestUtilsService>(TestUtilsService)
+    productUtils = moduleRef.get<ProductUtilsService>(ProductUtilsService)
 
     const notificationService = moduleRef.get<PushNotificationService>(
       PushNotificationService
@@ -316,7 +322,7 @@ describe("Rental Service", () => {
       .mockImplementation(() => null)
 
     jest
-      .spyOn(reservationService, "removeRestockNotifications")
+      .spyOn(productUtils, "removeRestockNotifications")
       .mockImplementation(() => null)
 
     jest
@@ -2700,8 +2706,7 @@ const addToBagAndReserveForCustomer = async (
     select: { productVariant: { select: { id: true } } },
   })
   const prodVarsToReserve = bagItemsToReserve.map(a => a.productVariant.id)
-  const r = await reservationService.reserveItems({
-    items: prodVarsToReserve,
+  const r = await reserveService.reserveItems({
     shippingCode,
     customer: testCustomer as any,
     select: {

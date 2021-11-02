@@ -43,6 +43,7 @@ export const CREATE_RENTAL_INVOICE_LINE_ITEMS_INVOICE_SELECT = Prisma.validator<
   id: true,
   billingStartAt: true,
   billingEndAt: true,
+  reservationPhysicalProducts: { select: { id: true } },
   products: {
     select: {
       id: true,
@@ -454,7 +455,7 @@ export class RentalService {
     physicalProduct: Pick<PhysicalProduct, "seasonsUID">,
     options: { upTo?: "today" | "billingEnd" | null } = { upTo: null }
   ) {
-    const invoiceWithData = await this.prisma.client.rentalInvoice.findUnique({
+    const invoiceWithData = await this.prisma.client.rentalInvoice.findFirst({
       where: { id: invoice.id },
       select: {
         billingStartAt: true,
@@ -949,6 +950,7 @@ export class RentalService {
                 product: {
                   select: {
                     id: true,
+                    name: true,
                     computedRentalPrice: true,
                     rentalPriceOverride: true,
                     wholesalePrice: true,
