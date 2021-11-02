@@ -160,6 +160,11 @@ export class ReservationService {
 
     const promises = []
 
+    // If we don't have a pickup date & time, default back to UPS Ground
+    if (shippingCode === "Pickup" && (!pickupTime || !pickupTime.date)) {
+      shippingCode = "UPSGround"
+    }
+
     // Do a quick validation on the data
     const customerPlanType = customerWithData.membership.plan.tier
     const numDraftRentalInvoices =
