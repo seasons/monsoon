@@ -150,7 +150,7 @@ export class ShippingService {
     const customerToSeasonsTransaction = await this.createShippingLabel({
       shipment: customerToSeasonsShipment,
       carrier_account: process.env.UPS_ACCOUNT_ID,
-      servicelevel_token: UPSServiceLevel.Ground,
+      servicelevel_token: UPSServiceLevel.Ground, // Inbound should always be ground, to save customer/us money
     })
 
     return [seasonsToCustomerTransaction, customerToSeasonsTransaction]

@@ -16,6 +16,8 @@ import { CREATE_RENTAL_INVOICE_LINE_ITEMS_INVOICE_SELECT } from "../../services/
 
 export const UPS_GROUND_FEE = 1000
 export const UPS_SELECT_FEE = 2000
+export const BASE_PROCESSING_FEE = 550
+
 const DEFAULT_RESERVATION_ARGS = Prisma.validator<Prisma.ReservationArgs>()({
   select: {
     id: true,
@@ -33,14 +35,14 @@ const DEFAULT_RESERVATION_ARGS = Prisma.validator<Prisma.ReservationArgs>()({
     shippingMethod: { select: { code: true } },
   },
 })
+export type TestReservation = Prisma.ReservationGetPayload<
+  typeof DEFAULT_RESERVATION_ARGS
+>
 
 export type TestCustomerWithId = Pick<Customer, "id">
 export type PrismaDateUpdateInput = Date | string | null
 export type PrismaOption = { prisma: PrismaService }
 export type TimeUtilsOption = { timeUtils: TimeUtilsService }
-export type TestReservation = Prisma.ReservationGetPayload<
-  typeof DEFAULT_RESERVATION_ARGS
->
 
 export const getCustWithData = async (
   testCustomer: TestCustomerWithId,
