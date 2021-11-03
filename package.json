@@ -203,7 +203,7 @@
       "tsx"
     ],
     "transform": {
-      "^.+\\.(t|j)s$": "ts-jest"
+      "^.+\\.(t)s$": "ts-jest"
     },
     "testEnvironment": "node",
     "moduleNameMapper": {
