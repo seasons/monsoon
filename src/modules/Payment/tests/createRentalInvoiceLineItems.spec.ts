@@ -312,6 +312,9 @@ describe("Create Rental Invoice Line Items", () => {
       )
     })
 
+    it("Does not create a line item for the 3rd outbound package because it hasn't entered the ups system yet", () => {
+      expect(0).toBe(1)
+    })
     it("Creates processing line items for all three new reservations with proper prices", () => {
       const keyOne = createProcessingObjectKey(
         initialReservation.reservationNumber,
@@ -623,6 +626,18 @@ describe("Create Rental Invoice Line Items", () => {
 
       expect(outboundPackageLineItem).toBeDefined()
       expect(outboundPackageLineItem.price).toBe(700) // ups ground fee of 1000 with a 30% discount
+    })
+  })
+
+  describe("outbound package exceptions", () => {
+    it("does not charge if customer picked up reservation")
+
+    it("does not charge if multiple resys were processed in one go")
+
+    it("charges if package enters ups system")
+
+    it("if a reservation was created in the previous billing cycle but the outbound package was not sent until this billing cycle, it creates a line item", () => {
+      expect(0).toBe(1)
     })
   })
 })

@@ -655,15 +655,16 @@ export class RentalService {
   }
 
   async createRentalInvoiceLineItems(
-    invoice: Pick<RentalInvoice, "id" | "billingStartAt"> & {
-      reservations: (Pick<Reservation, "createdAt"> & {
-        reservationNumber: number
+    invoice: Pick<RentalInvoice, "id" | "billingStartAt" | "billingEndAt"> & {
+      reservations: (Pick<Reservation, "createdAt" | "reservationNumber"> & {
         returnPackages: Array<
           Pick<Package, "deliveredAt" | "amount"> & {
             items: Array<Pick<PhysicalProduct, "seasonsUID">>
-          } & { shippingMethod?: Pick<ShippingMethod, "code"> }
+          } & {
+            shippingMethod?: Pick<ShippingMethod, "code">
+          }
         >
-      })[]
+      } & { sentPackage: Pick<Package, "enteredDeliverySystemAt"> })[]
       products: (Pick<PhysicalProduct, "id" | "seasonsUID"> & {
         productVariant: {
           product: Pick<Product, "computedRentalPrice">
@@ -724,10 +725,21 @@ export class RentalService {
     // Calculate the processing fees
 
     // Outbound packages
+    // const outboundPackagesShippedThisBillingCycle = invoice.reservations
+    //   .flatMap(r => r.sentPackage)
+    //   .filter(r => !!r.enteredDeliverySystemAt)
+    //   .filter(
+    //     r =>
+    //       this.timeUtils.isLaterDate(
+    //         r.enteredDeliverySystemAt,
+    //         invoice.billingStartAt
+    //       ) && this.timeUtils.isLaterDate(invoice.billingStartAt, r.createdAt)
+    //   )
     const newReservations = invoice.reservations.filter(a =>
       this.timeUtils.isLaterDate(a.createdAt, invoice.billingStartAt)
     )
     const sortedNewReservations = orderBy(newReservations, "createdAt", "asc")
+    // TODO: Filter out reservations where the sent package hasn't been sent yet.
     const newReservationOutboundPackageLineItemDatas = sortedNewReservations.map(
       (r, idx) => {
         const name = "Reservation-" + r.reservationNumber + "-OutboundPackage"
@@ -762,6 +774,7 @@ export class RentalService {
         })
       }
     )
+    // TODO: Create another array to cover the edge case where a reservation was created BEFORE this billing cycle but the outbound package was sent AFTER this billing cycle
 
     // Inbound Packages
     const allReturnPackages = invoice.reservations.flatMap(
