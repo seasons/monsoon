@@ -1,0 +1,99 @@
+Debugger listening on ws://127.0.0.1:9229/c7f05cbe-7235-434b-81df-a179bc08d0c7
+For help, see: https://nodejs.org/en/docs/inspector
+{
+  user: { email: 'narchie12@gmail.com' },
+  membership: { rentalInvoices: [] }
+}
+{
+  user: { email: 'sclowery@crimson.ua.edu' },
+  membership: { rentalInvoices: [] }
+}
+{
+  user: { email: 'galfredomedina@icloud.com' },
+  membership: { rentalInvoices: [] }
+}
+{
+  user: { email: 'aneesetb@gmail.com' },
+  membership: { rentalInvoices: [] }
+}
+{
+  user: { email: 'abeylopez2@gmail.com' },
+  membership: { rentalInvoices: [] }
+}
+{
+  user: { email: 'adamlceely@gmail.com' },
+  membership: { rentalInvoices: [] }
+}
+{
+  user: { email: 'cgreene1998@me.com' },
+  membership: { rentalInvoices: [] }
+}
+{
+  user: { email: 'ryan.degraw.s@gmail.com' },
+  membership: { rentalInvoices: [] }
+}
+{
+  user: { email: 'lmichalski1037@gmail.com' },
+  membership: { rentalInvoices: [] }
+}
+{
+  user: { email: 'anthonyriley7575@gmail.com' },
+  membership: { rentalInvoices: [] }
+}
+{
+  user: { email: 'bradsyates@gmail.com' },
+  membership: { rentalInvoices: [] }
+}
+{
+  user: { email: 'alecsuthy@icloud.com' },
+  membership: { rentalInvoices: [] }
+}
+{
+  user: { email: 'rapsarmiento@gmail.com' },
+  membership: { rentalInvoices: [] }
+}
+{
+  user: { email: 'kjknesel@gmail.com' },
+  membership: { rentalInvoices: [] }
+}
+{
+  user: { email: 'm.gassner23@gmail.com' },
+  membership: { rentalInvoices: [] }
+}
+{
+  user: { email: 'rgarcia0223@yahoo.com' },
+  membership: { rentalInvoices: [] }
+}
+{
+  user: { email: 'justinpollivierre@gmail.com' },
+  membership: { rentalInvoices: [] }
+}
+{
+  user: { email: 'francisco.e.sanchez6@gmail.com' },
+  membership: { rentalInvoices: [] }
+}
+{
+  user: { email: 'perla.trejo@live.com' },
+  membership: { rentalInvoices: [] }
+}
+{
+  user: { email: 'jbroha@gmail.com' },
+  membership: { rentalInvoices: [ [Object] ] }
+}
+{
+  user: { email: 'kfuhrman03@gmail.com' },
+  membership: { rentalInvoices: [] }
+}
+{
+  user: { email: 'eowhite01@gmail.com' },
+  membership: { rentalInvoices: [ [Object] ] }
+}
+{
+  user: { email: 'chadmjohnson@gmail.com' },
+  membership: { rentalInvoices: [] }
+}
+{
+  user: { email: 'reganbozman@gmail.com' },
+  membership: { rentalInvoices: [] }
+}
+24

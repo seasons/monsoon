@@ -1,0 +1,55 @@
+Debugger listening on ws://127.0.0.1:9229/9c672cee-429d-4a3b-b9d2-617392a16681
+For help, see: https://nodejs.org/en/docs/inspector
+[
+  {
+    membership: {
+      rentalInvoices: [
+        {
+          id: 'cktt7s29u6167rduv7o698g6j',
+          status: 'Billed',
+          createdAt: 2021-09-20T22:22:35.394Z,
+          billingEndAt: 2021-10-19T16:07:39.000Z,
+          billingStartAt: 2021-09-20T22:22:35.154Z,
+          reservations: [ { reservationNumber: 450474852 } ],
+          products: [ { seasonsUID: 'ACNE-BWN-MM-005-01' } ],
+          lineItems: [
+            {
+              id: 'ckuyc0z5412633ssj3d5w9iev',
+              price: 1723,
+              physicalProduct: null
+            },
+            {
+              id: 'ckuyc0z5412643ssjcg7hs3ri',
+              price: 550,
+              physicalProduct: null
+            },
+            {
+              id: 'ckuyc0z3x12603ssjd96j8wyk',
+              price: 1407,
+              physicalProduct: {
+                productVariant: { product: { name: 'Logo Crewneck Sweatshirt' } }
+              }
+            },
+            {
+              id: 'ckuyc0z5312613ssjszejgt3r',
+              price: 0,
+              physicalProduct: null
+            }
+          ],
+          comment: null
+        },
+        {
+          id: 'ckuyc119t13473ssj053qen0n',
+          status: 'Draft',
+          createdAt: 2021-10-19T17:00:05.681Z,
+          billingEndAt: 2021-11-20T00:00:00.000Z,
+          billingStartAt: 2021-10-19T17:00:05.568Z,
+          reservations: [ { reservationNumber: 677965654 } ],
+          products: [ { seasonsUID: 'ACNE-BLU-MM-043-01' } ],
+          lineItems: [],
+          comment: null
+        }
+      ]
+    }
+  }
+]

@@ -1,0 +1,43 @@
+Debugger listening on ws://127.0.0.1:9229/c22b854e-dcd7-4c37-963d-d260913a218f
+For help, see: https://nodejs.org/en/docs/inspector
+{
+  user: { email: 'aneesetb@gmail.com' },
+  membership: { rentalInvoices: [] }
+}
+{
+  user: { email: 'abeylopez2@gmail.com' },
+  membership: { rentalInvoices: [] }
+}
+{
+  user: { email: 'cgreene1998@me.com' },
+  membership: { rentalInvoices: [] }
+}
+{
+  user: { email: 'ryan.degraw.s@gmail.com' },
+  membership: { rentalInvoices: [] }
+}
+{
+  user: { email: 'anthonyriley7575@gmail.com' },
+  membership: { rentalInvoices: [] }
+}
+{
+  user: { email: 'bradsyates@gmail.com' },
+  membership: { rentalInvoices: [] }
+}
+{
+  user: { email: 'alecsuthy@icloud.com' },
+  membership: { rentalInvoices: [] }
+}
+{
+  user: { email: 'm.gassner23@gmail.com' },
+  membership: { rentalInvoices: [] }
+}
+{
+  user: { email: 'francisco.e.sanchez6@gmail.com' },
+  membership: { rentalInvoices: [] }
+}
+{
+  user: { email: 'kfuhrman03@gmail.com' },
+  membership: { rentalInvoices: [] }
+}
+10

@@ -1,0 +1,288 @@
+Debugger listening on ws://127.0.0.1:9229/cf94fc04-5633-41db-9990-a55d50c100ba
+For help, see: https://nodejs.org/en/docs/inspector
+{
+  user: { email: 'narchie12@gmail.com' },
+  membership: {
+    rentalInvoices: [
+      {
+        billingEndAt: 2021-10-01T21:20:08.000Z,
+        billingStartAt: 2021-09-20T22:11:56.790Z
+      },
+      {
+        billingEndAt: 2021-11-06T00:00:00.000Z,
+        billingStartAt: 2021-10-06T18:00:15.234Z
+      }
+    ]
+  }
+}
+{
+  user: { email: 'galfredomedina@icloud.com' },
+  membership: {
+    rentalInvoices: [
+      {
+        billingEndAt: 2021-10-03T20:10:12.000Z,
+        billingStartAt: 2021-09-20T22:17:24.480Z
+      },
+      {
+        billingEndAt: 2021-11-07T00:00:00.000Z,
+        billingStartAt: 2021-10-07T23:00:08.088Z
+      }
+    ]
+  }
+}
+{
+  user: { email: 'aneesetb@gmail.com' },
+  membership: {
+    rentalInvoices: [
+      {
+        billingEndAt: 2021-10-01T20:32:26.000Z,
+        billingStartAt: 2021-09-20T22:17:32.849Z
+      },
+      {
+        billingEndAt: 2021-11-10T00:00:00.000Z,
+        billingStartAt: 2021-10-10T17:00:10.602Z
+      }
+    ]
+  }
+}
+{
+  user: { email: 'abeylopez2@gmail.com' },
+  membership: {
+    rentalInvoices: [
+      {
+        billingEndAt: 2021-09-27T04:18:27.000Z,
+        billingStartAt: 2021-09-20T22:18:04.929Z
+      },
+      {
+        billingEndAt: 2021-11-12T00:00:00.000Z,
+        billingStartAt: 2021-10-12T17:00:03.234Z
+      }
+    ]
+  }
+}
+{
+  user: { email: 'adamlceely@gmail.com' },
+  membership: {
+    rentalInvoices: [
+      {
+        billingEndAt: 2021-10-06T16:40:47.000Z,
+        billingStartAt: 2021-09-20T22:21:35.357Z
+      },
+      {
+        billingEndAt: 2021-11-10T00:00:00.000Z,
+        billingStartAt: 2021-10-10T17:00:09.834Z
+      }
+    ]
+  }
+}
+{
+  user: { email: 'cgreene1998@me.com' },
+  membership: {
+    rentalInvoices: [
+      {
+        billingEndAt: 2021-10-02T13:19:44.000Z,
+        billingStartAt: 2021-09-20T22:21:56.948Z
+      },
+      {
+        billingEndAt: 2021-11-10T00:00:00.000Z,
+        billingStartAt: 2021-10-10T17:00:09.378Z
+      }
+    ]
+  }
+}
+{
+  user: { email: 'ryan.degraw.s@gmail.com' },
+  membership: {
+    rentalInvoices: [
+      {
+        billingEndAt: 2021-09-29T18:18:33.000Z,
+        billingStartAt: 2021-09-20T22:23:01.239Z
+      },
+      {
+        billingEndAt: 2021-11-07T00:00:00.000Z,
+        billingStartAt: 2021-10-07T23:00:06.060Z
+      }
+    ]
+  }
+}
+{
+  user: { email: 'lmichalski1037@gmail.com' },
+  membership: {
+    rentalInvoices: [
+      {
+        billingEndAt: 2021-10-03T21:34:34.000Z,
+        billingStartAt: 2021-09-20T22:27:06.006Z
+      },
+      {
+        billingEndAt: 2021-11-10T00:00:00.000Z,
+        billingStartAt: 2021-10-10T17:00:08.278Z
+      }
+    ]
+  }
+}
+{
+  user: { email: 'anthonyriley7575@gmail.com' },
+  membership: {
+    rentalInvoices: [
+      {
+        billingEndAt: 2021-10-03T01:25:25.000Z,
+        billingStartAt: 2021-09-20T22:28:53.442Z
+      },
+      {
+        billingEndAt: 2021-11-10T00:00:00.000Z,
+        billingStartAt: 2021-10-10T17:00:07.818Z
+      }
+    ]
+  }
+}
+{
+  user: { email: 'bradsyates@gmail.com' },
+  membership: {
+    rentalInvoices: [
+      {
+        billingEndAt: 2021-09-29T23:19:53.000Z,
+        billingStartAt: 2021-09-20T22:29:10.276Z
+      },
+      {
+        billingEndAt: 2021-11-10T00:00:00.000Z,
+        billingStartAt: 2021-10-10T17:00:07.338Z
+      }
+    ]
+  }
+}
+{
+  user: { email: 'alecsuthy@icloud.com' },
+  membership: {
+    rentalInvoices: [
+      {
+        billingEndAt: 2021-10-01T21:45:54.000Z,
+        billingStartAt: 2021-09-20T22:29:34.469Z
+      },
+      {
+        billingEndAt: 2021-11-10T00:00:00.000Z,
+        billingStartAt: 2021-10-10T17:00:06.882Z
+      }
+    ]
+  }
+}
+{
+  user: { email: 'rapsarmiento@gmail.com' },
+  membership: {
+    rentalInvoices: [
+      {
+        billingEndAt: 2021-10-07T01:57:59.000Z,
+        billingStartAt: 2021-09-20T22:31:02.646Z
+      },
+      {
+        billingEndAt: 2021-11-10T00:00:00.000Z,
+        billingStartAt: 2021-10-10T17:00:06.402Z
+      }
+    ]
+  }
+}
+{
+  user: { email: 'kjknesel@gmail.com' },
+  membership: {
+    rentalInvoices: [
+      {
+        billingEndAt: 2021-10-04T02:40:37.000Z,
+        billingStartAt: 2021-09-20T22:33:37.838Z
+      },
+      {
+        billingEndAt: 2021-11-10T00:00:00.000Z,
+        billingStartAt: 2021-10-10T17:00:05.722Z
+      }
+    ]
+  }
+}
+{
+  user: { email: 'm.gassner23@gmail.com' },
+  membership: {
+    rentalInvoices: [
+      {
+        billingEndAt: 2021-10-01T15:19:07.000Z,
+        billingStartAt: 2021-09-20T22:35:29.803Z
+      },
+      {
+        billingEndAt: 2021-11-10T00:00:00.000Z,
+        billingStartAt: 2021-10-10T17:00:05.066Z
+      }
+    ]
+  }
+}
+{
+  user: { email: 'rgarcia0223@yahoo.com' },
+  membership: {
+    rentalInvoices: [
+      {
+        billingEndAt: 2021-10-09T14:28:26.000Z,
+        billingStartAt: 2021-09-20T22:45:49.986Z
+      },
+      {
+        billingEndAt: 2021-11-13T05:00:00.000Z,
+        billingStartAt: 2021-10-13T20:39:12.285Z
+      }
+    ]
+  }
+}
+{
+  user: { email: 'justinpollivierre@gmail.com' },
+  membership: {
+    rentalInvoices: [
+      {
+        billingEndAt: 2022-03-11T18:54:26.000Z,
+        billingStartAt: 2021-09-20T22:52:40.411Z
+      },
+      {
+        billingEndAt: 2021-11-04T04:00:00.000Z,
+        billingStartAt: 2021-10-04T18:39:45.065Z
+      }
+    ]
+  }
+}
+{
+  user: { email: 'francisco.e.sanchez6@gmail.com' },
+  membership: {
+    rentalInvoices: [
+      {
+        billingEndAt: 2021-09-22T16:47:22.000Z,
+        billingStartAt: 2021-09-20T22:53:54.603Z
+      },
+      {
+        billingEndAt: 2021-11-10T00:00:00.000Z,
+        billingStartAt: 2021-10-10T17:00:03.110Z
+      }
+    ]
+  }
+}
+{
+  user: { email: 'kfuhrman03@gmail.com' },
+  membership: {
+    rentalInvoices: [
+      {
+        billingEndAt: 2021-09-23T02:54:28.000Z,
+        billingStartAt: 2021-09-20T22:49:27.140Z
+      },
+      {
+        billingEndAt: 2021-11-10T00:00:00.000Z,
+        billingStartAt: 2021-10-10T17:00:04.138Z
+      }
+    ]
+  }
+}
+{
+  user: { email: 'reganbozman@gmail.com' },
+  membership: {
+    rentalInvoices: [
+      {
+        billingEndAt: 2021-10-05T19:23:40.000Z,
+        billingStartAt: 2021-09-20T22:55:33.404Z
+      },
+      {
+        billingEndAt: 2021-11-10T00:00:00.000Z,
+        billingStartAt: 2021-10-10T17:00:01.562Z
+      }
+    ]
+  }
+}
+19

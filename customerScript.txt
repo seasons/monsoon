@@ -1,0 +1,227 @@
+Debugger listening on ws://127.0.0.1:9229/8056d986-0c06-4445-9a5f-2aa4c6efc355
+For help, see: https://nodejs.org/en/docs/inspector
+{
+  user: { email: 'jack_armstrong@icloud.com' },
+  membership: { rentalInvoices: [] }
+}
+{
+  user: { email: 'ravahn@gmail.com' },
+  membership: { rentalInvoices: [] }
+}
+{
+  user: { email: 'semonereau@gmail.com' },
+  membership: { rentalInvoices: [] }
+}
+{
+  user: { email: 'cquintana@ucdavis.edu' },
+  membership: { rentalInvoices: [] }
+}
+{
+  user: { email: 'charliedorn.smith@gmail.com' },
+  membership: { rentalInvoices: [ [Object] ] }
+}
+{
+  user: { email: 'martys.smithbooking@gmail.com' },
+  membership: { rentalInvoices: [ [Object] ] }
+}
+{
+  user: { email: 'narchie12@gmail.com' },
+  membership: { rentalInvoices: [] }
+}
+{
+  user: { email: 'moneymaker.gamewinner@gmail.com' },
+  membership: { rentalInvoices: [ [Object] ] }
+}
+{
+  user: { email: 'ausarmundra@gmail.com' },
+  membership: { rentalInvoices: [] }
+}
+{
+  user: { email: 'sclowery@crimson.ua.edu' },
+  membership: { rentalInvoices: [] }
+}
+{
+  user: { email: 'alexandrahowley@gmail.com' },
+  membership: { rentalInvoices: [] }
+}
+{
+  user: { email: 'galfredomedina@icloud.com' },
+  membership: { rentalInvoices: [] }
+}
+{
+  user: { email: 'aneesetb@gmail.com' },
+  membership: { rentalInvoices: [] }
+}
+{
+  user: { email: 'zachary.hinton7@gmail.com' },
+  membership: { rentalInvoices: [] }
+}
+{
+  user: { email: 'abeylopez2@gmail.com' },
+  membership: { rentalInvoices: [] }
+}
+{
+  user: { email: 'justin.postonb@gmail.com' },
+  membership: { rentalInvoices: [ [Object] ] }
+}
+{
+  user: { email: 'adamlceely@gmail.com' },
+  membership: { rentalInvoices: [] }
+}
+{
+  user: { email: 'ernesto.chapa@gmail.com' },
+  membership: { rentalInvoices: [] }
+}
+{
+  user: { email: 'peterdluu@gmail.com' },
+  membership: { rentalInvoices: [] }
+}
+{
+  user: { email: 'cgreene1998@me.com' },
+  membership: { rentalInvoices: [] }
+}
+{
+  user: { email: 'chen.zhaoyang@outlook.com' },
+  membership: { rentalInvoices: [] }
+}
+{
+  user: { email: 'ryan.degraw.s@gmail.com' },
+  membership: { rentalInvoices: [] }
+}
+{
+  user: { email: 'mikelmayo1030@gmail.com' },
+  membership: { rentalInvoices: [ [Object] ] }
+}
+{
+  user: { email: 'katohiphop@gmail.com' },
+  membership: { rentalInvoices: [ [Object] ] }
+}
+{
+  user: { email: 'costajohnc@gmail.com' },
+  membership: { rentalInvoices: [] }
+}
+{
+  user: { email: 'willedem+1@gmail.com' },
+  membership: { rentalInvoices: [] }
+}
+{
+  user: { email: 'lmichalski1037@gmail.com' },
+  membership: { rentalInvoices: [] }
+}
+{
+  user: { email: 'anthonyriley7575@gmail.com' },
+  membership: { rentalInvoices: [] }
+}
+{
+  user: { email: 'bradsyates@gmail.com' },
+  membership: { rentalInvoices: [] }
+}
+{
+  user: { email: 'alecsuthy@icloud.com' },
+  membership: { rentalInvoices: [] }
+}
+{
+  user: { email: 'rapsarmiento@gmail.com' },
+  membership: { rentalInvoices: [] }
+}
+{
+  user: { email: 'garry@initialized.com' },
+  membership: { rentalInvoices: [] }
+}
+{
+  user: { email: 'verbicr@gmail.com' },
+  membership: { rentalInvoices: [] }
+}
+{
+  user: { email: 'bruceleeroy827@gmail.com' },
+  membership: { rentalInvoices: [] }
+}
+{
+  user: { email: 'kjknesel@gmail.com' },
+  membership: { rentalInvoices: [] }
+}
+{
+  user: { email: 'jerinv06@gmail.com' },
+  membership: { rentalInvoices: [] }
+}
+{
+  user: { email: 'robertbmckinley@gmail.com' },
+  membership: { rentalInvoices: [] }
+}
+{
+  user: { email: 'm.gassner23@gmail.com' },
+  membership: { rentalInvoices: [] }
+}
+{
+  user: { email: 'rgarcia0223@yahoo.com' },
+  membership: { rentalInvoices: [] }
+}
+{
+  user: { email: 'nicolas.caceres89@gmail.com' },
+  membership: { rentalInvoices: [] }
+}
+{
+  user: { email: 'justinpollivierre@gmail.com' },
+  membership: { rentalInvoices: [] }
+}
+{
+  user: { email: 'francisco.e.sanchez6@gmail.com' },
+  membership: { rentalInvoices: [] }
+}
+{
+  user: { email: 'perla.trejo@live.com' },
+  membership: { rentalInvoices: [] }
+}
+{
+  user: { email: 'danielrak@me.com' },
+  membership: { rentalInvoices: [ [Object] ] }
+}
+{
+  user: { email: 'ariana.nathani@gmail.com' },
+  membership: { rentalInvoices: [] }
+}
+{
+  user: { email: 'michaeldanielhogan@gmail.com' },
+  membership: { rentalInvoices: [] }
+}
+{
+  user: { email: 'armaann@gmail.com' },
+  membership: { rentalInvoices: [ [Object] ] }
+}
+{
+  user: { email: 'alexfloresdesigns+1@gmail.com' },
+  membership: { rentalInvoices: [] }
+}
+{
+  user: { email: 'jbroha@gmail.com' },
+  membership: { rentalInvoices: [ [Object] ] }
+}
+{
+  user: { email: 'paul@pauloctavious.com' },
+  membership: { rentalInvoices: [] }
+}
+{
+  user: { email: 'kfuhrman03@gmail.com' },
+  membership: { rentalInvoices: [] }
+}
+{
+  user: { email: 'jorge.perez430@yahoo.com' },
+  membership: { rentalInvoices: [] }
+}
+{
+  user: { email: 'eowhite01@gmail.com' },
+  membership: { rentalInvoices: [ [Object] ] }
+}
+{
+  user: { email: 'chadmjohnson@gmail.com' },
+  membership: { rentalInvoices: [] }
+}
+{
+  user: { email: 'reganbozman@gmail.com' },
+  membership: { rentalInvoices: [] }
+}
+{
+  user: { email: 'englishdamion@gmail.com' },
+  membership: { rentalInvoices: [] }
+}
+56
