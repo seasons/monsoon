@@ -15,7 +15,6 @@ import {
 } from "../services/rental.service"
 import {
   BASE_PROCESSING_FEE,
-  UPS_GROUND_FEE,
   UPS_SELECT_FEE,
   addToBagAndReserveForCustomer,
   createLineItemHash,
@@ -25,7 +24,6 @@ import {
   overridePrices,
   setPackageAmount,
   setPackageDeliveredAt,
-  setPackageEnteredSystemAt,
   setReservationCreatedAt,
   setReservationStatus,
 } from "./utils/utils"
