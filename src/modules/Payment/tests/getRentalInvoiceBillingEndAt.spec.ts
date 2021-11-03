@@ -1,5 +1,4 @@
 import { EmailService } from "@app/modules/Email/services/email.service"
-import { EmailServiceMock } from "@app/modules/Utils/mocks/emailService.mock"
 import { TestUtilsService } from "@app/modules/Utils/services/test.service"
 import { TimeUtilsService } from "@app/modules/Utils/services/time.service"
 import { PrismaService } from "@app/prisma/prisma.service"
@@ -33,7 +32,6 @@ describe("Get Rental Invoice Billing End At", () => {
 
   beforeAll(async () => {
     const moduleBuilder = await Test.createTestingModule(PAYMENT_MODULE_DEF)
-    moduleBuilder.overrideProvider(EmailService).useClass(EmailServiceMock)
 
     const moduleRef = await moduleBuilder.compile()
 

@@ -1,7 +1,6 @@
 import { EmailService } from "@app/modules/Email/services/email.service"
 import { PushNotificationService } from "@app/modules/PushNotification/services/pushNotification.service"
 import { ReservationService } from "@app/modules/Reservation/services/reservation.service"
-import { EmailServiceMock } from "@app/modules/Utils/mocks/emailService.mock"
 import { PushNotificationServiceMock } from "@app/modules/Utils/mocks/pushNotificationService.mock"
 import { TestUtilsService } from "@app/modules/Utils/services/test.service"
 import { TimeUtilsService } from "@app/modules/Utils/services/time.service"
@@ -47,7 +46,7 @@ describe("Create Rental Invoice Line Items", () => {
 
   beforeAll(async () => {
     const moduleBuilder = await Test.createTestingModule(PAYMENT_MODULE_DEF)
-    moduleBuilder.overrideProvider(EmailService).useClass(EmailServiceMock)
+
     moduleBuilder
       .overrideProvider(PushNotificationService)
       .useClass(PushNotificationServiceMock)

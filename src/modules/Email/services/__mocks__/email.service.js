@@ -5,15 +5,20 @@ export class EmailServiceMock {
   sendRecommendedItemsNurtureEmail = async () => null
   sendAuthorizedDayTwoFollowup = async () => null
   sendBuyUsedOrderConfirmationEmail = async () => null
-  sendUnpaidMembershipEmail = async => () => null
+  sendUnpaidMembershipEmail = async () => null
   sendReturnToGoodStandingEmail = async () => null
   sendReferralConfirmationEmail = async () => null
   sendWaitlistedEmail = async () => null
   sendSubscribedEmail = async () => null
   sendAdminConfirmationEmail = async () => null
   sendPriorityAccessEmail = async () => null
-  sendReservationConfirmationEmail = async () => null
+  sendReservationConfirmationEmail = async () => {
+    console.log("mock conf email function runs")
+    return null
+  }
   sendReturnReminderEmail = async () => null
   sendRestockNotificationEmails = async () => null
   sendYouCanNowReserveAgainEmail = async () => null
 }
+
+module.exports = EmailServiceMock
