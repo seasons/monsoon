@@ -1,5 +1,6 @@
 import { WinstonLogger } from "@app/lib/logger"
 import { ErrorService } from "@app/modules/Error/services/error.service"
+import { ShippingService } from "@app/modules/Shipping/services/shipping.service"
 import { TimeUtilsService } from "@app/modules/Utils/services/time.service"
 import { Injectable, Logger } from "@nestjs/common"
 import {
@@ -122,7 +123,8 @@ export class RentalService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly timeUtils: TimeUtilsService,
-    private readonly error: ErrorService
+    private readonly error: ErrorService,
+    private readonly shipping: ShippingService
   ) {}
 
   private rentalReservationSelect = Prisma.validator<
@@ -473,6 +475,7 @@ export class RentalService {
       },
       orderBy: { createdAt: "desc" },
       select: {
+        id: true,
         deliveredAt: true,
         reservationOnSentPackage: {
           select: this.rentalReservationSelect,
@@ -728,11 +731,17 @@ export class RentalService {
     const newReservationOutboundPackageLineItemDatas = sortedNewReservations.map(
       (r, idx) => {
         const name = "Reservation-" + r.reservationNumber + "-OutboundPackage"
-        let price = r.sentPackage.amount
+        const usedPremiumShipping =
+          !!r && r.shippingMethod?.code === "UPSSelect"
+
+        const undiscountedPrice = r.sentPackage.amount
+        let price = this.shipping.discountShippingRate(
+          undiscountedPrice,
+          usedPremiumShipping ? "UPSSelect" : "UPSGround",
+          "Outbound"
+        )
         let comment
         if (idx === 0) {
-          const usedPremiumShipping =
-            !!r && r.shippingMethod?.code === "UPSSelect"
           if (usedPremiumShipping) {
             comment =
               "First reservation of billing cycle. Used premium shipping. Charge full outbound package."
@@ -769,12 +778,19 @@ export class RentalService {
       "asc"
     )
     const inboundPackagesLineItemDatas = uniquePackagesReturnedAndSorted.map(
-      (p, idx) =>
-        addLineItemBasics({
+      (p, idx) => {
+        const undiscountedPrice = p.amount
+        let price = this.shipping.discountShippingRate(
+          undiscountedPrice,
+          "UPSGround",
+          "Inbound"
+        )
+        return addLineItemBasics({
           name: "InboundPackage-" + (idx + 1),
-          price: p.amount,
+          price,
           comment: `Returning items: ${p.items.map(a => a.seasonsUID)}`,
         })
+      }
     )
 
     // Base Processing Fees
@@ -978,14 +994,14 @@ export class RentalService {
         { upTo: options.upTo }
       )
 
-      const rentalPriceForDaysUntilToday = this.calculatePriceForDaysRented({
+      const { price } = await this.calculatePriceForDaysRented({
         invoice: currentInvoice,
         product: product,
         customer: { id: customerId },
         daysRented,
       })
 
-      rentalPrices.push(rentalPriceForDaysUntilToday)
+      rentalPrices.push(price)
     }
 
     return rentalPrices.reduce((a, b) => a + b, 0)

@@ -1,3 +1,4 @@
+import { Int } from "@app/prisma/prisma.binding"
 import { PrismaService } from "@app/prisma/prisma.service"
 import { UtilsService } from "@modules/Utils/services/utils.service"
 import { Injectable } from "@nestjs/common"
@@ -21,7 +22,7 @@ export enum UPSServiceLevel {
 interface ShippoLabelInputs {
   shipment: ShippoShipment
   carrier_account: string
-  servicelevel_token: string
+  servicelevel_token: UPSServiceLevel
 }
 
 @Injectable()
@@ -71,6 +72,7 @@ export class ShippingService {
       ? await this.getShippingRate({
           shipment: sentPackage,
           servicelevel_token: serviceLevel,
+          shipmentType: "Outbound",
         })
       : { rate: null }
 
@@ -78,6 +80,7 @@ export class ShippingService {
       ? await this.getShippingRate({
           shipment: returnPackage,
           servicelevel_token: serviceLevel,
+          shipmentType: "Inbound",
         })
       : { rate: null }
 
@@ -107,7 +110,7 @@ export class ShippingService {
     const seasonsToCustomerTransaction = await this.createShippingLabel({
       shipment: seasonsToShippoShipment,
       carrier_account: process.env.UPS_ACCOUNT_ID,
-      servicelevel_token: "ups_ground",
+      servicelevel_token: UPSServiceLevel.Ground,
     })
 
     return seasonsToCustomerTransaction
@@ -134,9 +137,9 @@ export class ShippingService {
       insuranceAmount,
     })
 
-    let serviceLevelToken = "ups_ground"
+    let serviceLevelToken = UPSServiceLevel.Ground
     if (!!shippingCode && shippingCode === "UPSSelect") {
-      serviceLevelToken = "ups_3_day_select"
+      serviceLevelToken = UPSServiceLevel.Select
     }
 
     const seasonsToCustomerTransaction = await this.createShippingLabel({
@@ -147,7 +150,7 @@ export class ShippingService {
     const customerToSeasonsTransaction = await this.createShippingLabel({
       shipment: customerToSeasonsShipment,
       carrier_account: process.env.UPS_ACCOUNT_ID,
-      servicelevel_token: serviceLevelToken,
+      servicelevel_token: UPSServiceLevel.Ground, // Inbound should always be ground, to save customer/us money
     })
 
     return [seasonsToCustomerTransaction, customerToSeasonsTransaction]
@@ -361,10 +364,33 @@ export class ShippingService {
     return [sentPackage, returnPackage]
   }
 
+  discountShippingRate(
+    rate: Int,
+    servicelevel: "UPSGround" | "UPSSelect",
+    shipmentType: "Inbound" | "Outbound"
+  ) {
+    let discountPercentage
+    if (servicelevel === "UPSSelect") {
+      discountPercentage = 0.55
+    } else if (servicelevel === "UPSGround" && shipmentType === "Inbound") {
+      discountPercentage = 0.38
+    } else if (servicelevel === "UPSGround" && shipmentType === "Outbound") {
+      discountPercentage = 0.3
+    } else {
+      throw new Error(
+        `Unexpected servicelevel, shipment type tuple: ${servicelevel}, ${shipmentType}`
+      )
+    }
+    return Math.round(rate * (1 - discountPercentage))
+  }
+
   private async getShippingRate({
     shipment: shipmentInput,
     servicelevel_token,
-  }: Omit<ShippoLabelInputs, "carrier_account">): Promise<{
+    shipmentType,
+  }: Omit<ShippoLabelInputs, "carrier_account"> & {
+    shipmentType: "Inbound" | "Outbound"
+  }): Promise<{
     rate: ShippoRate
     shipmentId: string
   }> {
@@ -378,17 +404,19 @@ export class ShippingService {
     })
 
     // We'll want to pull that number dynamically from the Shippo API once it's fixed
-    const discountPercentage = 0.58
-    const amount = Math.floor(
-      parseFloat(((rate?.amount as unknown) as string) || "0.00") *
-        100 *
-        discountPercentage
+    const rawAmount = Math.round(
+      parseFloat(((rate?.amount as unknown) as string) || "0.00")
+    )
+    const discountedAmount = this.discountShippingRate(
+      rawAmount,
+      servicelevel_token === UPSServiceLevel.Ground ? "UPSGround" : "UPSSelect",
+      shipmentType
     )
 
     return {
       rate: {
         ...rate,
-        amount,
+        amount: discountedAmount,
       },
       shipmentId: shipment.object_id,
     }
