@@ -3,6 +3,7 @@ import { PushNotificationService } from "@app/modules/PushNotification/services/
 import { ReservationService } from "@app/modules/Reservation/services/reservation.service"
 import { EmailServiceMock } from "@app/modules/Utils/mocks/emailService.mock"
 import { PushNotificationServiceMock } from "@app/modules/Utils/mocks/pushNotificationService.mock"
+import { ShippoMock } from "@app/modules/Utils/mocks/shippo.mock"
 import { TestUtilsService } from "@app/modules/Utils/services/test.service"
 import { TimeUtilsService } from "@app/modules/Utils/services/time.service"
 import { PrismaService } from "@app/prisma/prisma.service"
@@ -46,6 +47,10 @@ describe("Create Rental Invoice Line Items", () => {
   let getCustWithDataWithParams
 
   beforeAll(async () => {
+    // Must mock this before creating the module so the shipping service
+    // instantiates shippo using the mock
+    jest.mock("shippo", () => new ShippoMock())
+
     const moduleBuilder = await Test.createTestingModule(PAYMENT_MODULE_DEF)
     moduleBuilder.overrideProvider(EmailService).useClass(EmailServiceMock)
     moduleBuilder

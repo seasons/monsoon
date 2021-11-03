@@ -21,6 +21,10 @@ describe("Buy Used", () => {
   let testCustomer: any
 
   beforeAll(async () => {
+    // Must mock this before creating the module so the shipping service
+    // instantiates shippo using the mock
+    jest.mock("shippo", () => new ShippoMock())
+
     const moduleBuilder = await Test.createTestingModule(APP_MODULE_DEF)
     moduleBuilder.overrideProvider(EmailService).useClass(EmailServiceMock)
     moduleRef = await moduleBuilder.compile()
@@ -53,8 +57,6 @@ describe("Buy Used", () => {
         },
       }),
     })
-
-    jest.mock("shippo", () => new ShippoMock())
   })
 
   beforeEach(async () => {
