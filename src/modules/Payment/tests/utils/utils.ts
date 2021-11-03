@@ -290,5 +290,5 @@ export const createLineItemHash = (
 
 export const createProcessingObjectKey = (
   reservationNumber,
-  type: "OutboundPackage" | "Processing"
+  type: "OutboundPackage" | "Processing" | "Pickup"
 ) => "Reservation-" + reservationNumber + "-" + type

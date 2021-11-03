@@ -77,7 +77,7 @@ export const CREATE_RENTAL_INVOICE_LINE_ITEMS_INVOICE_SELECT = Prisma.validator<
           items: { select: { seasonsUID: true } },
         },
       },
-      sentPackage: { select: { amount: true } },
+      sentPackage: { select: { amount: true, enteredDeliverySystemAt: true } },
       shippingMethod: { select: { code: true } },
     },
     orderBy: { createdAt: "asc" },
@@ -722,6 +722,30 @@ export class RentalService {
       })
     )) as any
 
+    // Assume an array of shippedOutboundPackages on the RentalInvoice
+    /*
+    const shippedOutboundPackages = invoice.reservations.flatMap(a => a.sentPackage).filter(// check the dates)
+    const shippedOutboundPackagesOnPreviousInvoice = ... analagous
+      For each package
+        const createdInThisBillingCycle = ....
+        if (createdInThisBillingCycle) {
+          If it's the first
+            If it's select, charge it
+            If it's ground, do not charge it
+          If it's the second or later
+            Charge it.
+        } else {
+          throw an error if package.createdAt >= invoice.billingStartsAt
+          const previousInvoice = ...
+          const shippedOutboundPackagesFromLastInvoice = previousInvoice.shippedOutboundPackages
+          if (shippedOutboundPackagesFromLastInvoice.length >= 1) {
+            Charge it
+          } else {
+            If it's select, charge it
+            If it's not select, do not charge it.
+          }
+        }
+    */
     // Calculate the processing fees
 
     // Outbound packages

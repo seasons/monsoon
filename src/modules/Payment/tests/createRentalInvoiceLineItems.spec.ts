@@ -3,6 +3,8 @@ import { TestUtilsService } from "@app/modules/Utils/services/test.service"
 import { TimeUtilsService } from "@app/modules/Utils/services/time.service"
 import { PrismaService } from "@app/prisma/prisma.service"
 import { Test } from "@nestjs/testing"
+import { init } from "@sentry/node"
+import { expressJwtSecret } from "jwks-rsa"
 
 import { PAYMENT_MODULE_DEF } from "../payment.module"
 import {
@@ -20,6 +22,7 @@ import {
   overridePrices,
   setPackageAmount,
   setPackageDeliveredAt,
+  setPackageEnteredSystemAt,
   setReservationCreatedAt,
   setReservationStatus,
 } from "./utils/utils"
@@ -40,6 +43,7 @@ describe("Create Rental Invoice Line Items", () => {
   let setPackageDeliveredAtWithParams
   let setReservationStatusWithParams
   let getCustWithDataWithParams
+  let setPackageEnteredSystemAtWithParams
 
   beforeAll(async () => {
     const moduleBuilder = await Test.createTestingModule(PAYMENT_MODULE_DEF)
@@ -80,6 +84,8 @@ describe("Create Rental Invoice Line Items", () => {
       setPackageDeliveredAt(packageId, numDaysAgo, { prisma, timeUtils })
     setReservationStatusWithParams = (reservationId, status) =>
       setReservationStatus(reservationId, status, { prisma })
+    setPackageEnteredSystemAtWithParams = (packageId, numDaysAgo) =>
+      setPackageEnteredSystemAt(packageId, numDaysAgo, { prisma, timeUtils })
   })
   describe("Properly creates line items for an invoice with 3 reservations and 4 products", () => {
     let lineItemsBySUIDOrName
@@ -593,8 +599,6 @@ describe("Create Rental Invoice Line Items", () => {
         rentalInvoice
       )
     })
-    beforeEach(async () => {})
-    // TODO: Inbound package is always ground
 
     it("Discounts an outbound select package by 55%", async () => {
       const outboundPackageLineItem = lineItems.find(
@@ -629,15 +633,152 @@ describe("Create Rental Invoice Line Items", () => {
     })
   })
 
-  describe("outbound package exceptions", () => {
-    it("does not charge if customer picked up reservation")
+  describe("Outbound packages", () => {
+    it("does not charge if customer picked up reservation", async () => {
+      /*
+      1. create test customer 
+      2. place reservation for customer with shipping option pickup
+      3. set reservation created at and set reservation status
+      4. create the line items
+      5. look for an outbound package lineitem and confirm that it is undefined 
+      6. look for a pickup package lineitem and confirnm that it has a price of $0
+      */
+      const { customer } = await testUtils.createTestCustomer({
+        select: { id: true },
+      })
+      testCustomer = customer
 
-    it("does not charge if multiple resys were processed in one go")
+      const initialReservation = await addToBagAndReserveForCustomerWithParams(
+        2,
+        {
+          shippingCode: "Pickup",
+        }
+      )
+      await setReservationCreatedAtWithParams(initialReservation.id, 25)
+      await setReservationStatusWithParams(initialReservation.id, "Delivered")
 
-    it("charges if package enters ups system")
+      const custWithData = (await getCustWithDataWithParams()) as any
+      const rentalInvoice = custWithData.membership.rentalInvoices[0]
+      const lineItems = await rentalService.createRentalInvoiceLineItems(
+        rentalInvoice
+      )
 
-    it("if a reservation was created in the previous billing cycle but the outbound package was not sent until this billing cycle, it creates a line item", () => {
-      expect(0).toBe(1)
+      const outboundPackageLineItemName = createProcessingObjectKey(
+        initialReservation.reservationNumber,
+        "OutboundPackage"
+      )
+
+      const outboundPackageLineItem = lineItems.find(
+        a => a.name === outboundPackageLineItemName
+      )
+
+      const pickupPackageLineItemName = createProcessingObjectKey(
+        initialReservation.reservationNumber,
+        "Pickup"
+      )
+
+      const pickupPackageLineItem = lineItems.find(
+        a => a.name === pickupPackageLineItemName
+      )
+
+      expect(outboundPackageLineItem).toBeUndefined()
+      expect(pickupPackageLineItem).toBeDefined()
+      expect(pickupPackageLineItem.price).toBe(0)
+    })
+
+    it("If a customer picks up their first reservation, and their second reservation, and then has the third one shipped ground, do not charge him", () => {})
+
+    it("If a customer picks up their first reservation, and their second reservation, and then has the third one shipped select, not charge him", () => {})
+
+    it("If a customer only has one shipped (ground) outbound package in this billing cycle, do not charge him", () => {})
+
+    it("If a customer only has one shipped, select package in this billing cycle, charge him", () => {})
+
+    it("If a customer's first outbound package is select, and the second outbound package is ground, charge him for both", () => {})
+
+    it("If a customer placed 3 reservations in the same day and chose ground shipping, then never reserved anything else in the billing cycle, do not charge him", () => {})
+
+    it("If a customer's second outbound package includes items from multiple reservations placed in the same day, only charge him for one outbound package", () => {})
+
+    it("If a customer has more than one shipped outbound package in this billing cycle, charge him for all but the first", () => {
+      // Make three outbound packages
+    })
+
+    // it("only charges for one label if multiple reservation are processed in one go", async () => {
+    //   /*
+    //     1. create test user
+    //     2. place reservation for customer but do not set entered delivered system at
+    //     3. set reservation created at & set reservation status
+    //     4. repeat processes 2 and 3 but we set entered delivered system at
+    //     5. create the line items
+    //     6. look for the outbound package lineitem on the first reservation and check to see if it exsist, price is $0, and comment explains why
+    //     7. look for outpackage lineitem on the second reservation and check to see if price is > 0 and comment is present
+    //   */
+
+    //   const { customer } = await testUtils.createTestCustomer({
+    //     select: { id: true },
+    //   })
+    //   testCustomer = customer
+
+    //   const initialReservation = await addToBagAndReserveForCustomerWithParams(
+    //     2
+    //   )
+    //   await setReservationCreatedAtWithParams(initialReservation.id, 25)
+    //   await setReservationStatusWithParams(initialReservation.id, "Completed")
+
+    //   const secondReservation = await addToBagAndReserveForCustomerWithParams(2)
+    //   await setReservationCreatedAtWithParams(secondReservation.id, 25)
+    //   await setReservationStatusWithParams(secondReservation.id, "Delivered")
+    //   await setPackageEnteredSystemAtWithParams(
+    //     secondReservation.sentPackage.id,
+    //     24
+    //   )
+
+    //   const custWithData = (await getCustWithDataWithParams()) as any
+    //   const rentalInvoice = custWithData.membership.rentalInvoices[0]
+    //   const lineItems = await rentalService.createRentalInvoiceLineItems(
+    //     rentalInvoice
+    //   )
+
+    //   const firstOutboundPackageLineItemName = createProcessingObjectKey(
+    //     initialReservation.reservationNumber,
+    //     "OutboundPackage"
+    //   )
+
+    //   const firstOutboundPackageLineItem = lineItems.find(
+    //     a => a.name === firstOutboundPackageLineItemName
+    //   )
+
+    //   const secondOutboundPackageLineItemName = createProcessingObjectKey(
+    //     secondReservation.reservationNumber,
+    //     "OutboundPackage"
+    //   )
+
+    //   const secondOutboundPackageLineItem = lineItems.find(
+    //     a => a.name === secondOutboundPackageLineItemName
+    //   )
+
+    //   expect(firstOutboundPackageLineItem).toBeDefined()
+    //   expect(firstOutboundPackageLineItem.price).toBe(0)
+    //   expect(firstOutboundPackageLineItem.comment).toEqual(
+    //     "Package never entered delivery system. Do not charge"
+    //   )
+
+    //   expect(secondOutboundPackageLineItem).toBeDefined()
+    //   expect(secondOutboundPackageLineItem.price).toBeGreaterThan(0)
+    //   expect(
+    //     secondOutboundPackageLineItem.comment.includes(
+    //       "Charge full outbound package"
+    //     )
+    //   ).toBe(true)
+    // })
+
+    describe("A reservation was created in the previous billing cycle but the outbound package was not sent until this billing cycle", () => {
+      it("The package was the first shipped outbound package from the previous billing cycle. It was select. Charge", () => {})
+
+      it("The package was the first shipped outbound package from the previous billing cycle. It was ground. Do not charge", () => {})
+
+      it("The package was the second shipped outbound package from the previous billing cycle. Charge.", () => {})
     })
   })
 })
