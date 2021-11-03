@@ -1,7 +1,4 @@
-import { EmailService } from "@app/modules/Email/services/email.service"
-import { PushNotificationService } from "@app/modules/PushNotification/services/pushNotification.service"
 import { ReservationService } from "@app/modules/Reservation/services/reservation.service"
-import { PushNotificationServiceMock } from "@app/modules/Utils/mocks/pushNotificationService.mock"
 import { TestUtilsService } from "@app/modules/Utils/services/test.service"
 import { TimeUtilsService } from "@app/modules/Utils/services/time.service"
 import { UtilsService } from "@app/modules/Utils/services/utils.service"
@@ -29,10 +26,6 @@ describe("Price for items", () => {
 
   beforeAll(async () => {
     const moduleBuilder = await Test.createTestingModule(PAYMENT_MODULE_DEF)
-
-    moduleBuilder
-      .overrideProvider(PushNotificationService)
-      .useClass(PushNotificationServiceMock)
 
     const moduleRef = await moduleBuilder.compile()
 
