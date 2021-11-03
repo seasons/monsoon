@@ -13,7 +13,6 @@ export class EmailServiceMock {
   sendAdminConfirmationEmail = async () => null
   sendPriorityAccessEmail = async () => null
   sendReservationConfirmationEmail = async () => {
-    console.log("mock conf email function runs")
     return null
   }
   sendReturnReminderEmail = async () => null
