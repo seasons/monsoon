@@ -837,6 +837,7 @@ model Image {
   height    Int?
   width     Int?
   alt       String?
+  position  Int?
 
   // Don't those fields for now
   BlogPost              BlogPost[]
@@ -1474,17 +1475,17 @@ model ReservationPhysicalProduct {
   inboundPackageId String?  @db.VarChar(30)
   inboundPackage   Package? @relation("ReservationPhysicalProductToInboundPackage", fields: [inboundPackageId], references: [id])
 
-  physicalProductId String          @map("physicalProduct") @db.VarChar(30)
+  physicalProductId String          @db.VarChar(30)
   physicalProduct   PhysicalProduct @relation(fields: [physicalProductId], references: [id])
 
-  reservationId String      @map("reservation") @db.VarChar(30)
+  reservationId String      @db.VarChar(30)
   reservation   Reservation @relation(fields: [reservationId], references: [id])
 
   bagItem BagItem?
 
   rentalInvoices RentalInvoice[] @relation("RentalInvoiceToReservationPhysicalProducts")
 
-  shippingMethodId String?         @map("shippingMethod") @db.VarChar(30)
+  shippingMethodId String?         @db.VarChar(30)
   shippingMethod   ShippingMethod? @relation(fields: [shippingMethodId], references: [id])
 
   pickupWindowId String?
