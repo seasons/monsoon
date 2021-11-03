@@ -412,6 +412,139 @@ export class BagService {
     return addedBagItem
   }
 
+  async processLostItems(lostBagItemsIds) {
+    const lostResPhysProds = await this.prisma.client.reservationPhysicalProduct.findMany(
+      {
+        where: {
+          id: {
+            in: lostBagItemsIds,
+          },
+        },
+        select: {
+          id: true,
+          status: true,
+        },
+      }
+    )
+
+    lostResPhysProds.forEach(resPhysProd => {
+      if (
+        resPhysProd.status !== "ShippedToCustomer" &&
+        resPhysProd.status !== "ShippedToBusiness"
+      ) {
+        throw new Error(
+          "Items that are inbound or outbound can only be marked as lost"
+        )
+      }
+    })
+
+    const promises = []
+
+    promises.push(
+      this.prisma.client.bagItem.deleteMany({
+        where: {
+          id: {
+            in: lostBagItemsIds,
+          },
+        },
+      })
+    )
+    const lostOutboundResPhysProds = lostResPhysProds.filter(
+      a => a.status === "ShippedToCustomer"
+    )
+    const lostInboundItemsResPhysProds = lostResPhysProds.filter(
+      a => a.status === "ShippedToBusiness"
+    )
+
+    if (lostOutboundResPhysProds) {
+      promises.push(
+        this.prisma.client.reservationPhysicalProduct.updateMany({
+          where: {
+            id: {
+              in: lostOutboundResPhysProds.map(a => a.id),
+            },
+          },
+          data: {
+            lostAt: new Date(),
+            lostInPhase: "BusinessToCustomer",
+            isLost: true,
+          },
+        })
+      )
+    }
+
+    if (lostInboundItemsResPhysProds) {
+      promises.push(
+        this.prisma.client.reservationPhysicalProduct.updateMany({
+          where: {
+            id: {
+              in: lostInboundItemsResPhysProds.map(a => a.id),
+            },
+          },
+          data: {
+            lostAt: new Date(),
+            lostInPhase: "CustomerToBusiness",
+            isLost: true,
+          },
+        })
+      )
+    }
+
+    const physicalProducts = await this.prisma.client.physicalProduct.findMany({
+      where: {
+        bagItems: {
+          some: {
+            id: {
+              in: lostBagItemsIds,
+            },
+          },
+        },
+      },
+      select: {
+        id: true,
+        productVariant: {
+          select: {
+            id: true,
+            reserved: true,
+            reservable: true,
+            nonReservable: true,
+          },
+        },
+      },
+    })
+
+    physicalProducts.forEach(physicalProduct => {
+      const productVariantData = this.productVariantService.getCountsForStatusChange(
+        {
+          productVariant: physicalProduct.productVariant,
+          oldInventoryStatus: "Reserved",
+          newInventoryStatus: "NonReservable",
+        }
+      )
+
+      promises.push(
+        this.prisma.client.physicalProduct.update({
+          where: {
+            id: physicalProduct.id,
+          },
+          data: {
+            productStatus: "Lost",
+            inventoryStatus: "NonReservable",
+            productVariant: {
+              update: {
+                ...productVariantData,
+              },
+            },
+          },
+        })
+      )
+    })
+
+    await this.prisma.client.$transaction(promises)
+
+    return true
+  }
+
   async removeFromBag(item, saved, customer): Promise<BagItem> {
     // TODO: removeFromBag has been deprecated, use deleteBagItem
     const bagItem = await this.getBagItem(item, saved, customer, { id: true })

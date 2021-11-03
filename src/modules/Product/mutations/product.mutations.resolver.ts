@@ -66,6 +66,11 @@ export class ProductMutationsResolver {
   }
 
   @Mutation()
+  async processLostItems(@Args() { lostBagItemsIds }) {
+    return await this.bagService.processLostItems(lostBagItemsIds)
+  }
+
+  @Mutation()
   async addToBag(@Args() args, @Customer() customer, @Select() select) {
     if (!customer) {
       throw new Error(`Can not add to bag without a logged in customer`)
