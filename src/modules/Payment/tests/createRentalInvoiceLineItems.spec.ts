@@ -5,6 +5,7 @@ import { PrismaService } from "@app/prisma/prisma.service"
 import { Test } from "@nestjs/testing"
 import { init } from "@sentry/node"
 import { expressJwtSecret } from "jwks-rsa"
+import { first } from "rxjs"
 
 import { PAYMENT_MODULE_DEF } from "../payment.module"
 import {
@@ -634,151 +635,686 @@ describe("Create Rental Invoice Line Items", () => {
   })
 
   describe("Outbound packages", () => {
-    it("does not charge if customer picked up reservation", async () => {
-      /*
-      1. create test customer 
-      2. place reservation for customer with shipping option pickup
-      3. set reservation created at and set reservation status
-      4. create the line items
-      5. look for an outbound package lineitem and confirm that it is undefined 
-      6. look for a pickup package lineitem and confirnm that it has a price of $0
-      */
-      const { customer } = await testUtils.createTestCustomer({
-        select: { id: true },
+    describe("Reservation and packages created in this billing cycle", () => {
+      beforeEach(async () => {
+        const { customer } = await testUtils.createTestCustomer({
+          select: { id: true },
+        })
+        testCustomer = customer
       })
-      testCustomer = customer
+      it("If a customer picked up their reservation, do not charge for the outbound package", async () => {
+        const initialReservation = await addToBagAndReserveForCustomerWithParams(
+          2,
+          {
+            shippingCode: "Pickup",
+          }
+        )
+        await setReservationCreatedAtWithParams(initialReservation.id, 25)
+        await setReservationStatusWithParams(initialReservation.id, "Delivered")
 
-      const initialReservation = await addToBagAndReserveForCustomerWithParams(
-        2,
-        {
-          shippingCode: "Pickup",
-        }
-      )
-      await setReservationCreatedAtWithParams(initialReservation.id, 25)
-      await setReservationStatusWithParams(initialReservation.id, "Delivered")
+        const custWithData = (await getCustWithDataWithParams()) as any
+        const rentalInvoice = custWithData.membership.rentalInvoices[0]
+        const lineItems = await rentalService.createRentalInvoiceLineItems(
+          rentalInvoice
+        )
 
-      const custWithData = (await getCustWithDataWithParams()) as any
-      const rentalInvoice = custWithData.membership.rentalInvoices[0]
-      const lineItems = await rentalService.createRentalInvoiceLineItems(
-        rentalInvoice
-      )
+        const outboundPackageLineItemName = createProcessingObjectKey(
+          initialReservation.reservationNumber,
+          "OutboundPackage"
+        )
 
-      const outboundPackageLineItemName = createProcessingObjectKey(
-        initialReservation.reservationNumber,
-        "OutboundPackage"
-      )
+        const outboundPackageLineItem = lineItems.find(
+          a => a.name === outboundPackageLineItemName
+        )
 
-      const outboundPackageLineItem = lineItems.find(
-        a => a.name === outboundPackageLineItemName
-      )
+        const pickupPackageLineItemName = createProcessingObjectKey(
+          initialReservation.reservationNumber,
+          "Pickup"
+        )
 
-      const pickupPackageLineItemName = createProcessingObjectKey(
-        initialReservation.reservationNumber,
-        "Pickup"
-      )
+        const pickupPackageLineItem = lineItems.find(
+          a => a.name === pickupPackageLineItemName
+        )
 
-      const pickupPackageLineItem = lineItems.find(
-        a => a.name === pickupPackageLineItemName
-      )
+        expect(outboundPackageLineItem).toBeUndefined()
+        expect(pickupPackageLineItem).toBeDefined()
+        expect(pickupPackageLineItem.price).toBe(0)
+      })
 
-      expect(outboundPackageLineItem).toBeUndefined()
-      expect(pickupPackageLineItem).toBeDefined()
-      expect(pickupPackageLineItem.price).toBe(0)
+      it("If a customer picks up their first reservation, and their second reservation, and then has the third one shipped ground, do not charge him on the third reservation.", async () => {
+        const initialReservation = await addToBagAndReserveForCustomerWithParams(
+          2,
+          {
+            shippingCode: "Pickup",
+          }
+        )
+        await setReservationCreatedAtWithParams(initialReservation.id, 25)
+        await setReservationStatusWithParams(initialReservation.id, "Delivered")
+
+        const secondReservation = await addToBagAndReserveForCustomerWithParams(
+          2,
+          {
+            shippingCode: "Pickup",
+          }
+        )
+        await setReservationCreatedAtWithParams(secondReservation.id, 15)
+        await setReservationStatusWithParams(secondReservation.id, "Delivered")
+
+        const thirdReservation = await addToBagAndReserveForCustomerWithParams(
+          2,
+          {
+            shippingCode: "UPSGround",
+          }
+        )
+        await setReservationCreatedAtWithParams(thirdReservation.id, 8)
+        await setPackageDeliveredAtWithParams(
+          thirdReservation.sentPackage.id,
+          6
+        )
+        await setPackageEnteredSystemAtWithParams(
+          thirdReservation.sentPackage.id,
+          8
+        )
+        await setReservationStatusWithParams(thirdReservation.id, "Delivered")
+
+        const custWithData = (await getCustWithDataWithParams()) as any
+        const rentalInvoice = custWithData.membership.rentalInvoices[0]
+        const lineItems = await rentalService.createRentalInvoiceLineItems(
+          rentalInvoice
+        )
+
+        const outboundPackageLineItemName = createProcessingObjectKey(
+          thirdReservation.reservationNumber,
+          "OutboundPackage"
+        )
+        const outboundPackageLineItem = lineItems.find(
+          a => a.name === outboundPackageLineItemName
+        )
+        expect(outboundPackageLineItem).toBeDefined()
+        expect(outboundPackageLineItem.price).toBe(0)
+      })
+
+      it("If a customer picks up their first reservation, and their second reservation, and then has the third one shipped select, charge him on the third reservation", async () => {
+        const initialReservation = await addToBagAndReserveForCustomerWithParams(
+          2,
+          {
+            shippingCode: "Pickup",
+          }
+        )
+        await setReservationCreatedAtWithParams(initialReservation.id, 25)
+        await setReservationStatusWithParams(initialReservation.id, "Delivered")
+
+        const secondReservation = await addToBagAndReserveForCustomerWithParams(
+          2,
+          {
+            shippingCode: "Pickup",
+          }
+        )
+        await setReservationCreatedAtWithParams(secondReservation.id, 15)
+        await setReservationStatusWithParams(secondReservation.id, "Delivered")
+
+        const thirdReservation = await addToBagAndReserveForCustomerWithParams(
+          2,
+          {
+            shippingCode: "UPSSelect",
+          }
+        )
+        await setReservationCreatedAtWithParams(thirdReservation.id, 8)
+        await setPackageDeliveredAtWithParams(
+          thirdReservation.sentPackage.id,
+          6
+        )
+        await setPackageEnteredSystemAtWithParams(
+          thirdReservation.sentPackage.id,
+          8
+        )
+        await setReservationStatusWithParams(thirdReservation.id, "Delivered")
+
+        const custWithData = (await getCustWithDataWithParams()) as any
+        const rentalInvoice = custWithData.membership.rentalInvoices[0]
+        const lineItems = await rentalService.createRentalInvoiceLineItems(
+          rentalInvoice
+        )
+
+        const outboundPackageLineItemName = createProcessingObjectKey(
+          thirdReservation.reservationNumber,
+          "OutboundPackage"
+        )
+        const outboundPackageLineItem = lineItems.find(
+          a => a.name === outboundPackageLineItemName
+        )
+        expect(outboundPackageLineItem).toBeDefined()
+        expect(outboundPackageLineItem.price).toBeGreaterThan(0)
+      })
+
+      it("If a customer only has one shipped (ground) outbound package in this billing cycle, do not charge him", async () => {
+        const initialReservation = await addToBagAndReserveForCustomerWithParams(
+          2,
+          {
+            shippingCode: "UPSGround",
+          }
+        )
+        await setReservationCreatedAtWithParams(initialReservation.id, 25)
+        await setReservationStatusWithParams(initialReservation.id, "Delivered")
+        await setPackageDeliveredAtWithParams(
+          initialReservation.sentPackage.id,
+          23
+        )
+        await setPackageEnteredSystemAtWithParams(
+          initialReservation.sentPackage.id,
+          25
+        )
+
+        const custWithData = (await getCustWithDataWithParams()) as any
+        const rentalInvoice = custWithData.membership.rentalInvoices[0]
+        const lineItems = await rentalService.createRentalInvoiceLineItems(
+          rentalInvoice
+        )
+
+        const outboundPackageLineItemName = createProcessingObjectKey(
+          initialReservation.reservationNumber,
+          "OutboundPackage"
+        )
+        const outboundPackageLineItem = lineItems.find(
+          a => a.name === outboundPackageLineItemName
+        )
+        expect(outboundPackageLineItem).toBeDefined()
+        expect(outboundPackageLineItem.price).toBe(0)
+      })
+
+      it("If a customer only has one shipped, select package in this billing cycle, charge him", async () => {
+        const initialReservation = await addToBagAndReserveForCustomerWithParams(
+          2,
+          {
+            shippingCode: "UPSSelect",
+          }
+        )
+        await setReservationCreatedAtWithParams(initialReservation.id, 25)
+        await setReservationStatusWithParams(initialReservation.id, "Delivered")
+        await setPackageDeliveredAtWithParams(
+          initialReservation.sentPackage.id,
+          23
+        )
+        await setPackageEnteredSystemAtWithParams(
+          initialReservation.sentPackage.id,
+          25
+        )
+
+        const custWithData = (await getCustWithDataWithParams()) as any
+        const rentalInvoice = custWithData.membership.rentalInvoices[0]
+        const lineItems = await rentalService.createRentalInvoiceLineItems(
+          rentalInvoice
+        )
+
+        const outboundPackageLineItemName = createProcessingObjectKey(
+          initialReservation.reservationNumber,
+          "OutboundPackage"
+        )
+        const outboundPackageLineItem = lineItems.find(
+          a => a.name === outboundPackageLineItemName
+        )
+        expect(outboundPackageLineItem).toBeDefined()
+        expect(outboundPackageLineItem.price).toBeGreaterThan(0)
+      })
+
+      it("If a customer's first outbound package is select, and the second outbound package is ground, charge him for both", async () => {
+        const initialReservation = await addToBagAndReserveForCustomerWithParams(
+          2,
+          {
+            shippingCode: "UPSSelect",
+          }
+        )
+        await setReservationCreatedAtWithParams(initialReservation.id, 25)
+        await setReservationStatusWithParams(initialReservation.id, "Delivered")
+        await setPackageDeliveredAtWithParams(
+          initialReservation.sentPackage.id,
+          23
+        )
+        await setPackageEnteredSystemAtWithParams(
+          initialReservation.sentPackage.id,
+          25
+        )
+
+        const secondReservation = await addToBagAndReserveForCustomerWithParams(
+          2,
+          {
+            shippingCode: "UPSGround",
+          }
+        )
+        await setReservationCreatedAtWithParams(secondReservation.id, 15)
+        await setReservationStatusWithParams(secondReservation.id, "Delivered")
+        await setPackageDeliveredAtWithParams(
+          secondReservation.sentPackage.id,
+          13
+        )
+        await setPackageEnteredSystemAtWithParams(
+          secondReservation.sentPackage.id,
+          15
+        )
+
+        const custWithData = (await getCustWithDataWithParams()) as any
+        const rentalInvoice = custWithData.membership.rentalInvoices[0]
+        const lineItems = await rentalService.createRentalInvoiceLineItems(
+          rentalInvoice
+        )
+
+        const firstOutboundPackageLineItemName = createProcessingObjectKey(
+          initialReservation.reservationNumber,
+          "OutboundPackage"
+        )
+        const firstOutboundPackageLineItem = lineItems.find(
+          a => a.name === firstOutboundPackageLineItemName
+        )
+        const secondOutboundPackageLineItemName = createProcessingObjectKey(
+          secondReservation.reservationNumber,
+          "OutboundPackage"
+        )
+        const secondOutboundPackageLineItem = lineItems.find(
+          a => a.name === secondOutboundPackageLineItemName
+        )
+        expect(firstOutboundPackageLineItem).toBeDefined()
+        expect(firstOutboundPackageLineItem.price).toBeGreaterThan(0)
+        expect(secondOutboundPackageLineItem).toBeDefined()
+        expect(secondOutboundPackageLineItem.price).toBeGreaterThan(0)
+      })
+
+      it("If a customer placed 3 reservations in the same day and chose ground shipping, then never reserved anything else in the billing cycle, do not charge him", async () => {
+        const firstReservation = await addToBagAndReserveForCustomerWithParams(
+          2,
+          {
+            shippingCode: "UPSGround",
+          }
+        )
+        await setReservationCreatedAtWithParams(firstReservation.id, 25)
+        await setReservationStatusWithParams(firstReservation.id, "Completed")
+        const secondReservation = await addToBagAndReserveForCustomerWithParams(
+          2,
+          {
+            shippingCode: "UPSGround",
+          }
+        )
+        await setReservationCreatedAtWithParams(secondReservation.id, 25)
+        await setReservationStatusWithParams(secondReservation.id, "Completed")
+        const thirdReservation = await addToBagAndReserveForCustomerWithParams(
+          2,
+          {
+            shippingCode: "UPSGround",
+          }
+        )
+        await setReservationCreatedAtWithParams(thirdReservation.id, 25)
+        await setReservationStatusWithParams(thirdReservation.id, "Delivered")
+        await setPackageDeliveredAtWithParams(
+          thirdReservation.sentPackage.id,
+          23
+        )
+        await setPackageEnteredSystemAtWithParams(
+          thirdReservation.sentPackage.id,
+          25
+        )
+
+        const custWithData = (await getCustWithDataWithParams()) as any
+        const rentalInvoice = custWithData.membership.rentalInvoices[0]
+        const lineItems = await rentalService.createRentalInvoiceLineItems(
+          rentalInvoice
+        )
+
+        const firstOutboundPackageLineItemName = createProcessingObjectKey(
+          firstReservation.reservationNumber,
+          "OutboundPackage"
+        )
+        const firstOutboundPackageLineItem = lineItems.find(
+          a => a.name === firstOutboundPackageLineItemName
+        )
+        const secondOutboundPackageLineItemName = createProcessingObjectKey(
+          secondReservation.reservationNumber,
+          "OutboundPackage"
+        )
+        const secondOutboundPackageLineItem = lineItems.find(
+          a => a.name === secondOutboundPackageLineItemName
+        )
+        const thirdOutboundPackageLineItemName = createProcessingObjectKey(
+          thirdReservation.reservationNumber,
+          "OutboundPackage"
+        )
+        const thirdOutboundPackageLineItem = lineItems.find(
+          a => a.name === thirdOutboundPackageLineItemName
+        )
+
+        expect(firstOutboundPackageLineItem).toBeDefined()
+        expect(firstOutboundPackageLineItem.price).toBe(0)
+        expect(secondOutboundPackageLineItem).toBeDefined()
+        expect(secondOutboundPackageLineItem.price).toBe(0)
+        expect(thirdOutboundPackageLineItem).toBeDefined()
+        expect(thirdOutboundPackageLineItem.price).toBe(0)
+      })
+
+      it("If a customer's second outbound package includes items from multiple reservations placed in the same day, only charge him for one outbound package", async () => {
+        const firstReservation = await addToBagAndReserveForCustomerWithParams(
+          2,
+          {
+            shippingCode: "UPSGround",
+          }
+        )
+        await setReservationCreatedAtWithParams(firstReservation.id, 25)
+        await setReservationStatusWithParams(firstReservation.id, "Delivered")
+        await setPackageDeliveredAtWithParams(
+          firstReservation.sentPackage.id,
+          23
+        )
+        await setPackageEnteredSystemAtWithParams(
+          firstReservation.sentPackage.id,
+          25
+        )
+
+        const secondReservation = await addToBagAndReserveForCustomerWithParams(
+          2,
+          {
+            shippingCode: "UPSGround",
+          }
+        )
+        await setReservationCreatedAtWithParams(secondReservation.id, 15)
+        await setReservationStatusWithParams(secondReservation.id, "Completed")
+
+        const thirdReservation = await addToBagAndReserveForCustomerWithParams(
+          2,
+          {
+            shippingCode: "UPSGround",
+          }
+        )
+        await setReservationCreatedAtWithParams(thirdReservation.id, 15)
+        await setReservationStatusWithParams(thirdReservation.id, "Delivered")
+        await setPackageDeliveredAtWithParams(
+          thirdReservation.sentPackage.id,
+          13
+        )
+        await setPackageEnteredSystemAtWithParams(
+          thirdReservation.sentPackage.id,
+          15
+        )
+
+        const custWithData = (await getCustWithDataWithParams()) as any
+        const rentalInvoice = custWithData.membership.rentalInvoices[0]
+        const lineItems = await rentalService.createRentalInvoiceLineItems(
+          rentalInvoice
+        )
+
+        const firstOutboundPackageLineItemName = createProcessingObjectKey(
+          firstReservation.reservationNumber,
+          "OutboundPackage"
+        )
+        const firstOutboundPackageLineItem = lineItems.find(
+          a => a.name === firstOutboundPackageLineItemName
+        )
+        const secondOutboundPackageLineItemName = createProcessingObjectKey(
+          secondReservation.reservationNumber,
+          "OutboundPackage"
+        )
+        const secondOutboundPackageLineItem = lineItems.find(
+          a => a.name === secondOutboundPackageLineItemName
+        )
+        const thirdOutboundPackageLineItemName = createProcessingObjectKey(
+          thirdReservation.reservationNumber,
+          "OutboundPackage"
+        )
+        const thirdOutboundPackageLineItem = lineItems.find(
+          a => a.name === thirdOutboundPackageLineItemName
+        )
+
+        expect(firstOutboundPackageLineItem).toBeDefined()
+        expect(firstOutboundPackageLineItem.price).toBe(0)
+        expect(secondOutboundPackageLineItem).toBeDefined()
+        expect(secondOutboundPackageLineItem.price).toBe(0)
+        expect(thirdOutboundPackageLineItem).toBeDefined()
+        expect(thirdOutboundPackageLineItem.price).toBeGreaterThan(0)
+      })
+
+      it("If a customer has more than one shipped outbound package in this billing cycle, charge him for all but the first", async () => {
+        const firstReservation = await addToBagAndReserveForCustomerWithParams(
+          2,
+          {
+            shippingCode: "UPSGround",
+          }
+        )
+        await setReservationCreatedAtWithParams(firstReservation.id, 25)
+        await setReservationStatusWithParams(firstReservation.id, "Delivered")
+        await setPackageDeliveredAtWithParams(
+          firstReservation.sentPackage.id,
+          23
+        )
+        await setPackageEnteredSystemAtWithParams(
+          firstReservation.sentPackage.id,
+          25
+        )
+
+        const secondReservation = await addToBagAndReserveForCustomerWithParams(
+          2,
+          {
+            shippingCode: "UPSGround",
+          }
+        )
+        await setReservationCreatedAtWithParams(secondReservation.id, 15)
+        await setReservationStatusWithParams(secondReservation.id, "Delivered")
+        await setPackageDeliveredAtWithParams(
+          secondReservation.sentPackage.id,
+          13
+        )
+        await setPackageEnteredSystemAtWithParams(
+          secondReservation.sentPackage.id,
+          15
+        )
+
+        const thirdReservation = await addToBagAndReserveForCustomerWithParams(
+          2,
+          {
+            shippingCode: "UPSGround",
+          }
+        )
+        await setReservationCreatedAtWithParams(thirdReservation.id, 5)
+        await setReservationStatusWithParams(thirdReservation.id, "Delivered")
+        await setPackageDeliveredAtWithParams(
+          thirdReservation.sentPackage.id,
+          3
+        )
+        await setPackageEnteredSystemAtWithParams(
+          thirdReservation.sentPackage.id,
+          5
+        )
+
+        const custWithData = (await getCustWithDataWithParams()) as any
+        const rentalInvoice = custWithData.membership.rentalInvoices[0]
+        const lineItems = await rentalService.createRentalInvoiceLineItems(
+          rentalInvoice
+        )
+
+        const firstOutboundPackageLineItemName = createProcessingObjectKey(
+          firstReservation.reservationNumber,
+          "OutboundPackage"
+        )
+        const firstOutboundPackageLineItem = lineItems.find(
+          a => a.name === firstOutboundPackageLineItemName
+        )
+        const secondOutboundPackageLineItemName = createProcessingObjectKey(
+          secondReservation.reservationNumber,
+          "OutboundPackage"
+        )
+        const secondOutboundPackageLineItem = lineItems.find(
+          a => a.name === secondOutboundPackageLineItemName
+        )
+        const thirdOutboundPackageLineItemName = createProcessingObjectKey(
+          thirdReservation.reservationNumber,
+          "OutboundPackage"
+        )
+        const thirdOutboundPackageLineItem = lineItems.find(
+          a => a.name === thirdOutboundPackageLineItemName
+        )
+
+        expect(firstOutboundPackageLineItem).toBeDefined()
+        expect(firstOutboundPackageLineItem.price).toBe(0)
+        expect(secondOutboundPackageLineItem).toBeDefined()
+        expect(secondOutboundPackageLineItem.price).toBeGreaterThan(0)
+        expect(thirdOutboundPackageLineItem).toBeDefined()
+        expect(thirdOutboundPackageLineItem.price).toBeGreaterThan(0)
+      })
     })
-
-    it("If a customer picks up their first reservation, and their second reservation, and then has the third one shipped ground, do not charge him", () => {})
-
-    it("If a customer picks up their first reservation, and their second reservation, and then has the third one shipped select, not charge him", () => {})
-
-    it("If a customer only has one shipped (ground) outbound package in this billing cycle, do not charge him", () => {})
-
-    it("If a customer only has one shipped, select package in this billing cycle, charge him", () => {})
-
-    it("If a customer's first outbound package is select, and the second outbound package is ground, charge him for both", () => {})
-
-    it("If a customer placed 3 reservations in the same day and chose ground shipping, then never reserved anything else in the billing cycle, do not charge him", () => {})
-
-    it("If a customer's second outbound package includes items from multiple reservations placed in the same day, only charge him for one outbound package", () => {})
-
-    it("If a customer has more than one shipped outbound package in this billing cycle, charge him for all but the first", () => {
-      // Make three outbound packages
-    })
-
-    // it("only charges for one label if multiple reservation are processed in one go", async () => {
-    //   /*
-    //     1. create test user
-    //     2. place reservation for customer but do not set entered delivered system at
-    //     3. set reservation created at & set reservation status
-    //     4. repeat processes 2 and 3 but we set entered delivered system at
-    //     5. create the line items
-    //     6. look for the outbound package lineitem on the first reservation and check to see if it exsist, price is $0, and comment explains why
-    //     7. look for outpackage lineitem on the second reservation and check to see if price is > 0 and comment is present
-    //   */
-
-    //   const { customer } = await testUtils.createTestCustomer({
-    //     select: { id: true },
-    //   })
-    //   testCustomer = customer
-
-    //   const initialReservation = await addToBagAndReserveForCustomerWithParams(
-    //     2
-    //   )
-    //   await setReservationCreatedAtWithParams(initialReservation.id, 25)
-    //   await setReservationStatusWithParams(initialReservation.id, "Completed")
-
-    //   const secondReservation = await addToBagAndReserveForCustomerWithParams(2)
-    //   await setReservationCreatedAtWithParams(secondReservation.id, 25)
-    //   await setReservationStatusWithParams(secondReservation.id, "Delivered")
-    //   await setPackageEnteredSystemAtWithParams(
-    //     secondReservation.sentPackage.id,
-    //     24
-    //   )
-
-    //   const custWithData = (await getCustWithDataWithParams()) as any
-    //   const rentalInvoice = custWithData.membership.rentalInvoices[0]
-    //   const lineItems = await rentalService.createRentalInvoiceLineItems(
-    //     rentalInvoice
-    //   )
-
-    //   const firstOutboundPackageLineItemName = createProcessingObjectKey(
-    //     initialReservation.reservationNumber,
-    //     "OutboundPackage"
-    //   )
-
-    //   const firstOutboundPackageLineItem = lineItems.find(
-    //     a => a.name === firstOutboundPackageLineItemName
-    //   )
-
-    //   const secondOutboundPackageLineItemName = createProcessingObjectKey(
-    //     secondReservation.reservationNumber,
-    //     "OutboundPackage"
-    //   )
-
-    //   const secondOutboundPackageLineItem = lineItems.find(
-    //     a => a.name === secondOutboundPackageLineItemName
-    //   )
-
-    //   expect(firstOutboundPackageLineItem).toBeDefined()
-    //   expect(firstOutboundPackageLineItem.price).toBe(0)
-    //   expect(firstOutboundPackageLineItem.comment).toEqual(
-    //     "Package never entered delivery system. Do not charge"
-    //   )
-
-    //   expect(secondOutboundPackageLineItem).toBeDefined()
-    //   expect(secondOutboundPackageLineItem.price).toBeGreaterThan(0)
-    //   expect(
-    //     secondOutboundPackageLineItem.comment.includes(
-    //       "Charge full outbound package"
-    //     )
-    //   ).toBe(true)
-    // })
 
     describe("A reservation was created in the previous billing cycle but the outbound package was not sent until this billing cycle", () => {
-      it("The package was the first shipped outbound package from the previous billing cycle. It was select. Charge", () => {})
+      beforeEach(async () => {
+        const { customer } = await testUtils.createTestCustomer({
+          select: { id: true },
+          create: {
+            membership: {
+              create: {
+                rentalInvoices: {
+                  create: {
+                    billingStartAt: timeUtils.xDaysAgoISOString(60),
+                    billingEndAt: timeUtils.xDaysAgoISOString(30),
+                  },
+                },
+              },
+            },
+          } as any,
+        })
+        testCustomer = customer
+      })
+      it("The package was the first shipped outbound package from the previous billing cycle. It was select. Charge", async () => {
+        const firstReservation = await addToBagAndReserveForCustomerWithParams(
+          2,
+          {
+            shippingCode: "UPSSelect",
+          }
+        )
+        await setReservationCreatedAtWithParams(firstReservation.id, 31)
+        await setReservationStatusWithParams(firstReservation.id, "Completed")
+        await setPackageEnteredSystemAtWithParams(
+          firstReservation.sentPackage.id,
+          29
+        )
+        await setPackageDeliveredAtWithParams(
+          firstReservation.sentPackage.id,
+          27
+        )
 
-      it("The package was the first shipped outbound package from the previous billing cycle. It was ground. Do not charge", () => {})
+        const secondReservation = await addToBagAndReserveForCustomerWithParams(
+          2
+        )
+        await setReservationCreatedAtWithParams(secondReservation.id, 21)
+        await setReservationStatusWithParams(secondReservation.id, "Delivered")
+        await setPackageDeliveredAtWithParams(
+          secondReservation.sentPackage.id,
+          19
+        )
+        await setPackageEnteredSystemAtWithParams(
+          secondReservation.sentPackage.id,
+          21
+        )
 
-      it("The package was the second shipped outbound package from the previous billing cycle. Charge.", () => {})
+        const custWithData = (await getCustWithDataWithParams()) as any
+        const rentalInvoice = custWithData.membership.rentalInvoices[0]
+        const lineItems = await rentalService.createRentalInvoiceLineItems(
+          rentalInvoice
+        )
+
+        const firstOutboundPackageLineItemName = createProcessingObjectKey(
+          firstReservation.reservationNumber,
+          "OutboundPackage"
+        )
+        const firstOutboundPackageLineItem = lineItems.find(
+          a => a.name === firstOutboundPackageLineItemName
+        )
+
+        expect(firstOutboundPackageLineItem).toBeDefined()
+        expect(firstOutboundPackageLineItem.price).toBeGreaterThan(0)
+        expect(firstOutboundPackageLineItem.comment).toBe("FILL IN")
+      })
+
+      it("The package was the first shipped outbound package from the previous billing cycle. It was ground. Do not charge", async () => {
+        const firstReservation = await addToBagAndReserveForCustomerWithParams(
+          2,
+          {
+            shippingCode: "UPSGround",
+          }
+        )
+        setReservationCreatedAtWithParams(firstReservation.id, 31)
+        setReservationStatusWithParams(firstReservation.id, "Completed")
+        setPackageEnteredSystemAtWithParams(firstReservation.sentPackage.id, 29)
+        setPackageDeliveredAtWithParams(firstReservation.sentPackage.id, 27)
+
+        const secondReservation = await addToBagAndReserveForCustomerWithParams(
+          2
+        )
+        setReservationCreatedAtWithParams(secondReservation.id, 21)
+        setReservationStatusWithParams(secondReservation.id, "Delivered")
+        setPackageDeliveredAtWithParams(secondReservation.sentPackage.id, 19)
+        setPackageEnteredSystemAtWithParams(
+          secondReservation.sentPackage.id,
+          21
+        )
+
+        const custWithData = (await getCustWithDataWithParams()) as any
+        const rentalInvoice = custWithData.membership.rentalInvoices[0]
+        const lineItems = await rentalService.createRentalInvoiceLineItems(
+          rentalInvoice
+        )
+
+        const firstOutboundPackageLineItemName = createProcessingObjectKey(
+          firstReservation.reservationNumber,
+          "OutboundPackage"
+        )
+        const firstOutboundPackageLineItem = lineItems.find(
+          a => a.name === firstOutboundPackageLineItemName
+        )
+
+        expect(firstOutboundPackageLineItem).toBeDefined()
+        expect(firstOutboundPackageLineItem.price).toBe(0)
+        expect(firstOutboundPackageLineItem.comment).toBe("FILL IN")
+      })
+
+      it("The package was the second shipped outbound package from the previous billing cycle. Charge.", async () => {
+        const firstReservation = await addToBagAndReserveForCustomerWithParams(
+          2
+        )
+        setReservationCreatedAtWithParams(firstReservation.id, 45)
+        setReservationStatusWithParams(firstReservation.id, "Completed")
+        setPackageEnteredSystemAtWithParams(firstReservation.sentPackage.id, 45)
+        setPackageDeliveredAtWithParams(firstReservation.sentPackage.id, 43)
+
+        const secondReservation = await addToBagAndReserveForCustomerWithParams(
+          2
+        )
+        setReservationCreatedAtWithParams(secondReservation.id, 31)
+        setReservationStatusWithParams(secondReservation.id, "Completed")
+        setPackageDeliveredAtWithParams(secondReservation.sentPackage.id, 27)
+        setPackageEnteredSystemAtWithParams(
+          secondReservation.sentPackage.id,
+          29
+        )
+
+        const thirdReservation = await addToBagAndReserveForCustomerWithParams(
+          2
+        )
+        setReservationCreatedAtWithParams(thirdReservation.id, 15)
+        setReservationStatusWithParams(thirdReservation.id, "Delivered")
+        setPackageDeliveredAtWithParams(thirdReservation.sentPackage.id, 13)
+        setPackageEnteredSystemAtWithParams(thirdReservation.sentPackage.id, 15)
+
+        const custWithData = (await getCustWithDataWithParams()) as any
+        const rentalInvoice = custWithData.membership.rentalInvoices[0]
+        const lineItems = await rentalService.createRentalInvoiceLineItems(
+          rentalInvoice
+        )
+
+        const secondOutboundPackageLineItemName = createProcessingObjectKey(
+          secondReservation.reservationNumber,
+          "OutboundPackage"
+        )
+        const secondOutboundPackageLineItem = lineItems.find(
+          a => a.name === secondOutboundPackageLineItemName
+        )
+
+        expect(secondOutboundPackageLineItem).toBeDefined()
+        expect(secondOutboundPackageLineItem.price).toBeGreaterThan(0)
+        expect(secondOutboundPackageLineItem.comment).toBe("FILL IN")
+      })
     })
   })
 })
