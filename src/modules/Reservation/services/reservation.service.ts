@@ -1,3 +1,4 @@
+import { ApplicationType } from "@app/decorators/application.decorator"
 import { WinstonLogger } from "@app/lib/logger"
 import { ErrorService } from "@app/modules/Error/services/error.service"
 import { RentalService } from "@app/modules/Payment/services/rental.service"
@@ -700,11 +701,13 @@ export class ReservationService {
   }
 
   async draftReservationLineItems({
+    application,
     reservation,
     customer,
     filterBy = ReservationLineItemsFilter.AllItems,
     shippingCode = ShippingCode.UPSGround,
   }: {
+    application: ApplicationType
     reservation?: Reservation
     customer: Customer
     filterBy: ReservationLineItemsFilter
@@ -735,7 +738,7 @@ export class ReservationService {
       },
     })
 
-    if (customerWithUser.membership === null) {
+    if (application !== "spring" && customerWithUser.membership === null) {
       this.logger.log("Customer without membership trying to reserve", {
         customer: customerWithUser,
       })
