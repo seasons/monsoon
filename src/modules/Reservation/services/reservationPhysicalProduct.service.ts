@@ -191,4 +191,25 @@ export class ReservationPhysicalProductService {
     const results = await this.prisma.client.$transaction(promises)
     return !!results
   }
+
+  async pickItems(itemIDs: string[]) {
+    const reservationPhysicalProducts = await this.prisma.client.reservationPhysicalProduct.findMany(
+      {
+        where: {
+          id: {
+            in: itemIDs,
+          },
+        },
+        select: {
+          id: true,
+          physicalProductId: true,
+          physicalProduct: {
+            select: {
+              id: true,
+            },
+          },
+        },
+      }
+    )
+  }
 }

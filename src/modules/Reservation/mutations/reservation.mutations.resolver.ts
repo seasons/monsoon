@@ -39,6 +39,10 @@ export class ReservationMutationsResolver {
     )
   }
 
+  async pickItems(@Args() { items }) {
+    return this.reservationPhysicalProduct.pickItems(items)
+  }
+
   @Mutation()
   async updateReservation(@Args() { data, where }, @Select() select) {
     const result = await this.reservation.updateReservation(data, where, select)
