@@ -1,4 +1,5 @@
 import { Customer, User } from "@app/decorators"
+import { Application } from "@app/decorators/application.decorator"
 import { Select } from "@app/decorators/select.decorator"
 import { ReservationService } from "@app/modules/Reservation/services/reservation.service"
 import { CustomerService } from "@app/modules/User/services/customer.service"
@@ -176,10 +177,15 @@ export class MeFieldsResolver {
   }
 
   @ResolveField()
-  async reservationLineItems(@Args() args, @Customer() customer) {
+  async reservationLineItems(
+    @Args() args,
+    @Customer() customer,
+    @Application() application
+  ) {
     const { filterBy, shippingCode } = args
 
     const result = await this.reservation.draftReservationLineItems({
+      application,
       customer,
       filterBy,
       shippingCode,
