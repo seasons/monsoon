@@ -1,20 +1,5 @@
-Debugger listening on ws://127.0.0.1:9229/cf94fc04-5633-41db-9990-a55d50c100ba
+Debugger listening on ws://127.0.0.1:9229/608e024b-fb8e-45f9-bb01-eb881c4b521e
 For help, see: https://nodejs.org/en/docs/inspector
-{
-  user: { email: 'narchie12@gmail.com' },
-  membership: {
-    rentalInvoices: [
-      {
-        billingEndAt: 2021-10-01T21:20:08.000Z,
-        billingStartAt: 2021-09-20T22:11:56.790Z
-      },
-      {
-        billingEndAt: 2021-11-06T00:00:00.000Z,
-        billingStartAt: 2021-10-06T18:00:15.234Z
-      }
-    ]
-  }
-}
 {
   user: { email: 'galfredomedina@icloud.com' },
   membership: {
@@ -226,21 +211,6 @@ For help, see: https://nodejs.org/en/docs/inspector
   }
 }
 {
-  user: { email: 'justinpollivierre@gmail.com' },
-  membership: {
-    rentalInvoices: [
-      {
-        billingEndAt: 2022-03-11T18:54:26.000Z,
-        billingStartAt: 2021-09-20T22:52:40.411Z
-      },
-      {
-        billingEndAt: 2021-11-04T04:00:00.000Z,
-        billingStartAt: 2021-10-04T18:39:45.065Z
-      }
-    ]
-  }
-}
-{
   user: { email: 'francisco.e.sanchez6@gmail.com' },
   membership: {
     rentalInvoices: [
@@ -285,4 +255,19 @@ For help, see: https://nodejs.org/en/docs/inspector
     ]
   }
 }
-19
+{
+  user: { email: 'justinpollivierre@gmail.com' },
+  membership: {
+    rentalInvoices: [
+      {
+        billingEndAt: 2022-03-11T18:54:26.000Z,
+        billingStartAt: 2021-09-20T22:52:40.411Z
+      },
+      {
+        billingEndAt: 2021-11-04T04:00:00.000Z,
+        billingStartAt: 2021-10-04T18:39:45.065Z
+      }
+    ]
+  }
+}
+18

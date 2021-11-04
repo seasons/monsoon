@@ -1,0 +1,291 @@
+Debugger listening on ws://127.0.0.1:9229/47c2e73b-8199-4235-b40c-dc6d4f601e8f
+For help, see: https://nodejs.org/en/docs/inspector
+[
+  {
+    membership: {
+      rentalInvoices: [
+        {
+          id: 'cktt8kea60069q6uvl52ad45r',
+          status: 'Billed',
+          createdAt: 2021-09-20T22:44:37.326Z,
+          billingEndAt: 2021-09-21T19:01:58.000Z,
+          billingStartAt: 2021-09-20T22:44:37.083Z,
+          reservations: [ { reservationNumber: 468921414 } ],
+          products: [
+            { seasonsUID: 'BODE-GRN-306-022-01' },
+            { seasonsUID: 'OURL-BLK-SS-040-01' },
+            { seasonsUID: 'DEVA-BLK-307-019-01' }
+          ],
+          lineItems: [
+            {
+              id: 'cktui4knd03473rv191ww6ca0',
+              rentalEndedAt: null,
+              rentalStartedAt: null,
+              daysRented: null,
+              price: 0,
+              comment: null,
+              physicalProduct: null
+            },
+            {
+              id: 'cktui4knc03453rv19fda05wk',
+              rentalEndedAt: 2021-09-21T19:01:58.000Z,
+              rentalStartedAt: 2021-09-20T22:44:37.083Z,
+              daysRented: 1,
+              price: 67,
+              comment: 'Initial reservation: 468921414, status Delivered.\n' +
+                'Item status: with customer',
+              physicalProduct: {
+                productVariant: { product: { name: 'Box Sleeveless' } }
+              }
+            },
+            {
+              id: 'cktui4knc03463rv135aixhg6',
+              rentalEndedAt: 2021-09-21T19:01:58.000Z,
+              rentalStartedAt: 2021-09-20T22:44:37.083Z,
+              daysRented: 1,
+              price: 167,
+              comment: 'Initial reservation: 468921414, status Delivered.\n' +
+                'Item status: with customer',
+              physicalProduct: { productVariant: { product: { name: 'Brooks Short' } } }
+            },
+            {
+              id: 'cktui4knb03443rv10f6gd4jz',
+              rentalEndedAt: 2021-09-21T19:01:58.000Z,
+              rentalStartedAt: 2021-09-20T22:44:37.083Z,
+              daysRented: 1,
+              price: 150,
+              comment: 'Initial reservation: 330899413, status Completed.\n' +
+                'Item status: with customer',
+              physicalProduct: {
+                productVariant: { product: { name: 'Checkerboard Rugby Short' } }
+              }
+            }
+          ],
+          comment: 'Rebilled items reserved before migration day (9.20) on invoice: 7447.\n' +
+            'Line items rebilled:\n' +
+            '--cktui4knc03453rv19fda05wk. (Box Sleeveless)\n' +
+            '--cktui4knc03463rv135aixhg6. (Brooks Short)\n' +
+            '--cktui4knb03443rv10f6gd4jz. (Checkerboard Rugby Short)'
+        },
+        {
+          id: 'cktui4ldj03963rv1a627lkg0',
+          status: 'Billed',
+          createdAt: 2021-09-21T20:00:02.359Z,
+          billingEndAt: 2021-10-21T00:00:00.000Z,
+          billingStartAt: 2021-09-21T20:00:01.678Z,
+          reservations: [
+            { reservationNumber: 468921414 },
+            { reservationNumber: 160902355 },
+            { reservationNumber: 531535036 }
+          ],
+          products: [
+            { seasonsUID: 'BODE-GRN-306-022-01' },
+            { seasonsUID: 'OURL-BLU-SS-020-01' },
+            { seasonsUID: 'OURL-BLK-SS-040-01' },
+            { seasonsUID: 'CRGR-ORG-SS-032-01' },
+            { seasonsUID: 'VNTG-WTE-SS-063-01' },
+            { seasonsUID: 'NANU-BLU-3027-029-02' },
+            { seasonsUID: 'DEVA-BLK-307-019-01' },
+            { seasonsUID: 'CRGR-GRN-LL-007-01' },
+            { seasonsUID: 'MTAL-GRY-UNI-001-01' },
+            { seasonsUID: 'S2W8-PRP-SS-002-01' }
+          ],
+          lineItems: [
+            {
+              id: 'ckv81g6s770753nk65jeivtp9',
+              rentalEndedAt: null,
+              rentalStartedAt: null,
+              daysRented: null,
+              price: 550,
+              comment: 'Base processing fee for a new reservation',
+              physicalProduct: null
+            },
+            {
+              id: 'ckv81g6s670703nk6vxdgm44t',
+              rentalEndedAt: null,
+              rentalStartedAt: null,
+              daysRented: null,
+              price: 0,
+              comment: 'First reservation of billing cycle. Free outbound package',
+              physicalProduct: null
+            },
+            {
+              id: 'ckv81g6s770733nk6q3bo8jn3',
+              rentalEndedAt: null,
+              rentalStartedAt: null,
+              daysRented: null,
+              price: 550,
+              comment: 'Base processing fee for a new reservation',
+              physicalProduct: null
+            },
+            {
+              id: 'ckv81g6s770723nk6n7uxi5rl',
+              rentalEndedAt: null,
+              rentalStartedAt: null,
+              daysRented: null,
+              price: 1727,
+              comment: 'Returning items: CRGR-GRN-LL-007-01',
+              physicalProduct: null
+            },
+            {
+              id: 'ckv81g6s670683nk6ltyfzqke',
+              rentalEndedAt: 2021-10-21T00:00:00.000Z,
+              rentalStartedAt: 2021-10-07T20:35:37.210Z,
+              daysRented: 14,
+              price: 1400,
+              comment: 'Initial reservation: 160902355, status Completed, phase CustomerToBusiness\n' +
+                'Item status: with customer',
+              physicalProduct: {
+                productVariant: { product: { name: 'Mesh Multi-Pocket Nylon Vest' } }
+              }
+            },
+            {
+              id: 'ckv81g6s670713nk6ssw7rkc3',
+              rentalEndedAt: null,
+              rentalStartedAt: null,
+              daysRented: null,
+              price: 2109,
+              comment: 'Reservation 2 of billing cycle. Charge full outbound package.',
+              physicalProduct: null
+            },
+            {
+              id: 'ckv81g6s570663nk69olgoe00',
+              rentalEndedAt: 2021-10-14T02:41:18.183Z,
+              rentalStartedAt: 2021-10-07T20:35:37.210Z,
+              daysRented: 7,
+              price: 804,
+              comment: 'Initial reservation: 160902355, status Completed, phase CustomerToBusiness\n' +
+                'Item status: returned',
+              physicalProduct: {
+                productVariant: {
+                  product: { name: 'Embroidered Hole String LS T-Shirt' }
+                }
+              }
+            },
+            {
+              id: 'ckv81g6s570673nk6ird5cdcu',
+              rentalEndedAt: 2021-10-23T20:23:57.000Z,
+              rentalStartedAt: 2021-10-16T20:23:57.679Z,
+              daysRented: 7,
+              price: 804,
+              comment: 'Initial reservation: 531535036, status Lost, phase CustomerToBusiness\n' +
+                'Item status: Unknown. Applied minimum charge (7 days)',
+              physicalProduct: {
+                productVariant: { product: { name: 'Coree Split Chain' } }
+              }
+            },
+            {
+              id: 'ckv81g6s470623nk6ej3m9ckl',
+              rentalEndedAt: 2021-10-03T17:13:40.000Z,
+              rentalStartedAt: 2021-09-21T20:00:01.678Z,
+              daysRented: 12,
+              price: 2004,
+              comment: 'Initial reservation: 468921414, status Completed, phase BusinessToCustomer\n' +
+                'Item status: returned',
+              physicalProduct: { productVariant: { product: { name: 'Brooks Short' } } }
+            },
+            {
+              id: 'ckv81g6s470643nk64xnfwwtx',
+              rentalEndedAt: 2021-10-23T20:23:57.000Z,
+              rentalStartedAt: 2021-10-16T20:23:57.679Z,
+              daysRented: 7,
+              price: 1596,
+              comment: 'Initial reservation: 531535036, status Lost, phase CustomerToBusiness\n' +
+                'Item status: Unknown. Applied minimum charge (7 days)',
+              physicalProduct: { productVariant: { product: { name: 'Jasper Pants' } } }
+            },
+            {
+              id: 'ckv81g6s370613nk6ow6ixmkr',
+              rentalEndedAt: 2021-10-23T20:23:57.000Z,
+              rentalStartedAt: 2021-10-16T20:23:57.679Z,
+              daysRented: 7,
+              price: 396,
+              comment: 'Initial reservation: 531535036, status Lost, phase CustomerToBusiness\n' +
+                'Item status: Unknown. Applied minimum charge (7 days)',
+              physicalProduct: {
+                productVariant: {
+                  product: {
+                    name: 'Honda 1992 Suzuka World Endurance Sweatshirt'
+                  }
+                }
+              }
+            },
+            {
+              id: 'ckv81g6s370593nk6g12amx5w',
+              rentalEndedAt: 2021-10-21T00:00:00.000Z,
+              rentalStartedAt: 2021-10-07T20:35:37.210Z,
+              daysRented: 14,
+              price: 3500,
+              comment: 'Initial reservation: 160902355, status Completed, phase CustomerToBusiness\n' +
+                'Item status: with customer',
+              physicalProduct: {
+                productVariant: { product: { name: 'Qulited Skin Jacket' } }
+              }
+            },
+            {
+              id: 'ckv81g6s270583nk6mkkkdi8c',
+              rentalEndedAt: 2021-10-03T17:13:40.000Z,
+              rentalStartedAt: 2021-09-21T20:00:01.678Z,
+              daysRented: 12,
+              price: 804,
+              comment: 'Initial reservation: 468921414, status Completed, phase BusinessToCustomer\n' +
+                'Item status: returned',
+              physicalProduct: {
+                productVariant: { product: { name: 'Box Sleeveless' } }
+              }
+            },
+            {
+              id: 'ckv81g6s270563nk6vsm6j7wp',
+              rentalEndedAt: 2021-10-23T20:23:57.000Z,
+              rentalStartedAt: 2021-10-16T20:23:57.679Z,
+              daysRented: 7,
+              price: 996,
+              comment: 'Initial reservation: 531535036, status Lost, phase CustomerToBusiness\n' +
+                'Item status: Unknown. Applied minimum charge (7 days)',
+              physicalProduct: {
+                productVariant: { product: { name: 'Borrowed BD Shirt' } }
+              }
+            },
+            {
+              id: 'ckv81g6s270553nk62lwg8kw3',
+              rentalEndedAt: 2021-10-03T17:13:40.000Z,
+              rentalStartedAt: 2021-09-21T20:00:01.678Z,
+              daysRented: 12,
+              price: 1800,
+              comment: 'Initial reservation: 330899413, status Completed, phase CustomerToBusiness\n' +
+                'Item status: returned',
+              physicalProduct: {
+                productVariant: { product: { name: 'Checkerboard Rugby Short' } }
+              }
+            }
+          ],
+          comment: null
+        },
+        {
+          id: 'ckv06hc3324323ty0eoerxinu',
+          status: 'Draft',
+          createdAt: 2021-10-21T00:00:20.847Z,
+          billingEndAt: 2021-11-22T00:00:00.000Z,
+          billingStartAt: 2021-10-21T00:00:20.787Z,
+          reservations: [
+            { reservationNumber: 531535036 },
+            { reservationNumber: 768111437 },
+            { reservationNumber: 845296965 }
+          ],
+          products: [
+            { seasonsUID: 'OURL-BLU-SS-020-01' },
+            { seasonsUID: 'CRGR-ORG-SS-032-01' },
+            { seasonsUID: 'VNTG-WTE-SS-063-01' },
+            { seasonsUID: 'NANU-BLU-3027-029-02' },
+            { seasonsUID: 'JWA-GRN-3028-003-01' },
+            { seasonsUID: 'AURA-PRP-MM-020-01' },
+            { seasonsUID: 'MTAL-GRY-UNI-001-01' },
+            { seasonsUID: 'S2W8-PRP-SS-002-01' }
+          ],
+          lineItems: [],
+          comment: null
+        }
+      ]
+    }
+  }
+]

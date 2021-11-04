@@ -1,87 +1,5 @@
-Debugger listening on ws://127.0.0.1:9229/60e38ac8-ddb3-432e-9e5e-63d7a5b4a1f5
+Debugger listening on ws://127.0.0.1:9229/bd0381cb-0806-46e7-b5a2-c69f1ce24c44
 For help, see: https://nodejs.org/en/docs/inspector
-{
-  billingEndAt: 2021-12-05T00:00:00.000Z,
-  membership: {
-    customer: {
-      user: { email: 'alexandrahowley@gmail.com', firstName: 'Alexandra' }
-    },
-    subscription: { nextBillingAt: 2021-11-05T15:26:56.000Z }
-  },
-  daysBetween: 29
-}
-{
-  billingEndAt: 2021-12-05T00:00:00.000Z,
-  membership: {
-    customer: { user: { email: 'carverhiatt@fcds.org', firstName: 'Carver' } },
-    subscription: { nextBillingAt: 2021-11-05T04:00:00.000Z }
-  },
-  daysBetween: 29
-}
-{
-  billingEndAt: 2021-12-05T00:00:00.000Z,
-  membership: {
-    customer: { user: { email: 'reardon.johnj@gmail.com', firstName: 'JJ' } },
-    subscription: { nextBillingAt: 2021-11-05T09:14:15.000Z }
-  },
-  daysBetween: 29
-}
-{
-  billingEndAt: 2021-12-05T00:00:00.000Z,
-  membership: {
-    customer: { user: { email: 'jxavila@gmail.com', firstName: 'Xavier' } },
-    subscription: { nextBillingAt: 2021-11-05T16:21:08.000Z }
-  },
-  daysBetween: 29
-}
-{
-  billingEndAt: 2021-12-05T00:00:00.000Z,
-  membership: {
-    customer: { user: { email: 'bert71893@gmail.com', firstName: 'Alberto' } },
-    subscription: { nextBillingAt: 2021-11-05T22:07:24.000Z }
-  },
-  daysBetween: 29
-}
-{
-  billingEndAt: 2021-12-04T00:00:00.000Z,
-  membership: {
-    customer: { user: { email: 'dustin.vutera@gmail.com', firstName: 'Dustin' } },
-    subscription: { nextBillingAt: 2021-11-04T13:13:26.000Z }
-  },
-  daysBetween: 29
-}
-{
-  billingEndAt: 2021-12-04T00:00:00.000Z,
-  membership: {
-    customer: { user: { email: 'llb.barone@gmail.com', firstName: 'Luca' } },
-    subscription: { nextBillingAt: 2021-11-04T15:19:19.000Z }
-  },
-  daysBetween: 29
-}
-{
-  billingEndAt: 2021-12-04T00:00:00.000Z,
-  membership: {
-    customer: { user: { email: 'ben.millstein@gmail.com', firstName: 'Ben' } },
-    subscription: { nextBillingAt: 2021-11-04T18:00:10.000Z }
-  },
-  daysBetween: 29
-}
-{
-  billingEndAt: 2021-12-04T00:00:00.000Z,
-  membership: {
-    customer: { user: { email: 'solea@seasons.nyc', firstName: 'Solea' } },
-    subscription: { nextBillingAt: 2021-11-04T19:17:23.000Z }
-  },
-  daysBetween: 29
-}
-{
-  billingEndAt: 2021-12-04T00:00:00.000Z,
-  membership: {
-    customer: { user: { email: 'tylerfallon5@gmail.com', firstName: 'Tyler' } },
-    subscription: { nextBillingAt: 2021-11-04T22:05:18.000Z }
-  },
-  daysBetween: 29
-}
 {
   billingEndAt: 2021-11-15T00:00:00.000Z,
   membership: {
@@ -221,14 +139,6 @@ For help, see: https://nodejs.org/en/docs/inspector
     subscription: { nextBillingAt: 2021-11-15T05:02:11.000Z }
   },
   daysBetween: 2
-}
-{
-  billingEndAt: 2021-11-13T05:00:00.000Z,
-  membership: {
-    customer: { user: { email: 'rgarcia0223@yahoo.com', firstName: 'Rey' } },
-    subscription: { nextBillingAt: 2021-11-10T15:28:26.000Z }
-  },
-  daysBetween: 3
 }
 {
   billingEndAt: 2021-11-13T00:00:00.000Z,
@@ -550,14 +460,6 @@ For help, see: https://nodejs.org/en/docs/inspector
 {
   billingEndAt: 2021-11-10T00:00:00.000Z,
   membership: {
-    customer: { user: { email: 'adamlceely@gmail.com', firstName: 'Adam' } },
-    subscription: { nextBillingAt: 2021-11-07T17:40:47.000Z }
-  },
-  daysBetween: 2
-}
-{
-  billingEndAt: 2021-11-10T00:00:00.000Z,
-  membership: {
     customer: { user: { email: 'cgreene1998@me.com', firstName: 'Chris' } },
     subscription: { nextBillingAt: 2021-12-03T14:19:44.000Z }
   },
@@ -570,14 +472,6 @@ For help, see: https://nodejs.org/en/docs/inspector
     subscription: { nextBillingAt: 2021-11-11T17:30:03.000Z }
   },
   daysBetween: 2
-}
-{
-  billingEndAt: 2021-11-10T00:00:00.000Z,
-  membership: {
-    customer: { user: { email: 'lmichalski1037@gmail.com', firstName: 'Luke' } },
-    subscription: { nextBillingAt: 2021-11-04T21:34:34.000Z }
-  },
-  daysBetween: 5
 }
 {
   billingEndAt: 2021-11-10T00:00:00.000Z,
@@ -604,22 +498,6 @@ For help, see: https://nodejs.org/en/docs/inspector
     subscription: { nextBillingAt: 2021-12-02T22:45:54.000Z }
   },
   daysBetween: 23
-}
-{
-  billingEndAt: 2021-11-10T00:00:00.000Z,
-  membership: {
-    customer: { user: { email: 'rapsarmiento@gmail.com', firstName: 'Raphael' } },
-    subscription: { nextBillingAt: 2021-11-08T02:57:59.000Z }
-  },
-  daysBetween: 2
-}
-{
-  billingEndAt: 2021-11-10T00:00:00.000Z,
-  membership: {
-    customer: { user: { email: 'kjknesel@gmail.com', firstName: 'Kristofer' } },
-    subscription: { nextBillingAt: 2021-11-05T02:40:37.000Z }
-  },
-  daysBetween: 5
 }
 {
   billingEndAt: 2021-11-10T00:00:00.000Z,
@@ -651,14 +529,6 @@ For help, see: https://nodejs.org/en/docs/inspector
     subscription: { nextBillingAt: 2021-11-23T17:47:22.000Z }
   },
   daysBetween: 14
-}
-{
-  billingEndAt: 2021-11-10T00:00:00.000Z,
-  membership: {
-    customer: { user: { email: 'reganbozman@gmail.com', firstName: 'Regan' } },
-    subscription: { nextBillingAt: 2021-11-06T19:23:40.000Z }
-  },
-  daysBetween: 3
 }
 {
   billingEndAt: 2021-11-10T00:00:00.000Z,
