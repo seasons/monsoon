@@ -405,7 +405,7 @@ export class ShippingService {
 
     // We'll want to pull that number dynamically from the Shippo API once it's fixed
     const rawAmount = Math.round(
-      parseFloat(((rate?.amount as unknown) as string) || "0.00")
+      parseFloat(((rate?.amount as unknown) as string) || "0.00") * 100
     )
     const discountedAmount = this.discountShippingRate(
       rawAmount,
