@@ -218,9 +218,8 @@ describe("Create Rental Invoice Line Items", () => {
           rentalEndedAt: null,
           price: 0,
         },
-        // Processing fees:
+        // Shipping fees:
         // 3 reservations sent, none returned --> paying for 2 sent packages at 700 each. 1st package is on us --> 1400
-        // 3 new reservations, 3 * reservation_processing_cost (550) --> 1650
         [createProcessingObjectKey(
           initialReservation.reservationNumber,
           "OutboundPackage"
@@ -240,24 +239,6 @@ describe("Create Rental Invoice Line Items", () => {
           price: 0, // Hasn't been shipped out yet
           comment:
             "Reservation 3 of billing cycle. Package did not ship before invoice billed. No charge.",
-        },
-        [createProcessingObjectKey(
-          initialReservation.reservationNumber,
-          "Processing"
-        )]: {
-          price: 550,
-        },
-        [createProcessingObjectKey(
-          reservationTwo.reservationNumber,
-          "Processing"
-        )]: {
-          price: 550,
-        },
-        [createProcessingObjectKey(
-          reservationThree.reservationNumber,
-          "Processing"
-        )]: {
-          price: 550,
         },
       }
     })
@@ -295,12 +276,6 @@ describe("Create Rental Invoice Line Items", () => {
       }
     })
 
-    /* By way of construction, this test covers the following cases
-      If a reservation was created but not returned in this billing cycle, we charge the
-        base processing fee
-      If there are 2 or more new reservations in this billing cycle, we charge for the
-        sent package on all but the first
-      */
     it("Creates a line item for the first outbound package with a price of 0", () => {
       const key = createProcessingObjectKey(
         initialReservation.reservationNumber,
@@ -339,27 +314,6 @@ describe("Create Rental Invoice Line Items", () => {
       )
     })
 
-    it("Creates processing line items for all three new reservations with proper prices", () => {
-      const keyOne = createProcessingObjectKey(
-        initialReservation.reservationNumber,
-        "Processing"
-      )
-      const keyTwo = createProcessingObjectKey(
-        reservationTwo.reservationNumber,
-        "Processing"
-      )
-      const keyThree = createProcessingObjectKey(
-        reservationThree.reservationNumber,
-        "Processing"
-      )
-      for (const key of [keyOne, keyTwo, keyThree]) {
-        expect(lineItemsBySUIDOrName[key]).toBeDefined()
-        expect(lineItemsBySUIDOrName[key].price).toBe(
-          expectedResultsBySUIDOrName[key].price
-        )
-      }
-    })
-
     it("Doesn't set the taxes on them", () => {
       expect(Object.keys(expectedResultsBySUIDOrName).length).toBeGreaterThan(0)
       for (const id of Object.keys(expectedResultsBySUIDOrName)) {
@@ -371,35 +325,12 @@ describe("Create Rental Invoice Line Items", () => {
     })
   })
 
-  describe("Processing Edge cases", () => {
+  describe("Package Edge cases", () => {
     beforeEach(async () => {
       const { customer } = await testUtils.createTestCustomer({
         select: { id: true },
       })
       testCustomer = customer
-    })
-
-    it("Does not charge any processing fee for a reservation created in a previous billing cycle and held throughout this billing cycle", async () => {
-      const initialReservation = await addToBagAndReserveForCustomerWithParams(
-        2
-      )
-      await setReservationCreatedAtWithParams(initialReservation.id, 40)
-      await setPackageDeliveredAtWithParams(
-        initialReservation.sentPackage.id,
-        38
-      )
-      await setReservationStatusWithParams(initialReservation.id, "Delivered")
-
-      const custWithData = (await getCustWithDataWithParams()) as any
-      const rentalInvoice = custWithData.membership.rentalInvoices[0]
-      const lineItems = await rentalService.createRentalInvoiceLineItems(
-        rentalInvoice
-      )
-
-      const processingLineItem = lineItems.find(a =>
-        a.name?.includes("Reservation")
-      )
-      expect(processingLineItem).toBe(undefined)
     })
 
     it("Charges for the return package if a reservation was created in a previous billing cycle and returned in this one", async () => {
@@ -424,14 +355,14 @@ describe("Create Rental Invoice Line Items", () => {
         rentalInvoice
       )
 
-      const processingLineItem = lineItems.find(
+      const inboundPackageLineItem = lineItems.find(
         a => a.name === "InboundPackage-1"
       )
-      expect(processingLineItem).toBeDefined()
-      expect(processingLineItem.price).toBe(620) // ground fee of 1000 with a 38% discount
+      expect(inboundPackageLineItem).toBeDefined()
+      expect(inboundPackageLineItem.price).toBe(620) // ground fee of 1000 with a 38% discount
     })
 
-    it("Charges for the return package and base processing fee if a reservation was created and returned in this billing cycle", async () => {
+    it("Charges for the return package if a reservation was created and returned in this billing cycle", async () => {
       const initialReservation = await addToBagAndReserveForCustomerWithParams(
         2
       )
@@ -456,17 +387,9 @@ describe("Create Rental Invoice Line Items", () => {
       const inboundPackageLineItem = lineItems.find(
         a => a.name === "InboundPackage-1"
       )
-      const processingLineItem = lineItems.find(
-        a =>
-          a.name ===
-          "Reservation-" + initialReservation.reservationNumber + "-Processing"
-      )
 
       expect(inboundPackageLineItem).toBeDefined()
-      expect(processingLineItem).toBeDefined()
-
       expect(inboundPackageLineItem.price).toBe(620) // ground fee of 1000 with a 38% discount
-      expect(processingLineItem.price).toBe(BASE_PROCESSING_FEE)
     })
 
     it("Charges for the outbound package if a reservation used a premium shipping option", async () => {
@@ -505,17 +428,9 @@ describe("Create Rental Invoice Line Items", () => {
             initialReservation.reservationNumber +
             "-OutboundPackage"
       )
-      const processingLineItem = lineItems.find(
-        a =>
-          a.name ===
-          "Reservation-" + initialReservation.reservationNumber + "-Processing"
-      )
 
       expect(outboundPackageLineItem).toBeDefined()
-      expect(processingLineItem).toBeDefined()
-
       expect(outboundPackageLineItem.price).toBe(900) // select fee of 2000 with a 55% discount
-      expect(processingLineItem.price).toBe(BASE_PROCESSING_FEE)
     })
 
     /* We once had a bug where we were double charging for inbound packages. */
