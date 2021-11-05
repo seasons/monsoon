@@ -732,22 +732,11 @@ export class RentalService {
       invoice
     )
 
-    // Base Processing Fees
-    const newReservations = invoice.reservations.filter(a =>
-      this.timeUtils.isLaterDate(a.createdAt, invoice.billingStartAt)
-    )
-    const baseProcessingFeeLineItemDatas = newReservations.map(r => ({
-      name: "Reservation-" + r.reservationNumber + "-Processing",
-      price: RESERVATION_PROCESSING_FEE,
-      comment: "Base processing fee for a new reservation",
-    }))
-
     const lineItemDatas = [
       ...lineItemsForPhysicalProductDatas,
       ...newReservationOutboundPackageLineItemDatas,
       ...outboundPackagesFromPreviousBillingCycleLineItemDatas,
       ...inboundPackagesLineItemDatas,
-      ...baseProcessingFeeLineItemDatas,
     ]
     const formattedLineItemDatas = lineItemDatas.map(addLineItemBasics)
     const lineItemPromises = formattedLineItemDatas.map(data =>
