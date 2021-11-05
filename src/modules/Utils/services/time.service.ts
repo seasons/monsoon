@@ -17,6 +17,12 @@ export class TimeUtilsService {
     return date1.getTime() - date2.getTime() >= 0
   }
 
+  isBetweenDates(date: Date, startDate: Date, endDate: Date) {
+    return (
+      date.getTime() - startDate.getTime() >= 0 &&
+      date.getTime() - endDate.getTime() <= 0
+    )
+  }
   xDaysBeforeDate(
     date: Date,
     x: number,

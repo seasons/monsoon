@@ -22,6 +22,7 @@ import {
   getCustWithData,
   overridePrices,
   setPackageAmount,
+  setPackageCreatedAt,
   setPackageDeliveredAt,
   setPackageEnteredSystemAt,
   setReservationCreatedAt,
@@ -45,6 +46,7 @@ describe("Create Rental Invoice Line Items", () => {
   let setReservationStatusWithParams
   let getCustWithDataWithParams
   let setPackageEnteredSystemAtWithParams
+  let setPackageCreatedAtWithParams
 
   beforeAll(async () => {
     const moduleBuilder = await Test.createTestingModule(PAYMENT_MODULE_DEF)
@@ -57,6 +59,8 @@ describe("Create Rental Invoice Line Items", () => {
     timeUtils = moduleRef.get<TimeUtilsService>(TimeUtilsService)
     reservationService = moduleRef.get<ReservationService>(ReservationService)
 
+    setPackageCreatedAtWithParams = (packageId, date) =>
+      setPackageCreatedAt(packageId, date, { prisma, timeUtils })
     addToBagAndReserveForCustomerWithParams = (
       numBagItems,
       { shippingCode } = { shippingCode: "UPSGround" as ShippingCode }
@@ -106,6 +110,10 @@ describe("Create Rental Invoice Line Items", () => {
       // Two delivered reservations
       initialReservation = await addToBagAndReserveForCustomerWithParams(2)
       await setReservationCreatedAtWithParams(initialReservation.id, 25)
+      await setPackageEnteredSystemAtWithParams(
+        initialReservation.sentPackage.id,
+        25
+      )
       await setPackageDeliveredAtWithParams(
         initialReservation.sentPackage.id,
         23
@@ -114,6 +122,10 @@ describe("Create Rental Invoice Line Items", () => {
 
       reservationTwo = await addToBagAndReserveForCustomerWithParams(1)
       await setReservationCreatedAtWithParams(reservationTwo.id, 10)
+      await setPackageEnteredSystemAtWithParams(
+        reservationTwo.sentPackage.id,
+        10
+      )
       await setPackageDeliveredAtWithParams(reservationTwo.sentPackage.id, 9)
       await setReservationStatusWithParams(reservationTwo.id, "Delivered")
 
@@ -225,7 +237,9 @@ describe("Create Rental Invoice Line Items", () => {
           reservationThree.reservationNumber,
           "OutboundPackage"
         )]: {
-          price: 700, // 1000 * 30% discount for outbound ground package
+          price: 0, // Hasn't been shipped out yet
+          comment:
+            "Reservation 3 of billing cycle. Package did not ship before invoice billed. No charge.",
         },
         [createProcessingObjectKey(
           initialReservation.reservationNumber,
@@ -298,13 +312,9 @@ describe("Create Rental Invoice Line Items", () => {
       )
     })
 
-    it("Creates line items for the 2nd and 3rd outbound packages with nonzero prices", () => {
+    it("Creates a line item for the 2nd outbound package with a nonzero price", () => {
       const keyTwo = createProcessingObjectKey(
         reservationTwo.reservationNumber,
-        "OutboundPackage"
-      )
-      const keyThree = createProcessingObjectKey(
-        reservationThree.reservationNumber,
         "OutboundPackage"
       )
 
@@ -312,16 +322,23 @@ describe("Create Rental Invoice Line Items", () => {
       expect(lineItemsBySUIDOrName[keyTwo].price).toBe(
         expectedResultsBySUIDOrName[keyTwo].price
       )
+    })
+
+    it("Creates a line item for the 3rd outbound package with a zero price because it hasn't been shipped yet", () => {
+      const keyThree = createProcessingObjectKey(
+        reservationThree.reservationNumber,
+        "OutboundPackage"
+      )
 
       expect(lineItemsBySUIDOrName[keyThree]).toBeDefined()
       expect(lineItemsBySUIDOrName[keyThree].price).toBe(
         expectedResultsBySUIDOrName[keyThree].price
       )
+      expect(lineItemsBySUIDOrName[keyThree].comment).toBe(
+        expectedResultsBySUIDOrName[keyThree].comment
+      )
     })
 
-    it("Does not create a line item for the 3rd outbound package because it hasn't entered the ups system yet", () => {
-      expect(0).toBe(1)
-    })
     it("Creates processing line items for all three new reservations with proper prices", () => {
       const keyOne = createProcessingObjectKey(
         initialReservation.reservationNumber,
@@ -464,6 +481,10 @@ describe("Create Rental Invoice Line Items", () => {
         initialReservation.sentPackage.id,
         23
       )
+      await setPackageEnteredSystemAtWithParams(
+        initialReservation.sentPackage.id,
+        25
+      )
       await setReservationStatusWithParams(initialReservation.id, "Delivered")
       await setPackageAmount(
         initialReservation.sentPackage.id,
@@ -578,6 +599,10 @@ describe("Create Rental Invoice Line Items", () => {
         shippingCode: "UPSSelect",
       })
       await setReservationCreatedAtWithParams(initialReservation.id, 25)
+      await setPackageEnteredSystemAtWithParams(
+        initialReservation.sentPackage.id,
+        25
+      )
       await setPackageAmount(
         initialReservation.sentPackage.id,
         UPS_SELECT_FEE,
@@ -591,6 +616,10 @@ describe("Create Rental Invoice Line Items", () => {
       await setPackageDeliveredAtWithParams(
         reservationTwo.returnPackages[0].id,
         5
+      )
+      await setPackageEnteredSystemAtWithParams(
+        reservationTwo.sentPackage.id,
+        25
       )
 
       const custWithData = (await getCustWithDataWithParams()) as any
@@ -679,6 +708,9 @@ describe("Create Rental Invoice Line Items", () => {
         expect(outboundPackageLineItem).toBeUndefined()
         expect(pickupPackageLineItem).toBeDefined()
         expect(pickupPackageLineItem.price).toBe(0)
+        expect(pickupPackageLineItem.comment).toBe(
+          "Reservation 1 of billing cycle. Customer picked up package. No charge."
+        )
       })
 
       it("If a customer picks up their first reservation, and their second reservation, and then has the third one shipped ground, do not charge him on the third reservation.", async () => {
@@ -732,6 +764,9 @@ describe("Create Rental Invoice Line Items", () => {
         )
         expect(outboundPackageLineItem).toBeDefined()
         expect(outboundPackageLineItem.price).toBe(0)
+        expect(outboundPackageLineItem.comment).toBe(
+          "Reservation 3 of billing cycle. First active outbound package of billing cycle. Did not use premium shipping. Do not charge."
+        )
       })
 
       it("If a customer picks up their first reservation, and their second reservation, and then has the third one shipped select, charge him on the third reservation", async () => {
@@ -784,7 +819,7 @@ describe("Create Rental Invoice Line Items", () => {
           a => a.name === outboundPackageLineItemName
         )
         expect(outboundPackageLineItem).toBeDefined()
-        expect(outboundPackageLineItem.price).toBeGreaterThan(0)
+        expect(outboundPackageLineItem.price).toBe(900) // 2000 with 55% discount
       })
 
       it("If a customer only has one shipped (ground) outbound package in this billing cycle, do not charge him", async () => {
@@ -854,7 +889,7 @@ describe("Create Rental Invoice Line Items", () => {
           a => a.name === outboundPackageLineItemName
         )
         expect(outboundPackageLineItem).toBeDefined()
-        expect(outboundPackageLineItem.price).toBeGreaterThan(0)
+        expect(outboundPackageLineItem.price).toBe(900) // 2000 with 55% discount
       })
 
       it("If a customer's first outbound package is select, and the second outbound package is ground, charge him for both", async () => {
@@ -913,9 +948,9 @@ describe("Create Rental Invoice Line Items", () => {
           a => a.name === secondOutboundPackageLineItemName
         )
         expect(firstOutboundPackageLineItem).toBeDefined()
-        expect(firstOutboundPackageLineItem.price).toBeGreaterThan(0)
+        expect(firstOutboundPackageLineItem.price).toBe(900) // 2000 with 55% discount
         expect(secondOutboundPackageLineItem).toBeDefined()
-        expect(secondOutboundPackageLineItem.price).toBeGreaterThan(0)
+        expect(secondOutboundPackageLineItem.price).toBe(700) // 1000 with a 30% discount
       })
 
       it("If a customer placed 3 reservations in the same day and chose ground shipping, then never reserved anything else in the billing cycle, do not charge him", async () => {
@@ -1065,7 +1100,7 @@ describe("Create Rental Invoice Line Items", () => {
         expect(secondOutboundPackageLineItem).toBeDefined()
         expect(secondOutboundPackageLineItem.price).toBe(0)
         expect(thirdOutboundPackageLineItem).toBeDefined()
-        expect(thirdOutboundPackageLineItem.price).toBeGreaterThan(0)
+        expect(thirdOutboundPackageLineItem.price).toBe(700) // 1000 with 30% discount
       })
 
       it("If a customer has more than one shipped outbound package in this billing cycle, charge him for all but the first", async () => {
@@ -1151,16 +1186,87 @@ describe("Create Rental Invoice Line Items", () => {
         expect(firstOutboundPackageLineItem).toBeDefined()
         expect(firstOutboundPackageLineItem.price).toBe(0)
         expect(secondOutboundPackageLineItem).toBeDefined()
-        expect(secondOutboundPackageLineItem.price).toBeGreaterThan(0)
+        expect(secondOutboundPackageLineItem.price).toBe(700) // 1000 with 30% discount
         expect(thirdOutboundPackageLineItem).toBeDefined()
-        expect(thirdOutboundPackageLineItem.price).toBeGreaterThan(0)
+        expect(thirdOutboundPackageLineItem.price).toBe(700) // 1000 with 30% discount
       })
     })
 
     describe("A reservation was created in the previous billing cycle but the outbound package was not sent until this billing cycle", () => {
+      let transitionRentalInvoices
+      let addLineItemsToFirstInvoice: (
+        datas: Prisma.RentalInvoiceLineItemCreateWithoutRentalInvoiceInput[]
+      ) => Promise<void>
+
+      beforeAll(() => {
+        transitionRentalInvoices = async () => {
+          await prisma.client.customer.update({
+            where: { id: testCustomer.id },
+            data: {
+              membership: {
+                update: {
+                  rentalInvoices: {
+                    create: {
+                      billingEndAt: timeUtils.xDaysAgoISOString(0),
+                      billingStartAt: timeUtils.xDaysAgoISOString(30),
+                    },
+                    update: {
+                      where: {
+                        id: testCustomer.membership.rentalInvoices[0].id,
+                      },
+                      data: {
+                        status: "Billed",
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          })
+        }
+        addLineItemsToFirstInvoice = async (
+          datas: Prisma.RentalInvoiceLineItemCreateWithoutRentalInvoiceInput[]
+        ) => {
+          await prisma.client.customer.update({
+            where: { id: testCustomer.id },
+            data: {
+              membership: {
+                update: {
+                  rentalInvoices: {
+                    update: {
+                      where: {
+                        id: testCustomer.membership.rentalInvoices[0].id,
+                      },
+                      data: {
+                        lineItems: {
+                          create: datas,
+                        },
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          })
+        }
+      })
+
       beforeEach(async () => {
         const { customer } = await testUtils.createTestCustomer({
-          select: { id: true },
+          select: {
+            id: true,
+            membership: {
+              select: {
+                rentalInvoices: {
+                  select: {
+                    id: true,
+                    billingEndAt: true,
+                    billingStartAt: true,
+                  },
+                },
+              },
+            },
+          },
           create: {
             membership: {
               create: {
@@ -1176,144 +1282,327 @@ describe("Create Rental Invoice Line Items", () => {
         })
         testCustomer = customer
       })
-      it("The package was the first shipped outbound package from the previous billing cycle. It was select. Charge", async () => {
-        const firstReservation = await addToBagAndReserveForCustomerWithParams(
-          2,
-          {
-            shippingCode: "UPSSelect",
-          }
-        )
-        await setReservationCreatedAtWithParams(firstReservation.id, 31)
-        await setReservationStatusWithParams(firstReservation.id, "Completed")
-        await setPackageEnteredSystemAtWithParams(
-          firstReservation.sentPackage.id,
-          29
-        )
-        await setPackageDeliveredAtWithParams(
-          firstReservation.sentPackage.id,
-          27
-        )
 
-        const secondReservation = await addToBagAndReserveForCustomerWithParams(
-          2
-        )
-        await setReservationCreatedAtWithParams(secondReservation.id, 21)
-        await setReservationStatusWithParams(secondReservation.id, "Delivered")
-        await setPackageDeliveredAtWithParams(
-          secondReservation.sentPackage.id,
-          19
-        )
-        await setPackageEnteredSystemAtWithParams(
-          secondReservation.sentPackage.id,
-          21
-        )
+      describe("It was charged last cycle", () => {
+        it("The package was the second shipped outbound package from the previous billing cycle. Do not create line item or charge.", async () => {
+          const firstReservation = await addToBagAndReserveForCustomerWithParams(
+            2
+          )
+          setReservationCreatedAtWithParams(firstReservation.id, 45)
+          setReservationStatusWithParams(firstReservation.id, "Completed")
+          setPackageEnteredSystemAtWithParams(
+            firstReservation.sentPackage.id,
+            45
+          )
+          setPackageDeliveredAtWithParams(firstReservation.sentPackage.id, 43)
+          await setPackageCreatedAtWithParams(
+            firstReservation.sentPackage.id,
+            45
+          )
 
-        const custWithData = (await getCustWithDataWithParams()) as any
-        const rentalInvoice = custWithData.membership.rentalInvoices[0]
-        const lineItems = await rentalService.createRentalInvoiceLineItems(
-          rentalInvoice
-        )
+          const secondReservation = await addToBagAndReserveForCustomerWithParams(
+            2
+          )
+          setReservationCreatedAtWithParams(secondReservation.id, 31)
+          setReservationStatusWithParams(secondReservation.id, "Completed")
+          setPackageDeliveredAtWithParams(secondReservation.sentPackage.id, 27)
+          setPackageEnteredSystemAtWithParams(
+            secondReservation.sentPackage.id,
+            29
+          )
+          await setPackageCreatedAtWithParams(
+            secondReservation.sentPackage.id,
+            31
+          )
 
-        const firstOutboundPackageLineItemName = createProcessingObjectKey(
-          firstReservation.reservationNumber,
-          "OutboundPackage"
-        )
-        const firstOutboundPackageLineItem = lineItems.find(
-          a => a.name === firstOutboundPackageLineItemName
-        )
+          await transitionRentalInvoices()
+          await addLineItemsToFirstInvoice([
+            {
+              name: createProcessingObjectKey(
+                firstReservation.reservationNumber,
+                "OutboundPackage"
+              ),
+              price: 0,
+              comment: "",
+              currencyCode: "USD",
+            },
+            {
+              name: createProcessingObjectKey(
+                secondReservation.reservationNumber,
+                "OutboundPackage"
+              ),
+              price: 700,
+              comment: "",
+              currencyCode: "USD",
+            },
+          ])
 
-        expect(firstOutboundPackageLineItem).toBeDefined()
-        expect(firstOutboundPackageLineItem.price).toBeGreaterThan(0)
-        expect(firstOutboundPackageLineItem.comment).toBe("FILL IN")
+          const thirdReservation = await addToBagAndReserveForCustomerWithParams(
+            2
+          )
+          setReservationCreatedAtWithParams(thirdReservation.id, 15)
+          setReservationStatusWithParams(thirdReservation.id, "Delivered")
+          setPackageDeliveredAtWithParams(thirdReservation.sentPackage.id, 13)
+          setPackageEnteredSystemAtWithParams(
+            thirdReservation.sentPackage.id,
+            15
+          )
+
+          const custWithData = (await getCustWithDataWithParams()) as any
+          const rentalInvoice = custWithData.membership.rentalInvoices[1]
+          const lineItems = await rentalService.createRentalInvoiceLineItems(
+            rentalInvoice
+          )
+
+          const secondOutboundPackageLineItemName = createProcessingObjectKey(
+            secondReservation.reservationNumber,
+            "OutboundPackage"
+          )
+          const secondOutboundPackageLineItem = lineItems.find(
+            a => a.name === secondOutboundPackageLineItemName
+          )
+
+          expect(secondOutboundPackageLineItem).toBeUndefined()
+        })
       })
+      describe("It was not charged last cycle", () => {
+        it("The package was the first shipped outbound package from the previous billing cycle. It was select. Charge", async () => {
+          const firstReservation = await addToBagAndReserveForCustomerWithParams(
+            2,
+            {
+              shippingCode: "UPSSelect",
+            }
+          )
+          await setReservationCreatedAtWithParams(firstReservation.id, 31)
+          await setReservationStatusWithParams(firstReservation.id, "Completed")
+          await setPackageEnteredSystemAtWithParams(
+            firstReservation.sentPackage.id,
+            29
+          )
+          await setPackageDeliveredAtWithParams(
+            firstReservation.sentPackage.id,
+            27
+          )
+          await setPackageCreatedAtWithParams(
+            firstReservation.sentPackage.id,
+            31
+          )
+          await transitionRentalInvoices()
+          await addLineItemsToFirstInvoice([
+            {
+              name: createProcessingObjectKey(
+                firstReservation.reservationNumber,
+                "OutboundPackage"
+              ),
+              price: 0,
+              comment: "",
+              currencyCode: "USD",
+            },
+          ])
 
-      it("The package was the first shipped outbound package from the previous billing cycle. It was ground. Do not charge", async () => {
-        const firstReservation = await addToBagAndReserveForCustomerWithParams(
-          2,
-          {
-            shippingCode: "UPSGround",
-          }
-        )
-        setReservationCreatedAtWithParams(firstReservation.id, 31)
-        setReservationStatusWithParams(firstReservation.id, "Completed")
-        setPackageEnteredSystemAtWithParams(firstReservation.sentPackage.id, 29)
-        setPackageDeliveredAtWithParams(firstReservation.sentPackage.id, 27)
+          const secondReservation = await addToBagAndReserveForCustomerWithParams(
+            2
+          )
+          await setReservationCreatedAtWithParams(secondReservation.id, 21)
+          await setReservationStatusWithParams(
+            secondReservation.id,
+            "Delivered"
+          )
+          await setPackageDeliveredAtWithParams(
+            secondReservation.sentPackage.id,
+            19
+          )
+          await setPackageEnteredSystemAtWithParams(
+            secondReservation.sentPackage.id,
+            21
+          )
 
-        const secondReservation = await addToBagAndReserveForCustomerWithParams(
-          2
-        )
-        setReservationCreatedAtWithParams(secondReservation.id, 21)
-        setReservationStatusWithParams(secondReservation.id, "Delivered")
-        setPackageDeliveredAtWithParams(secondReservation.sentPackage.id, 19)
-        setPackageEnteredSystemAtWithParams(
-          secondReservation.sentPackage.id,
-          21
-        )
+          const custWithData = (await getCustWithDataWithParams(
+            Prisma.validator<Prisma.CustomerSelect>()({
+              membership: {
+                select: {
+                  rentalInvoices: { orderBy: { billingStartAt: "asc" } },
+                },
+              },
+            })
+          )) as any
+          const rentalInvoice = custWithData.membership.rentalInvoices[1]
+          const lineItems = await rentalService.createRentalInvoiceLineItems(
+            rentalInvoice
+          )
 
-        const custWithData = (await getCustWithDataWithParams()) as any
-        const rentalInvoice = custWithData.membership.rentalInvoices[0]
-        const lineItems = await rentalService.createRentalInvoiceLineItems(
-          rentalInvoice
-        )
+          const firstOutboundPackageLineItemName = createProcessingObjectKey(
+            firstReservation.reservationNumber,
+            "OutboundPackage"
+          )
+          const firstOutboundPackageLineItem = lineItems.find(
+            a => a.name === firstOutboundPackageLineItemName
+          )
 
-        const firstOutboundPackageLineItemName = createProcessingObjectKey(
-          firstReservation.reservationNumber,
-          "OutboundPackage"
-        )
-        const firstOutboundPackageLineItem = lineItems.find(
-          a => a.name === firstOutboundPackageLineItemName
-        )
+          expect(firstOutboundPackageLineItem).toBeDefined()
+          expect(firstOutboundPackageLineItem.price).toBe(900) // 2000 with 55% discount
+          expect(firstOutboundPackageLineItem.comment).toBe(
+            "Outbound package created in previous billing cycle but did not enter delivery system until this billing cycle. Premium Package. Charge."
+          )
+        })
 
-        expect(firstOutboundPackageLineItem).toBeDefined()
-        expect(firstOutboundPackageLineItem.price).toBe(0)
-        expect(firstOutboundPackageLineItem.comment).toBe("FILL IN")
-      })
+        it("The package was the first shipped outbound package from the previous billing cycle. It was ground. Do not charge", async () => {
+          const firstReservation = await addToBagAndReserveForCustomerWithParams(
+            2,
+            {
+              shippingCode: "UPSGround",
+            }
+          )
+          await setReservationCreatedAtWithParams(firstReservation.id, 31)
+          await setReservationStatusWithParams(firstReservation.id, "Completed")
+          await setPackageEnteredSystemAtWithParams(
+            firstReservation.sentPackage.id,
+            29
+          )
+          await setPackageDeliveredAtWithParams(
+            firstReservation.sentPackage.id,
+            27
+          )
+          await setPackageCreatedAtWithParams(
+            firstReservation.sentPackage.id,
+            31
+          )
 
-      it("The package was the second shipped outbound package from the previous billing cycle. Charge.", async () => {
-        const firstReservation = await addToBagAndReserveForCustomerWithParams(
-          2
-        )
-        setReservationCreatedAtWithParams(firstReservation.id, 45)
-        setReservationStatusWithParams(firstReservation.id, "Completed")
-        setPackageEnteredSystemAtWithParams(firstReservation.sentPackage.id, 45)
-        setPackageDeliveredAtWithParams(firstReservation.sentPackage.id, 43)
+          await transitionRentalInvoices()
+          await addLineItemsToFirstInvoice([
+            {
+              name: createProcessingObjectKey(
+                firstReservation.reservationNumber,
+                "OutboundPackage"
+              ),
+              price: 0,
+              comment: "",
+              currencyCode: "USD",
+            },
+          ])
 
-        const secondReservation = await addToBagAndReserveForCustomerWithParams(
-          2
-        )
-        setReservationCreatedAtWithParams(secondReservation.id, 31)
-        setReservationStatusWithParams(secondReservation.id, "Completed")
-        setPackageDeliveredAtWithParams(secondReservation.sentPackage.id, 27)
-        setPackageEnteredSystemAtWithParams(
-          secondReservation.sentPackage.id,
-          29
-        )
+          const secondReservation = await addToBagAndReserveForCustomerWithParams(
+            2
+          )
+          await setReservationCreatedAtWithParams(secondReservation.id, 21)
+          await setReservationStatusWithParams(
+            secondReservation.id,
+            "Delivered"
+          )
+          await setPackageDeliveredAtWithParams(
+            secondReservation.sentPackage.id,
+            19
+          )
+          await setPackageEnteredSystemAtWithParams(
+            secondReservation.sentPackage.id,
+            21
+          )
 
-        const thirdReservation = await addToBagAndReserveForCustomerWithParams(
-          2
-        )
-        setReservationCreatedAtWithParams(thirdReservation.id, 15)
-        setReservationStatusWithParams(thirdReservation.id, "Delivered")
-        setPackageDeliveredAtWithParams(thirdReservation.sentPackage.id, 13)
-        setPackageEnteredSystemAtWithParams(thirdReservation.sentPackage.id, 15)
+          const custWithData = (await getCustWithDataWithParams()) as any
+          const rentalInvoice = custWithData.membership.rentalInvoices[1]
+          const lineItems = await rentalService.createRentalInvoiceLineItems(
+            rentalInvoice
+          )
 
-        const custWithData = (await getCustWithDataWithParams()) as any
-        const rentalInvoice = custWithData.membership.rentalInvoices[0]
-        const lineItems = await rentalService.createRentalInvoiceLineItems(
-          rentalInvoice
-        )
+          const firstOutboundPackageLineItemName = createProcessingObjectKey(
+            firstReservation.reservationNumber,
+            "OutboundPackage"
+          )
+          const firstOutboundPackageLineItem = lineItems.find(
+            a => a.name === firstOutboundPackageLineItemName
+          )
 
-        const secondOutboundPackageLineItemName = createProcessingObjectKey(
-          secondReservation.reservationNumber,
-          "OutboundPackage"
-        )
-        const secondOutboundPackageLineItem = lineItems.find(
-          a => a.name === secondOutboundPackageLineItemName
-        )
+          expect(firstOutboundPackageLineItem).toBeDefined()
+          expect(firstOutboundPackageLineItem.price).toBe(0)
+          expect(firstOutboundPackageLineItem.comment).toBe(
+            "Outbound package created in previous billing cycle but did not enter delivery system until this billing cycle. Not Premium Package. First package of previous billing cycle. Do not charge."
+          )
+        })
 
-        expect(secondOutboundPackageLineItem).toBeDefined()
-        expect(secondOutboundPackageLineItem.price).toBeGreaterThan(0)
-        expect(secondOutboundPackageLineItem.comment).toBe("FILL IN")
+        it("The package was the second shipped outbound package from the previous billing cycle. Charge.", async () => {
+          const firstReservation = await addToBagAndReserveForCustomerWithParams(
+            2
+          )
+          setReservationCreatedAtWithParams(firstReservation.id, 45)
+          setReservationStatusWithParams(firstReservation.id, "Completed")
+          setPackageEnteredSystemAtWithParams(
+            firstReservation.sentPackage.id,
+            45
+          )
+          setPackageDeliveredAtWithParams(firstReservation.sentPackage.id, 43)
+          await setPackageCreatedAtWithParams(
+            firstReservation.sentPackage.id,
+            45
+          )
+
+          const secondReservation = await addToBagAndReserveForCustomerWithParams(
+            2
+          )
+          setReservationCreatedAtWithParams(secondReservation.id, 31)
+          setReservationStatusWithParams(secondReservation.id, "Completed")
+          setPackageDeliveredAtWithParams(secondReservation.sentPackage.id, 27)
+          setPackageEnteredSystemAtWithParams(
+            secondReservation.sentPackage.id,
+            29
+          )
+          await setPackageCreatedAtWithParams(
+            secondReservation.sentPackage.id,
+            31
+          )
+
+          await transitionRentalInvoices()
+          await addLineItemsToFirstInvoice([
+            {
+              name: createProcessingObjectKey(
+                firstReservation.reservationNumber,
+                "OutboundPackage"
+              ),
+              price: 0,
+              comment: "",
+              currencyCode: "USD",
+            },
+            {
+              name: createProcessingObjectKey(
+                secondReservation.reservationNumber,
+                "OutboundPackage"
+              ),
+              price: 0,
+              comment: "",
+              currencyCode: "USD",
+            },
+          ])
+
+          const thirdReservation = await addToBagAndReserveForCustomerWithParams(
+            2
+          )
+          setReservationCreatedAtWithParams(thirdReservation.id, 15)
+          setReservationStatusWithParams(thirdReservation.id, "Delivered")
+          setPackageDeliveredAtWithParams(thirdReservation.sentPackage.id, 13)
+          setPackageEnteredSystemAtWithParams(
+            thirdReservation.sentPackage.id,
+            15
+          )
+
+          const custWithData = (await getCustWithDataWithParams()) as any
+          const rentalInvoice = custWithData.membership.rentalInvoices[1]
+          const lineItems = await rentalService.createRentalInvoiceLineItems(
+            rentalInvoice
+          )
+
+          const secondOutboundPackageLineItemName = createProcessingObjectKey(
+            secondReservation.reservationNumber,
+            "OutboundPackage"
+          )
+          const secondOutboundPackageLineItem = lineItems.find(
+            a => a.name === secondOutboundPackageLineItemName
+          )
+
+          expect(secondOutboundPackageLineItem).toBeDefined()
+          expect(secondOutboundPackageLineItem.price).toBe(700) // 1000 with a 30% discount
+          expect(secondOutboundPackageLineItem.comment).toBe(
+            "Outbound package created in previous billing cycle but did not enter delivery system until this billing cycle. Not Premium Package. Charge."
+          )
+        })
       })
     })
   })

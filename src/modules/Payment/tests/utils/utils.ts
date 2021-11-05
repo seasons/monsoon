@@ -1,3 +1,5 @@
+import { time } from "console"
+
 import { ReservationService } from "@app/modules/Reservation"
 import { TimeUtilsService } from "@app/modules/Utils/services/time.service"
 import { PrismaService } from "@app/prisma/prisma.service"
@@ -61,9 +63,10 @@ export const getCustWithData = async (
     },
   }
 
+  const mergedSelect = merge(defaultSelect, select)
   return await prisma.client.customer.findFirst({
     where: { id: testCustomer.id },
-    select: merge(defaultSelect, select),
+    select: mergedSelect,
   })
 }
 
@@ -175,8 +178,10 @@ export const addToBagAndReserveForCustomer = async (
     customer: testCustomer as any,
     select: DEFAULT_RESERVATION_ARGS.select,
   })
-  await setPackageAmount(r.sentPackage.id, UPS_GROUND_FEE, { prisma })
-  await setPackageAmount(r.returnPackages[0].id, UPS_GROUND_FEE, { prisma })
+  const priceForPackage =
+    shippingCode === "UPSSelect" ? UPS_SELECT_FEE : UPS_GROUND_FEE
+  await setPackageAmount(r.sentPackage.id, priceForPackage, { prisma })
+  await setPackageAmount(r.returnPackages[0].id, priceForPackage, { prisma })
   return r
 }
 
@@ -188,6 +193,18 @@ export const setPackageAmount = async (
   await prisma.client.package.update({
     where: { id: packageId },
     data: { amount },
+  })
+}
+
+export const setPackageCreatedAt = async (
+  packageId,
+  numDaysAgo: number,
+  { prisma, timeUtils }: PrismaOption & TimeUtilsOption
+) => {
+  const createdAt = timeUtils.xDaysAgoISOString(numDaysAgo)
+  await prisma.client.package.update({
+    where: { id: packageId },
+    data: { createdAt },
   })
 }
 
