@@ -22,8 +22,6 @@ import chargebee from "chargebee"
 import { orderBy, uniqBy } from "lodash"
 import { DateTime } from "luxon"
 
-import { RESERVATION_PROCESSING_FEE } from "../constants"
-
 export const RETURN_PACKAGE_CUSHION = 3 // TODO: Set as an env var
 export const SENT_PACKAGE_CUSHION = 3 // TODO: Set as an env var
 
@@ -397,7 +395,7 @@ export class RentalService {
         membership: membershipWithData,
       }
     )
-    const thirtyDaysFromBillingStartAt = await this.calculateBillingEndDateFromStartDate(
+    const thirtyDaysFromBillingStartAt = this.calculateBillingEndDateFromStartDate(
       billingStartAt
     )
 
@@ -433,16 +431,32 @@ export class RentalService {
       )
 
     let billingEndAt
+    const planID = membershipWithData.plan.planID
     if (nextBillingAtBeforeNow) {
       billingEndAt = thirtyDaysFromBillingStartAt
     } else if (nextBillingAtLessThanThreeDaysFromNow) {
-      // TODO: Fix this. We want to stop the bleeding in this case. We should do
-      // 1 day before or after the sanitizedNextBillingAt
-      billingEndAt = await this.calculateBillingEndDateFromStartDate(
+      // This means we got off sync with their invoices and need to
+      // get back on track.
+      const thirtyDaysFromNextBillingAt = this.calculateBillingEndDateFromStartDate(
         sanitizedNextBillingAt
       )
+      if (planID === "access-monthly") {
+        billingEndAt = this.timeUtils.xDaysBeforeDate(
+          thirtyDaysFromBillingStartAt,
+          1,
+          "date"
+        )
+      } else if (planID === "access-yearly") {
+        billingEndAt = thirtyDaysFromNextBillingAt
+      } else {
+        billingEndAt = this.timeUtils.xDaysAfterDate(
+          thirtyDaysFromBillingStartAt,
+          1,
+          "date"
+        )
+      }
     } else if (nextBillingAtJustFarEnoughAway) {
-      if (GRANDFATHERED_PLAN_IDS.includes(membershipWithData.plan.planID)) {
+      if (GRANDFATHERED_PLAN_IDS.includes(planID)) {
         billingEndAt = this.timeUtils.xDaysAfterDate(
           sanitizedNextBillingAt,
           1,
@@ -1186,9 +1200,7 @@ export class RentalService {
     ]
   }
 
-  async calculateBillingEndDateFromStartDate(
-    billingStartAt: Date
-  ): Promise<Date> {
+  calculateBillingEndDateFromStartDate(billingStartAt: Date): Date {
     const startYear = billingStartAt.getFullYear()
     const startMonth = billingStartAt.getMonth()
     const startDate = billingStartAt.getDate()
