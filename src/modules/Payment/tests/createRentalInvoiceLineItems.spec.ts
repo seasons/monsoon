@@ -1288,13 +1288,16 @@ describe("Create Rental Invoice Line Items", () => {
           const firstReservation = await addToBagAndReserveForCustomerWithParams(
             2
           )
-          setReservationCreatedAtWithParams(firstReservation.id, 45)
-          setReservationStatusWithParams(firstReservation.id, "Completed")
-          setPackageEnteredSystemAtWithParams(
+          await setReservationCreatedAtWithParams(firstReservation.id, 45)
+          await setReservationStatusWithParams(firstReservation.id, "Completed")
+          await setPackageEnteredSystemAtWithParams(
             firstReservation.sentPackage.id,
             45
           )
-          setPackageDeliveredAtWithParams(firstReservation.sentPackage.id, 43)
+          await setPackageDeliveredAtWithParams(
+            firstReservation.sentPackage.id,
+            43
+          )
           await setPackageCreatedAtWithParams(
             firstReservation.sentPackage.id,
             45
@@ -1303,10 +1306,16 @@ describe("Create Rental Invoice Line Items", () => {
           const secondReservation = await addToBagAndReserveForCustomerWithParams(
             2
           )
-          setReservationCreatedAtWithParams(secondReservation.id, 31)
-          setReservationStatusWithParams(secondReservation.id, "Completed")
-          setPackageDeliveredAtWithParams(secondReservation.sentPackage.id, 27)
-          setPackageEnteredSystemAtWithParams(
+          await setReservationCreatedAtWithParams(secondReservation.id, 31)
+          await setReservationStatusWithParams(
+            secondReservation.id,
+            "Completed"
+          )
+          await setPackageDeliveredAtWithParams(
+            secondReservation.sentPackage.id,
+            27
+          )
+          await setPackageEnteredSystemAtWithParams(
             secondReservation.sentPackage.id,
             29
           )
@@ -1340,10 +1349,13 @@ describe("Create Rental Invoice Line Items", () => {
           const thirdReservation = await addToBagAndReserveForCustomerWithParams(
             2
           )
-          setReservationCreatedAtWithParams(thirdReservation.id, 15)
-          setReservationStatusWithParams(thirdReservation.id, "Delivered")
-          setPackageDeliveredAtWithParams(thirdReservation.sentPackage.id, 13)
-          setPackageEnteredSystemAtWithParams(
+          await setReservationCreatedAtWithParams(thirdReservation.id, 15)
+          await setReservationStatusWithParams(thirdReservation.id, "Delivered")
+          await setPackageDeliveredAtWithParams(
+            thirdReservation.sentPackage.id,
+            13
+          )
+          await setPackageEnteredSystemAtWithParams(
             thirdReservation.sentPackage.id,
             15
           )
@@ -1523,13 +1535,16 @@ describe("Create Rental Invoice Line Items", () => {
           const firstReservation = await addToBagAndReserveForCustomerWithParams(
             2
           )
-          setReservationCreatedAtWithParams(firstReservation.id, 45)
-          setReservationStatusWithParams(firstReservation.id, "Completed")
-          setPackageEnteredSystemAtWithParams(
+          await setReservationCreatedAtWithParams(firstReservation.id, 45)
+          await setReservationStatusWithParams(firstReservation.id, "Completed")
+          await setPackageEnteredSystemAtWithParams(
             firstReservation.sentPackage.id,
             45
           )
-          setPackageDeliveredAtWithParams(firstReservation.sentPackage.id, 43)
+          await setPackageDeliveredAtWithParams(
+            firstReservation.sentPackage.id,
+            43
+          )
           await setPackageCreatedAtWithParams(
             firstReservation.sentPackage.id,
             45
@@ -1538,10 +1553,16 @@ describe("Create Rental Invoice Line Items", () => {
           const secondReservation = await addToBagAndReserveForCustomerWithParams(
             2
           )
-          setReservationCreatedAtWithParams(secondReservation.id, 31)
-          setReservationStatusWithParams(secondReservation.id, "Completed")
-          setPackageDeliveredAtWithParams(secondReservation.sentPackage.id, 27)
-          setPackageEnteredSystemAtWithParams(
+          await setReservationCreatedAtWithParams(secondReservation.id, 31)
+          await setReservationStatusWithParams(
+            secondReservation.id,
+            "Completed"
+          )
+          await setPackageDeliveredAtWithParams(
+            secondReservation.sentPackage.id,
+            27
+          )
+          await setPackageEnteredSystemAtWithParams(
             secondReservation.sentPackage.id,
             29
           )
@@ -1575,10 +1596,13 @@ describe("Create Rental Invoice Line Items", () => {
           const thirdReservation = await addToBagAndReserveForCustomerWithParams(
             2
           )
-          setReservationCreatedAtWithParams(thirdReservation.id, 15)
-          setReservationStatusWithParams(thirdReservation.id, "Delivered")
-          setPackageDeliveredAtWithParams(thirdReservation.sentPackage.id, 13)
-          setPackageEnteredSystemAtWithParams(
+          await setReservationCreatedAtWithParams(thirdReservation.id, 15)
+          await setReservationStatusWithParams(thirdReservation.id, "Delivered")
+          await setPackageDeliveredAtWithParams(
+            thirdReservation.sentPackage.id,
+            13
+          )
+          await setPackageEnteredSystemAtWithParams(
             thirdReservation.sentPackage.id,
             15
           )
