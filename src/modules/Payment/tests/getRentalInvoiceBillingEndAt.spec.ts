@@ -1,14 +1,11 @@
-import { EmailService } from "@app/modules/Email/services/email.service"
 import { TestUtilsService } from "@app/modules/Utils/services/test.service"
 import { TimeUtilsService } from "@app/modules/Utils/services/time.service"
 import { PrismaService } from "@app/prisma/prisma.service"
-import { ModuleRef } from "@nestjs/core"
-import { Test, TestingModule } from "@nestjs/testing"
+import { Test } from "@nestjs/testing"
 import chargebee from "chargebee"
 import moment from "moment"
 
 import { PAYMENT_MODULE_DEF } from "../payment.module"
-import { PaymentService } from "../services/payment.service"
 import { RentalService } from "../services/rental.service"
 import {
   expectTimeToEqual,
