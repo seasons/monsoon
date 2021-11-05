@@ -1,10 +1,11 @@
-Debugger listening on ws://127.0.0.1:9229/d8bf2bff-c02b-4729-a9d2-27bd913706a1
+Debugger listening on ws://127.0.0.1:9229/2044827e-e233-4c93-b853-662f9adbf08d
 For help, see: https://nodejs.org/en/docs/inspector
 {
+  id: 'ckushz96y03393vu02erqzdxz',
   billingEndAt: 2021-11-15T00:00:00.000Z,
   membership: {
     customer: {
-      user: { email: 'johnhilf@wharton.upenn.edu', firstName: 'John' }
+      user: { email: 'johnhilf@wharton.upenn.edu', firstName: 'John' } // checked
     },
     subscription: { nextBillingAt: 2021-11-16T15:47:30.000Z }
   },
@@ -12,37 +13,41 @@ For help, see: https://nodejs.org/en/docs/inspector
   oneDayAfterNextBillingAt: '2021-11-17T10:47:30-05:00'
 }
 {
+  id: 'ckusfuciw02163vu0gfms83tp',
   billingEndAt: 2021-11-15T00:00:00.000Z,
   membership: {
-    customer: { user: { email: 'elvishamilton@gmail.com', firstName: 'Elvis' } },
+    customer: { user: { email: 'elvishamilton@gmail.com', firstName: 'Elvis' } }, //Checked
     subscription: { nextBillingAt: 2021-11-16T14:02:50.000Z }
   },
   daysBetween: 2,
   oneDayAfterNextBillingAt: '2021-11-17T09:02:50-05:00'
 }
 {
+  id: 'ckurwjrlw3147863rvo3qo0gkmg',
   billingEndAt: 2021-11-15T00:00:00.000Z,
   membership: {
-    customer: { user: { email: 'keaganrechel@gmail.com', firstName: 'Keagan' } },
+    customer: { user: { email: 'keaganrechel@gmail.com', firstName: 'Keagan' } }, //Checked
     subscription: { nextBillingAt: 2021-11-16T05:19:58.000Z }
   },
   daysBetween: 2,
   oneDayAfterNextBillingAt: '2021-11-17T00:19:58-05:00'
 }
 {
+  id: 'ckurjooy401353rvo30bp0qcm',
   billingEndAt: 2021-11-14T00:00:00.000Z,
   membership: {
-    customer: { user: { email: 'tomelyman@gmail.com', firstName: 'Thomas' } },
+    customer: { user: { email: 'tomelyman@gmail.com', firstName: 'Thomas' } }, //Checked
     subscription: { nextBillingAt: 2021-11-15T23:02:09.000Z }
   },
   daysBetween: 2,
   oneDayAfterNextBillingAt: '2021-11-16T18:02:09-05:00'
 }
 {
+  id: 'ckurfedvo04283t17ro1fo00t',
   billingEndAt: 2021-11-14T00:00:00.000Z,
   membership: {
     customer: {
-      user: { email: 'peterbutlersmith@gmail.com', firstName: 'Peter' }
+      user: { email: 'peterbutlersmith@gmail.com', firstName: 'Peter' } //Checked but has a charge on the 26th that I want to ask Faiyam about
     },
     subscription: { nextBillingAt: 2021-11-15T21:01:43.000Z }
   },
@@ -50,19 +55,21 @@ For help, see: https://nodejs.org/en/docs/inspector
   oneDayAfterNextBillingAt: '2021-11-16T16:01:43-05:00'
 }
 {
+  id: 'ckurd98o001413t1769w77bqt',
   billingEndAt: 2021-11-14T00:00:00.000Z,
   membership: {
-    customer: { user: { email: 'soonkyup@gmail.com', firstName: 'SoonKyu' } },
+    customer: { user: { email: 'soonkyup@gmail.com', firstName: 'SoonKyu' } }, // Checked
     subscription: { nextBillingAt: 2021-11-15T20:01:19.000Z }
   },
   daysBetween: 2,
   oneDayAfterNextBillingAt: '2021-11-16T15:01:19-05:00'
 }
 {
+  id: 'ckur8z0g106343szk7zbn0abl',
   billingEndAt: 2021-11-14T00:00:00.000Z,
   membership: {
     customer: {
-      user: { email: 'anoop.kansupada@gmail.com', firstName: 'Anoop' }
+      user: { email: 'anoop.kansupada@gmail.com', firstName: 'Anoop' } // checked
     },
     subscription: { nextBillingAt: 2021-11-15T18:05:38.000Z }
   },
@@ -70,19 +77,21 @@ For help, see: https://nodejs.org/en/docs/inspector
   oneDayAfterNextBillingAt: '2021-11-16T13:05:38-05:00'
 }
 {
+  id: 'ckur8ywwi05963szkc5jbbiq2',
   billingEndAt: 2021-11-14T00:00:00.000Z,
   membership: {
-    customer: { user: { email: 'dervindim@gmail.com', firstName: 'Dervin' } },
+    customer: { user: { email: 'dervindim@gmail.com', firstName: 'Dervin' } }, // checked
     subscription: { nextBillingAt: 2021-11-15T18:49:33.000Z }
   },
   daysBetween: 2,
   oneDayAfterNextBillingAt: '2021-11-16T13:49:33-05:00'
 }
 {
+  id: 'ckur6tqhu03053szk52po15y8',
   billingEndAt: 2021-11-14T00:00:00.000Z,
   membership: {
     customer: {
-      user: { email: 'jsalinas087@hotmail.com', firstName: 'Victoria' }
+      user: { email: 'jsalinas087@hotmail.com', firstName: 'Victoria' } // checked
     },
     subscription: { nextBillingAt: 2021-11-15T17:42:48.000Z }
   },
@@ -90,46 +99,51 @@ For help, see: https://nodejs.org/en/docs/inspector
   oneDayAfterNextBillingAt: '2021-11-16T12:42:48-05:00'
 }
 {
+  id: 'ckur6tpoy02453szkd9ossevg',
   billingEndAt: 2021-11-14T00:00:00.000Z,
   membership: {
-    customer: { user: { email: 'lpratson@gmail.com', firstName: 'Luke' } },
+    customer: { user: { email: 'lpratson@gmail.com', firstName: 'Luke' } }, // checked
     subscription: { nextBillingAt: 2021-11-15T17:20:59.000Z }
   },
   daysBetween: 2,
   oneDayAfterNextBillingAt: '2021-11-16T12:20:59-05:00'
 }
 {
+  id: 'ckur6tp5501913szkvpfp4t86',
   billingEndAt: 2021-11-14T00:00:00.000Z,
   membership: {
-    customer: { user: { email: 'exleyja@gmail.com', firstName: 'John' } },
+    customer: { user: { email: 'exleyja@gmail.com', firstName: 'John' } }, // ask faiyam if we should charge him for his
     subscription: { nextBillingAt: 2021-11-15T17:40:37.000Z }
   },
   daysBetween: 2,
   oneDayAfterNextBillingAt: '2021-11-16T12:40:37-05:00'
 }
 {
+  id: 'ckur0ed2p12403soglwvnlh1l',
   billingEndAt: 2021-11-14T00:00:00.000Z,
   membership: {
-    customer: { user: { email: 'edisonl562@gmail.com', firstName: 'Edison' } },
+    customer: { user: { email: 'edisonl562@gmail.com', firstName: 'Edison' } }, // unbilled charges
     subscription: { nextBillingAt: 2021-11-15T14:39:30.000Z }
   },
   daysBetween: 2,
   oneDayAfterNextBillingAt: '2021-11-16T09:39:30-05:00'
 }
 {
+  id: 'ckur0ec6911893sogshni7n2a',
   billingEndAt: 2021-11-14T00:00:00.000Z,
   membership: {
-    customer: { user: { email: 'k.wons03@gmail.com', firstName: 'Kyle' } },
+    customer: { user: { email: 'k.wons03@gmail.com', firstName: 'Kyle' } }, // unbilled charges
     subscription: { nextBillingAt: 2021-11-15T14:48:24.000Z }
   },
   daysBetween: 2,
   oneDayAfterNextBillingAt: '2021-11-16T09:48:24-05:00'
 }
 {
+  id: 'ckuqy92hw10303sogg3whyh1k',
   billingEndAt: 2021-11-14T00:00:00.000Z,
   membership: {
     customer: {
-      user: { email: 'justice.sifford@gmail.com', firstName: 'Justice' }
+      user: { email: 'justice.sifford@gmail.com', firstName: 'Justice' } // checked
     },
     subscription: { nextBillingAt: 2021-11-15T13:27:28.000Z }
   },
@@ -137,10 +151,11 @@ For help, see: https://nodejs.org/en/docs/inspector
   oneDayAfterNextBillingAt: '2021-11-16T08:27:28-05:00'
 }
 {
+  id: 'ckuqh3rro01323sog00u33i8i',
   billingEndAt: 2021-11-14T00:00:00.000Z,
   membership: {
     customer: {
-      user: { email: 'stephenkyriacou@gmail.com', firstName: 'Stephen' }
+      user: { email: 'stephenkyriacou@gmail.com', firstName: 'Stephen' } // checked
     },
     subscription: { nextBillingAt: 2021-11-15T05:02:11.000Z }
   },
@@ -148,33 +163,37 @@ For help, see: https://nodejs.org/en/docs/inspector
   oneDayAfterNextBillingAt: '2021-11-16T00:02:11-05:00'
 }
 {
+  id: 'ckupvo8gj13533rxpmitnzoa5',
   billingEndAt: 2021-11-13T00:00:00.000Z,
   membership: {
-    customer: { user: { email: 'oas131995@gmail.com', firstName: 'Omar' } },
+    customer: { user: { email: 'oas131995@gmail.com', firstName: 'Omar' } }, // checked
     subscription: { nextBillingAt: 2021-11-14T19:19:15.000Z }
   },
   daysBetween: 2,
   oneDayAfterNextBillingAt: '2021-11-15T14:19:15-05:00'
 }
 {
+  id: 'ckuprdw5c07703rxpv0dfcb39',
   billingEndAt: 2021-11-13T00:00:00.000Z,
   membership: {
-    customer: { user: { email: 'dvaron@umich.edu', firstName: 'David' } },
+    customer: { user: { email: 'dvaron@umich.edu', firstName: 'David' } },// checked
     subscription: { nextBillingAt: 2021-11-14T17:21:57.000Z }
   },
   daysBetween: 2,
   oneDayAfterNextBillingAt: '2021-11-15T12:21:57-05:00'
 }
 {
+  id: 'ckupit80x02713rxp34lb58fp',
   billingEndAt: 2021-11-13T00:00:00.000Z,
   membership: {
-    customer: { user: { email: 'jvc960@aol.com', firstName: 'James' } },
+    customer: { user: { email: 'jvc960@aol.com', firstName: 'James' } },// checked
     subscription: { nextBillingAt: 2021-11-14T13:02:48.000Z }
   },
   daysBetween: 2,
   oneDayAfterNextBillingAt: '2021-11-15T08:02:48-05:00'
 }
 {
+  id: 'ckup1nygh2955643suwb5eypivi',
   billingEndAt: 2021-11-13T00:00:00.000Z,
   membership: {
     customer: { user: { email: 'trogers13@fordham.edu', firstName: 'Taylor' } },
@@ -184,6 +203,7 @@ For help, see: https://nodejs.org/en/docs/inspector
   oneDayAfterNextBillingAt: '2021-11-15T00:10:16-05:00'
 }
 {
+  id: 'ckuog8dqi02343suwv7e0zc30',
   billingEndAt: 2021-11-12T00:00:00.000Z,
   membership: {
     customer: {
@@ -195,6 +215,7 @@ For help, see: https://nodejs.org/en/docs/inspector
   oneDayAfterNextBillingAt: '2021-11-14T14:56:38-05:00'
 }
 {
+  id: 'ckuog8cus01613suwd3ri0qy8',
   billingEndAt: 2021-11-12T00:00:00.000Z,
   membership: {
     customer: { user: { email: 'mrchristianlaw@gmail.com', firstName: 'Chris' } },
@@ -204,6 +225,7 @@ For help, see: https://nodejs.org/en/docs/inspector
   oneDayAfterNextBillingAt: '2021-11-14T14:00:01-05:00'
 }
 {
+  id: 'ckuoby0rd12283tys5l54sw6u',
   billingEndAt: 2021-11-12T00:00:00.000Z,
   membership: {
     customer: { user: { email: 'abeylopez2@gmail.com', firstName: 'Abey' } },
@@ -213,6 +235,7 @@ For help, see: https://nodejs.org/en/docs/inspector
   oneDayAfterNextBillingAt: '2021-11-29T00:18:27-05:00'
 }
 {
+  id: 'ckuo9svhm09773tyssr3kzooz',
   billingEndAt: 2021-11-12T00:00:00.000Z,
   membership: {
     customer: { user: { email: 'malikluhv@gmail.com', firstName: 'Malik' } },
@@ -222,6 +245,7 @@ For help, see: https://nodejs.org/en/docs/inspector
   oneDayAfterNextBillingAt: '2021-11-14T11:15:13-05:00'
 }
 {
+  id: 'ckuo7np5k08463tysf7jwquf0',
   billingEndAt: 2021-11-12T00:00:00.000Z,
   membership: {
     customer: { user: { email: 'jersmetana@yahoo.com', firstName: 'Jeremy' } },
@@ -231,6 +255,7 @@ For help, see: https://nodejs.org/en/docs/inspector
   oneDayAfterNextBillingAt: '2021-11-14T10:11:30-05:00'
 }
 {
+  id: 'ckuo5ijkj06853tys4qqxaap2',
   billingEndAt: 2021-11-12T00:00:00.000Z,
   membership: {
     customer: { user: { email: 'lcastillo524@gmail.com', firstName: 'Lucas' } },
@@ -240,6 +265,7 @@ For help, see: https://nodejs.org/en/docs/inspector
   oneDayAfterNextBillingAt: '2021-11-14T09:18:16-05:00'
 }
 {
+  id: 'ckunodiai3082963sr2fnd8wmtz',
   billingEndAt: 2021-11-12T00:00:00.000Z,
   membership: {
     customer: { user: { email: 'alecalbright55@gmail.com', firstName: 'Alec' } },
@@ -249,6 +275,7 @@ For help, see: https://nodejs.org/en/docs/inspector
   oneDayAfterNextBillingAt: '2021-11-14T01:46:18-05:00'
 }
 {
+  id: 'ckun9d41p19083sr2fmlgw4ev',
   billingEndAt: 2021-11-11T00:00:00.000Z,
   membership: {
     customer: {
@@ -260,6 +287,7 @@ For help, see: https://nodejs.org/en/docs/inspector
   oneDayAfterNextBillingAt: '2021-11-13T18:59:01-05:00'
 }
 {
+  id: 'ckun2xpb815713sr25xxhe17m',
   billingEndAt: 2021-11-11T00:00:00.000Z,
   membership: {
     customer: { user: { email: 'ack.b.williams@gmail.com', firstName: 'Ack' } },
@@ -269,6 +297,7 @@ For help, see: https://nodejs.org/en/docs/inspector
   oneDayAfterNextBillingAt: '2021-11-13T15:20:39-05:00'
 }
 {
+  id: 'ckun2xmxp15183sr2r7hhqasf',
   billingEndAt: 2021-11-11T00:00:00.000Z,
   membership: {
     customer: { user: { email: 'jrnalbandian@yahoo.com', firstName: 'Jason' } },
@@ -278,6 +307,7 @@ For help, see: https://nodejs.org/en/docs/inspector
   oneDayAfterNextBillingAt: '2021-11-13T15:07:43-05:00'
 }
 {
+  id: 'ckun0sgw213363sr2xztg89n3',
   billingEndAt: 2021-11-11T00:00:00.000Z,
   membership: {
     customer: { user: { email: 'xalwayswins@gmail.com', firstName: 'Alan' } },
@@ -287,6 +317,7 @@ For help, see: https://nodejs.org/en/docs/inspector
   oneDayAfterNextBillingAt: '2021-11-13T14:57:30-05:00'
 }
 {
+  id: 'ckun0sgfl12873sr2e4fx0vkn',
   billingEndAt: 2021-11-11T00:00:00.000Z,
   membership: {
     customer: { user: { email: 'elliottbrink@gmail.com', firstName: 'Elliott' } },
@@ -296,6 +327,7 @@ For help, see: https://nodejs.org/en/docs/inspector
   oneDayAfterNextBillingAt: '2021-11-13T14:56:41-05:00'
 }
 {
+  id: 'ckumynn5310483sr2fe9u79eb',
   billingEndAt: 2021-11-11T00:00:00.000Z,
   membership: {
     customer: {
@@ -310,6 +342,7 @@ For help, see: https://nodejs.org/en/docs/inspector
   oneDayAfterNextBillingAt: '2021-11-13T13:49:05-05:00'
 }
 {
+  id: 'ckumwi65p06163sr2d6ph067c',
   billingEndAt: 2021-11-11T00:00:00.000Z,
   membership: {
     customer: { user: { email: 'toddhind@gmail.com', firstName: 'Todd' } },
@@ -319,6 +352,7 @@ For help, see: https://nodejs.org/en/docs/inspector
   oneDayAfterNextBillingAt: '2021-11-13T12:26:45-05:00'
 }
 {
+  id: 'ckumud1wl03073sr2uozw7dn5',
   billingEndAt: 2021-11-11T00:00:00.000Z,
   membership: {
     customer: { user: { email: 'jfb3565@mac.com', firstName: 'John' } },
@@ -328,6 +362,7 @@ For help, see: https://nodejs.org/en/docs/inspector
   oneDayAfterNextBillingAt: '2021-11-13T11:25:57-05:00'
 }
 {
+  id: 'ckumud0el02003sr2wheevtn9',
   billingEndAt: 2021-11-11T00:00:00.000Z,
   membership: {
     customer: { user: { email: 'jramirez26@live.com', firstName: 'Jonathan' } },
@@ -337,6 +372,7 @@ For help, see: https://nodejs.org/en/docs/inspector
   oneDayAfterNextBillingAt: '2021-11-13T11:03:13-05:00'
 }
 {
+  id: 'ckumq2v1r15853rzyn4lklhmb',
   billingEndAt: 2021-11-11T00:00:00.000Z,
   membership: {
     customer: { user: { email: 'willsheehan13@gmail.com', firstName: 'Will' } },
@@ -346,6 +382,7 @@ For help, see: https://nodejs.org/en/docs/inspector
   oneDayAfterNextBillingAt: '2021-11-13T09:13:16-05:00'
 }
 {
+  id: 'ckumnxo4514263rzyqf84gejl',
   billingEndAt: 2021-11-11T00:00:00.000Z,
   membership: {
     customer: { user: { email: 'whartley100@gmail.com', firstName: 'William' } },
@@ -355,6 +392,7 @@ For help, see: https://nodejs.org/en/docs/inspector
   oneDayAfterNextBillingAt: '2021-11-13T08:55:18-05:00'
 }
 {
+  id: 'ckumnxmy411423rzy46rljgms',
   billingEndAt: 2021-11-11T00:00:00.000Z,
   membership: {
     customer: { user: { email: 'frank@pache.co', firstName: 'Frank' } },
@@ -364,6 +402,7 @@ For help, see: https://nodejs.org/en/docs/inspector
   oneDayAfterNextBillingAt: '2021-11-13T08:08:45-05:00'
 }
 {
+  id: 'ckumlshpg08443rzy5vz3dn9k',
   billingEndAt: 2021-11-11T00:00:00.000Z,
   membership: {
     customer: {
@@ -375,6 +414,7 @@ For help, see: https://nodejs.org/en/docs/inspector
   oneDayAfterNextBillingAt: '2021-11-13T07:29:54-05:00'
 }
 {
+  id: 'ckulrs3cg34253trwpulk4ir0',
   billingEndAt: 2021-11-10T00:00:00.000Z,
   membership: {
     customer: {
@@ -386,6 +426,7 @@ For help, see: https://nodejs.org/en/docs/inspector
   oneDayAfterNextBillingAt: '2021-11-12T17:23:39-05:00'
 }
 {
+  id: 'ckulpmybv32733trwb27xjvy9',
   billingEndAt: 2021-11-10T00:00:00.000Z,
   membership: {
     customer: { user: { email: 'mckahler27@gmail.com', firstName: 'Matt' } },
@@ -395,6 +436,7 @@ For help, see: https://nodejs.org/en/docs/inspector
   oneDayAfterNextBillingAt: '2021-11-12T16:21:21-05:00'
 }
 {
+  id: 'ckulnhvb731023trwu3in0xkm',
   billingEndAt: 2021-11-10T00:00:00.000Z,
   membership: {
     customer: { user: { email: 'ryjlewis@gmail.com', firstName: 'Ryan' } },
@@ -404,6 +446,7 @@ For help, see: https://nodejs.org/en/docs/inspector
   oneDayAfterNextBillingAt: '2021-11-12T15:37:47-05:00'
 }
 {
+  id: 'ckulnhrk830213trw9m0bz0kb',
   billingEndAt: 2021-11-10T00:00:00.000Z,
   membership: {
     customer: { user: { email: 'steveballa142@gmail.com', firstName: 'Steven' } },
@@ -413,6 +456,7 @@ For help, see: https://nodejs.org/en/docs/inspector
   oneDayAfterNextBillingAt: '2021-11-12T15:32:46-05:00'
 }
 {
+  id: 'ckullco3828323trwz1he63zx',
   billingEndAt: 2021-11-10T00:00:00.000Z,
   membership: {
     customer: { user: { email: 'connor.mcewen@gmail.com', firstName: 'Connor' } },
@@ -422,6 +466,7 @@ For help, see: https://nodejs.org/en/docs/inspector
   oneDayAfterNextBillingAt: '2021-11-12T14:51:11-05:00'
 }
 {
+  id: 'ckullcnqn27733trw9wwhew6l',
   billingEndAt: 2021-11-10T00:00:00.000Z,
   membership: {
     customer: { user: { email: 'ebanchik@gmail.com', firstName: 'Elias' } },
@@ -431,6 +476,7 @@ For help, see: https://nodejs.org/en/docs/inspector
   oneDayAfterNextBillingAt: '2021-11-12T14:48:45-05:00'
 }
 {
+  id: 'ckullcmm726743trwryoxywo6',
   billingEndAt: 2021-11-10T00:00:00.000Z,
   membership: {
     customer: {
@@ -442,6 +488,7 @@ For help, see: https://nodejs.org/en/docs/inspector
   oneDayAfterNextBillingAt: '2021-11-12T14:02:01-05:00'
 }
 {
+  id: 'ckullclqm26033trwjvyh63s1',
   billingEndAt: 2021-11-10T00:00:00.000Z,
   membership: {
     customer: {
@@ -453,6 +500,7 @@ For help, see: https://nodejs.org/en/docs/inspector
   oneDayAfterNextBillingAt: '2021-11-12T14:02:09-05:00'
 }
 {
+  id: 'ckulj7obt24253trwfwmh2d8i',
   billingEndAt: 2021-11-10T00:00:00.000Z,
   membership: {
     customer: { user: { email: 'paul.l.mariani@gmail.com', firstName: 'Paul' } },
@@ -462,6 +510,7 @@ For help, see: https://nodejs.org/en/docs/inspector
   oneDayAfterNextBillingAt: '2021-11-12T13:07:59-05:00'
 }
 {
+  id: 'ckulj7jsd23383trwvaxaq3zm',
   billingEndAt: 2021-11-10T00:00:00.000Z,
   membership: {
     customer: { user: { email: 'tcfww8@gmail.com', firstName: 'Thomas' } },
@@ -471,6 +520,7 @@ For help, see: https://nodejs.org/en/docs/inspector
   oneDayAfterNextBillingAt: '2021-11-12T13:29:37-05:00'
 }
 {
+  id: 'ckulj7glz22783trw459kcnb5',
   billingEndAt: 2021-11-10T00:00:00.000Z,
   membership: {
     customer: { user: { email: 'tim.cannon09@gmail.com', firstName: 'Tim' } },
@@ -480,6 +530,7 @@ For help, see: https://nodejs.org/en/docs/inspector
   oneDayAfterNextBillingAt: '2021-11-12T13:31:09-05:00'
 }
 {
+  id: 'ckulh2g5n16763trwr46wvfaa',
   billingEndAt: 2021-11-10T00:00:00.000Z,
   membership: {
     customer: { user: { email: 'cgreene1998@me.com', firstName: 'Chris' } },
@@ -489,6 +540,7 @@ For help, see: https://nodejs.org/en/docs/inspector
   oneDayAfterNextBillingAt: '2021-12-04T09:19:44-05:00'
 }
 {
+  id: 'ckulh2fnj15543trwxwh3trmo',
   billingEndAt: 2021-11-10T00:00:00.000Z,
   membership: {
     customer: { user: { email: 'kassmith24@gmail.com', firstName: 'Kaseen' } },
@@ -498,6 +550,7 @@ For help, see: https://nodejs.org/en/docs/inspector
   oneDayAfterNextBillingAt: '2021-11-12T12:30:03-05:00'
 }
 {
+  id: 'ckulh2eyb14303trw8d0lt46c',
   billingEndAt: 2021-11-10T00:00:00.000Z,
   membership: {
     customer: {
@@ -509,6 +562,7 @@ For help, see: https://nodejs.org/en/docs/inspector
   oneDayAfterNextBillingAt: '2021-12-04T21:25:25-05:00'
 }
 {
+  id: 'ckulh2ekz13153trw05h5ulrn',
   billingEndAt: 2021-11-10T00:00:00.000Z,
   membership: {
     customer: { user: { email: 'bradsyates@gmail.com', firstName: 'Brad' } },
@@ -518,6 +572,7 @@ For help, see: https://nodejs.org/en/docs/inspector
   oneDayAfterNextBillingAt: '2021-12-01T19:19:53-05:00'
 }
 {
+  id: 'ckulh2e8b12443trwdz7g7x1n',
   billingEndAt: 2021-11-10T00:00:00.000Z,
   membership: {
     customer: { user: { email: 'alecsuthy@icloud.com', firstName: 'Alec' } },
@@ -527,6 +582,7 @@ For help, see: https://nodejs.org/en/docs/inspector
   oneDayAfterNextBillingAt: '2021-12-03T17:45:54-05:00'
 }
 {
+  id: 'ckulh2ctv09683trwj0tas34j',
   billingEndAt: 2021-11-10T00:00:00.000Z,
   membership: {
     customer: {
@@ -538,6 +594,7 @@ For help, see: https://nodejs.org/en/docs/inspector
   oneDayAfterNextBillingAt: '2021-12-03T11:19:07-05:00'
 }
 {
+  id: 'ckulh2c4308083trwf2ipp595',
   billingEndAt: 2021-11-10T00:00:00.000Z,
   membership: {
     customer: { user: { email: 'kfuhrman03@gmail.com', firstName: 'Ken' } },
@@ -547,6 +604,7 @@ For help, see: https://nodejs.org/en/docs/inspector
   oneDayAfterNextBillingAt: '2021-11-24T22:54:28-05:00'
 }
 {
+  id: 'ckulh2bbj04973trwwj462xnx',
   billingEndAt: 2021-11-10T00:00:00.000Z,
   membership: {
     customer: {
@@ -561,6 +619,7 @@ For help, see: https://nodejs.org/en/docs/inspector
   oneDayAfterNextBillingAt: '2021-11-24T12:47:22-05:00'
 }
 {
+  id: 'ckukvms6j03513tswos67ky39',
   billingEndAt: 2021-11-10T00:00:00.000Z,
   membership: {
     customer: {
@@ -572,6 +631,7 @@ For help, see: https://nodejs.org/en/docs/inspector
   oneDayAfterNextBillingAt: '2021-11-12T02:36:31-05:00'
 }
 {
+  id: 'ckukvmp8k02493tswfrq9dgi5',
   billingEndAt: 2021-11-10T00:00:00.000Z,
   membership: {
     customer: { user: { email: 'carlo@cosmicbonds.com', firstName: 'carlo' } },
@@ -581,6 +641,7 @@ For help, see: https://nodejs.org/en/docs/inspector
   oneDayAfterNextBillingAt: '2021-11-12T02:01:58-05:00'
 }
 {
+  id: 'ckukthq6101303tswjik1vh9s',
   billingEndAt: 2021-11-10T00:00:00.000Z,
   membership: {
     customer: { user: { email: 'lucjdetiger@gmail.com', firstName: 'Luc' } },
@@ -590,6 +651,7 @@ For help, see: https://nodejs.org/en/docs/inspector
   oneDayAfterNextBillingAt: '2021-11-12T01:28:32-05:00'
 }
 {
+  id: 'ckuka76gh11573s0abwlhf4pd',
   billingEndAt: 2021-11-09T00:00:00.000Z,
   membership: {
     customer: {
@@ -601,6 +663,7 @@ For help, see: https://nodejs.org/en/docs/inspector
   oneDayAfterNextBillingAt: '2021-11-11T16:12:21-05:00'
 }
 {
+  id: 'ckuk81yvw10453s0a0w1lj3m3',
   billingEndAt: 2021-11-09T00:00:00.000Z,
   membership: {
     customer: { user: { email: 'jackdbonn@gmail.com', firstName: 'Jack' } },
@@ -610,6 +673,7 @@ For help, see: https://nodejs.org/en/docs/inspector
   oneDayAfterNextBillingAt: '2021-11-11T15:23:25-05:00'
 }
 {
+  id: 'ckuk5wvxe09243s0a3e1ik1te',
   billingEndAt: 2021-11-09T00:00:00.000Z,
   membership: {
     customer: {
@@ -621,6 +685,7 @@ For help, see: https://nodejs.org/en/docs/inspector
   oneDayAfterNextBillingAt: '2021-11-11T14:13:04-05:00'
 }
 {
+  id: 'ckujzhkqh04303s0akzr4bbzj',
   billingEndAt: 2021-11-09T00:00:00.000Z,
   membership: {
     customer: {
@@ -632,6 +697,7 @@ For help, see: https://nodejs.org/en/docs/inspector
   oneDayAfterNextBillingAt: '2021-11-11T11:30:16-05:00'
 }
 {
+  id: 'ckujzhhgk03053s0aqxr6ezuh',
   billingEndAt: 2021-11-09T00:00:00.000Z,
   membership: {
     customer: { user: { email: 'shyam.mervana@gmail.com', firstName: 'Shyam' } },
@@ -641,6 +707,7 @@ For help, see: https://nodejs.org/en/docs/inspector
   oneDayAfterNextBillingAt: '2021-11-11T11:30:13-05:00'
 }
 {
+  id: 'ckujv6xxj08423sv1kfz2kz3p',
   billingEndAt: 2021-11-09T00:00:00.000Z,
   membership: {
     customer: { user: { email: 'markjohnson303@gmail.com', firstName: 'Mark' } },
@@ -650,6 +717,7 @@ For help, see: https://nodejs.org/en/docs/inspector
   oneDayAfterNextBillingAt: '2021-11-11T09:32:45-05:00'
 }
 {
+  id: 'ckujmmglj04203sv19xpey9v0',
   billingEndAt: 2021-11-09T00:00:00.000Z,
   membership: {
     customer: { user: { email: 'jasonrziess@gmail.com', firstName: 'Jason' } },
@@ -659,6 +727,7 @@ For help, see: https://nodejs.org/en/docs/inspector
   oneDayAfterNextBillingAt: '2021-11-11T05:53:58-05:00'
 }
 {
+  id: 'ckuiwwga005083svc3vo1enre',
   billingEndAt: 2021-11-08T00:00:00.000Z,
   membership: {
     customer: {
@@ -670,6 +739,7 @@ For help, see: https://nodejs.org/en/docs/inspector
   oneDayAfterNextBillingAt: '2021-11-10T17:49:39-05:00'
 }
 {
+  id: 'ckuiura5i03543svcx7khpw1y',
   billingEndAt: 2021-11-08T00:00:00.000Z,
   membership: {
     customer: { user: { email: 'harris.baum93@gmail.com', firstName: 'Harris' } },
@@ -679,6 +749,7 @@ For help, see: https://nodejs.org/en/docs/inspector
   oneDayAfterNextBillingAt: '2021-11-10T16:36:53-05:00'
 }
 {
+  id: 'ckuismeft02133svca504epya',
   billingEndAt: 2021-11-08T00:00:00.000Z,
   membership: {
     customer: {
@@ -690,6 +761,7 @@ For help, see: https://nodejs.org/en/docs/inspector
   oneDayAfterNextBillingAt: '2021-11-10T15:18:18-05:00'
 }
 {
+  id: 'ckuiqgxkw10203rqnnkd9smj2',
   billingEndAt: 2021-11-08T00:00:00.000Z,
   membership: {
     customer: { user: { email: 'rob+1@seasons.nyc', firstName: 'Robert' } },
@@ -699,6 +771,7 @@ For help, see: https://nodejs.org/en/docs/inspector
   oneDayAfterNextBillingAt: '2021-11-10T14:58:53-05:00'
 }
 {
+  id: 'ckuhwgsyh00943s89a3nuypm2',
   billingEndAt: 2021-11-08T00:00:00.000Z,
   membership: {
     customer: { user: { email: 'asyrkett@gmail.com', firstName: 'Asad' } },
@@ -708,6 +781,7 @@ For help, see: https://nodejs.org/en/docs/inspector
   oneDayAfterNextBillingAt: '2021-11-10T00:17:04-05:00'
 }
 {
+  id: 'ckuhjls9m01423syzdt2ezje6',
   billingEndAt: 2021-11-07T00:00:00.000Z,
   membership: {
     customer: { user: { email: 'ryan.degraw.s@gmail.com', firstName: 'Ryan' } },
@@ -717,6 +791,7 @@ For help, see: https://nodejs.org/en/docs/inspector
   oneDayAfterNextBillingAt: '2021-12-01T14:18:33-05:00'
 }
 {
+  id: 'ckuh4llte04383ruujmxtk4ex',
   billingEndAt: 2021-11-07T00:00:00.000Z,
   membership: {
     customer: {
@@ -728,6 +803,7 @@ For help, see: https://nodejs.org/en/docs/inspector
   oneDayAfterNextBillingAt: '2021-11-09T11:28:20-05:00'
 }
 {
+  id: 'ckuh2gfg102733ruuo2pmdgmz',
   billingEndAt: 2021-11-07T00:00:00.000Z,
   membership: {
     customer: { user: { email: 'cadegoodwin@icloud.com', firstName: 'Cade' } },
@@ -737,6 +813,7 @@ For help, see: https://nodejs.org/en/docs/inspector
   oneDayAfterNextBillingAt: '2021-11-09T10:56:04-05:00'
 }
 {
+  id: 'ckuglb5rn2980973tymkulfh1jk',
   billingEndAt: 2021-11-07T00:00:00.000Z,
   membership: {
     customer: {
@@ -748,6 +825,7 @@ For help, see: https://nodejs.org/en/docs/inspector
   oneDayAfterNextBillingAt: '2021-11-09T02:00:08-05:00'
 }
 {
+  id: 'ckugh0szo2978613tymy1yhxqxe',
   billingEndAt: 2021-11-07T00:00:00.000Z,
   membership: {
     customer: { user: { email: 'aeoliverio1@gmail.com', firstName: 'Anthony' } },
@@ -757,6 +835,7 @@ For help, see: https://nodejs.org/en/docs/inspector
   oneDayAfterNextBillingAt: '2021-11-09T00:00:45-05:00'
 }
 {
+  id: 'ckug45zxz22583tuwbv16vpk6',
   billingEndAt: 2021-11-06T00:00:00.000Z,
   membership: {
     customer: { user: { email: 'ckngo91@gmail.com', firstName: 'Calvin' } },
@@ -766,6 +845,7 @@ For help, see: https://nodejs.org/en/docs/inspector
   oneDayAfterNextBillingAt: '2021-11-08T18:48:42-05:00'
 }
 {
+  id: 'ckug45ukp20993tuwb9o3fpvo',
   billingEndAt: 2021-11-06T00:00:00.000Z,
   membership: {
     customer: { user: { email: 'carlosjosejorge@mac.com', firstName: 'Carlos' } },
@@ -775,6 +855,7 @@ For help, see: https://nodejs.org/en/docs/inspector
   oneDayAfterNextBillingAt: '2021-11-08T18:32:22-05:00'
 }
 {
+  id: 'ckufxqtg517683tuwwelrif5n',
   billingEndAt: 2021-11-06T00:00:00.000Z,
   membership: {
     customer: {
@@ -786,6 +867,7 @@ For help, see: https://nodejs.org/en/docs/inspector
   oneDayAfterNextBillingAt: '2021-11-08T15:34:21-05:00'
 }
 {
+  id: 'ckufxqj9916883tuwxjqgjain',
   billingEndAt: 2021-11-06T00:00:00.000Z,
   membership: {
     customer: { user: { email: 'agonzalezuga8@gmail.com', firstName: 'Arturo' } },
@@ -795,6 +877,7 @@ For help, see: https://nodejs.org/en/docs/inspector
   oneDayAfterNextBillingAt: '2021-11-08T15:03:43-05:00'
 }
 {
+  id: 'ckufrayx210823tuwxawckpkb',
   billingEndAt: 2021-11-06T00:00:00.000Z,
   membership: {
     customer: { user: { email: 'dav.okubo@gmail.com', firstName: 'David' } },
@@ -804,6 +887,7 @@ For help, see: https://nodejs.org/en/docs/inspector
   oneDayAfterNextBillingAt: '2021-11-08T12:44:36-05:00'
 }
 {
+  id: 'ckufgld5o05963tuwtds24boc',
   billingEndAt: 2021-11-06T00:00:00.000Z,
   membership: {
     customer: { user: { email: 'steventovaste@gmail.com', firstName: 'Steven' } },
@@ -813,6 +897,7 @@ For help, see: https://nodejs.org/en/docs/inspector
   oneDayAfterNextBillingAt: '2021-11-08T07:42:48-05:00'
 }
 {
+  id: 'ckufcauwn03583tuwsg9lojm3',
   billingEndAt: 2021-11-06T00:00:00.000Z,
   membership: {
     customer: { user: { email: 'acandis8@gmail.com', firstName: 'Aaron' } },
@@ -822,6 +907,7 @@ For help, see: https://nodejs.org/en/docs/inspector
   oneDayAfterNextBillingAt: '2021-11-08T05:51:34-05:00'
 }
 {
+  id: 'ckuf3qatd3011583rz149cpejgl',
   billingEndAt: 2021-11-06T00:00:00.000Z,
   membership: {
     customer: { user: { email: 'kdboyle@gmail.com', firstName: 'Keith' } },
@@ -831,6 +917,7 @@ For help, see: https://nodejs.org/en/docs/inspector
   oneDayAfterNextBillingAt: '2021-11-08T01:32:43-05:00'
 }
 {
+  id: 'ckueoq2iu03963uwz28u5h3f6',
   billingEndAt: 2021-11-05T00:00:00.000Z,
   membership: {
     customer: { user: { email: 'grahamtariq12@gmail.com', firstName: 'Tariq' } },
@@ -840,6 +927,7 @@ For help, see: https://nodejs.org/en/docs/inspector
   oneDayAfterNextBillingAt: '2021-11-07T18:12:46-05:00'
 }
 {
+  id: 'ckueoq1d303233uwz3ao2rs7y',
   billingEndAt: 2021-11-05T00:00:00.000Z,
   membership: {
     customer: { user: { email: 'samy.hamdouche@gmail.com', firstName: 'Samy' } },
@@ -849,6 +937,7 @@ For help, see: https://nodejs.org/en/docs/inspector
   oneDayAfterNextBillingAt: '2021-11-07T18:44:15-05:00'
 }
 {
+  id: 'ckueoq0y102633uwzyx4ahmli',
   billingEndAt: 2021-11-05T00:00:00.000Z,
   membership: {
     customer: { user: { email: 'hypeamiri@gmail.com', firstName: 'Derian' } },
@@ -858,6 +947,7 @@ For help, see: https://nodejs.org/en/docs/inspector
   oneDayAfterNextBillingAt: '2021-11-07T18:52:40-05:00'
 }
 {
+  id: 'ckueib0jk2949093rvalpwgdu14',
   billingEndAt: 2021-11-05T00:00:00.000Z,
   membership: {
     customer: { user: { email: 'zdcarrel@gmail.com', firstName: 'Zachary' } },
@@ -867,6 +957,7 @@ For help, see: https://nodejs.org/en/docs/inspector
   oneDayAfterNextBillingAt: '2021-11-07T15:31:41-05:00'
 }
 {
+  id: 'ckue5fldt2941663rvas2ez7x9x',
   billingEndAt: 2021-11-05T00:00:00.000Z,
   membership: {
     customer: { user: { email: 'robert.gonzalez@mac.com', firstName: 'Robert' } },
@@ -876,6 +967,7 @@ For help, see: https://nodejs.org/en/docs/inspector
   oneDayAfterNextBillingAt: '2021-11-07T09:41:12-05:00'
 }
 {
+  id: 'ckudqfevy2934943rva78tzk7iy',
   billingEndAt: 2021-11-05T00:00:00.000Z,
   membership: {
     customer: { user: { email: 'davidb21@gmail.com', firstName: 'David' } },

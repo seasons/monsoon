@@ -1,4 +1,4 @@
-Debugger listening on ws://127.0.0.1:9229/c7f05cbe-7235-434b-81df-a179bc08d0c7
+ Debugger listening on ws://127.0.0.1:9229/c7f05cbe-7235-434b-81df-a179bc08d0c7
 For help, see: https://nodejs.org/en/docs/inspector
 {
   user: { email: 'narchie12@gmail.com' },

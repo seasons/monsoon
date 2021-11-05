@@ -124,6 +124,7 @@ const run = async () => {
       },
     },
     select: {
+      id: true,
       billingEndAt: true,
       membership: {
         select: {

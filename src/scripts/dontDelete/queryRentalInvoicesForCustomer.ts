@@ -7,7 +7,7 @@ const run = async () => {
   const ps = new PrismaService()
   const timeUtils = new TimeUtilsService()
 
-  const email = "hdreyesii@gmail.com"
+  const email = "vaughalv13@gmail.com"
   const c = await ps.client.customer.findMany({
     where: { user: { email } },
     select: {
@@ -23,6 +23,7 @@ const run = async () => {
               billingStartAt: true,
               reservations: { select: { reservationNumber: true } },
               products: { select: { seasonsUID: true } },
+              estimatedTotal: true,
               lineItems: {
                 select: {
                   id: true,
