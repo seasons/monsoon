@@ -1,6 +1,7 @@
 import { WinstonLogger } from "@app/lib/logger"
 import { ErrorService } from "@app/modules/Error/services/error.service"
 import { ShippingService } from "@app/modules/Shipping/services/shipping.service"
+import { GRANDFATHERED_PLAN_IDS } from "@app/modules/Utils/constants"
 import { TimeUtilsService } from "@app/modules/Utils/services/time.service"
 import { Injectable, Logger } from "@nestjs/common"
 import {
@@ -435,15 +436,25 @@ export class RentalService {
     if (nextBillingAtBeforeNow) {
       billingEndAt = thirtyDaysFromBillingStartAt
     } else if (nextBillingAtLessThanThreeDaysFromNow) {
+      // TODO: Fix this. We want to stop the bleeding in this case. We should do
+      // 1 day before or after the sanitizedNextBillingAt
       billingEndAt = await this.calculateBillingEndDateFromStartDate(
         sanitizedNextBillingAt
       )
     } else if (nextBillingAtJustFarEnoughAway) {
-      billingEndAt = this.timeUtils.xDaysBeforeDate(
-        sanitizedNextBillingAt,
-        1,
-        "date"
-      )
+      if (GRANDFATHERED_PLAN_IDS.includes(membershipWithData.plan.planID)) {
+        billingEndAt = this.timeUtils.xDaysAfterDate(
+          sanitizedNextBillingAt,
+          1,
+          "date"
+        )
+      } else {
+        billingEndAt = this.timeUtils.xDaysBeforeDate(
+          sanitizedNextBillingAt,
+          1,
+          "date"
+        )
+      }
     } else {
       billingEndAt = thirtyDaysFromBillingStartAt
     }

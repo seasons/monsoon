@@ -30,16 +30,7 @@ export class TimeUtilsService {
   ) {
     const returnDate = moment(date.toISOString()).subtract(x, "days")
 
-    switch (returnType) {
-      case "isoString":
-        return returnDate.format()
-      case "timestamp":
-        return returnDate.utc().format("X")
-      case "date":
-        return returnDate.toDate()
-      default:
-        throw `Invalid return type: ${returnType}`
-    }
+    return this.formatDate(returnDate, returnType)
   }
 
   // Returns an ISO string for a date that's X days ago
@@ -51,8 +42,30 @@ export class TimeUtilsService {
     return moment().add(x, "days").format()
   }
 
-  xDaysAfterDate(date: Date, x: number) {
-    return moment(date.toISOString()).add(x, "days").format()
+  xDaysAfterDate(
+    date: Date,
+    x: number,
+    returnType: "isoString" | "timestamp" | "date" = "isoString"
+  ) {
+    const returnDate = moment(date.toISOString()).add(x, "days")
+
+    return this.formatDate(returnDate, returnType)
+  }
+
+  private formatDate(
+    date: moment.Moment,
+    returnType: "isoString" | "timestamp" | "date"
+  ) {
+    switch (returnType) {
+      case "isoString":
+        return date.format()
+      case "timestamp":
+        return date.utc().format("X")
+      case "date":
+        return date.toDate()
+      default:
+        throw `Invalid return type: ${returnType}`
+    }
   }
 
   secondsSinceEpoch(date: Date) {
