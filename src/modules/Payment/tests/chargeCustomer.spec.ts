@@ -21,6 +21,7 @@ import {
   setCustomerSubscriptionNextBillingAt,
   setCustomerSubscriptionStatus,
   setPackageDeliveredAt,
+  setPackageEnteredSystemAt,
   setReservationCreatedAt,
   setReservationStatus,
 } from "./utils/utils"
@@ -202,6 +203,7 @@ describe("Charge customer", () => {
   let getCustWithDataWithParams
   let setCustomerPlanTypeWithParams
   let setCustomerSubscriptionNextBillingAtWithParams
+  let setPackageEnteredSystemAtWithParams
 
   beforeAll(async () => {
     const moduleBuilder = await Test.createTestingModule(PAYMENT_MODULE_DEF)
@@ -232,6 +234,8 @@ describe("Charge customer", () => {
       })
     setPackageDeliveredAtWithParams = (packageId, numDaysAgo) =>
       setPackageDeliveredAt(packageId, numDaysAgo, { prisma, timeUtils })
+    setPackageEnteredSystemAtWithParams = (packageId, numDaysAgo) =>
+      setPackageEnteredSystemAt(packageId, numDaysAgo, { prisma, timeUtils })
     setReservationStatusWithParams = (reservationId, status) =>
       setReservationStatus(reservationId, status, { prisma })
     setCustomerPlanTypeWithParams = planType =>
@@ -278,6 +282,10 @@ describe("Charge customer", () => {
       await setPackageDeliveredAtWithParams(
         initialReservation.sentPackage.id,
         23
+      )
+      await setPackageEnteredSystemAtWithParams(
+        initialReservation.sentPackage.id,
+        25
       )
       await setReservationStatusWithParams(initialReservation.id, "Delivered")
 
@@ -328,10 +336,6 @@ describe("Charge customer", () => {
       )
 
       lineItemsBySUIDOrName = createLineItemHash(lineItemsWithDataAfterCharging)
-      const processingKey = createProcessingObjectKey(
-        initialReservation.reservationNumber,
-        "Processing"
-      )
       expectedResultsBySUIDOrName = {
         [initialReservationProductSUIDs[0]]: {
           taxPrice: 184,
@@ -341,15 +345,11 @@ describe("Charge customer", () => {
           taxPrice: 307,
           taxRate: 0.08,
         },
-        [processingKey]: {
-          taxPrice: 44,
-          taxRate: 0.08,
-        },
       }
     })
 
     it("Creates a charge for each line item", () => {
-      expect(addedCharges.length).toBe(3)
+      expect(addedCharges.length).toBe(2)
     })
 
     it("Marks their current rental invoice as billed", () => {
@@ -363,7 +363,7 @@ describe("Charge customer", () => {
     })
 
     it("Adds taxes to the line items", () => {
-      expect(Object.keys(expectedResultsBySUIDOrName).length).toBe(3)
+      expect(Object.keys(expectedResultsBySUIDOrName).length).toBe(2)
       for (const id of Object.keys(expectedResultsBySUIDOrName)) {
         expect(lineItemsBySUIDOrName[id].taxPrice).toEqual(
           expectedResultsBySUIDOrName[id].taxPrice
@@ -394,6 +394,10 @@ describe("Charge customer", () => {
       await setPackageDeliveredAtWithParams(
         initialReservation.sentPackage.id,
         23
+      )
+      await setPackageEnteredSystemAtWithParams(
+        initialReservation.sentPackage.id,
+        25
       )
       await setReservationStatusWithParams(initialReservation.id, "Delivered")
 
@@ -448,10 +452,6 @@ describe("Charge customer", () => {
       )
 
       lineItemsBySUIDOrName = createLineItemHash(lineItemsWithDataAfterCharging)
-      const processingKey = createProcessingObjectKey(
-        initialReservation.reservationNumber,
-        "Processing"
-      )
       expectedResultsBySUIDOrName = {
         [initialReservationProductSUIDs[0]]: {
           taxPrice: 184,
@@ -461,7 +461,6 @@ describe("Charge customer", () => {
           taxPrice: 307,
           taxRate: 0.08,
         },
-        [processingKey]: { taxPrice: 44, taxRate: 0.08 },
       }
     })
 
@@ -480,7 +479,7 @@ describe("Charge customer", () => {
     })
 
     it("Adds taxes to the line items", () => {
-      expect(Object.keys(expectedResultsBySUIDOrName).length).toBe(3)
+      expect(Object.keys(expectedResultsBySUIDOrName).length).toBe(2)
       for (const id of Object.keys(expectedResultsBySUIDOrName)) {
         expect(lineItemsBySUIDOrName[id].taxPrice).toEqual(
           expectedResultsBySUIDOrName[id].taxPrice
@@ -747,6 +746,10 @@ describe("Charge customer", () => {
           initialReservation.sentPackage.id,
           23
         )
+        await setPackageEnteredSystemAtWithParams(
+          initialReservation.sentPackage.id,
+          25
+        )
         await setReservationStatusWithParams(initialReservation.id, "Delivered")
 
         custWithData = (await getCustWithDataWithParams()) as any
@@ -769,7 +772,7 @@ describe("Charge customer", () => {
         expect(custWithData.membership.rentalInvoices.length).toBe(2)
         expect(rentalInvoicesStatuses.includes("ChargeFailed")).toBe(true)
         expect(rentalInvoicesStatuses.includes("Draft")).toBe(true)
-        expect(lineItems.length).toBe(4) // two item charges, one outbound package, one processing fee
+        expect(lineItems.length).toBe(3) // two item charges, one outbound package charge
 
         // Next charge. No error being thrown this time
         jest
@@ -803,8 +806,8 @@ describe("Charge customer", () => {
       })
 
       it("Doesn't re-create line items if they already exist on a rental invoice", () => {
-        // two for item charges. one for procesing. one for an outbound package
-        expect(lineItems.length).toBe(4)
+        // two for item charges
+        expect(lineItems.length).toBe(3)
       })
     })
 
@@ -832,6 +835,10 @@ describe("Charge customer", () => {
         await setPackageDeliveredAtWithParams(
           initialReservation.sentPackage.id,
           23
+        )
+        await setPackageEnteredSystemAtWithParams(
+          initialReservation.sentPackage.id,
+          25
         )
         await setReservationStatusWithParams(initialReservation.id, "Delivered")
 
@@ -879,7 +886,7 @@ describe("Charge customer", () => {
       })
 
       it("Creates the line items the second time through", () => {
-        expect(lineItems.length).toBe(4) // two items, one outbound package, one processing fee
+        expect(lineItems.length).toBe(3) // two items, one outbound package
       })
 
       it("Doesn't create another rental invoice during retry", () => {
@@ -926,6 +933,10 @@ describe("Charge customer", () => {
         await setPackageDeliveredAtWithParams(
           initialReservation.sentPackage.id,
           23
+        )
+        await setPackageEnteredSystemAtWithParams(
+          initialReservation.sentPackage.id,
+          25
         )
         await setReservationStatusWithParams(initialReservation.id, "Delivered")
 
