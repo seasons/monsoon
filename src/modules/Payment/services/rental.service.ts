@@ -521,10 +521,16 @@ export class RentalService {
 
     const getRentalEndedAt = defaultDate => {
       if (options.upTo === "today") {
-        return DateTime.local().toJSDate()
+        return this.timeUtils.getEarlierDate(
+          defaultDate,
+          DateTime.local().toJSDate()
+        )
       }
       if (options.upTo === "billingEnd") {
-        return invoiceWithData.billingEndAt
+        return this.timeUtils.getEarlierDate(
+          defaultDate,
+          invoiceWithData.billingEndAt
+        )
       }
       return defaultDate
     }

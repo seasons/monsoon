@@ -13,6 +13,13 @@ export class TimeUtilsService {
     return date2
   }
 
+  getEarlierDate(date1: Date, date2: Date) {
+    if (date1.getTime() - date2.getTime() <= 0) {
+      return date1
+    }
+    return date2
+  }
+
   isLaterDate(date1: Date, date2: Date) {
     return date1.getTime() - date2.getTime() >= 0
   }
