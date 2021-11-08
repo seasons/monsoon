@@ -13,11 +13,21 @@ import { PhysicalProductService } from "../services/physicalProduct.service"
 describe("Mark items as lost", () => {
   let prismaService: PrismaService
   let bagService: BagService
+  let testService: TestUtilsService
+
+  let testCustomer
+  let addToBagAndReserveForCustomerWithParams
 
   beforeAll(async () => {
     const moduleRef = await Test.createTestingModule(ProductModuleDef).compile()
     prismaService = moduleRef.get<PrismaService>(PrismaService)
     bagService = moduleRef.get<BagService>(BagService)
+
+    testCustomer = await testService.createTestCustomer({
+      select: {
+        id: true,
+      },
+    })
   })
 
   it("removes bag items from customer's bag", () => {
