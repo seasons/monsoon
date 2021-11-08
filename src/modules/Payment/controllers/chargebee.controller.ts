@@ -2,6 +2,7 @@ import { WinstonLogger } from "@app/lib/logger"
 import { SegmentService } from "@app/modules/Analytics/services/segment.service"
 import { EmailService } from "@app/modules/Email/services/email.service"
 import { ErrorService } from "@app/modules/Error/services/error.service"
+import { GRANDFATHERED_PLAN_IDS } from "@app/modules/Utils/constants"
 import { StatementsService } from "@app/modules/Utils/services/statements.service"
 import { UtilsService } from "@app/modules/Utils/services/utils.service"
 import { PrismaService } from "@app/prisma/prisma.service"
@@ -12,7 +13,6 @@ import { pick } from "lodash"
 
 import { PaymentService } from "../services/payment.service"
 import { RentalService } from "../services/rental.service"
-import { GRANDFATHERED_PLAN_IDS } from "../services/subscription.service"
 
 export type ChargebeeEvent = {
   content: any

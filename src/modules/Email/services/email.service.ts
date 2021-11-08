@@ -276,15 +276,13 @@ export class EmailService {
       productsVariantIDs
     )
 
-    const payload = await RenderEmail.reservationConfirmation({
+    const data = {
       products: gridPayload,
       orderNumber: `${reservation.reservationNumber}`,
       trackingNumber,
       trackingURL: trackingUrl,
       id: user.id,
-      ...(shippingCode && {
-        customerWillPickup: shippingCode === ShippingCode.Pickup,
-      }),
+      customerWillPickUp: shippingCode === ShippingCode.Pickup,
       ...(pickupTime && {
         pickup: {
           date: DateTime.fromISO(pickupTime?.date).toJSDate(),
@@ -293,7 +291,9 @@ export class EmailService {
           )?.display,
         },
       }),
-    })
+    }
+
+    const payload = await RenderEmail.reservationConfirmation(data)
     await this.sendPreRenderedTransactionalEmail({
       user,
       payload,
@@ -477,7 +477,7 @@ export class EmailService {
     }
 
     const nonMembershipSeasonsEmail =
-      to.includes("seasons.nyc") && to !== process.env.OPERATIONS_ADMIN_EMAIL
+      to?.includes("seasons.nyc") && to !== process.env.OPERATIONS_ADMIN_EMAIL
     if (process.env.NODE_ENV === "production" || nonMembershipSeasonsEmail) {
       sgMail.send(msg)
     } else {

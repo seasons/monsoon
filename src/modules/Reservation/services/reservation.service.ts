@@ -1,3 +1,4 @@
+import { ApplicationType } from "@app/decorators/application.decorator"
 import { WinstonLogger } from "@app/lib/logger"
 import { ErrorService } from "@app/modules/Error/services/error.service"
 import { RentalService } from "@app/modules/Payment/services/rental.service"
@@ -159,6 +160,11 @@ export class ReservationService {
     }
 
     const promises = []
+
+    // If we don't have a pickup date & time, default back to UPS Ground
+    if (shippingCode === "Pickup" && (!pickupTime || !pickupTime.date)) {
+      shippingCode = "UPSGround"
+    }
 
     // Do a quick validation on the data
     const customerPlanType = customerWithData.membership.plan.tier
@@ -695,11 +701,13 @@ export class ReservationService {
   }
 
   async draftReservationLineItems({
+    application,
     reservation,
     customer,
     filterBy = ReservationLineItemsFilter.AllItems,
     shippingCode = ShippingCode.UPSGround,
   }: {
+    application: ApplicationType
     reservation?: Reservation
     customer: Customer
     filterBy: ReservationLineItemsFilter
@@ -729,6 +737,13 @@ export class ReservationService {
         },
       },
     })
+
+    if (application !== "spring" && customerWithUser.membership === null) {
+      this.logger.log("Customer without membership trying to reserve", {
+        customer: customerWithUser,
+      })
+      throw new Error("Cannot reserve items without a membership")
+    }
 
     const productSelect = Prisma.validator<Prisma.ProductSelect>()({
       id: true,

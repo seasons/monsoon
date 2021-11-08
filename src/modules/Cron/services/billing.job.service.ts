@@ -72,7 +72,7 @@ export class BillingScheduledJobs {
     )
   }
 
-  @Cron(CronExpression.EVERY_DAY_AT_4AM)
+  @Cron(CronExpression.EVERY_DAY_AT_2AM)
   async updateEstimatedTotalOnInvoices() {
     const invoices = await this.prisma.client.rentalInvoice.findMany({
       where: {
@@ -107,7 +107,10 @@ export class BillingScheduledJobs {
           }
         )
       } catch (e) {
-        this.logger.error(`Error while updating invoice ${invoice.id}`, e)
+        this.logger.error(`Error while updating invoice ${invoice.id}`, {
+          invoice,
+          error: e,
+        })
       }
     }
 
