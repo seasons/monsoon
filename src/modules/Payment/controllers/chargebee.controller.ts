@@ -144,13 +144,11 @@ export class ChargebeeController {
     const accessPlanIds = ["access-monthly", "access-yearly"]
     const planId = prismaCustomer.membership.plan.planID
 
-    const isTraditionalPlanPayment = content.invoice.line_items.some(
-      li =>
-        li.entity_type === "plan" &&
-        GRANDFATHERED_PLAN_IDS.includes(li.entity_id)
+    const isPlanPayment = content.invoice.line_items.some(
+      li => li.entity_type === "plan"
     )
 
-    if (accessPlanIds.includes(planId) && isTraditionalPlanPayment) {
+    if (accessPlanIds.includes(planId) && isPlanPayment) {
       await this.prisma.client.customerMembership.update({
         where: { id: prismaCustomer.membership.id },
         data: {
