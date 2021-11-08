@@ -1,4 +1,5 @@
 import { EmailService } from "@app/modules/Email/services/email.service"
+import { BagService } from "@app/modules/Product/services/bag.service"
 import { PushNotificationService } from "@app/modules/PushNotification/services/pushNotification.service"
 import { ReservationService } from "@app/modules/Reservation"
 import { ReserveService } from "@app/modules/Reservation/services/reserve.service"
@@ -246,6 +247,7 @@ let testCustomer: any
 let moduleRef: TestingModule
 let testUtils: TestUtilsService
 let productUtils: ProductUtilsService
+let bagService: BagService
 
 const testCustomerSelect = Prisma.validator<Prisma.CustomerSelect>()({
   id: true,
@@ -2581,6 +2583,286 @@ describe("Rental Service", () => {
         )
         expectTimeToEqual(rentalInvoiceBillingEndAt, new Date(2022, 0, 31))
       })
+    })
+  })
+
+  describe("Mark Items as Lost", () => {
+    let reservation
+
+    beforeEach(async () => {
+      const { cleanupFunc, customer } = await testUtils.createTestCustomer({
+        select: testCustomerSelect,
+      })
+      cleanupFuncs.push(cleanupFunc)
+      testCustomer = customer
+
+      reservation = await addToBagAndReserveForCustomer(2)
+    })
+
+    it("removes bag items from customer's bag", async () => {
+      /**
+       * create customer
+       * place reservation(add items to bag, make reservation)
+       * ship reservation to customer
+       * mark items as lost
+       * check to see if items were removed from customer's bag
+       */
+      reservation = await addToBagAndReserveForCustomer(2)
+
+      await setReservationCreatedAt(reservation.id, 4)
+      let reservationPackage = reservation.sentPackage
+      await setPackageEnteredSystemAt(reservationPackage, 2)
+
+      const preLostBagItems = await prisma.client.bagItem.findMany({
+        where: {
+          reservationPhysicalProduct: {
+            reservation: {
+              id: reservation.id,
+            },
+          },
+        },
+        select: {
+          id: true,
+        },
+      })
+
+      await bagService.processLostItems({ preLostBagItems })
+
+      const postLostBagItems = await prisma.client.bagItem.findMany({
+        where: {
+          id: {
+            in: preLostBagItems.map(a => a.id),
+          },
+        },
+      })
+      expect(postLostBagItems.length).toBe(0)
+    })
+
+    it("sets the lostAt, isLost for relevant reservationPhysicalProducts", async () => {
+      /**
+       * create reservation
+       * place reservation
+       * ship reservation
+       * mark items as lost
+       * check to see if reservationPhysicalProduct's lostAt time stamp has been set
+       * check to see if reservationPhysicalProduct's isLost boolean has been set
+       */
+
+      await setReservationCreatedAt(reservation.id, 4)
+      const sentPackage = reservation.sentPackage
+      await setPackageEnteredSystemAt(sentPackage.id, 2)
+      const bagItems = await prisma.client.bagItem.findMany({
+        where: {
+          reservationPhysicalProduct: {
+            reservation: {
+              id: reservation.id,
+            },
+          },
+        },
+      })
+
+      await bagService.processLostItems(bagItems.map(a => a.id))
+
+      const lostResPhysProds = await prisma.client.reservationPhysicalProduct.findMany(
+        {
+          where: {
+            reservation: {
+              id: reservation.id,
+            },
+          },
+          select: {
+            lostAt: true,
+            isLost: true,
+          },
+        }
+      )
+
+      for (const reservationPhysProd of lostResPhysProds) {
+        expect(reservationPhysProd.isLost).toBe(true)
+        expect(!!reservationPhysProd.lostAt).toBe(true)
+      }
+    })
+
+    it("sets lostInPhase for outbound ppackage as BusinessToCustomer", async () => {
+      /**
+       * create reservation
+       * place reservation
+       * ship reservation to customer
+       * mark items as lost
+       * check to see that lostInPhase is set to BusinessToCustomer
+       */
+      await setReservationCreatedAt(reservation.id, 4)
+      const sentPackage = reservation.sentPackage
+      await setPackageEnteredSystemAt(sentPackage.id, 2)
+      const bagItems = await prisma.client.bagItem.findMany({
+        where: {
+          reservationPhysicalProduct: {
+            reservation: {
+              id: reservation.id,
+            },
+          },
+        },
+      })
+      await bagService.processLostItems(bagItems.map(a => a.id))
+
+      const lostResPhysProds = await prisma.client.reservationPhysicalProduct.findMany(
+        {
+          where: {
+            reservation: {
+              id: reservation.id,
+            },
+          },
+          select: {
+            lostInPhase: true,
+          },
+        }
+      )
+
+      for (const reservationPhysProds of lostResPhysProds) {
+        expect(reservationPhysProds.lostInPhase).toBe("BusinessToCustomer")
+      }
+    })
+
+    it("sets lostInPhase for inbound package to CustomerToBusiness", async () => {
+      /**
+       * create reservation
+       * place reservation
+       * ship reservation to customer
+       * set package as delivered
+       * ship reservation back to business
+       * mark items as lost
+       * check to see that lostInPhase is set to CustomerToBusiness
+       */
+
+      await setReservationCreatedAt(reservation.id, 25)
+      const sentPackage = reservation.sentPackage
+      await setPackageEnteredSystemAt(sentPackage.id, 23)
+      const bagItems = await prisma.client.bagItem.findMany({
+        where: {
+          reservationPhysicalProduct: {
+            reservation: {
+              id: reservation.id,
+            },
+          },
+        },
+      })
+      await setPackageDeliveredAt(sentPackage.id, 21)
+
+      await setPackageEnteredSystemAt(reservation.returnPackage, 5)
+
+      const lostResPhysProds = await prisma.client.reservationPhysicalProduct.findMany(
+        {
+          where: {
+            reservation: {
+              id: reservation.id,
+            },
+          },
+          select: {
+            lostInPhase: true,
+          },
+        }
+      )
+
+      for (const reservationPhysProds of lostResPhysProds) {
+        expect(reservationPhysProds.lostInPhase).toBe("CustomerToBusiness")
+      }
+    })
+
+    it("updates product variant counts", async () => {
+      /**
+       * create reservation
+       * place reservation
+       * ship reservation
+       * mark items as lost
+       * check product variant counts
+       */
+      await setReservationCreatedAt(reservation.id, 25)
+      const sentPackage = reservation.sentPackage
+      await setPackageEnteredSystemAt(sentPackage.id, 23)
+      const bagItems = await prisma.client.bagItem.findMany({
+        where: {
+          reservationPhysicalProduct: {
+            reservation: {
+              id: reservation.id,
+            },
+          },
+        },
+      })
+
+      await bagService.processLostItems(bagItems.map(a => a.id))
+
+      const postLostProductVariants = await prisma.client.productVariant.findMany(
+        {
+          where: {
+            physicalProducts: {
+              some: {
+                reservationPhysicalProduct: {
+                  some: {
+                    reservationId: reservation.id,
+                  },
+                },
+              },
+            },
+          },
+          select: {
+            reservable: true,
+            reserved: true,
+            nonReservable: true,
+          },
+        }
+      )
+      for (const productVariant of postLostProductVariants) {
+        expect(productVariant.nonReservable).toBe(
+          productVariant.nonReservable - 1
+        )
+      }
+    })
+
+    it("sets physicalProduct inventory status to NonReservable and product status to lost", async () => {
+      /**
+       * create reseravtion
+       * place reservation
+       * ship reservation
+       * mark items as lost
+       * check physicalProduct inventory status
+       */
+
+      await setReservationCreatedAt(reservation.id, 25)
+      const sentPackage = reservation.sentPackage
+      await setPackageEnteredSystemAt(sentPackage.id, 23)
+      const bagItems = await prisma.client.bagItem.findMany({
+        where: {
+          reservationPhysicalProduct: {
+            reservation: {
+              id: reservation.id,
+            },
+          },
+        },
+      })
+      await bagService.processLostItems(bagItems.map(a => a.id))
+
+      const lostPhysicalProducts = await prisma.client.physicalProduct.findMany(
+        {
+          where: {
+            reservationPhysicalProduct: {
+              some: {
+                reservation: {
+                  id: reservation.id,
+                },
+              },
+            },
+          },
+          select: {
+            inventoryStatus: true,
+            productStatus: true,
+          },
+        }
+      )
+
+      for (const lostPhysProd of lostPhysicalProducts) {
+        expect(lostPhysProd.inventoryStatus).toBe("NonReservable")
+        expect(lostPhysProd.productStatus).toBe("Lost")
+      }
     })
   })
 })
