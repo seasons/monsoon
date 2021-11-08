@@ -81,10 +81,14 @@ export class OrderService {
   async getBuyUsedMetadata({
     productVariantID,
     customer,
+    type,
   }: {
     productVariantID: string
     customer: Customer
+    type: "draft" | "order"
   }): Promise<{
+    membershipCreditsApplied: number
+    promotionalCreditsApplied: number
     invoice: InvoiceInput
     shippingAddress: Location
     orderLineItems: OrderLineItem[]
@@ -109,12 +113,20 @@ export class OrderService {
         },
       },
     })
+
     const customerWithData = await this.prisma.client.customer.findUnique({
       where: { id: customer.id },
       select: {
         id: true,
         user: {
           select: { id: true, firstName: true, lastName: true, email: true },
+        },
+        membership: {
+          select: {
+            id: true,
+            membershipDiscountCredits: true,
+            creditBalance: true,
+          },
         },
         detail: {
           select: {
@@ -193,6 +205,25 @@ export class OrderService {
       )
     }
 
+    const membershipCreditsApplied =
+      customerWithData.membership.membershipDiscountCredits ?? 0
+    const hasMembershipDiscountCredits = membershipCreditsApplied > 0
+
+    const promotionalCreditsAvailable =
+      customerWithData.membership.creditBalance ?? 0
+    const hasPromotionalCredits = promotionalCreditsAvailable > 0
+
+    const totalCreditsAvailable =
+      promotionalCreditsAvailable + membershipCreditsApplied
+    const buyUsedPrice = physicalProduct.price.buyUsedPrice
+    const totalCreditsApplied =
+      totalCreditsAvailable > buyUsedPrice
+        ? buyUsedPrice
+        : totalCreditsAvailable
+
+    const promotionalCreditsApplied =
+      totalCreditsApplied - membershipCreditsApplied
+
     const orderLineItems = [
       {
         recordID: physicalProduct.id,
@@ -210,11 +241,59 @@ export class OrderService {
             needShipping: false,
           }
         : null,
+      ,
+      hasMembershipDiscountCredits
+        ? {
+            name: "Membership discount",
+            recordID: customerWithData.membership.id,
+            recordType: "MembershipDiscount",
+            currencyCode: "USD",
+            price: -membershipCreditsApplied,
+          }
+        : null,
+      hasPromotionalCredits
+        ? {
+            name: "Promotional credits",
+            recordID: customerWithData.membership.id,
+            recordType: "Credit",
+            currencyCode: "USD",
+            price: -promotionalCreditsApplied,
+          }
+        : null,
     ].filter(Boolean) as OrderLineItem[]
+
+    let totalCreditsToApply =
+      membershipCreditsApplied + promotionalCreditsApplied
+
+    const charges = orderLineItems
+      ?.map(orderLineItem => {
+        let price = orderLineItem.price
+        // In draft mode we haven't applied the credits yet, so we have to mock them,
+        // otherwise the taxes won't be correct in the order estimate
+        if (type === "draft" && totalCreditsToApply > 0) {
+          if (price > totalCreditsToApply) {
+            price = price - totalCreditsToApply
+            totalCreditsToApply = 0
+          } else {
+            price = 0
+            totalCreditsToApply = totalCreditsToApply - orderLineItem.price
+          }
+        }
+        return this.getChargebeeChargeForOrderLineItem({
+          price,
+          recordType: orderLineItem.recordType,
+          productName,
+          productTaxCode,
+          shippingDescription: shipping?.rate?.servicelevel?.name || "Shipping",
+        })
+      })
+      .filter(Boolean)
 
     return {
       shippingAddress,
       orderLineItems,
+      membershipCreditsApplied,
+      promotionalCreditsApplied,
       invoice: {
         customer_id: customerWithData.user.id,
         // We used "Purchase Used" to ID a buy used invoice in chargebee webhooks. Change
@@ -224,17 +303,7 @@ export class OrderService {
           location: shippingAddress,
           user: customerWithData.user,
         }),
-        charges: orderLineItems
-          ?.map(orderLineItem =>
-            this.getChargebeeChargeForOrderLineItem({
-              orderLineItem,
-              productName,
-              productTaxCode,
-              shippingDescription:
-                shipping?.rate?.servicelevel?.name || "Shipping",
-            })
-          )
-          .filter(Boolean),
+        charges,
       },
     }
   }
@@ -452,7 +521,8 @@ export class OrderService {
             charges: orderWithLineItems.lineItems
               .map(orderLineItem =>
                 this.getChargebeeChargeForOrderLineItem({
-                  orderLineItem,
+                  price: orderLineItem.price,
+                  recordType: orderLineItem.recordType,
                   productName,
                   productTaxCode,
                   shippingDescription: draftOrder.shippingLine.title,
@@ -596,7 +666,8 @@ export class OrderService {
       charges: orderLineItems
         .map(orderLineItem =>
           this.getChargebeeChargeForOrderLineItem({
-            orderLineItem,
+            price: orderLineItem.price,
+            recordType: orderLineItem.recordType,
             productName,
             productTaxCode,
             shippingDescription: shippingRate.title || "Shipping",
@@ -640,9 +711,15 @@ export class OrderService {
     customer: Customer
     select: Prisma.OrderSelect
   }): Promise<Order> {
-    const { invoice, orderLineItems } = await this.getBuyUsedMetadata({
+    const {
+      invoice,
+      orderLineItems,
+      membershipCreditsApplied,
+      promotionalCreditsApplied,
+    } = await this.getBuyUsedMetadata({
       productVariantID,
       customer,
+      type: "draft",
     })
 
     const chargebeeResult = await chargebee.estimate
@@ -660,7 +737,11 @@ export class OrderService {
       orderNumber: `O-${Math.floor(Math.random() * 900000000) + 100000000}`,
       type: "Used" as OrderType,
       status: "Drafted" as OrderStatus,
-      subTotal: invoice_estimate.sub_total,
+      subTotal:
+        invoice_estimate.sub_total +
+        // Because we removed the credits manually early, add them back here
+        membershipCreditsApplied +
+        promotionalCreditsApplied,
       total: invoice_estimate.total,
       lineItems: {
         create: orderLineItems.map((orderLineItem, idx) => ({
@@ -695,7 +776,12 @@ export class OrderService {
         id: true,
         orderNumber: true,
         lineItems: {
-          select: { recordType: true, recordID: true, needShipping: true },
+          select: {
+            recordType: true,
+            recordID: true,
+            needShipping: true,
+            price: true,
+          },
         },
       },
     })
@@ -723,10 +809,52 @@ export class OrderService {
       "id" | "reservable" | "offloaded" | "reserved"
     >
 
-    const { invoice, shippingAddress } = await this.getBuyUsedMetadata({
+    const {
+      invoice,
+      shippingAddress,
+      membershipCreditsApplied,
+      promotionalCreditsApplied,
+    } = await this.getBuyUsedMetadata({
       productVariantID: productVariant.id,
       customer,
+      type: "order",
     })
+
+    if (membershipCreditsApplied > 0 || promotionalCreditsApplied > 0) {
+      const customerWithData = await this.prisma.client.customer.findUnique({
+        where: {
+          id: customer.id,
+        },
+        select: {
+          user: {
+            select: {
+              id: true,
+            },
+          },
+          membership: {
+            select: {
+              id: true,
+              creditBalance: true,
+            },
+          },
+        },
+      })
+
+      await this.addPromotionalCredits({
+        membershipCreditsApplied,
+        promotionalCreditsApplied,
+        userId: customerWithData.user.id,
+      })
+
+      promises.push(
+        this.updateMembershipCreditsUsed({
+          membershipCreditsApplied,
+          promotionalCreditsApplied,
+          customerMembershipId: customerWithData.membership.id,
+          creditBalance: customerWithData.membership.creditBalance,
+        })
+      )
+    }
 
     const { invoice: chargebeeInvoice } = await chargebee.invoice
       .create({ ...invoice, auto_collection: "on" })
@@ -893,6 +1021,7 @@ export class OrderService {
         }),
       ]
     )
+
     const results = await this.prisma.client.$transaction(promises)
     const updatedOrder = results.pop()
 
@@ -1020,36 +1149,109 @@ export class OrderService {
   }
 
   getChargebeeChargeForOrderLineItem({
-    orderLineItem,
+    price,
+    recordType,
     productName,
     productTaxCode,
     shippingDescription,
   }: {
-    orderLineItem: Pick<OrderLineItem, "recordType" | "price">
+    price: number
+    recordType: string
     productName: string
     productTaxCode: string
     shippingDescription: string
   }): InvoiceCharge | null {
-    if (
-      orderLineItem.recordType === "ExternalProduct" ||
-      orderLineItem.recordType === "PhysicalProduct"
-    ) {
+    if (price === 0) {
+      return null
+    }
+
+    if (recordType === "ExternalProduct" || recordType === "PhysicalProduct") {
       return {
-        amount: orderLineItem.price,
+        amount: price,
         taxable: true,
         description: productName,
         avalara_tax_code: productTaxCode,
       }
     }
 
-    if (orderLineItem.recordType === "Package" && orderLineItem.price > 0) {
+    if (recordType === "Package" && price > 0) {
       return {
-        amount: orderLineItem.price,
+        amount: price,
         taxable: true,
         description: shippingDescription,
         avalara_tax_code: "FR020000",
       }
     }
+  }
+
+  private async addPromotionalCredits({
+    membershipCreditsApplied,
+    promotionalCreditsApplied,
+    userId,
+  }: {
+    membershipCreditsApplied: number
+    promotionalCreditsApplied: number
+    userId: string
+  }) {
+    let description
+    if (membershipCreditsApplied > 0 && promotionalCreditsApplied > 0) {
+      description = `(MONSOON_IGNORE) Membership discount credits: $${
+        membershipCreditsApplied / 100
+      } & Promotional credits $${
+        promotionalCreditsApplied / 100
+      } applied towards order charges`
+    } else if (membershipCreditsApplied > 0) {
+      description = `(MONSOON_IGNORE) Membership discount credits: $${
+        membershipCreditsApplied / 100
+      } applied towards order charges`
+    } else {
+      description = `(MONSOON_IGNORE) Promotional credits: $${
+        promotionalCreditsApplied / 100
+      } applied towards order charges`
+    }
+
+    await chargebee.promotional_credit
+      .add({
+        customer_id: userId,
+        amount: promotionalCreditsApplied + membershipCreditsApplied,
+        // (MONSOON_IGNORE) tells the chargebee webhook to not automatically move these credits to prisma.
+        description,
+      })
+      .request()
+  }
+
+  private async updateMembershipCreditsUsed({
+    customerMembershipId,
+    creditBalance,
+    membershipCreditsApplied,
+    promotionalCreditsApplied,
+  }: {
+    customerMembershipId: string
+    creditBalance: number
+    membershipCreditsApplied: number
+    promotionalCreditsApplied: number
+  }) {
+    let data
+    if (membershipCreditsApplied > 0 && promotionalCreditsApplied > 0) {
+      data = {
+        membershipDiscountCredits: 0,
+        creditBalance: creditBalance - promotionalCreditsApplied,
+      }
+    } else if (membershipCreditsApplied > 0) {
+      data = {
+        membershipDiscountCredits: 0,
+      }
+    } else {
+      data = {
+        creditBalance: creditBalance - promotionalCreditsApplied,
+      }
+    }
+    return this.prisma.client.customerMembership.update({
+      where: {
+        id: customerMembershipId,
+      },
+      data,
+    })
   }
 
   private async getProductTaxCode(productCategoryId) {

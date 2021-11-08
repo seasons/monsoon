@@ -68,6 +68,7 @@ export class ChargebeeController {
       case CHARGEBEE_PAYMENT_SUCCEEDED:
         await this.chargebeePaymentSucceeded(body.content)
         await this.addGrandfatheredPromotionalCredits(body.content)
+        await this.setPurchaseCredits(body.content)
         break
       case CHARGEBEE_PAYMENT_FAILED:
         await this.chargebeePaymentFailed(body.content)
@@ -117,6 +118,45 @@ export class ChargebeeController {
           { error: err, content }
         )
       }
+    }
+  }
+
+  private async setPurchaseCredits(content: any) {
+    const chargebeeCustomerID = content.customer.id
+    const prismaCustomer = await this.prisma.client.customer.findFirst({
+      where: { user: { id: chargebeeCustomerID } },
+      select: {
+        id: true,
+        user: { select: { id: true } },
+        membership: {
+          select: {
+            id: true,
+            plan: {
+              select: {
+                planID: true,
+              },
+            },
+          },
+        },
+      },
+    })
+
+    const accessPlanIds = ["access-monthly", "access-yearly"]
+    const planId = prismaCustomer.membership.plan.planID
+
+    const isTraditionalPlanPayment = content.invoice.line_items.some(
+      li =>
+        li.entity_type === "plan" &&
+        GRANDFATHERED_PLAN_IDS.includes(li.entity_id)
+    )
+
+    if (accessPlanIds.includes(planId) && isTraditionalPlanPayment) {
+      await this.prisma.client.customerMembership.update({
+        where: { id: prismaCustomer.membership.id },
+        data: {
+          membershipDiscountCredits: 2000,
+        },
+      })
     }
   }
 
