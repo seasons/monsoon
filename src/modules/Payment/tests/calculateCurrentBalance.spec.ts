@@ -106,7 +106,7 @@ describe("Calculate Current Balance", () => {
         initialReservation.sentPackage.id,
         15
       )
-      await setReservationStatusWithParams("Delivered")
+      await setReservationStatusWithParams(initialReservation.id, "Delivered")
 
       await overridePricesWithParams(
         initialReservation.products.map(a => a.seasonsUID),
@@ -132,7 +132,7 @@ describe("Calculate Current Balance", () => {
     it("Calcualtes the estimated total properly", () => {
       // $20/month product held for 25 days --> 16.67
       // $40/month product held for 25 days --> 33.33
-      expect(0).toBe(5001)
+      expect(estimatedTotal).toBe(5000)
     })
   })
 
@@ -196,14 +196,14 @@ describe("Calculate Current Balance", () => {
       )
       await setPackageDeliveredAtWithParams(secondReservation.sentPackage.id, 3)
 
-      await overridePricesWithParams(
-        initialReservation.products.map(a => a.seasonsUID),
-        [20, 40]
+      const reservationOneProducts = initialReservation.products.map(
+        a => a.seasonsUID
       )
-      await overridePricesWithParams(
-        secondReservation.products.map(a => a.seasonsUID),
-        [30, 50]
-      )
+      await overridePricesWithParams(reservationOneProducts, [20, 40])
+      const reservationTwoProducts = secondReservation.products
+        .map(a => a.seasonsUID)
+        .filter(a => !reservationOneProducts.includes(a))
+      await overridePricesWithParams(reservationTwoProducts, [30, 50])
 
       currentBalance = await rentalService.calculateCurrentBalance(
         testCustomer.id,
