@@ -1,5 +1,7 @@
 // A generic shippo so we can run shipping service functions without hitting shippo
-export class ShippoMock {
+class ShippoMock {
+  constructor(apiKey) {}
+
   shipment = {
     create: async () => ({
       object_id: "mock-object-id",
@@ -17,6 +19,10 @@ export class ShippoMock {
           label_url: "mock-label-url",
           tracking_number: "mock-tracking-number",
           tracking_url_provide: "mock-tracking-url-provider",
+          rate: {
+            amount: 1000,
+            service_level_token: "ups_ground",
+          },
         })
       }),
   }
@@ -45,3 +51,5 @@ export class ShippoMock {
     }),
   }
 }
+
+module.exports = apiKey => new ShippoMock(apiKey)

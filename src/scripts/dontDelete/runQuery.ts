@@ -6,14 +6,9 @@ const run = async () => {
   const ps = new PrismaService()
 
   const invoiceId = "cktt8xz7s9298q6uvwyrsnrut"
-  const x = await ps.client.rentalInvoice.findUnique({
-    where: { id: invoiceId },
-    select: {
-      status: true,
-      lineItems: { select: { price: true, name: true, comment: true } },
-      membership: { select: { customer: { select: { user: true } } } },
-    },
-  })
+  // How many access-yearly customers were created before 9.20? 
+
+  const 
   console.dir(x, { depth: null })
 }
 run()
