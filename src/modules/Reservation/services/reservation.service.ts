@@ -1288,7 +1288,7 @@ export class ReservationService {
       sentRate,
     } = await this.shippingService.getShippingRateForVariantIDs(variantIDs, {
       customer,
-      includeSentPackage: !hasFreeSwap,
+      includeSentPackage: shippingCode !== ShippingCode.Pickup,
       includeReturnPackage: false,
       serviceLevel:
         shippingCode === "UPSGround"
@@ -1297,11 +1297,6 @@ export class ReservationService {
     })
 
     return [
-      {
-        name: "Processing",
-        recordType: "Fee",
-        price: 550,
-      },
       {
         name: "Shipping",
         recordType: "Fee",
