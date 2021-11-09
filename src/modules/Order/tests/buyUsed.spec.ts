@@ -62,6 +62,105 @@ describe("Buy Used", () => {
     testCustomer = customer
   })
 
+  describe("It renders the correct amounts in draft and order views", () => {
+    it.only("Renders the correct line item amounts in draft mode", async () => {
+      const reservableProductVariant = await prisma.client.productVariant.findFirst(
+        {
+          where: {
+            reservable: { gte: 2 }, // want two because we want to ensure the correct one of two (or more) is picked
+            physicalProducts: {
+              some: {
+                price: { buyUsedEnabled: true, buyUsedPrice: { gt: 0 } },
+              },
+            },
+          },
+          select: {
+            id: true,
+            physicalProducts: {
+              select: {
+                price: {
+                  select: {
+                    id: true,
+                  },
+                },
+              },
+            },
+          },
+        }
+      )
+
+      const updatedPhysicalProducts = await prisma.client.physicalProductPrice.updateMany(
+        {
+          where: {
+            id: {
+              in: reservableProductVariant.physicalProducts.map(
+                p => p.price.id
+              ),
+            },
+          },
+          data: {
+            buyUsedPrice: 4000,
+          },
+        }
+      )
+
+      const draftOrder = await order.buyUsedCreateDraftedOrder({
+        productVariantID: reservableProductVariant.id,
+        customer: testCustomer,
+        select: {
+          id: true,
+          lineItems: {
+            select: { id: true, recordType: true, recordID: true, price: true },
+          },
+          total: true,
+          subTotal: true,
+        },
+      })
+
+      console.log("draftOrder", draftOrder)
+
+      expect(draftOrder.subTotal).toBe(400)
+      expect(draftOrder.total).toBe(400)
+    })
+
+    it("Renders the correct line item amounts in order mode", async () => {
+      const reservableProductVariant = await prisma.client.productVariant.findFirst(
+        {
+          where: {
+            reservable: { gte: 2 }, // want two because we want to ensure the correct one of two (or more) is picked
+            physicalProducts: {
+              some: {
+                price: { buyUsedEnabled: true, buyUsedPrice: { gt: 0 } },
+              },
+            },
+          },
+          select: {
+            id: true,
+          },
+        }
+      )
+
+      const draftOrder = await order.buyUsedCreateDraftedOrder({
+        productVariantID: reservableProductVariant.id,
+        customer: testCustomer,
+        select: {
+          id: true,
+          lineItems: { select: { id: true, recordType: true, recordID: true } },
+        },
+      })
+
+      const submittedOrder = (await order.buyUsedSubmitOrder({
+        order: draftOrder,
+        customer: testCustomer,
+        select: {
+          lineItems: { select: { id: true, recordType: true, recordID: true } },
+        },
+      })) as any
+
+      expect(submittedOrder).toBeDefined()
+    })
+  })
+
   describe("Selects correct physical product for order", () => {
     it("If a customer is buying an item he has reserved, we give him that physical product", async () => {
       const reservableProductVariant = await prisma.client.productVariant.findFirst(

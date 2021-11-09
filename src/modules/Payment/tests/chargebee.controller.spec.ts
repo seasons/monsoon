@@ -46,11 +46,11 @@ describe("Chargebee Controller", () => {
         select: {
           id: true,
           user: { select: { id: true } },
-          membership: { select: { id: true, membershipDiscountCredits: true } },
+          membership: { select: { id: true, purchaseCredits: true } },
         },
       })
       testCustomer = customer
-      expect(testCustomer.membership.membershipDiscountCredits).toBe(0)
+      expect(testCustomer.membership.purchaseCredits).toBe(0)
     })
 
     it("If on essential plan, do not add membership dicount credits", async () => {
@@ -67,7 +67,7 @@ describe("Chargebee Controller", () => {
       await sendEvent(paymentSucceededEvent)
 
       customerWithData = await getCustWithData()
-      expect(customerWithData.membership.membershipDiscountCredits).toBe(0)
+      expect(customerWithData.membership.purchaseCredits).toBe(0)
     })
 
     it("If on access-yearly plan, customer should have 3000 membership discount credits", async () => {
@@ -84,7 +84,7 @@ describe("Chargebee Controller", () => {
       await sendEvent(paymentSucceededEvent)
 
       customerWithData = await getCustWithData()
-      expect(customerWithData.membership.membershipDiscountCredits).toBe(3000)
+      expect(customerWithData.membership.purchaseCredits).toBe(3000)
     })
 
     it("If on access-monthly plan, customer should have 2000 membership discount credits", async () => {
@@ -101,7 +101,7 @@ describe("Chargebee Controller", () => {
       await sendEvent(paymentSucceededEvent)
 
       customerWithData = await getCustWithData()
-      expect(customerWithData.membership.membershipDiscountCredits).toBe(2000)
+      expect(customerWithData.membership.purchaseCredits).toBe(2000)
     })
   })
 
@@ -476,7 +476,7 @@ const getCustWithData = async () => {
       membership: {
         select: {
           creditBalance: true,
-          membershipDiscountCredits: true,
+          purchaseCredits: true,
           creditUpdateHistory: {
             orderBy: { createdAt: "desc" },
             take: 1,

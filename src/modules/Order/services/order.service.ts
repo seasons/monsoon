@@ -87,7 +87,7 @@ export class OrderService {
     customer: Customer
     type: "draft" | "order"
   }): Promise<{
-    membershipCreditsApplied: number
+    purchaseCreditsApplied: number
     promotionalCreditsApplied: number
     invoice: InvoiceInput
     shippingAddress: Location
@@ -124,7 +124,7 @@ export class OrderService {
         membership: {
           select: {
             id: true,
-            membershipDiscountCredits: true,
+            purchaseCredits: true,
             creditBalance: true,
           },
         },
@@ -205,16 +205,14 @@ export class OrderService {
       )
     }
 
-    const membershipCreditsApplied =
-      customerWithData.membership.membershipDiscountCredits ?? 0
-    const hasMembershipDiscountCredits = membershipCreditsApplied > 0
+    const purchaseCreditsApplied =
+      customerWithData.membership.purchaseCredits ?? 0
+    const hasPurchaseCredits = purchaseCreditsApplied > 0
 
-    const promotionalCreditsAvailable =
-      customerWithData.membership.creditBalance ?? 0
-    const hasPromotionalCredits = promotionalCreditsAvailable > 0
+    const creditsAvailable = customerWithData.membership.creditBalance ?? 0
+    const hasCredits = creditsAvailable > 0
 
-    const totalCreditsAvailable =
-      promotionalCreditsAvailable + membershipCreditsApplied
+    const totalCreditsAvailable = creditsAvailable + purchaseCreditsApplied
     const buyUsedPrice = physicalProduct.price.buyUsedPrice
     const totalCreditsApplied =
       totalCreditsAvailable > buyUsedPrice
@@ -222,7 +220,7 @@ export class OrderService {
         : totalCreditsAvailable
 
     const promotionalCreditsApplied =
-      totalCreditsApplied - membershipCreditsApplied
+      totalCreditsApplied - purchaseCreditsApplied
 
     const orderLineItems = [
       {
@@ -242,16 +240,16 @@ export class OrderService {
           }
         : null,
       ,
-      hasMembershipDiscountCredits
+      hasPurchaseCredits
         ? {
             name: "Membership discount",
             recordID: customerWithData.membership.id,
-            recordType: "MembershipDiscount",
+            recordType: "PurchaseCredit",
             currencyCode: "USD",
-            price: -membershipCreditsApplied,
+            price: -purchaseCreditsApplied,
           }
         : null,
-      hasPromotionalCredits
+      hasCredits
         ? {
             name: "Promotional credits",
             recordID: customerWithData.membership.id,
@@ -262,8 +260,7 @@ export class OrderService {
         : null,
     ].filter(Boolean) as OrderLineItem[]
 
-    let totalCreditsToApply =
-      membershipCreditsApplied + promotionalCreditsApplied
+    let totalCreditsToApply = purchaseCreditsApplied + promotionalCreditsApplied
 
     const charges = orderLineItems
       ?.map(orderLineItem => {
@@ -292,7 +289,7 @@ export class OrderService {
     return {
       shippingAddress,
       orderLineItems,
-      membershipCreditsApplied,
+      purchaseCreditsApplied,
       promotionalCreditsApplied,
       invoice: {
         customer_id: customerWithData.user.id,
@@ -714,7 +711,7 @@ export class OrderService {
     const {
       invoice,
       orderLineItems,
-      membershipCreditsApplied,
+      purchaseCreditsApplied,
       promotionalCreditsApplied,
     } = await this.getBuyUsedMetadata({
       productVariantID,
@@ -740,7 +737,7 @@ export class OrderService {
       subTotal:
         invoice_estimate.sub_total +
         // Because we removed the credits manually early, add them back here
-        membershipCreditsApplied +
+        purchaseCreditsApplied +
         promotionalCreditsApplied,
       total: invoice_estimate.total,
       lineItems: {
@@ -812,7 +809,7 @@ export class OrderService {
     const {
       invoice,
       shippingAddress,
-      membershipCreditsApplied,
+      purchaseCreditsApplied,
       promotionalCreditsApplied,
     } = await this.getBuyUsedMetadata({
       productVariantID: productVariant.id,
@@ -820,7 +817,7 @@ export class OrderService {
       type: "order",
     })
 
-    if (membershipCreditsApplied > 0 || promotionalCreditsApplied > 0) {
+    if (purchaseCreditsApplied > 0 || promotionalCreditsApplied > 0) {
       const customerWithData = await this.prisma.client.customer.findUnique({
         where: {
           id: customer.id,
@@ -841,14 +838,14 @@ export class OrderService {
       })
 
       await this.addPromotionalCredits({
-        membershipCreditsApplied,
+        purchaseCreditsApplied,
         promotionalCreditsApplied,
         userId: customerWithData.user.id,
       })
 
       promises.push(
-        this.updateMembershipCreditsUsed({
-          membershipCreditsApplied,
+        this.updatePurchaseCreditsUsed({
+          purchaseCreditsApplied,
           promotionalCreditsApplied,
           customerMembershipId: customerWithData.membership.id,
           creditBalance: customerWithData.membership.creditBalance,
@@ -1185,24 +1182,24 @@ export class OrderService {
   }
 
   private async addPromotionalCredits({
-    membershipCreditsApplied,
+    purchaseCreditsApplied,
     promotionalCreditsApplied,
     userId,
   }: {
-    membershipCreditsApplied: number
+    purchaseCreditsApplied: number
     promotionalCreditsApplied: number
     userId: string
   }) {
     let description
-    if (membershipCreditsApplied > 0 && promotionalCreditsApplied > 0) {
+    if (purchaseCreditsApplied > 0 && promotionalCreditsApplied > 0) {
       description = `(MONSOON_IGNORE) Membership discount credits: $${
-        membershipCreditsApplied / 100
+        purchaseCreditsApplied / 100
       } & Promotional credits $${
         promotionalCreditsApplied / 100
       } applied towards order charges`
-    } else if (membershipCreditsApplied > 0) {
+    } else if (purchaseCreditsApplied > 0) {
       description = `(MONSOON_IGNORE) Membership discount credits: $${
-        membershipCreditsApplied / 100
+        purchaseCreditsApplied / 100
       } applied towards order charges`
     } else {
       description = `(MONSOON_IGNORE) Promotional credits: $${
@@ -1213,33 +1210,33 @@ export class OrderService {
     await chargebee.promotional_credit
       .add({
         customer_id: userId,
-        amount: promotionalCreditsApplied + membershipCreditsApplied,
+        amount: promotionalCreditsApplied + purchaseCreditsApplied,
         // (MONSOON_IGNORE) tells the chargebee webhook to not automatically move these credits to prisma.
         description,
       })
       .request()
   }
 
-  private async updateMembershipCreditsUsed({
+  private async updatePurchaseCreditsUsed({
     customerMembershipId,
     creditBalance,
-    membershipCreditsApplied,
+    purchaseCreditsApplied,
     promotionalCreditsApplied,
   }: {
     customerMembershipId: string
     creditBalance: number
-    membershipCreditsApplied: number
+    purchaseCreditsApplied: number
     promotionalCreditsApplied: number
   }) {
     let data
-    if (membershipCreditsApplied > 0 && promotionalCreditsApplied > 0) {
+    if (purchaseCreditsApplied > 0 && promotionalCreditsApplied > 0) {
       data = {
-        membershipDiscountCredits: 0,
+        purchaseCredits: 0,
         creditBalance: creditBalance - promotionalCreditsApplied,
       }
-    } else if (membershipCreditsApplied > 0) {
+    } else if (purchaseCreditsApplied > 0) {
       data = {
-        membershipDiscountCredits: 0,
+        purchaseCredits: 0,
       }
     } else {
       data = {

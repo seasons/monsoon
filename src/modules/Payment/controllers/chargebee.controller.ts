@@ -152,7 +152,7 @@ export class ChargebeeController {
       await this.prisma.client.customerMembership.update({
         where: { id: prismaCustomer.membership.id },
         data: {
-          membershipDiscountCredits: planId === "access-yearly" ? 3000 : 2000,
+          purchaseCredits: planId === "access-yearly" ? 3000 : 2000,
         },
       })
     }

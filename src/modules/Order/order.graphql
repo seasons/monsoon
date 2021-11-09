@@ -37,7 +37,7 @@ enum OrderLineItemRecordType {
   Fee
   Total
   Credit
-  MembershipDiscount
+  PurchaseCredit
 }
 
 type Order {

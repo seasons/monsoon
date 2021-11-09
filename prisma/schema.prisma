@@ -422,7 +422,7 @@ enum OrderLineItemRecordType {
   Fee
   Total
   Credit
-  MembershipDiscount
+  PurchaseCredit
 }
 
 enum OrderStatus {
@@ -742,7 +742,7 @@ model CustomerMembership {
   customerId                 String                              @map("customer") @db.VarChar(30)
   planId                     String                              @map("plan") @db.VarChar(30)
   giftId                     String?
-  membershipDiscountCredits  Int?                                @default(0)
+  purchaseCredits            Int?                                @default(0)
   grandfathered              Boolean?                            @default(false)
   creditBalance              Int                                 @default(0)
   currentBalance             Int?
