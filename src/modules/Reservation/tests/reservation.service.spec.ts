@@ -18,7 +18,7 @@ describe("Reservation Service", () => {
     testService = moduleRef.get<TestUtilsService>(TestUtilsService)
   })
 
-  it("", () => {
+  it("if customer is in california and shipping method ", () => {
     expect(reservationService).toBeTruthy()
   })
 })
