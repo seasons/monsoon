@@ -3274,6 +3274,8 @@ input CollectionWhereInput {
   id_not_starts_with: ID
   id_ends_with: ID
   id_not_ends_with: ID
+  featured: Boolean
+  featured_not: Boolean
   slug: String
   slug_not: String
   slug_in: [String!]

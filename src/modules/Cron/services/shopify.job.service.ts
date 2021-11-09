@@ -12,7 +12,7 @@ export class ShopifyScheduledJobs {
     private readonly prisma: PrismaService
   ) {}
 
-  @Cron(CronExpression.EVERY_DAY_AT_4AM)
+  @Cron(CronExpression.EVERY_DAY_AT_6AM)
   async importProductVariantsForShopifyShops() {
     this.logger.log(
       "Run import product variants for external shopify integrations"

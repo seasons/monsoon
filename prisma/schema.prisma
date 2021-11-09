@@ -624,6 +624,7 @@ model Category {
 model Collection {
   id                 String                @id @default(cuid()) @db.VarChar(30)
   slug               String                @unique
+  featured           Boolean               @default(false)
   title              String?
   subTitle           String?
   published          Boolean
