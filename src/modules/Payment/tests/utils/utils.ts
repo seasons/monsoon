@@ -175,6 +175,9 @@ export const addToBagAndReserveForCustomer = async (
   const r = await reservationService.reserveItems({
     items: prodVarsToReserve,
     shippingCode,
+    ...(shippingCode === "Pickup"
+      ? { pickupTime: { date: new Date().toISOString() } }
+      : {}),
     customer: testCustomer as any,
     select: DEFAULT_RESERVATION_ARGS.select,
   })
