@@ -1,6 +1,9 @@
 import { EmailService } from "@app/modules/Email/services/email.service"
 import { PushNotificationService } from "@app/modules/PushNotification/services/pushNotification.service"
-import { ReservationService } from "@app/modules/Reservation"
+import {
+  ReservationPhysicalProductService,
+  ReservationService,
+} from "@app/modules/Reservation"
 import { ReserveService } from "@app/modules/Reservation/services/reserve.service"
 import { EmailServiceMock } from "@app/modules/Utils/mocks/emailService.mock"
 import { ShippoMock } from "@app/modules/Utils/mocks/shippo.mock"
@@ -246,6 +249,7 @@ let testCustomer: any
 let moduleRef: TestingModule
 let testUtils: TestUtilsService
 let productUtils: ProductUtilsService
+let resPhysProdService: ReservationPhysicalProductService
 
 const testCustomerSelect = Prisma.validator<Prisma.CustomerSelect>()({
   id: true,
@@ -2582,6 +2586,82 @@ describe("Rental Service", () => {
         expectTimeToEqual(rentalInvoiceBillingEndAt, new Date(2022, 0, 31))
       })
     })
+  })
+
+  describe("Return Items", () => {
+    it("removes items from customer's bag", () => {
+      /**
+       * create customer
+       * make reservation
+       * set reservation to delivered
+       * return items
+       * check to see if bagItems are null
+       */
+    })
+
+    it("sets productVariant counts", () => {
+      /**
+       * create customer
+       * make reservation
+       * set reservation to delivered
+       * return items
+       * check product variant counts
+       */
+    })
+
+    it("sets reservation as complete if all reservation physical products are returned", () => {
+      /**
+       * create customer
+       * make reservation
+       * set reservation to delivered
+       * return all items on the reservation
+       * check to see if reservation is completed
+       */
+    })
+
+    it("doesn't set reservation to completed if all reservation physical products items are not returned", () => [
+      /**
+       * create customer
+       * make reservation
+       * set reservation to delivered
+       * return only one item on the reservation
+       * check to see if reservation is still in status delivered
+       */
+    ])
+
+    it("sets droppedOffBy to 'UPS' and has relevant inbound package if dropped of by ups on reservationPhysicalProducts", () => {
+      /**
+       * create customer
+       * make reservation
+       * set reservation to delivered (put the returnPackage in the system)
+       * query reservationPhysicalProducts related to reservation, filter them by hasBeenProcessed
+       * check droppedOffAt and inboundPackage on filtered resPhysProds
+       */
+    })
+
+    it("sets droppedOffBy to 'Customer' and has no package if dropped off by customer on reservationPhysicalProducts", () => {
+      /**
+       * create customer
+       * make reservation
+       * set reservation to delivered
+       * query reservationPhysicalProducts related to reservation, filter them by hasBeenProcessed
+       * check droppedOffAt on filtered resPhysProds
+       * check to see if there is no package on filtered resPhysProd
+       */
+    })
+
+    it("sets hasReturnProcessed and returnProcessAt on reservationPhysicalProducts", () => {
+      /**
+       * create customer
+       * make reservation
+       * set reservation to delivered
+       * query reservationPhysicalProducts related to reservation, filter by hasReturnProcessed
+       * check to see if the number of items returned matches the length of the filtered array
+       * check to see if the filtered array has a returnProcessAt
+       */
+    })
+
+    it("sets inventoryStatus of relevant physical product to non reservable if")
   })
 })
 
