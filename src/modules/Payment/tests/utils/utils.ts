@@ -1,6 +1,4 @@
-import { time } from "console"
-
-import { ReservationService } from "@app/modules/Reservation"
+import { ReserveService } from "@app/modules/Reservation/services/reserve.service"
 import { TimeUtilsService } from "@app/modules/Utils/services/time.service"
 import { PrismaService } from "@app/prisma/prisma.service"
 import {
@@ -105,10 +103,7 @@ export const setCustomerSubscriptionNextBillingAt = async (
 export const addToBagAndReserveForCustomer = async (
   testCustomer: TestCustomerWithId,
   numProductsToAdd: number,
-  {
-    prisma,
-    reservationService,
-  }: PrismaOption & { reservationService: ReservationService },
+  { prisma, reserveService }: PrismaOption & { reserveService: ReserveService },
   options: { shippingCode?: ShippingCode } = {}
 ) => {
   const { shippingCode = "UPSGround" } = options
@@ -163,17 +158,7 @@ export const addToBagAndReserveForCustomer = async (
     })
   }
 
-  const bagItemsToReserve = await prisma.client.bagItem.findMany({
-    where: {
-      customer: { id: testCustomer.id },
-      status: { in: ["Added", "Reserved"] },
-      saved: false,
-    },
-    select: { productVariant: { select: { id: true } } },
-  })
-  const prodVarsToReserve = bagItemsToReserve.map(a => a.productVariant.id)
-  const r = await reservationService.reserveItems({
-    items: prodVarsToReserve,
+  const r = await reserveService.reserveItems({
     shippingCode,
     customer: testCustomer as any,
     select: DEFAULT_RESERVATION_ARGS.select,

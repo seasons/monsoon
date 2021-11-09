@@ -1,4 +1,5 @@
 import { ReservationService } from "@app/modules/Reservation"
+import { ReserveService } from "@app/modules/Reservation/services/reserve.service"
 import { TestUtilsService } from "@app/modules/Utils/services/test.service"
 import { TimeUtilsService } from "@app/modules/Utils/services/time.service"
 import { PrismaService } from "@app/prisma/prisma.service"
@@ -24,6 +25,7 @@ describe("Calculate Days Rented", () => {
   let rentalService: RentalService
   let timeUtils: TimeUtilsService
   let reservationService: ReservationService
+  let reserveService: ReserveService
   let addToBagAndReserveForCustomerWithParams
   let setReservationCreatedAtWithParams
   let setPackageDeliveredAtWithParams
@@ -65,7 +67,7 @@ describe("Calculate Days Rented", () => {
     addToBagAndReserveForCustomerWithParams = numBagItems =>
       addToBagAndReserveForCustomer(testCustomer, numBagItems, {
         prisma,
-        reservationService,
+        reserveService,
       })
     getCustWithDataWithParams = () =>
       getCustWithData(testCustomer, {

@@ -1,4 +1,5 @@
 import { ReservationService } from "@app/modules/Reservation/services/reservation.service"
+import { ReserveService } from "@app/modules/Reservation/services/reserve.service"
 import { TestUtilsService } from "@app/modules/Utils/services/test.service"
 import { TimeUtilsService } from "@app/modules/Utils/services/time.service"
 import { PrismaService } from "@app/prisma/prisma.service"
@@ -183,7 +184,7 @@ const CHARGEBEE_SUBSCRIPTION_RETRIEVE_MOCK = {
 }
 describe("Charge customer", () => {
   let timeUtils: TimeUtilsService
-  let reservationService: ReservationService
+  let reserveService: ReserveService
   let testUtils: TestUtilsService
   let prisma: PrismaService
   let rentalService: RentalService
@@ -214,12 +215,12 @@ describe("Charge customer", () => {
     prisma = moduleRef.get<PrismaService>(PrismaService)
     rentalService = moduleRef.get<RentalService>(RentalService)
     timeUtils = moduleRef.get<TimeUtilsService>(TimeUtilsService)
-    reservationService = moduleRef.get<ReservationService>(ReservationService)
+    reserveService = moduleRef.get<ReserveService>(ReserveService)
 
     addToBagAndReserveForCustomerWithParams = numBagItems =>
       addToBagAndReserveForCustomer(testCustomer, numBagItems, {
         prisma,
-        reservationService,
+        reserveService,
       })
     getCustWithDataWithParams = (select: Prisma.CustomerSelect = {}) =>
       getCustWithData(testCustomer, {

@@ -1,11 +1,8 @@
-import { ReservationService } from "@app/modules/Reservation/services/reservation.service"
+import { ReserveService } from "@app/modules/Reservation/services/reserve.service"
 import { TestUtilsService } from "@app/modules/Utils/services/test.service"
 import { TimeUtilsService } from "@app/modules/Utils/services/time.service"
 import { PrismaService } from "@app/prisma/prisma.service"
 import { Test } from "@nestjs/testing"
-import { init } from "@sentry/node"
-import { expressJwtSecret } from "jwks-rsa"
-import { first } from "rxjs"
 
 import { PAYMENT_MODULE_DEF } from "../payment.module"
 import {
@@ -13,7 +10,6 @@ import {
   RentalService,
 } from "../services/rental.service"
 import {
-  BASE_PROCESSING_FEE,
   UPS_SELECT_FEE,
   addToBagAndReserveForCustomer,
   createLineItemHash,
@@ -32,7 +28,7 @@ import { Prisma, ShippingCode } from ".prisma/client"
 
 describe("Create Rental Invoice Line Items", () => {
   let timeUtils: TimeUtilsService
-  let reservationService: ReservationService
+  let reserveService: ReserveService
   let testUtils: TestUtilsService
   let prisma: PrismaService
   let rentalService: RentalService
@@ -57,7 +53,7 @@ describe("Create Rental Invoice Line Items", () => {
     prisma = moduleRef.get<PrismaService>(PrismaService)
     rentalService = moduleRef.get<RentalService>(RentalService)
     timeUtils = moduleRef.get<TimeUtilsService>(TimeUtilsService)
-    reservationService = moduleRef.get<ReservationService>(ReservationService)
+    reserveService = moduleRef.get<ReserveService>(ReserveService)
 
     setPackageCreatedAtWithParams = (packageId, date) =>
       setPackageCreatedAt(packageId, date, { prisma, timeUtils })
@@ -70,7 +66,7 @@ describe("Create Rental Invoice Line Items", () => {
         numBagItems,
         {
           prisma,
-          reservationService,
+          reserveService,
         },
         { shippingCode }
       )
