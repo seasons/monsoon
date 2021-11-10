@@ -198,6 +198,7 @@ describe("Calculate Current Balance", () => {
       })
       const returnPackage = initialReservation.returnPackages[0]
       await setPackageEnteredSystemAtWithParams(returnPackage.id, 9)
+      await setPackageDeliveredAtWithParams(returnPackage.id, 8)
 
       // Place another reservation
       const secondReservation = await addToBagAndReserveForCustomerWithParams(2)
@@ -235,9 +236,9 @@ describe("Calculate Current Balance", () => {
       // $40/month product held for 6 days --> 16 (12 day minimum)
       // $30/month product held for 3 days --> 12 (12 day minimum)
       // $50/month product held for 3 days --> 20 (12 day minimum)
-      // inbound package for reservation one --> 10
-      // outbound package for reservation two --> 10
-      expect(currentBalance).toBe(7600)
+      // inbound package for reservation one --> 10 * 0.62 = 6,20
+      // outbound package for reservation two --> 10 * 0.70 = 7
+      expect(currentBalance).toBe(6920)
     })
 
     it("Calculates the estimated total properly", () => {
@@ -245,9 +246,9 @@ describe("Calculate Current Balance", () => {
       // $40/month product held for 6 days --> 16 (12 day minimum)
       // $30/month product held for 13 days --> 13
       // $50/month product held for 13 days --> 21.67
-      // inbound package for reservation one --> 10
-      // outbound package for reservation two --> 10
-      expect(estimatedTotal).toBe(7867)
+      // inbound package for reservation one --> 10 * 0.62 = 6.20
+      // outbound package for reservation two --> 10 * 0.70 = 7
+      expect(estimatedTotal).toBe(7187)
     })
   })
 })
