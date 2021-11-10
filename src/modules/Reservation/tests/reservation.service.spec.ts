@@ -28,7 +28,7 @@ describe("Reservation Service", () => {
     timeUtils = moduleRef.get<TimeUtilsService>(TimeUtilsService)
     testService = moduleRef.get<TestUtilsService>(TestUtilsService)
 
-    const { cleanupFunc, customer } = await testService.createTestCustomer({
+    const { customer } = await testService.createTestCustomer({
       create: {
         detail: {
           create: {
@@ -102,9 +102,6 @@ describe("Reservation Service", () => {
       customer: testCustomer,
       shippingCode: "UPSGround",
     })
-
-    console.log("Line items", lineItems)
-    console.log("Other line items", otherLineItems)
 
     expect(lineItems.filter(li => li.name === "Shipping").length).toBe(0)
     expect(otherLineItems.filter(li => li.name === "Shipping").length).toBe(1)

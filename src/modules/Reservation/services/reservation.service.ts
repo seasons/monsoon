@@ -1291,9 +1291,6 @@ export class ReservationService {
       ? false
       : true
 
-    console.log("Has Free Swap", hasFreeSwap)
-    console.log("Include Outbound package", includeSentPackage)
-
     const {
       sentRate,
     } = await this.shippingService.getShippingRateForVariantIDs(variantIDs, {
