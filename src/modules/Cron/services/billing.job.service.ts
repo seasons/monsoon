@@ -20,7 +20,7 @@ export class BillingScheduledJobs {
     private readonly rental: RentalService
   ) {}
 
-  @Cron(CronExpression.EVERY_DAY_AT_4AM)
+  @Cron(CronExpression.EVERY_DAY_AT_1AM)
   async updateCurrentBalanceOnCustomers() {
     const customers = await this.prisma.client.customer.findMany({
       where: {
@@ -95,7 +95,7 @@ export class BillingScheduledJobs {
         const [estimatedTotal] = await this.rental.updateEstimatedTotal(invoice)
 
         this.logger.log(
-          `Updated invoice ${invoice.id}, estimated total: ${(
+          `Updated estimated total on ${invoice.id}: ${(
             estimatedTotal / 100
           ).toLocaleString("en-US", {
             style: "currency",
@@ -107,10 +107,13 @@ export class BillingScheduledJobs {
           }
         )
       } catch (e) {
-        this.logger.error(`Error while updating invoice ${invoice.id}`, {
-          invoice,
-          error: e,
-        })
+        this.logger.error(
+          `Error while updating estimated total on invoice ${invoice.id}`,
+          {
+            invoice,
+            error: e,
+          }
+        )
       }
     }
 
