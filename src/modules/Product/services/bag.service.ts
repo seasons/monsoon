@@ -45,6 +45,13 @@ export class BagService {
             id: true,
           },
         },
+        reservationPhysicalProduct: {
+          select: {
+            id: true,
+            status: true,
+            hasCustomerReturnIntent: true,
+          },
+        },
       },
     })
 
@@ -450,11 +457,14 @@ export class BagService {
   }
 
   private async getQueuedSection(bagItems) {
+    const queuedBagItems = bagItems.filter(
+      b => b.reservationPhysicalProduct.status === "Queued"
+    )
     return {
       id: "queued",
       title: "Queued",
       status: "Queued",
-      bagItems: bagItems,
+      bagItems: queuedBagItems,
     }
   }
 
@@ -466,7 +476,10 @@ export class BagService {
         DateTime.fromISO(item?.updatedAt.toISOString()).diffNow("days")?.values
           ?.days <= -1
 
-      return item.status === "Reserved" && updatedMoreThan24HoursAgo
+      return (
+        item.reservationPhysicalProduct.status === "DeliveredToCustomer" &&
+        updatedMoreThan24HoursAgo
+      )
     })
 
     return {
@@ -478,29 +491,38 @@ export class BagService {
   }
 
   private async getPickedSection(bagItems) {
+    const pickedBagItems = bagItems.filter(
+      b => b.reservationPhysicalProduct.status === "Picked"
+    )
     return {
       id: "picked",
       title: "Picked",
       status: "Picked",
-      bagItems: bagItems,
+      bagItems: pickedBagItems,
     }
   }
 
   private async getPackedSection(bagItems) {
+    const packedBagItems = bagItems.filter(
+      b => b.reservationPhysicalProduct.status === "Packed"
+    )
     return {
       id: "packed",
       title: "Packed",
       status: "Packed",
-      bagItems: bagItems,
+      bagItems: packedBagItems,
     }
   }
 
   private async getCustomerToBusinessSection(bagItems) {
+    const customerToBusinessBagItems = bagItems.filter(b => {
+      return b.reservationPhysicalProduct.status === "ShippedToBusiness"
+    })
     return {
       id: "customerToBusiness",
       title: "Order on the way",
       status: "CustomerToBusiness",
-      bagItems: bagItems,
+      bagItems: customerToBusinessBagItems,
       deliveryStep: 1,
       deliveryStatusText: "Received",
       deliveryTrackingUrl: "",
@@ -508,11 +530,26 @@ export class BagService {
   }
 
   private async getBusinessToCustomerSection(bagItems) {
+    const businessToCustomerBagItems = bagItems.filter(b => {
+      const updatedMoreThan24HoursAgo =
+        b?.updatedAt &&
+        // @ts-ignore
+        DateTime.fromISO(item?.updatedAt.toISOString()).diffNow("days")?.values
+          ?.days <= -1
+      const beingShipped =
+        b.reservationPhysicalProduct.status === "ShippedToCustomer"
+      const recentlyReceived =
+        b.reservationPhysicalProduct.status === "ShippedToCustomer" &&
+        !updatedMoreThan24HoursAgo
+
+      return beingShipped || recentlyReceived
+    })
+
     return {
       id: "businessToCustomer",
       title: "Order on the way",
       status: "BusinessToCustomer",
-      bagItems: bagItems,
+      bagItems: businessToCustomerBagItems,
       deliveryStep: 1,
       deliveryStatusText: "Received",
       deliveryTrackingUrl: "",
@@ -520,11 +557,15 @@ export class BagService {
   }
 
   private async getReturnPendingSection(bagItems) {
+    const returnPendingBagItems = bagItems.filter(
+      item => item.reservationPhysicalProduct.hasCustomerReturnIntent
+    )
+
     return {
       id: "returnPending",
       title: "Returning",
       status: "ReturnPending",
-      bagItems: bagItems,
+      bagItems: returnPendingBagItems,
     }
   }
 
