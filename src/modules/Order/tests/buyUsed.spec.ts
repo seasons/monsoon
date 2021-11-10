@@ -1,10 +1,6 @@
 import { APP_MODULE_DEF } from "@app/app.module"
-import { EmailService } from "@app/modules/Email/services/email.service"
 import { BagService } from "@app/modules/Product/services/bag.service"
-import { ReservationService } from "@app/modules/Reservation/services/reservation.service"
 import { ReserveService } from "@app/modules/Reservation/services/reserve.service"
-import { EmailServiceMock } from "@app/modules/Utils/mocks/emailService.mock"
-import { ShippoMock } from "@app/modules/Utils/mocks/shippo.mock"
 import { TestUtilsService } from "@app/modules/Utils/services/test.service"
 import { PrismaService } from "@app/prisma/prisma.service"
 import { Test, TestingModule } from "@nestjs/testing"
@@ -23,7 +19,6 @@ describe("Buy Used", () => {
 
   beforeAll(async () => {
     const moduleBuilder = await Test.createTestingModule(APP_MODULE_DEF)
-    moduleBuilder.overrideProvider(EmailService).useClass(EmailServiceMock)
     moduleRef = await moduleBuilder.compile()
 
     testUtils = moduleRef.get<TestUtilsService>(TestUtilsService)
@@ -54,8 +49,6 @@ describe("Buy Used", () => {
         },
       }),
     })
-
-    jest.mock("shippo", () => new ShippoMock())
   })
 
   beforeEach(async () => {

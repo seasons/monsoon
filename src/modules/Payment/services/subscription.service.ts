@@ -1,4 +1,5 @@
 import { ErrorService } from "@app/modules/Error/services/error.service"
+import { GRANDFATHERED_PLAN_IDS } from "@app/modules/Utils/constants"
 import { PaymentUtilsService } from "@app/modules/Utils/services/paymentUtils.service"
 import { EmailService } from "@modules/Email/services/email.service"
 import { Injectable } from "@nestjs/common"
@@ -20,16 +21,6 @@ export interface SubscriptionData {
   subscriptionId: string
   planID: string
 }
-
-export const GRANDFATHERED_PLAN_IDS = [
-  "essential",
-  "essential-1",
-  "essential-2",
-  "essential-6",
-  "all-access",
-  "all-access-1",
-  "all-access-2",
-]
 
 @Injectable()
 export class SubscriptionService {

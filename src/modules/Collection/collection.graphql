@@ -6,6 +6,7 @@ type Mutation {
 type Collection {
   id: ID!
   slug: String!
+  featured: Boolean!
   displayTextOverlay: Boolean!
   textOverlayColor: String
   images(
@@ -57,6 +58,7 @@ input CollectionUpsertInput {
   images: [Upload!]
   title: String
   subTitle: String
+  featured: Boolean
   descriptions: CollectionCreatedescriptionsInput
   productIDs: [String]
   published: Boolean

@@ -127,7 +127,7 @@ export class DataScheduledJobs {
     await this.slackService.postMessage(message)
   }
 
-  @Cron(CronExpression.EVERY_DAY_AT_1AM)
+  @Cron(CronExpression.EVERY_DAY_AT_3AM)
   async updateLatitudesAndLongitudes() {
     const locationsToUpdate = await this.prisma.client.location.findMany({
       where: { OR: [{ lat: null }, { lng: null }] },

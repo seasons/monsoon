@@ -11,7 +11,6 @@ import {
   CREATE_RENTAL_INVOICE_LINE_ITEMS_INVOICE_SELECT,
   RentalService,
 } from "../modules/Payment/services/rental.service"
-import { GRANDFATHERED_PLAN_IDS } from "../modules/Payment/services/subscription.service"
 import { TimeUtilsService } from "../modules/Utils/services/time.service"
 import { PrismaService } from "../prisma/prisma.service"
 import { Prisma, Product, RentalInvoiceLineItem } from ".prisma/client"

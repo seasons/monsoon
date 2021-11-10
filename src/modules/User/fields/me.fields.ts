@@ -196,10 +196,15 @@ export class MeFieldsResolver {
   }
 
   @ResolveField()
-  async reservationLineItems(@Args() args, @Customer() customer) {
+  async reservationLineItems(
+    @Args() args,
+    @Customer() customer,
+    @Application() application
+  ) {
     const { filterBy, shippingCode } = args
 
     const result = await this.reservation.draftReservationLineItems({
+      application,
       customer,
       filterBy,
       shippingCode,

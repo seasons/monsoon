@@ -1,10 +1,7 @@
-import { Customer } from "@app/decorators"
-import { ErrorService } from "@app/modules/Error/services/error.service"
 import { ProductUtilsService } from "@app/modules/Utils/services/product.utils.service"
-import { StatementsService } from "@app/modules/Utils/services/statements.service"
 import { UtilsService } from "@app/modules/Utils/services/utils.service"
 import { Injectable } from "@nestjs/common"
-import { BagItem, InventoryStatus, Prisma } from "@prisma/client"
+import { BagItem, BagSection, InventoryStatus, Prisma } from "@prisma/client"
 import { PrismaService } from "@prisma1/prisma.service"
 import { ApolloError } from "apollo-server"
 import { DateTime } from "luxon"
@@ -45,6 +42,13 @@ export class BagService {
             id: true,
           },
         },
+        reservationPhysicalProduct: {
+          select: {
+            id: true,
+            status: true,
+            hasCustomerReturnIntent: true,
+          },
+        },
       },
     })
 
@@ -54,7 +58,9 @@ export class BagService {
       case "AtHome":
         return await this.getAtHomeSection(bagItems)
       case "CustomerToBusiness":
-        return await this.getCustomerToBusinessSection(bagItems)
+        return this.getCustomerToBusinessSections(bagItems).filter(
+          s => s.status === "CustomerToBusiness"
+        )
       case "BusinessToCustomer":
         return await this.getBusinessToCustomerSection(bagItems)
       case "ReturnPending":
@@ -86,21 +92,21 @@ export class BagService {
 
     if (application === "spring") {
       return [
-        await this.getQueuedSection(bagItems),
-        await this.getPickedSection(bagItems),
-        await this.getPackedSection(bagItems),
-        await this.getBusinessToCustomerSection(bagItems),
-        await this.getAtHomeSection(bagItems),
-        await this.getReturnPendingSection(bagItems),
-        await this.getCustomerToBusinessSection(bagItems),
+        this.getQueuedSection(bagItems),
+        this.getPickedSection(bagItems),
+        this.getPackedSection(bagItems),
+        this.getBusinessToCustomerSection(bagItems),
+        this.getAtHomeSection(bagItems),
+        this.getReturnPendingSection(bagItems),
+        this.getCustomerToBusinessSections(bagItems),
       ]
     } else {
       return [
-        await this.getAddedSection(bagItems),
-        await this.getReturnPendingSection(bagItems),
-        await this.getBusinessToCustomerSection(bagItems),
-        await this.getCustomerToBusinessSection(bagItems),
-        await this.getAtHomeSection(bagItems),
+        this.getAddedSection(bagItems),
+        this.getReturnPendingSection(bagItems),
+        this.getBusinessToCustomerSection(bagItems),
+        ...this.getCustomerToBusinessSections(bagItems),
+        this.getAtHomeSection(bagItems),
       ]
     }
   }
@@ -449,16 +455,19 @@ export class BagService {
     return bagItem
   }
 
-  private async getQueuedSection(bagItems) {
+  private getQueuedSection(bagItems) {
+    const queuedBagItems = bagItems.filter(
+      b => b.reservationPhysicalProduct?.status === "Queued"
+    )
     return {
       id: "queued",
       title: "Queued",
       status: "Queued",
-      bagItems: bagItems,
+      bagItems: queuedBagItems,
     }
   }
 
-  private async getAtHomeSection(bagItems) {
+  private getAtHomeSection(bagItems) {
     const atHomeBagItems = bagItems.filter(item => {
       const updatedMoreThan24HoursAgo =
         item?.updatedAt &&
@@ -466,7 +475,10 @@ export class BagService {
         DateTime.fromISO(item?.updatedAt.toISOString()).diffNow("days")?.values
           ?.days <= -1
 
-      return item.status === "Reserved" && updatedMoreThan24HoursAgo
+      return (
+        item.reservationPhysicalProduct?.status === "DeliveredToCustomer" &&
+        updatedMoreThan24HoursAgo
+      )
     })
 
     return {
@@ -477,58 +489,129 @@ export class BagService {
     }
   }
 
-  private async getPickedSection(bagItems) {
+  private getPickedSection(bagItems) {
+    const pickedBagItems = bagItems.filter(
+      b => b.reservationPhysicalProduct?.status === "Picked"
+    )
     return {
       id: "picked",
       title: "Picked",
       status: "Picked",
-      bagItems: bagItems,
+      bagItems: pickedBagItems,
     }
   }
 
-  private async getPackedSection(bagItems) {
+  private getPackedSection(bagItems) {
+    const packedBagItems = bagItems.filter(
+      b => b.reservationPhysicalProduct?.status === "Packed"
+    )
     return {
       id: "packed",
       title: "Packed",
       status: "Packed",
-      bagItems: bagItems,
+      bagItems: packedBagItems,
     }
   }
 
-  private async getCustomerToBusinessSection(bagItems) {
-    return {
-      id: "customerToBusiness",
-      title: "Order on the way",
-      status: "CustomerToBusiness",
-      bagItems: bagItems,
-      deliveryStep: 1,
-      deliveryStatusText: "Received",
-      deliveryTrackingUrl: "",
+  private getCustomerToBusinessSections(bagItems): any[] {
+    const sections = []
+    const packedItems = bagItems.filter(b => {
+      const resPhysProdStatus = b.reservationPhysicalProduct?.status
+      return resPhysProdStatus === "Packed"
+    })
+    const shippedToBusinessItems = bagItems.filter(b => {
+      const resPhysProdStatus = b.reservationPhysicalProduct?.status
+      return resPhysProdStatus === "ShippedToBusiness"
+    })
+    const deliveredItems = bagItems.filter(b => {
+      const updatedMoreThan24HoursAgo =
+        b?.updatedAt &&
+        // @ts-ignore
+        DateTime.fromISO(b?.updatedAt.toISOString()).diffNow("days")?.values
+          ?.days <= -1
+      const resPhysProdStatus = b.reservationPhysicalProduct?.status
+      return (
+        resPhysProdStatus === "DeliveredToBusiness" &&
+        !updatedMoreThan24HoursAgo
+      )
+    })
+    if (packedItems.length > 0) {
+      sections.push({
+        id: "customerToBusiness",
+        title: "On the way back",
+        status: "CustomerToBusiness",
+        bagItems: packedItems,
+        deliveryStep: 1,
+        deliveryStatusText: "Received by UPS",
+        deliveryTrackingUrl: "",
+      })
     }
+    if (shippedToBusinessItems.length > 0) {
+      sections.push({
+        id: "customerToBusiness",
+        title: "On the way back",
+        status: "CustomerToBusiness",
+        bagItems: shippedToBusinessItems,
+        deliveryStep: 2,
+        deliveryStatusText: "Shipped",
+        deliveryTrackingUrl: "",
+      })
+    }
+    if (deliveredItems.length > 0) {
+      sections.push({
+        id: "customerToBusiness",
+        title: "Order returned",
+        status: "CustomerToBusiness",
+        bagItems: deliveredItems,
+        deliveryStep: 3,
+        deliveryStatusText: "Shipped",
+        deliveryTrackingUrl: "",
+      })
+    }
+    return sections
   }
 
-  private async getBusinessToCustomerSection(bagItems) {
+  private getBusinessToCustomerSection(bagItems) {
+    const businessToCustomerBagItems = bagItems.filter(b => {
+      const updatedMoreThan24HoursAgo =
+        b?.updatedAt &&
+        // @ts-ignore
+        DateTime.fromISO(b?.updatedAt.toISOString()).diffNow("days")?.values
+          ?.days <= -1
+      const beingShipped =
+        b.reservationPhysicalProduct?.status === "ShippedToCustomer"
+      const recentlyReceived =
+        b.reservationPhysicalProduct?.status === "ShippedToCustomer" &&
+        !updatedMoreThan24HoursAgo
+
+      return beingShipped || recentlyReceived
+    })
+
     return {
       id: "businessToCustomer",
       title: "Order on the way",
       status: "BusinessToCustomer",
-      bagItems: bagItems,
+      bagItems: businessToCustomerBagItems,
       deliveryStep: 1,
       deliveryStatusText: "Received",
       deliveryTrackingUrl: "",
     }
   }
 
-  private async getReturnPendingSection(bagItems) {
+  private getReturnPendingSection(bagItems) {
+    const returnPendingBagItems = bagItems.filter(
+      item => item.reservationPhysicalProduct?.hasCustomerReturnIntent
+    )
+
     return {
       id: "returnPending",
       title: "Returning",
       status: "ReturnPending",
-      bagItems: bagItems,
+      bagItems: returnPendingBagItems,
     }
   }
 
-  private async getAddedSection(bagItems) {
+  private getAddedSection(bagItems) {
     const addedBagItems = bagItems.filter(item => item.status === "Added")
 
     return {
