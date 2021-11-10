@@ -212,6 +212,7 @@ type BagItem {
   isSwappable: Boolean!
   productVariant: ProductVariant!
   physicalProduct: PhysicalProduct
+  reservationPhysicalProduct: ReservationPhysicalProduct
   position: Int
   saved: Boolean
   status: BagItemStatus!
