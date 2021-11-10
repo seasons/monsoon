@@ -458,7 +458,7 @@ export class BagService {
 
   private async getQueuedSection(bagItems) {
     const queuedBagItems = bagItems.filter(
-      b => b.reservationPhysicalProduct.status === "Queued"
+      b => b.reservationPhysicalProduct?.status === "Queued"
     )
     return {
       id: "queued",
@@ -477,7 +477,7 @@ export class BagService {
           ?.days <= -1
 
       return (
-        item.reservationPhysicalProduct.status === "DeliveredToCustomer" &&
+        item.reservationPhysicalProduct?.status === "DeliveredToCustomer" &&
         updatedMoreThan24HoursAgo
       )
     })
@@ -492,7 +492,7 @@ export class BagService {
 
   private async getPickedSection(bagItems) {
     const pickedBagItems = bagItems.filter(
-      b => b.reservationPhysicalProduct.status === "Picked"
+      b => b.reservationPhysicalProduct?.status === "Picked"
     )
     return {
       id: "picked",
@@ -504,7 +504,7 @@ export class BagService {
 
   private async getPackedSection(bagItems) {
     const packedBagItems = bagItems.filter(
-      b => b.reservationPhysicalProduct.status === "Packed"
+      b => b.reservationPhysicalProduct?.status === "Packed"
     )
     return {
       id: "packed",
@@ -516,7 +516,7 @@ export class BagService {
 
   private async getCustomerToBusinessSection(bagItems) {
     const customerToBusinessBagItems = bagItems.filter(b => {
-      return b.reservationPhysicalProduct.status === "ShippedToBusiness"
+      return b.reservationPhysicalProduct?.status === "ShippedToBusiness"
     })
     return {
       id: "customerToBusiness",
@@ -534,12 +534,12 @@ export class BagService {
       const updatedMoreThan24HoursAgo =
         b?.updatedAt &&
         // @ts-ignore
-        DateTime.fromISO(item?.updatedAt.toISOString()).diffNow("days")?.values
+        DateTime.fromISO(b?.updatedAt.toISOString()).diffNow("days")?.values
           ?.days <= -1
       const beingShipped =
-        b.reservationPhysicalProduct.status === "ShippedToCustomer"
+        b.reservationPhysicalProduct?.status === "ShippedToCustomer"
       const recentlyReceived =
-        b.reservationPhysicalProduct.status === "ShippedToCustomer" &&
+        b.reservationPhysicalProduct?.status === "ShippedToCustomer" &&
         !updatedMoreThan24HoursAgo
 
       return beingShipped || recentlyReceived
@@ -558,7 +558,7 @@ export class BagService {
 
   private async getReturnPendingSection(bagItems) {
     const returnPendingBagItems = bagItems.filter(
-      item => item.reservationPhysicalProduct.hasCustomerReturnIntent
+      item => item.reservationPhysicalProduct?.hasCustomerReturnIntent
     )
 
     return {
