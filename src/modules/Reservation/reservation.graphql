@@ -62,6 +62,7 @@ type Mutation {
     productStates: [ProductStateInput!]!
     droppedOffBy: ReservationDropOffAgent!
   ): Boolean @hasRole(roles: [Admin])
+  pickItems(items: [ID!]!): Reservation @hasRole(roles: [Admin])
 }
 
 type ReservationFeedback {
@@ -283,6 +284,72 @@ type Reservation @cacheControl(maxAge: 0) {
     @deprecated(reason: "Use shippingMethod instead")
   shippingMethod: ShippingMethod
   adminMessage: ReservationAdminMessage! @hasRole(roles: [Admin])
+}
+
+enum ReservationPhysicalProductStatus {
+  Queued
+  Picked
+  Packed
+  ShippedToCustomer
+  ShippedToBusiness
+  DeliveredToCustomer
+  DeliveredToBusiness
+  ReturnProcessed
+  ResetEarly
+  Hold
+  Returned
+  Lost
+}
+
+enum ReservationDropOffAgent {
+  Customer
+  UPS
+}
+
+type ReservationPhysicalProduct {
+  id: ID!
+
+  physicalProduct: PhysicalProduct
+  reservation: Reservation
+  bagItem: BagItem
+  shippingMethod: ShippingMethod
+
+  isNew: Boolean!
+  isPurchased: Boolean!
+  purchasedAt: DateTime
+
+  droppedOffBy: ReservationDropOffAgent
+  droppedOffAt: DateTime
+
+  hasReturnProcessed: Boolean!
+  returnProcessedAt: DateTime
+
+  isResetEarlyByAdmin: Boolean!
+  resetEarlyByAdminAt: DateTime
+
+  hasCustomerReturnIntent: Boolean!
+  customerReturnIntentAt: DateTime
+
+  isLost: Boolean
+  lostAt: DateTime
+  lostInPhase: ReservationPhase
+
+  isDeliveredToCustomer: Boolean!
+  deliveredToCustomerAt: DateTime
+
+  isDeliveredToBusiness: Boolean!
+  deliveredToBusinessAt: DateTime
+
+  hasBeenScannedOnInbound: Boolean!
+  scannedOnInboundAt: DateTime
+
+  hasBeenScannedOnOutbound: Boolean!
+  scannedOnOutboundAt: DateTime
+
+  status: ReservationPhysicalProductStatus!
+
+  createdAt: DateTime
+  updatedAt: DateTime
 }
 
 type AdminActionLog {

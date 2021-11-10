@@ -82,6 +82,12 @@ export class BagService {
         id: true,
         status: true,
         updatedAt: true,
+        reservationPhysicalProduct: {
+          select: {
+            id: true,
+            status: true,
+          },
+        },
         physicalProduct: {
           select: {
             id: true,
@@ -455,15 +461,16 @@ export class BagService {
     return bagItem
   }
 
-  private getQueuedSection(bagItems) {
-    const queuedBagItems = bagItems.filter(
+  private async getQueuedSection(bagItems) {
+    const filteredBagItems = bagItems.filter(
       b => b.reservationPhysicalProduct?.status === "Queued"
     )
+
     return {
       id: "queued",
       title: "Queued",
       status: "Queued",
-      bagItems: queuedBagItems,
+      bagItems: filteredBagItems,
     }
   }
 
@@ -598,16 +605,22 @@ export class BagService {
     }
   }
 
-  private getReturnPendingSection(bagItems) {
-    const returnPendingBagItems = bagItems.filter(
-      item => item.reservationPhysicalProduct?.hasCustomerReturnIntent
+  private async getReturnPendingSection(bagItems) {
+    const filteredBagItems = bagItems.filter(
+      b =>
+        [
+          "DeliveredToCustomer",
+          "ShippedToBusiness",
+          "DeliveredToBusiness",
+        ].includes(b.reservationPhysicalProduct?.status) &&
+        b.reservationPhysicalProduct?.hasCustomerReturnIntent
     )
 
     return {
       id: "returnPending",
       title: "Returning",
       status: "ReturnPending",
-      bagItems: returnPendingBagItems,
+      bagItems: filteredBagItems,
     }
   }
 
