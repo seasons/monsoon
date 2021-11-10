@@ -1247,10 +1247,8 @@ export class RentalService {
   calculateUnadjustedPriceForDaysRented = (product, daysRented) => {
     const rawDailyRentalPrice =
       product.productVariant.product.computedRentalPrice / 30
-    const roundedDailyRentalPriceAsString = rawDailyRentalPrice.toFixed(2)
-    const roundedDailyRentalPrice = +roundedDailyRentalPriceAsString
 
-    return Math.round(daysRented * roundedDailyRentalPrice * 100)
+    return Math.round(daysRented * rawDailyRentalPrice * 100)
   }
 
   private prismaLineItemToChargebeeChargeInput = prismaLineItem => {

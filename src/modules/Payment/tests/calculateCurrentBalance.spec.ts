@@ -172,15 +172,27 @@ describe("Calculate Current Balance", () => {
       )
 
       // Fake its return
-      await setReservationStatusWithParams(initialReservation.id, "Completed")
       await prisma.client.reservation.update({
         where: { id: initialReservation.id },
         data: {
+          status: "Completed",
           returnedAt: timeUtils.xDaysAgoISOString(7),
           returnedProducts: {
             connect: initialReservation.products.map(a => ({
               seasonsUID: a.seasonsUID,
             })),
+          },
+          returnPackages: {
+            update: {
+              where: { id: initialReservation.returnPackages[0].id },
+              data: {
+                items: {
+                  connect: initialReservation.products.map(a => ({
+                    seasonsUID: a.seasonsUID,
+                  })),
+                },
+              },
+            },
           },
         },
       })
@@ -204,7 +216,10 @@ describe("Calculate Current Balance", () => {
         .map(a => a.seasonsUID)
         .filter(a => !reservationOneProducts.includes(a))
       await overridePricesWithParams(reservationTwoProducts, [30, 50])
+      await setReservationStatusWithParams(secondReservation.id, "Delivered")
 
+      // console.log(`${reservationOneProducts} priced at 20,40. Held 6 days`)
+      // console.log(`${reservationTwoProducts} priced at 30,50, held 3 days`)
       currentBalance = await rentalService.calculateCurrentBalance(
         testCustomer.id,
         { upTo: "today" }
@@ -216,23 +231,23 @@ describe("Calculate Current Balance", () => {
     })
 
     it("Calculates the current balance properly", () => {
-      // $20/month product held for 8 days --> 5.33
-      // $40/month product held for 8 days --> 10.67
-      // $30/month product held for 3 days --> 3
-      // $50/month product held for 3 days --> 5
+      // $20/month product held for 6 days --> 8 (12 day minimum)
+      // $40/month product held for 6 days --> 16 (12 day minimum)
+      // $30/month product held for 3 days --> 12 (12 day minimum)
+      // $50/month product held for 3 days --> 20 (12 day minimum)
       // inbound package for reservation one --> 10
       // outbound package for reservation two --> 10
-      expect(0).toBe(4400)
+      expect(currentBalance).toBe(7600)
     })
 
-    it("Calcualtes the estimated total properly", () => {
-      // $20/month product held for 8 days --> 5.33
-      // $40/month product held for 8 days --> 10.67
+    it("Calculates the estimated total properly", () => {
+      // $20/month product held for 6 days --> 8 (12 day minimum)
+      // $40/month product held for 6 days --> 16 (12 day minimum)
       // $30/month product held for 13 days --> 13
       // $50/month product held for 13 days --> 21.67
       // inbound package for reservation one --> 10
       // outbound package for reservation two --> 10
-      expect(0).toBe(7067)
+      expect(estimatedTotal).toBe(7867)
     })
   })
 })
