@@ -58,106 +58,205 @@ describe("Buy Used", () => {
   })
 
   beforeEach(async () => {
-    const { customer } = await testUtils.createTestCustomer()
+    const { customer } = await testUtils.createTestCustomer({
+      select: {
+        id: true,
+        membership: { select: { id: true } },
+      },
+    })
     testCustomer = customer
   })
 
-  describe("It renders the correct amounts in draft and order views", () => {
-    it.only("Renders the correct line item amounts in draft mode", async () => {
-      const reservableProductVariant = await prisma.client.productVariant.findFirst(
-        {
-          where: {
-            reservable: { gte: 2 }, // want two because we want to ensure the correct one of two (or more) is picked
-            physicalProducts: {
-              some: {
-                price: { buyUsedEnabled: true, buyUsedPrice: { gt: 0 } },
-              },
+  describe("It generates the correct metadata", () => {
+    let reservableProductVariant
+    beforeAll(async () => {
+      reservableProductVariant = await prisma.client.productVariant.findFirst({
+        where: {
+          reservable: { gte: 2 }, // want two because we want to ensure the correct one of two (or more) is picked
+          physicalProducts: {
+            some: {
+              price: { buyUsedEnabled: true, buyUsedPrice: { gt: 0 } },
             },
           },
-          select: {
-            id: true,
-            physicalProducts: {
-              select: {
-                price: {
-                  select: {
-                    id: true,
-                  },
+        },
+        select: {
+          id: true,
+          physicalProducts: {
+            select: {
+              price: {
+                select: {
+                  id: true,
                 },
               },
             },
           },
-        }
-      )
-
-      const updatedPhysicalProducts = await prisma.client.physicalProductPrice.updateMany(
-        {
-          where: {
-            id: {
-              in: reservableProductVariant.physicalProducts.map(
-                p => p.price.id
-              ),
-            },
-          },
-          data: {
-            buyUsedPrice: 4000,
-          },
-        }
-      )
-
-      const draftOrder = await order.buyUsedCreateDraftedOrder({
-        productVariantID: reservableProductVariant.id,
-        customer: testCustomer,
-        select: {
-          id: true,
-          lineItems: {
-            select: { id: true, recordType: true, recordID: true, price: true },
-          },
-          total: true,
-          subTotal: true,
         },
       })
 
-      console.log("draftOrder", draftOrder)
-
-      expect(draftOrder.subTotal).toBe(400)
-      expect(draftOrder.total).toBe(400)
+      await prisma.client.physicalProductPrice.updateMany({
+        where: {
+          id: {
+            in: reservableProductVariant.physicalProducts.map(p => p.price.id),
+          },
+        },
+        data: {
+          buyUsedPrice: 40000,
+        },
+      })
     })
 
-    it("Renders the correct line item amounts in order mode", async () => {
-      const reservableProductVariant = await prisma.client.productVariant.findFirst(
-        {
-          where: {
-            reservable: { gte: 2 }, // want two because we want to ensure the correct one of two (or more) is picked
-            physicalProducts: {
-              some: {
-                price: { buyUsedEnabled: true, buyUsedPrice: { gt: 0 } },
-              },
-            },
-          },
-          select: {
-            id: true,
-          },
-        }
-      )
-
-      const draftOrder = await order.buyUsedCreateDraftedOrder({
-        productVariantID: reservableProductVariant.id,
-        customer: testCustomer,
-        select: {
-          id: true,
-          lineItems: { select: { id: true, recordType: true, recordID: true } },
+    it("Generates correct metadata in draft mode with credit and purchase credit", async () => {
+      await prisma.client.customerMembership.update({
+        where: {
+          id: testCustomer.membership.id,
+        },
+        data: {
+          purchaseCredits: 2000,
+          creditBalance: 10000,
         },
       })
 
-      const submittedOrder = (await order.buyUsedSubmitOrder({
-        order: draftOrder,
+      const {
+        invoice,
+        orderLineItems,
+        purchaseCreditsApplied,
+        creditsApplied,
+      } = await order.getBuyUsedMetadata({
+        productVariantID: reservableProductVariant.id,
         customer: testCustomer,
-        select: {
-          lineItems: { select: { id: true, recordType: true, recordID: true } },
-        },
-      })) as any
+        type: "draft",
+      })
 
-      expect(submittedOrder).toBeDefined()
+      const chargePrice = invoice.charges[0].amount
+
+      const purchaseCreditLineItem = orderLineItems.find(
+        l => l.recordType === "PurchaseCredit"
+      )
+      const creditLineItem = orderLineItems.find(l => l.recordType === "Credit")
+
+      expect(purchaseCreditLineItem.price).toBe(-2000)
+      expect(creditLineItem.price).toBe(-10000)
+      expect(chargePrice).toBe(28000)
+      expect(purchaseCreditsApplied).toBe(2000)
+      expect(creditsApplied).toBe(10000)
+    })
+
+    it("Generates correct metadata in draft mode without credit nor purchase credit", async () => {
+      await prisma.client.customerMembership.update({
+        where: {
+          id: testCustomer.membership.id,
+        },
+        data: {
+          purchaseCredits: 0,
+          creditBalance: 0,
+        },
+      })
+
+      const {
+        invoice,
+        orderLineItems,
+        purchaseCreditsApplied,
+        creditsApplied,
+      } = await order.getBuyUsedMetadata({
+        productVariantID: reservableProductVariant.id,
+        customer: testCustomer,
+        type: "draft",
+      })
+
+      const chargePrice = invoice.charges[0].amount
+
+      const purchaseCreditLineItem = orderLineItems.find(
+        l => l.recordType === "PurchaseCredit"
+      )
+      const creditLineItem = orderLineItems.find(l => l.recordType === "Credit")
+
+      expect(purchaseCreditLineItem).toBeUndefined()
+      expect(creditLineItem).toBeUndefined()
+      expect(chargePrice).toBe(40000)
+      expect(purchaseCreditsApplied).toBe(0)
+      expect(creditsApplied).toBe(0)
+    })
+
+    it("Generates correct metadata in order mode with credit and purchase credit", async () => {
+      await prisma.client.customerMembership.update({
+        where: {
+          id: testCustomer.membership.id,
+        },
+        data: {
+          purchaseCredits: 2000,
+          creditBalance: 10000,
+        },
+      })
+
+      await prisma.client.customerMembership.update({
+        where: {
+          id: testCustomer.membership.id,
+        },
+        data: {
+          purchaseCredits: 2000,
+          creditBalance: 10000,
+        },
+      })
+
+      const {
+        invoice,
+        orderLineItems,
+        purchaseCreditsApplied,
+        creditsApplied,
+      } = await order.getBuyUsedMetadata({
+        productVariantID: reservableProductVariant.id,
+        customer: testCustomer,
+        type: "order",
+      })
+
+      const chargePrice = invoice.charges[0].amount
+
+      const purchaseCreditLineItem = orderLineItems.find(
+        l => l.recordType === "PurchaseCredit"
+      )
+      const creditLineItem = orderLineItems.find(l => l.recordType === "Credit")
+
+      expect(purchaseCreditLineItem.price).toBe(-2000)
+      expect(creditLineItem.price).toBe(-10000)
+      expect(chargePrice).toBe(40000)
+      expect(purchaseCreditsApplied).toBe(2000)
+      expect(creditsApplied).toBe(10000)
+    })
+
+    it("Generates correct metadata in order mode without credit nor purchase credit", async () => {
+      await prisma.client.customerMembership.update({
+        where: {
+          id: testCustomer.membership.id,
+        },
+        data: {
+          purchaseCredits: 0,
+          creditBalance: 0,
+        },
+      })
+
+      const {
+        invoice,
+        orderLineItems,
+        purchaseCreditsApplied,
+        creditsApplied,
+      } = await order.getBuyUsedMetadata({
+        productVariantID: reservableProductVariant.id,
+        customer: testCustomer,
+        type: "order",
+      })
+
+      const chargePrice = invoice.charges[0].amount
+
+      const purchaseCreditLineItem = orderLineItems.find(
+        l => l.recordType === "PurchaseCredit"
+      )
+      const creditLineItem = orderLineItems.find(l => l.recordType === "Credit")
+
+      expect(purchaseCreditLineItem).toBeUndefined()
+      expect(creditLineItem).toBeUndefined()
+      expect(chargePrice).toBe(40000)
+      expect(purchaseCreditsApplied).toBe(0)
+      expect(creditsApplied).toBe(0)
     })
   })
 
