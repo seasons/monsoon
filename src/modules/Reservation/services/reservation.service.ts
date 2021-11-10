@@ -710,7 +710,7 @@ export class ReservationService {
     application: ApplicationType
     reservation?: Reservation
     customer: Customer
-    filterBy: ReservationLineItemsFilter
+    filterBy?: ReservationLineItemsFilter
     shippingCode?: ShippingCode
   }) {
     const customerWithUser = await this.prisma.client.customer.findUnique({
@@ -798,7 +798,7 @@ export class ReservationService {
 
         lines = reservationWithProducts[key].map(p => {
           const product = p.productVariant.product
-          const price = p.computedRentalPrice * 100
+          const price = product.computedRentalPrice * 100
 
           return {
             name: product.name,
@@ -809,8 +809,9 @@ export class ReservationService {
         })
 
         variantIDs = reservationWithProducts[key].map(p => p.productVariant.id)
-        updatedShippingCode = (reservationWithProducts as any)?.shippingOption
-          ?.shippingMethod?.code
+        updatedShippingCode =
+          (reservationWithProducts as any)?.shippingOption?.shippingMethod
+            ?.code || shippingCode
       } else {
         const bagItems = await this.prisma.client.bagItem.findMany({
           where: {
@@ -1284,11 +1285,20 @@ export class ReservationService {
     hasFreeSwap: boolean
     shippingCode: ShippingCode
   }) {
+    const includeSentPackage = hasFreeSwap
+      ? false
+      : shippingCode === ShippingCode.Pickup
+      ? false
+      : true
+
+    console.log("Has Free Swap", hasFreeSwap)
+    console.log("Include Outbound package", includeSentPackage)
+
     const {
       sentRate,
     } = await this.shippingService.getShippingRateForVariantIDs(variantIDs, {
       customer,
-      includeSentPackage: shippingCode !== ShippingCode.Pickup,
+      includeSentPackage,
       includeReturnPackage: false,
       serviceLevel:
         shippingCode === "UPSGround"
