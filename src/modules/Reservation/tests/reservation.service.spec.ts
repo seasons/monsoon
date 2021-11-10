@@ -18,7 +18,29 @@ describe("Reservation Service", () => {
     testService = moduleRef.get<TestUtilsService>(TestUtilsService)
   })
 
-  it("if customer is in california and shipping method ", () => {
+  it("if customer is in california and shipping method", async () => {
     expect(reservationService).toBeTruthy()
+
+    const { cleanupFunc, customer } = await testService.createTestCustomer({
+      create: {
+        detail: {
+          create: {
+            shippingAddress: {
+              create: {
+                address1: "855 N Vermont Ave",
+                city: "Los Angeles",
+                state: "CA",
+                zipCode: "90029",
+              },
+            },
+          },
+        },
+      },
+    })
+
+    // reservationService.draftReservationLineItems({
+    //   application: "flare",
+
+    // })
   })
 })
