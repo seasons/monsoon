@@ -421,6 +421,8 @@ enum OrderLineItemRecordType {
   Reservation
   Fee
   Total
+  Credit
+  PurchaseCredit
 }
 
 enum OrderStatus {
@@ -738,21 +740,22 @@ model CustomerDetail {
 }
 
 model CustomerMembership {
-  id                       String                              @id @default(cuid()) @db.VarChar(30)
-  subscriptionId           String
-  customerId               String                              @map("customer") @db.VarChar(30)
-  planId                   String                              @map("plan") @db.VarChar(30)
-  giftId                   String?
-  grandfathered            Boolean?                            @default(false)
-  creditBalance            Int                                 @default(0)
-  currentBalance           Int?
-  membershipSubscriptionId String?                             @map("subscription") @db.VarChar(30)
-  customer                 Customer                            @relation(fields: [customerId], references: [id])
-  plan                     PaymentPlan                         @relation(fields: [planId], references: [id])
-  subscription             CustomerMembershipSubscriptionData? @relation(fields: [membershipSubscriptionId], references: [id])
-  pauseRequests            PauseRequest[]
-  rentalInvoices           RentalInvoice[]
-  creditUpdateHistory      CreditBalanceUpdateLog[]
+  id                         String                              @id @default(cuid()) @db.VarChar(30)
+  subscriptionId             String
+  customerId                 String                              @map("customer") @db.VarChar(30)
+  planId                     String                              @map("plan") @db.VarChar(30)
+  giftId                     String?
+  purchaseCredits            Int?                                @default(0)
+  grandfathered              Boolean?                            @default(false)
+  creditBalance              Int                                 @default(0)
+  currentBalance             Int?
+  membershipSubscriptionId   String?                             @map("subscription") @db.VarChar(30)
+  customer                   Customer                            @relation(fields: [customerId], references: [id])
+  plan                       PaymentPlan                         @relation(fields: [planId], references: [id])
+  subscription               CustomerMembershipSubscriptionData? @relation(fields: [membershipSubscriptionId], references: [id])
+  pauseRequests              PauseRequest[]
+  rentalInvoices             RentalInvoice[]
+  creditUpdateHistory        CreditBalanceUpdateLog[]
 }
 
 model CreditBalanceUpdateLog {
