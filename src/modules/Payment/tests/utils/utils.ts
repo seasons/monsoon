@@ -6,6 +6,7 @@ import {
   PhysicalProduct,
   Prisma,
   RentalInvoiceLineItem,
+  ReservationDropOffAgent,
   ReservationPhysicalProductStatus,
   ReservationStatus,
   ShippingCode,
@@ -337,6 +338,66 @@ export const setReservationPhysicalProductDeliveredToCustomerAt = async (
     },
   })
 }
+export const setReservationPhysicalProductDeliveredToBusinessAt = async (
+  reservationPhysicalProductId,
+  numDaysAgo,
+  { prisma, timeUtils }: PrismaOption & TimeUtilsOption
+) => {
+  const deliveredAt = timeUtils.xDaysAgoISOString(numDaysAgo)
+  await prisma.client.reservationPhysicalProduct.update({
+    where: { id: reservationPhysicalProductId },
+    data: {
+      deliveredToBusinessAt: deliveredAt,
+      hasBeenDeliveredToBusiness: true,
+    },
+  })
+}
+
+export const setReservationPhysicalProductScannedOnInboundAt = async (
+  reservationPhysicalProductId,
+  numDaysAgo,
+  { prisma, timeUtils }: PrismaOption & TimeUtilsOption
+) => {
+  const scannedAt = timeUtils.xDaysAgoISOString(numDaysAgo)
+  await prisma.client.reservationPhysicalProduct.update({
+    where: { id: reservationPhysicalProductId },
+    data: {
+      scannedOnInboundAt: scannedAt,
+      hasBeenScannedOnInbound: true,
+    },
+  })
+}
+
+export const setReservationPhysicalProductReturnProcessedAt = async (
+  reservationPhysicalProductId,
+  numDaysAgo,
+  { prisma, timeUtils }: PrismaOption & TimeUtilsOption
+) => {
+  const processedAt = timeUtils.xDaysAgoISOString(numDaysAgo)
+  await prisma.client.reservationPhysicalProduct.update({
+    where: { id: reservationPhysicalProductId },
+    data: {
+      returnProcessedAt: processedAt,
+      hasBeenScannedOnInbound: true,
+    },
+  })
+}
+
+export const setReservationPhysicalProductDroppedOffAt = async (
+  reservationPhysicalProductId,
+  numDaysAgo,
+  agent: ReservationDropOffAgent,
+  { prisma, timeUtils }: PrismaOption & TimeUtilsOption
+) => {
+  const timestamp = timeUtils.xDaysAgoISOString(numDaysAgo)
+  await prisma.client.reservationPhysicalProduct.update({
+    where: { id: reservationPhysicalProductId },
+    data: {
+      droppedOffAt: timestamp,
+      droppedOffBy: agent,
+    },
+  })
+}
 
 export const setReservationPhysicalProductStatus = async (
   reservationPhysicalProductId,
@@ -346,5 +407,15 @@ export const setReservationPhysicalProductStatus = async (
   await prisma.client.reservationPhysicalProduct.update({
     where: { id: reservationPhysicalProductId },
     data: { status },
+  })
+}
+
+export const getReservationPhysicalProductWithData = async (
+  reservationPhysicalProductId,
+  { prisma }
+) => {
+  return await prisma.client.reservationPhysicalProduct.findUnique({
+    where: { id: reservationPhysicalProductId },
+    select: ProcessableReservationPhysicalProductSelect,
   })
 }
