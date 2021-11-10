@@ -179,8 +179,8 @@ export const addToBagAndReserveForCustomer = async (
   })
   const priceForPackage =
     shippingCode === "UPSSelect" ? UPS_SELECT_FEE : UPS_GROUND_FEE
-  await setPackageAmount(r.sentPackage.id, priceForPackage, { prisma })
-  await setPackageAmount(r.returnPackages[0].id, priceForPackage, { prisma })
+  // await setPackageAmount(r.sentPackage.id, priceForPackage, { prisma })
+  // await setPackageAmount(r.returnPackages[0].id, priceForPackage, { prisma })
   if (numDaysAgo > 0) {
     await prisma.client.reservation.update({
       where: { id: r.id },
@@ -333,7 +333,7 @@ export const setReservationPhysicalProductDeliveredToCustomerAt = async (
     where: { id: reservationPhysicalProductId },
     data: {
       deliveredToCustomerAt: deliveredAt,
-      isDeliveredToCustomer: true,
+      hasBeenDeliveredToCustomer: true,
     },
   })
 }

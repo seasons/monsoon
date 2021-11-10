@@ -7,7 +7,10 @@ import { Test } from "@nestjs/testing"
 import { head } from "lodash"
 
 import { PAYMENT_MODULE_DEF } from "../payment.module"
-import { RentalService } from "../services/rental.service"
+import {
+  ProcessableReservationPhysicalProductSelect,
+  RentalService,
+} from "../services/rental.service"
 import {
   TestReservation,
   addToBagAndReserveForCustomer,
@@ -26,7 +29,6 @@ describe("Calculate Days Rented", () => {
   let prisma: PrismaService
   let rentalService: RentalService
   let timeUtils: TimeUtilsService
-  let reservationService: ReservationService
   let reserveService: ReserveService
 
   let addToBagAndReserveForCustomerWithParams
@@ -45,6 +47,7 @@ describe("Calculate Days Rented", () => {
     prisma = moduleRef.get<PrismaService>(PrismaService)
     rentalService = moduleRef.get<RentalService>(RentalService)
     timeUtils = moduleRef.get<TimeUtilsService>(TimeUtilsService)
+    reserveService = moduleRef.get<ReserveService>(ReserveService)
 
     addToBagAndReserveForCustomerWithParams = (numBagItems, { numDaysAgo }) =>
       addToBagAndReserveForCustomer(
@@ -111,6 +114,12 @@ describe("Calculate Days Rented", () => {
       )
 
       custWithData = await getCustWithDataWithParams()
+      const reservationPhysicalProductWithData = await prisma.client.reservationPhysicalProduct.findUnique(
+        {
+          where: { id: product.id },
+          select: ProcessableReservationPhysicalProductSelect,
+        }
+      )
       const {
         daysRented,
         comment,
@@ -118,7 +127,7 @@ describe("Calculate Days Rented", () => {
         rentalStartedAt,
       } = await rentalService.calcDaysRented(
         custWithData.membership.rentalInvoices[0],
-        product
+        reservationPhysicalProductWithData
       )
 
       expect(daysRented).toBe(23)

@@ -558,6 +558,7 @@ export class RentalService {
         break
       case "DeliveredToCustomer":
         rentalEndedAt = getRentalEndedAt(today)
+        break
       default:
         throw new Error(
           `Unexpected reservation physical product status: ${reservationPhysicalProduct.status}`
