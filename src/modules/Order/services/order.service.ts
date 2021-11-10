@@ -1216,7 +1216,7 @@ export class OrderService {
       .request()
   }
 
-  private async updatePurchaseCreditsUsed({
+  private updatePurchaseCreditsUsed({
     customerMembershipId,
     creditBalance,
     purchaseCreditsApplied,
