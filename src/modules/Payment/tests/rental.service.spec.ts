@@ -2743,11 +2743,13 @@ describe("Rental Service", () => {
        * check to see if reservation is still in status delivered
        */
 
-      const productStates = [
-        {
-          productUID: physicalProducts[0].seasonsUID,
-        },
-      ]
+      const productStates = []
+      productStates.push({
+        productUID: physicalProducts[0].seasonsUID,
+        returned: true,
+        productStatus: "Dirty",
+        notes: "no notes needed here",
+      })
 
       await resPhysProdService.returnMultiItems({
         productStates,
