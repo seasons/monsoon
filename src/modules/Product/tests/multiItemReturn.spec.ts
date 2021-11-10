@@ -1,5 +1,4 @@
 import {
-  PrismaOption,
   addToBagAndReserveForCustomer,
   setReservationStatus,
 } from "@app/modules/Payment/tests/utils/utils"
@@ -8,7 +7,6 @@ import { ReserveService } from "@app/modules/Reservation/services/reserve.servic
 import { TestUtilsService } from "@app/modules/Utils/services/test.service"
 import { PrismaService } from "@app/prisma/prisma.service"
 import { Test } from "@nestjs/testing"
-import { PrismaOptions } from "prisma-binding/dist/types"
 
 import { ProductModuleDef } from "../product.module"
 
