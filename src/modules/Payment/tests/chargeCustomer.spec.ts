@@ -9,7 +9,7 @@ import moment from "moment"
 
 import { PAYMENT_MODULE_DEF } from "../payment.module"
 import {
-  CREATE_RENTAL_INVOICE_LINE_ITEMS_INVOICE_SELECT,
+  ProcessableRentalInvoiceSelect,
   RentalService,
 } from "../services/rental.service"
 import {
@@ -221,6 +221,7 @@ describe("Charge customer", () => {
       addToBagAndReserveForCustomer(testCustomer, numBagItems, {
         prisma,
         reserveService,
+        timeUtils,
       })
     getCustWithDataWithParams = (select: Prisma.CustomerSelect = {}) =>
       getCustWithData(testCustomer, {
@@ -298,7 +299,7 @@ describe("Charge customer", () => {
       await overridePrices(initialReservationProductSUIDs, [30, 50], { prisma })
       rentalInvoiceToBeBilled = await prisma.client.rentalInvoice.findUnique({
         where: { id: custWithData.membership.rentalInvoices[0].id },
-        select: CREATE_RENTAL_INVOICE_LINE_ITEMS_INVOICE_SELECT,
+        select: ProcessableRentalInvoiceSelect,
       })
 
       await setCustomerPlanTypeWithParams("access-monthly")
@@ -415,7 +416,7 @@ describe("Charge customer", () => {
       )
       rentalInvoiceToBeBilled = await prisma.client.rentalInvoice.findUnique({
         where: { id: custWithData.membership.rentalInvoices[0].id },
-        select: CREATE_RENTAL_INVOICE_LINE_ITEMS_INVOICE_SELECT,
+        select: ProcessableRentalInvoiceSelect,
       })
       ;({
         lineItems,
@@ -519,7 +520,7 @@ describe("Charge customer", () => {
 
       rentalInvoiceToBeBilled = await prisma.client.rentalInvoice.findUnique({
         where: { id: custWithData.membership.rentalInvoices[0].id },
-        select: CREATE_RENTAL_INVOICE_LINE_ITEMS_INVOICE_SELECT,
+        select: ProcessableRentalInvoiceSelect,
       })
 
       await setCustomerPlanTypeWithParams("access-monthly")
@@ -589,7 +590,7 @@ describe("Charge customer", () => {
 
       rentalInvoiceToBeBilled = await prisma.client.rentalInvoice.findUnique({
         where: { id: custWithData.membership.rentalInvoices[0].id },
-        select: CREATE_RENTAL_INVOICE_LINE_ITEMS_INVOICE_SELECT,
+        select: ProcessableRentalInvoiceSelect,
       })
 
       await setCustomerPlanTypeWithParams("access-monthly")
@@ -645,7 +646,7 @@ describe("Charge customer", () => {
     const rentalInvoiceToBeBilled = await prisma.client.rentalInvoice.findUnique(
       {
         where: { id: custWithData.membership.rentalInvoices[0].id },
-        select: CREATE_RENTAL_INVOICE_LINE_ITEMS_INVOICE_SELECT,
+        select: ProcessableRentalInvoiceSelect,
       }
     )
 
@@ -675,7 +676,7 @@ describe("Charge customer", () => {
     const rentalInvoiceToBeBilled = await prisma.client.rentalInvoice.findUnique(
       {
         where: { id: custWithData.membership.rentalInvoices[0].id },
-        select: CREATE_RENTAL_INVOICE_LINE_ITEMS_INVOICE_SELECT,
+        select: ProcessableRentalInvoiceSelect,
       }
     )
 
@@ -705,7 +706,7 @@ describe("Charge customer", () => {
     const rentalInvoiceToBeBilled = await prisma.client.rentalInvoice.findUnique(
       {
         where: { id: custWithData.membership.rentalInvoices[0].id },
-        select: CREATE_RENTAL_INVOICE_LINE_ITEMS_INVOICE_SELECT,
+        select: ProcessableRentalInvoiceSelect,
       }
     )
 
@@ -758,7 +759,7 @@ describe("Charge customer", () => {
         let rentalInvoiceToBeBilled = await prisma.client.rentalInvoice.findUnique(
           {
             where: { id: custWithData.membership.rentalInvoices[0].id },
-            select: CREATE_RENTAL_INVOICE_LINE_ITEMS_INVOICE_SELECT,
+            select: ProcessableRentalInvoiceSelect,
           }
         )
         await rentalService.processInvoice(rentalInvoiceToBeBilled)
@@ -784,7 +785,7 @@ describe("Charge customer", () => {
         ).id
         rentalInvoiceToBeBilled = await prisma.client.rentalInvoice.findUnique({
           where: { id: rentalInvoiceToBeBilledID },
-          select: CREATE_RENTAL_INVOICE_LINE_ITEMS_INVOICE_SELECT,
+          select: ProcessableRentalInvoiceSelect,
         })
         await rentalService.processInvoice(rentalInvoiceToBeBilled, {
           onError: err => console.log(err),
@@ -848,7 +849,7 @@ describe("Charge customer", () => {
         let rentalInvoiceToBeBilled = await prisma.client.rentalInvoice.findUnique(
           {
             where: { id: custWithData.membership.rentalInvoices[0].id },
-            select: CREATE_RENTAL_INVOICE_LINE_ITEMS_INVOICE_SELECT,
+            select: ProcessableRentalInvoiceSelect,
           }
         )
         await rentalService.processInvoice(rentalInvoiceToBeBilled)
@@ -872,7 +873,7 @@ describe("Charge customer", () => {
         ).id
         rentalInvoiceToBeBilled = await prisma.client.rentalInvoice.findUnique({
           where: { id: rentalInvoiceToBeBilledID },
-          select: CREATE_RENTAL_INVOICE_LINE_ITEMS_INVOICE_SELECT,
+          select: ProcessableRentalInvoiceSelect,
         })
         await rentalService.processInvoice(rentalInvoiceToBeBilled)
 
@@ -945,7 +946,7 @@ describe("Charge customer", () => {
         let rentalInvoiceToBeBilled = await prisma.client.rentalInvoice.findUnique(
           {
             where: { id: custWithData.membership.rentalInvoices[0].id },
-            select: CREATE_RENTAL_INVOICE_LINE_ITEMS_INVOICE_SELECT,
+            select: ProcessableRentalInvoiceSelect,
           }
         )
         await rentalService.processInvoice(rentalInvoiceToBeBilled, {
@@ -962,7 +963,7 @@ describe("Charge customer", () => {
         ).id
         rentalInvoiceToBeBilled = await prisma.client.rentalInvoice.findUnique({
           where: { id: rentalInvoiceToBeBilledID },
-          select: CREATE_RENTAL_INVOICE_LINE_ITEMS_INVOICE_SELECT,
+          select: ProcessableRentalInvoiceSelect,
         })
         await rentalService.processInvoice(rentalInvoiceToBeBilled, {
           onError: err => console.log(err),

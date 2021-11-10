@@ -6,7 +6,7 @@ import { Test } from "@nestjs/testing"
 
 import { PAYMENT_MODULE_DEF } from "../payment.module"
 import {
-  CREATE_RENTAL_INVOICE_LINE_ITEMS_INVOICE_SELECT,
+  ProcessableRentalInvoiceSelect,
   RentalService,
 } from "../services/rental.service"
 import {
@@ -67,8 +67,9 @@ describe("Create Rental Invoice Line Items", () => {
         {
           prisma,
           reserveService,
+          timeUtils,
         },
-        { shippingCode }
+        { shippingCode, numDaysAgo: 0 }
       )
     getCustWithDataWithParams = (select: Prisma.CustomerSelect = {}) =>
       getCustWithData(testCustomer, {
@@ -158,7 +159,7 @@ describe("Create Rental Invoice Line Items", () => {
       const rentalInvoiceWithUpdatedPrices = await prisma.client.rentalInvoice.findUnique(
         {
           where: { id: rentalInvoice.id },
-          select: CREATE_RENTAL_INVOICE_LINE_ITEMS_INVOICE_SELECT,
+          select: ProcessableRentalInvoiceSelect,
         }
       )
       const lineItems = await rentalService.createRentalInvoiceLineItems(

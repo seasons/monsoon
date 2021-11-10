@@ -6,13 +6,17 @@ import {
   PhysicalProduct,
   Prisma,
   RentalInvoiceLineItem,
+  ReservationPhysicalProductStatus,
   ReservationStatus,
   ShippingCode,
 } from "@prisma/client"
 import { merge } from "lodash"
 import moment from "moment"
 
-import { CREATE_RENTAL_INVOICE_LINE_ITEMS_INVOICE_SELECT } from "../../services/rental.service"
+import {
+  ProcessableRentalInvoiceSelect,
+  ProcessableReservationPhysicalProductSelect,
+} from "../../services/rental.service"
 
 export const UPS_GROUND_FEE = 1000
 export const UPS_SELECT_FEE = 2000
@@ -22,8 +26,9 @@ const DEFAULT_RESERVATION_ARGS = Prisma.validator<Prisma.ReservationArgs>()({
   select: {
     id: true,
     reservationNumber: true,
-    products: { select: { seasonsUID: true } },
-    newProducts: { select: { seasonsUID: true } },
+    reservationPhysicalProducts: {
+      select: ProcessableReservationPhysicalProductSelect,
+    },
     sentPackage: { select: { id: true } },
     returnPackages: {
       orderBy: { createdAt: "desc" },
@@ -55,7 +60,7 @@ export const getCustWithData = async (
     membership: {
       select: {
         rentalInvoices: {
-          select: CREATE_RENTAL_INVOICE_LINE_ITEMS_INVOICE_SELECT,
+          select: ProcessableRentalInvoiceSelect,
         },
       },
     },
@@ -103,10 +108,16 @@ export const setCustomerSubscriptionNextBillingAt = async (
 export const addToBagAndReserveForCustomer = async (
   testCustomer: TestCustomerWithId,
   numProductsToAdd: number,
-  { prisma, reserveService }: PrismaOption & { reserveService: ReserveService },
-  options: { shippingCode?: ShippingCode } = {}
+  {
+    prisma,
+    reserveService,
+    timeUtils,
+  }: PrismaOption & { reserveService: ReserveService } & TimeUtilsOption,
+  options: { shippingCode?: ShippingCode; numDaysAgo: number } = {
+    numDaysAgo: 0,
+  }
 ) => {
-  const { shippingCode = "UPSGround" } = options
+  const { shippingCode = "UPSGround", numDaysAgo } = options
   const reservedBagItems = await prisma.client.bagItem.findMany({
     where: {
       customer: { id: testCustomer.id },
@@ -170,6 +181,20 @@ export const addToBagAndReserveForCustomer = async (
     shippingCode === "UPSSelect" ? UPS_SELECT_FEE : UPS_GROUND_FEE
   await setPackageAmount(r.sentPackage.id, priceForPackage, { prisma })
   await setPackageAmount(r.returnPackages[0].id, priceForPackage, { prisma })
+  if (numDaysAgo > 0) {
+    await prisma.client.reservation.update({
+      where: { id: r.id },
+      data: {
+        createdAt: timeUtils.xDaysAgoISOString(numDaysAgo),
+        reservationPhysicalProducts: {
+          updateMany: {
+            where: { id: { in: r.reservationPhysicalProducts.map(a => a.id) } },
+            data: { createdAt: timeUtils.xDaysAgoISOString(numDaysAgo) },
+          },
+        },
+      },
+    })
+  }
   return r
 }
 
@@ -297,3 +322,29 @@ export const createProcessingObjectKey = (
   reservationNumber,
   type: "OutboundPackage" | "Pickup"
 ) => "Reservation-" + reservationNumber + "-" + type
+
+export const setReservationPhysicalProductDeliveredToCustomerAt = async (
+  reservationPhysicalProductId,
+  numDaysAgo,
+  { prisma, timeUtils }: PrismaOption & TimeUtilsOption
+) => {
+  const deliveredAt = timeUtils.xDaysAgoISOString(numDaysAgo)
+  await prisma.client.reservationPhysicalProduct.update({
+    where: { id: reservationPhysicalProductId },
+    data: {
+      deliveredToCustomerAt: deliveredAt,
+      isDeliveredToCustomer: true,
+    },
+  })
+}
+
+export const setReservationPhysicalProductStatus = async (
+  reservationPhysicalProductId,
+  status: ReservationPhysicalProductStatus,
+  { prisma }: PrismaOption
+) => {
+  await prisma.client.reservationPhysicalProduct.update({
+    where: { id: reservationPhysicalProductId },
+    data: { status },
+  })
+}
