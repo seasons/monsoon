@@ -19,11 +19,15 @@ export class ReservationPhysicalProductService {
     private readonly productVariantService: ProductVariantService
   ) {}
 
-  async returnMultiItems(
-    productStates: ProductState[],
-    droppedOffBy: ReservationDropOffAgent,
+  async returnMultiItems({
+    productStates,
+    droppedOffBy,
+    trackingNumber,
+  }: {
+    productStates: ProductState[]
+    droppedOffBy: ReservationDropOffAgent
     trackingNumber?: string
-  ) {
+  }) {
     const physicalProducts = await this.prisma.client.physicalProduct.findMany({
       where: {
         seasonsUID: {

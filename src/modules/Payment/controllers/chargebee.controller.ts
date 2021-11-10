@@ -68,6 +68,7 @@ export class ChargebeeController {
       case CHARGEBEE_PAYMENT_SUCCEEDED:
         // Add the cedits before doing other things so that a downstream failure doesn't get in the way of credit creation
         await this.addGrandfatheredPromotionalCredits(body.content)
+        await this.setPurchaseCredits(body.content)
         await this.chargebeePaymentSucceeded(body.content)
         break
       case CHARGEBEE_PAYMENT_FAILED:
@@ -118,6 +119,43 @@ export class ChargebeeController {
           { error: err, content }
         )
       }
+    }
+  }
+
+  private async setPurchaseCredits(content: any) {
+    const chargebeeCustomerID = content.customer.id
+    const prismaCustomer = await this.prisma.client.customer.findFirst({
+      where: { user: { id: chargebeeCustomerID } },
+      select: {
+        id: true,
+        user: { select: { id: true } },
+        membership: {
+          select: {
+            id: true,
+            plan: {
+              select: {
+                planID: true,
+              },
+            },
+          },
+        },
+      },
+    })
+
+    const accessPlanIds = ["access-monthly", "access-yearly"]
+    const planId = prismaCustomer.membership.plan.planID
+
+    const isPlanPayment = content.invoice.line_items.some(
+      li => li.entity_type === "plan"
+    )
+
+    if (accessPlanIds.includes(planId) && isPlanPayment) {
+      await this.prisma.client.customerMembership.update({
+        where: { id: prismaCustomer.membership.id },
+        data: {
+          purchaseCredits: planId === "access-yearly" ? 3000 : 2000,
+        },
+      })
     }
   }
 
