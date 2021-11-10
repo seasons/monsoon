@@ -9,6 +9,9 @@ export class BagSectionFieldsResolver {
 
   @ResolveField()
   async bagItems(@Parent() parent, @Select() select) {
+    if (!parent) {
+      return null
+    }
     return await this.prisma.client.bagItem.findMany({
       where: {
         id: {
