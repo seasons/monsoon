@@ -1430,7 +1430,7 @@ model ReservationPhysicalProduct {
   id    String  @id @default(cuid()) @db.VarChar(30)
   isNew Boolean
 
-  isPurchased Boolean
+  hasBeenPurchased Boolean
   purchasedAt DateTime?
 
   status ReservationPhysicalProductStatus @default(value: Queued)
@@ -1444,21 +1444,21 @@ model ReservationPhysicalProduct {
   returnProcessedAt  DateTime?
 
   // admin marked item as returned early, it's still on its way
-  isResetEarlyByAdmin Boolean
+  hasBeenResetEarlyByAdmin Boolean
   resetEarlyByAdminAt DateTime?
 
   // denotes customer filling out the return flow
   hasCustomerReturnIntent Boolean
   customerReturnIntentAt  DateTime?
 
-  isLost      Boolean
+  hasBeenLost      Boolean
   lostAt      DateTime?
   lostInPhase ReservationPhase?
 
-  isDeliveredToCustomer Boolean
+  hasBeenDeliveredToCustomer Boolean
   deliveredToCustomerAt DateTime?
 
-  isDeliveredToBusiness Boolean
+  hasBeenDeliveredToBusiness Boolean
   deliveredToBusinessAt DateTime?
 
   // when UPS first gets the package into
