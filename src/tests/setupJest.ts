@@ -7,6 +7,16 @@ dotenv.config({ path: path.resolve(process.cwd(), ".env") })
 
 jest.setTimeout(50000)
 
+const checkEnvironment = () => {
+  if (
+    !process.env.DB_READ_URL.includes("localhost") ||
+    !process.env.DB_WRITE_URL.includes("localhost")
+  ) {
+    throw new Error(
+      `DB URL not pointing to local !!! : ${process.env.DB_READ_URL}, ${process.env.DB_WRITE_URL}`
+    )
+  }
+}
 // Fix variant counts so that doesn't cause test failures
 const fixVariantCounts = async () => {
   const ps = new PrismaService()
@@ -76,4 +86,5 @@ const fixVariantCounts = async () => {
     }
   }
 }
+checkEnvironment()
 fixVariantCounts()
