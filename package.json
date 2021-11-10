@@ -39,7 +39,7 @@
     "test:e2e": "jest --config ./jest-e2e.json",
     "test:watch": "jest --watch",
     "test:ci": "TEST=true jest  --reporters=default --reporters=jest-junit --detectOpenHandles --forceExit --verbose",
-    "test": "TEST=true jest"
+    "test": "TEST=true jest --runInBand"
   },
   "dependencies": {
     "@apollo/gateway": "0.16.9",
@@ -203,7 +203,7 @@
       "tsx"
     ],
     "transform": {
-      "^.+\\.(t|j)s$": "ts-jest"
+      "^.+\\.(t)s$": "ts-jest"
     },
     "testEnvironment": "node",
     "moduleNameMapper": {

@@ -38,6 +38,9 @@ export class CustomerFieldsResolver {
 
   @ResolveField()
   async bagSections(@Parent() customer, @Application() application) {
+    if (!customer) {
+      return null
+    }
     return this.bagService.bagSections(customer, application)
   }
 

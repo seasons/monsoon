@@ -421,6 +421,8 @@ enum OrderLineItemRecordType {
   Reservation
   Fee
   Total
+  Credit
+  PurchaseCredit
 }
 
 enum OrderStatus {
@@ -500,20 +502,20 @@ model AdminActionLogInterpretation {
 }
 
 model BagItem {
-  id                String           @id @default(cuid()) @db.VarChar(30)
-  position          Int?
-  saved             Boolean?
-  status            BagItemStatus
-  customerId        String?          @map("customer") @db.VarChar(30)
-  productVariantId  String?          @map("productVariant") @db.VarChar(30)
-  physicalProductId String?          @map("physicalProduct") @db.VarChar(30)
-  reservationPhysicalProductId String?          @map("reservationPhysicalProduct") @db.VarChar(30)
-  createdAt         DateTime         @default(now())
-  updatedAt         DateTime         @updatedAt
-  customer          Customer?        @relation(fields: [customerId], references: [id])
-  productVariant    ProductVariant?  @relation(fields: [productVariantId], references: [id])
-  physicalProduct   PhysicalProduct? @relation(fields: [physicalProductId], references: [id])
-  reservationPhysicalProduct ReservationPhysicalProduct? @relation(fields: [reservationPhysicalProductId], references: [id])
+  id                            String           @id @default(cuid()) @db.VarChar(30)
+  position                      Int?
+  saved                         Boolean?
+  status                        BagItemStatus
+  customerId                    String?          @map("customer") @db.VarChar(30)
+  productVariantId              String?          @map("productVariant") @db.VarChar(30)
+  physicalProductId             String?          @map("physicalProduct") @db.VarChar(30)
+  reservationPhysicalProductId  String?          @map("reservationPhysicalProduct") @db.VarChar(30)
+  createdAt                     DateTime         @default(now())
+  updatedAt                     DateTime         @updatedAt
+  customer                      Customer?        @relation(fields: [customerId], references: [id])
+  productVariant                ProductVariant?  @relation(fields: [productVariantId], references: [id])
+  physicalProduct               PhysicalProduct? @relation(fields: [physicalProductId], references: [id])
+  reservationPhysicalProduct    ReservationPhysicalProduct? @relation(fields: [reservationPhysicalProductId], references: [id])
 
   @@unique([productVariantId, customerId])
 }
@@ -624,6 +626,7 @@ model Category {
 model Collection {
   id                 String                @id @default(cuid()) @db.VarChar(30)
   slug               String                @unique
+  featured           Boolean               @default(false)
   title              String?
   subTitle           String?
   published          Boolean
@@ -737,21 +740,22 @@ model CustomerDetail {
 }
 
 model CustomerMembership {
-  id                       String                              @id @default(cuid()) @db.VarChar(30)
-  subscriptionId           String
-  customerId               String                              @map("customer") @db.VarChar(30)
-  planId                   String                              @map("plan") @db.VarChar(30)
-  giftId                   String?
-  grandfathered            Boolean?                            @default(false)
-  creditBalance            Int                                 @default(0)
-  currentBalance           Int?
-  membershipSubscriptionId String?                             @map("subscription") @db.VarChar(30)
-  customer                 Customer                            @relation(fields: [customerId], references: [id])
-  plan                     PaymentPlan                         @relation(fields: [planId], references: [id])
-  subscription             CustomerMembershipSubscriptionData? @relation(fields: [membershipSubscriptionId], references: [id])
-  pauseRequests            PauseRequest[]
-  rentalInvoices           RentalInvoice[]
-  creditUpdateHistory      CreditBalanceUpdateLog[]
+  id                         String                              @id @default(cuid()) @db.VarChar(30)
+  subscriptionId             String
+  customerId                 String                              @map("customer") @db.VarChar(30)
+  planId                     String                              @map("plan") @db.VarChar(30)
+  giftId                     String?
+  purchaseCredits            Int?                                @default(0)
+  grandfathered              Boolean?                            @default(false)
+  creditBalance              Int                                 @default(0)
+  currentBalance             Int?
+  membershipSubscriptionId   String?                             @map("subscription") @db.VarChar(30)
+  customer                   Customer                            @relation(fields: [customerId], references: [id])
+  plan                       PaymentPlan                         @relation(fields: [planId], references: [id])
+  subscription               CustomerMembershipSubscriptionData? @relation(fields: [membershipSubscriptionId], references: [id])
+  pauseRequests              PauseRequest[]
+  rentalInvoices             RentalInvoice[]
+  creditUpdateHistory        CreditBalanceUpdateLog[]
 }
 
 model CreditBalanceUpdateLog {

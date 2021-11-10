@@ -30,6 +30,7 @@ export class CollectionService {
       published: data.published,
       displayTextOverlay: data.displayTextOverlay,
       textOverlayColor: data.textOverlayColor,
+      featured: data.featured,
       placements: data.productIDs && { set: data.placements },
     }
 

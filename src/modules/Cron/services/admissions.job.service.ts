@@ -17,7 +17,7 @@ export class AdmissionsScheduledJobs {
     private readonly error: ErrorService
   ) {}
 
-  @Cron(CronExpression.EVERY_DAY_AT_4AM)
+  @Cron(CronExpression.EVERY_DAY_AT_MIDNIGHT)
   async updateAdmissionsFields() {
     this.logger.log(`Start update admissions field job`)
 

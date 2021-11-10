@@ -36,6 +36,8 @@ enum OrderLineItemRecordType {
   EarlySwap
   Fee
   Total
+  Credit
+  PurchaseCredit
 }
 
 type Order {

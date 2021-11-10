@@ -17,7 +17,7 @@ export class ProductScheduledJobs {
     private readonly productUtils: ProductUtilsService
   ) {}
 
-  @Cron(CronExpression.EVERY_DAY_AT_4AM)
+  @Cron(CronExpression.EVERY_DAY_AT_5AM)
   async cacheRentalPrices() {
     const productsToUpdate = await this.prisma.client.product.findMany({
       where: {
