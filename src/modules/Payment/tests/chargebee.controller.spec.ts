@@ -149,7 +149,7 @@ describe("Chargebee Controller", () => {
           expect(latestCreditBalanceUpdateLog).toBeDefined()
           expect(latestCreditBalanceUpdateLog.amount).toBe(7475)
           expect(latestCreditBalanceUpdateLog.reason).toBe(
-            "Grandfathered customer paid subscription dues on Essential 1 plan"
+            "Grandfathered customer paid subscription dues on Essential 1 plan. Invoice #7067"
           )
         })
         it("Essential 2", async () => {
@@ -167,7 +167,7 @@ describe("Chargebee Controller", () => {
           expect(latestCreditBalanceUpdateLog).toBeDefined()
           expect(latestCreditBalanceUpdateLog.amount).toBe(10925)
           expect(latestCreditBalanceUpdateLog.reason).toBe(
-            "Grandfathered customer paid subscription dues on Essential 2 plan"
+            "Grandfathered customer paid subscription dues on Essential 2 plan. Invoice #7067"
           )
         })
         it("Essential", async () => {
@@ -185,7 +185,7 @@ describe("Chargebee Controller", () => {
           expect(latestCreditBalanceUpdateLog).toBeDefined()
           expect(latestCreditBalanceUpdateLog.amount).toBe(14375)
           expect(latestCreditBalanceUpdateLog.reason).toBe(
-            "Grandfathered customer paid subscription dues on Essential plan"
+            "Grandfathered customer paid subscription dues on Essential plan. Invoice #7067"
           )
         })
         it("Essential 6", async () => {
@@ -203,7 +203,7 @@ describe("Chargebee Controller", () => {
           expect(latestCreditBalanceUpdateLog).toBeDefined()
           expect(latestCreditBalanceUpdateLog.amount).toBe(24725)
           expect(latestCreditBalanceUpdateLog.reason).toBe(
-            "Grandfathered customer paid subscription dues on Essential 6 plan"
+            "Grandfathered customer paid subscription dues on Essential 6 plan. Invoice #7067"
           )
         })
         it("All Access 1", async () => {
@@ -221,7 +221,7 @@ describe("Chargebee Controller", () => {
           expect(latestCreditBalanceUpdateLog).toBeDefined()
           expect(latestCreditBalanceUpdateLog.amount).toBe(12075)
           expect(latestCreditBalanceUpdateLog.reason).toBe(
-            "Grandfathered customer paid subscription dues on All Access 1 plan"
+            "Grandfathered customer paid subscription dues on All Access 1 plan. Invoice #7067"
           )
         })
         it("All Access 2", async () => {
@@ -239,7 +239,7 @@ describe("Chargebee Controller", () => {
           expect(latestCreditBalanceUpdateLog).toBeDefined()
           expect(latestCreditBalanceUpdateLog.amount).toBe(16675)
           expect(latestCreditBalanceUpdateLog.reason).toBe(
-            "Grandfathered customer paid subscription dues on All Access 2 plan"
+            "Grandfathered customer paid subscription dues on All Access 2 plan. Invoice #7067"
           )
         })
         it("All Access", async () => {
@@ -257,7 +257,7 @@ describe("Chargebee Controller", () => {
           expect(latestCreditBalanceUpdateLog).toBeDefined()
           expect(latestCreditBalanceUpdateLog.amount).toBe(20125)
           expect(latestCreditBalanceUpdateLog.reason).toBe(
-            "Grandfathered customer paid subscription dues on All Access plan"
+            "Grandfathered customer paid subscription dues on All Access plan. Invoice #7067"
           )
         })
       })
@@ -293,6 +293,26 @@ describe("Chargebee Controller", () => {
         await sendEvent(paymentSucceededEvent)
         customerWithData = await getCustWithData()
         expect(customerWithData.membership.creditBalance).toBe(6325) // 5500 * 1.15
+      })
+
+      it("If a webhook fires twice, we add credits only once", async () => {
+        const paymentSucceededEvent = getPaymentSucceededEvent(
+          testCustomer.user.id,
+          "essential-1"
+        )
+        await sendEvent(paymentSucceededEvent)
+        await sendEvent(paymentSucceededEvent)
+
+        const customerWithData = await getCustWithData()
+        expect(customerWithData.membership.creditBalance).toBe(7475)
+
+        const latestCreditBalanceUpdateLog =
+          customerWithData.membership.creditUpdateHistory?.[0]
+        expect(latestCreditBalanceUpdateLog).toBeDefined()
+        expect(latestCreditBalanceUpdateLog.amount).toBe(7475)
+        expect(latestCreditBalanceUpdateLog.reason).toBe(
+          "Grandfathered customer paid subscription dues on Essential 1 plan. Invoice #7067"
+        )
       })
     })
 

@@ -229,8 +229,146 @@ export class PhysicalProductService {
         where: {
           barcode: warehouseLocationBarcode,
         },
+        select: {
+          id: true,
+          barcode: true,
+          constraints: {
+            select: {
+              id: true,
+              limit: true,
+            },
+          },
+        },
       }
     )
+    if (warehouseLocation.constraints.length > 0) {
+      throw new Error(`
+      Use single item stow for this warehouse location
+      `)
+    }
+
+    const location = await this.prisma.client.location.findUnique({
+      where: {
+        slug:
+          process.env.SEASONS_CLEANER_LOCATION_SLUG ||
+          "seasons-cleaners-official",
+      },
+      select: {
+        id: true,
+      },
+    })
+
+    const physProdsBeforeUpdate = await this.prisma.client.physicalProduct.findMany(
+      {
+        where: {
+          id: {
+            in: ids,
+          },
+        },
+        select: {
+          id: true,
+          seasonsUID: true,
+          inventoryStatus: true,
+          productStatus: true,
+          warehouseLocation: { select: { barcode: true } },
+          productVariant: {
+            select: {
+              id: true,
+              reservable: true,
+              reserved: true,
+              offloaded: true,
+              nonReservable: true,
+              stored: true,
+              product: {
+                select: {
+                  id: true,
+                  slug: true,
+                  name: true,
+                  images: {
+                    select: {
+                      url: true,
+                      id: true,
+                    },
+                  },
+                  brand: { select: { id: true, name: true } },
+                  variants: {
+                    select: {
+                      id: true,
+                      displayShort: true,
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      }
+    )
+    const storedPhysicalProducts = physProdsBeforeUpdate.filter(
+      a => a.inventoryStatus === "Stored"
+    )
+    if (storedPhysicalProducts.length > 0) {
+      const storedSUIDs = storedPhysicalProducts.map(a => a.seasonsUID)
+      throw `The following items are stored. Please use single item stow for them: ${storedSUIDs}`
+    }
+
+    const productVariants = physProdsBeforeUpdate.map(
+      a =>
+        (a?.productVariant as unknown) as Pick<
+          ProductVariant,
+          "reservable" | "id"
+        > & {
+          product: Pick<Product, "id" | "slug" | "name"> & {
+            brand: Pick<Brand, "name">
+          }
+        }
+    )
+
+    // If the physical product is being stowed and there are currently no reservable units, notify users
+
+    const notifyUsersIfNeeded = []
+    productVariants.forEach(async prodVariant => {
+      if (prodVariant.reservable !== 0) {
+        return
+      }
+      const product = prodVariant.product
+      const notifications = await this.prisma.client.productNotification.findMany(
+        {
+          where: {
+            productVariant: {
+              id: prodVariant.id,
+            },
+          },
+          select: {
+            id: true,
+            customer: {
+              select: {
+                id: true,
+                user: { select: { id: true, email: true } },
+              },
+            },
+          },
+        }
+      )
+
+      const emails = notifications.map(notif => notif.customer?.user?.email)
+      // Send the notification
+      notifyUsersIfNeeded.push(
+        this.pushNotification.pushNotifyUsers({
+          emails,
+          pushNotifID: "ProductRestock",
+          vars: {
+            id: product?.id,
+            slug: product?.slug,
+            productName: product?.name,
+            brandName: product?.brand?.name,
+          },
+        })
+      )
+      notifyUsersIfNeeded.push(
+        this.emails.sendRestockNotificationEmails(emails, product)
+      )
+    })
 
     const stowedProducts = await this.prisma.client.physicalProduct.updateMany({
       where: {
@@ -240,8 +378,14 @@ export class PhysicalProductService {
       },
       data: {
         warehouseLocationId: warehouseLocation.id,
+        locationId: location.id,
+        productStatus: "Clean",
+        inventoryStatus: "Reservable",
       },
     })
+
+    await Promise.all(notifyUsersIfNeeded)
+
     return stowedProducts.count > 0
   }
 

@@ -20,7 +20,6 @@ const PACKAGE_DELIVERED_TXN_ID_TWO = TRANSACTION_ID_TWO_EVENTS["Delivered"]
 
 describe("Shippo Controller", () => {
   let app: INestApplication
-  let pushNotificationsService: PushNotificationService
   let prismaService: PrismaService
   let testUtils: TestUtilsService
   let testReservation: Partial<Reservation>
@@ -33,16 +32,8 @@ describe("Shippo Controller", () => {
     app = moduleRef.createNestApplication()
     await app.init()
 
-    pushNotificationsService = moduleRef.get<PushNotificationService>(
-      PushNotificationService
-    )
     prismaService = moduleRef.get<PrismaService>(PrismaService)
     testUtils = moduleRef.get<TestUtilsService>(TestUtilsService)
-
-    // Don't send push notifications
-    jest
-      .spyOn(pushNotificationsService, "pushNotifyUsers")
-      .mockResolvedValue(Promise.resolve({}) as any)
 
     const { reservation, cleanupFunc } = await testUtils.createTestReservation({
       sentPackageTransactionID: TRANSACTION_ID_ONE,
