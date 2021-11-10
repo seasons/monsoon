@@ -129,7 +129,7 @@ describe("Calculate Current Balance", () => {
       expect(currentBalance).toEqual(3000)
     })
 
-    it("Calcualtes the estimated total properly", () => {
+    it("Calculates the estimated total properly", () => {
       // $20/month product held for 25 days --> 16.67
       // $40/month product held for 25 days --> 33.33
       expect(estimatedTotal).toBe(5000)
