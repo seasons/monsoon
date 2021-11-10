@@ -38,7 +38,7 @@ const CHARGEBEE_USAGE_LINE_ITEMS = [
     is_taxed: true,
   },
   {
-    amount: 3841,
+    amount: 3833,
     date_from: 1628741509,
     date_to: 1630642309,
     tax_amount: 307,
