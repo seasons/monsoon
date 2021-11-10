@@ -53,7 +53,7 @@ describe("Chargebee Controller", () => {
       expect(testCustomer.membership.purchaseCredits).toBe(0)
     })
 
-    it("If on essential plan, do not add membership dicount credits", async () => {
+    it("while customer is on essential plan, does not add membership dicount credits", async () => {
       await prisma.client.customerMembership.update({
         where: { id: testCustomer.membership.id },
         data: { plan: { connect: { planID: "essential" } } },
@@ -70,7 +70,7 @@ describe("Chargebee Controller", () => {
       expect(customerWithData.membership.purchaseCredits).toBe(0)
     })
 
-    it("If on access-yearly plan, customer should have 3000 membership discount credits", async () => {
+    it("while customer is on access-yearly plan, customer has 3000 membership discount credits", async () => {
       await prisma.client.customerMembership.update({
         where: { id: testCustomer.membership.id },
         data: { plan: { connect: { planID: "access-yearly" } } },
