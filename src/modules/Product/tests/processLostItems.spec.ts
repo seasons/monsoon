@@ -97,14 +97,14 @@ describe("Mark Items as Lost", () => {
       expect(postLostBagItems.length).toBe(0)
     })
 
-    it("sets the lostAt, isLost for relevant reservationPhysicalProducts", async () => {
+    it("sets the lostAt, hasBeenLost for relevant reservationPhysicalProducts", async () => {
       /**
        * create reservation
        * place reservation
        * ship reservation
        * mark items as lost
        * check to see if reservationPhysicalProduct's lostAt time stamp has been set
-       * check to see if reservationPhysicalProduct's isLost boolean has been set
+       * check to see if reservationPhysicalProduct's hasBeenLost boolean has been set
        */
 
       await setReservationCreatedAt(reservation.id, 4, {
@@ -137,13 +137,13 @@ describe("Mark Items as Lost", () => {
           },
           select: {
             lostAt: true,
-            isLost: true,
+            hasBeenLost: true,
           },
         }
       )
 
       for (const reservationPhysProd of lostResPhysProds) {
-        expect(reservationPhysProd.isLost).toBe(true)
+        expect(reservationPhysProd.hasBeenLost).toBe(true)
         expect(!!reservationPhysProd.lostAt).toBe(true)
       }
     })

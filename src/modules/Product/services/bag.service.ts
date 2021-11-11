@@ -467,19 +467,6 @@ export class BagService {
     // Probably best to query bagItemsWithData at the top, including the reservation physical products and the physical products.
 
     // TODO: Add a test that confirms this errors as expected
-    // const lostResPhysProds = await this.prisma.client.reservationPhysicalProduct.findMany(
-    //   {
-    //     where: {
-    //       id: {
-    //         in: lostBagItemsIds,
-    //       },
-    //     },
-    //     select: {
-    //       id: true,
-    //       status: true,
-    //     },
-    //   }
-    // )
 
     const bagItemsWithData = await this.prisma.client.bagItem.findMany({
       where: {
@@ -514,11 +501,13 @@ export class BagService {
       a => a.reservationPhysicalProduct
     )
 
+    const physicalProducts = bagItemsWithData.map(a => a.physicalProduct)
+
     // TODO: Once we update the statuses for in transit states, this needs to be updated.
     // Also, it should probably include the delivered statuses, since things can get stolen from stoops/lobbies etc.
     lostResPhysProds.forEach(resPhysProd => {
       if (
-        ([
+        !([
           "ScannedOnInbound",
           "InTransitInbound",
           "DeliveredToCustomer",
@@ -593,29 +582,6 @@ export class BagService {
         })
       )
     }
-
-    const physicalProducts = await this.prisma.client.physicalProduct.findMany({
-      where: {
-        bagItems: {
-          some: {
-            id: {
-              in: lostBagItemsIds,
-            },
-          },
-        },
-      },
-      select: {
-        id: true,
-        productVariant: {
-          select: {
-            id: true,
-            reserved: true,
-            reservable: true,
-            nonReservable: true,
-          },
-        },
-      },
-    })
 
     physicalProducts.forEach(physicalProduct => {
       const productVariantData = this.productVariantService.getCountsForStatusChange(
