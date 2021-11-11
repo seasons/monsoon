@@ -311,6 +311,8 @@ export class BagService {
       customerID
     )) as any
 
+    // TODO: We probably should gate based on the reservationPhysicalProduct status, rather than the reservation status,
+    // now that we're kind of relying less and less on reservation statuses.
     if (!["Queued", "Hold"].includes(lastReservation.status)) {
       throw Error(
         "Only reservations with status Hold or Queued can have a bag item swapped"
