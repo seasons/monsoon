@@ -58,9 +58,7 @@ export class BagService {
       case "AtHome":
         return await this.getAtHomeSection(bagItems)
       case "CustomerToBusiness":
-        return this.getCustomerToBusinessSections(bagItems).filter(
-          s => s.status === "CustomerToBusiness"
-        )
+        return this.getCustomerToBusinessSection(bagItems)
       case "BusinessToCustomer":
         return await this.getBusinessToCustomerSection(bagItems)
       case "ReturnPending":
@@ -86,6 +84,25 @@ export class BagService {
           select: {
             id: true,
             status: true,
+            hasBeenScannedOnInbound: true,
+            outboundPackage: {
+              select: {
+                shippingLabel: {
+                  select: {
+                    trackingURL: true,
+                  },
+                },
+              },
+            },
+            inboundPackage: {
+              select: {
+                shippingLabel: {
+                  select: {
+                    trackingURL: true,
+                  },
+                },
+              },
+            },
           },
         },
         physicalProduct: {
@@ -100,18 +117,35 @@ export class BagService {
       return [
         this.getQueuedSection(bagItems),
         this.getPickedSection(bagItems),
-        this.getPackedSection(bagItems),
+        this.getPackedSection(bagItems, "spring"),
         this.getBusinessToCustomerSection(bagItems),
         this.getAtHomeSection(bagItems),
         this.getReturnPendingSection(bagItems),
-        this.getCustomerToBusinessSections(bagItems),
+        this.getCustomerToBusinessSection(bagItems),
       ]
     } else {
       return [
         this.getAddedSection(bagItems),
         this.getReturnPendingSection(bagItems),
+
+        // Step 1 outbound,
+        this.getPackedSection(bagItems, "client"),
+
+        // Step 2 outbound
         this.getBusinessToCustomerSection(bagItems),
-        ...this.getCustomerToBusinessSections(bagItems),
+
+        // Step 3 outbound
+        this.getDeliveredToCustomerSection(bagItems),
+
+        // Step 1 inbound
+        this.getHasBeenScannedOutboundSection(bagItems),
+
+        // Step 2 inbound
+        this.getCustomerToBusinessSection(bagItems),
+
+        // Step 3 inbound
+        this.getDeliveredToBusinessSection(bagItems),
+
         this.getAtHomeSection(bagItems),
       ]
     }
@@ -608,16 +642,20 @@ export class BagService {
   }
 
   private getAtHomeSection(bagItems) {
-    const atHomeBagItems = bagItems.filter(item => {
+    const filteredBagItems = bagItems.filter(item => {
       const updatedMoreThan24HoursAgo =
         item?.updatedAt &&
         // @ts-ignore
         DateTime.fromISO(item?.updatedAt.toISOString()).diffNow("days")?.values
           ?.days <= -1
 
+      const noReturnPending = !item.reservationPhysicalProduct
+        ?.hasCustomerReturnIntent
+
       return (
         item.reservationPhysicalProduct?.status === "DeliveredToCustomer" &&
-        updatedMoreThan24HoursAgo
+        updatedMoreThan24HoursAgo &&
+        noReturnPending
       )
     })
 
@@ -625,45 +663,60 @@ export class BagService {
       id: "atHome",
       title: "At home",
       status: "AtHome",
-      bagItems: atHomeBagItems,
+      bagItems: filteredBagItems,
     }
   }
 
   private getPickedSection(bagItems) {
-    const pickedBagItems = bagItems.filter(
+    const filteredBagItems = bagItems.filter(
       b => b.reservationPhysicalProduct?.status === "Picked"
     )
     return {
       id: "picked",
       title: "Picked",
       status: "Picked",
-      bagItems: pickedBagItems,
+      bagItems: filteredBagItems,
     }
   }
 
-  private getPackedSection(bagItems) {
-    const packedBagItems = bagItems.filter(
-      b => b.reservationPhysicalProduct?.status === "Packed"
-    )
-    return {
-      id: "packed",
-      title: "Packed",
-      status: "Packed",
-      bagItems: packedBagItems,
-    }
-  }
-
-  private getCustomerToBusinessSections(bagItems): any[] {
-    const sections = []
-    const packedItems = bagItems.filter(b => {
-      const resPhysProdStatus = b.reservationPhysicalProduct?.status
-      return resPhysProdStatus === "Packed"
+  // 1. Inbound step 1
+  private getHasBeenScannedOutboundSection(bagItems) {
+    const filteredBagItems = bagItems.filter(b => {
+      return b.reservationPhysicalProduct?.hasBeenScannedOnInbound
     })
-    const shippedToBusinessItems = bagItems.filter(b => {
+
+    return {
+      id: "customerToBusiness",
+      title: "On the way back",
+      status: "CustomerToBusiness",
+      bagItems: filteredBagItems,
+      deliveryStep: 1,
+      deliveryStatusText: "Received by UPS",
+      deliveryTrackingUrl: this.getInboundTrackingUrl(filteredBagItems),
+    }
+  }
+
+  // 2. Inbound step 2
+  private getCustomerToBusinessSection(bagItems) {
+    const filteredBagItems = bagItems.filter(b => {
       const resPhysProdStatus = b.reservationPhysicalProduct?.status
       return resPhysProdStatus === "ShippedToBusiness"
     })
-    const deliveredItems = bagItems.filter(b => {
+
+    return {
+      id: "customerToBusiness",
+      title: "On the way back",
+      status: "CustomerToBusiness",
+      bagItems: filteredBagItems,
+      deliveryStep: 2,
+      deliveryStatusText: "Shipped",
+      deliveryTrackingUrl: this.getInboundTrackingUrl(filteredBagItems),
+    }
+  }
+
+  // 3. Inbound step 3
+  private getDeliveredToBusinessSection(bagItems) {
+    const filteredBagItems = bagItems.filter(b => {
       const updatedMoreThan24HoursAgo =
         b?.updatedAt &&
         // @ts-ignore
@@ -675,77 +728,87 @@ export class BagService {
         !updatedMoreThan24HoursAgo
       )
     })
-    if (packedItems.length > 0) {
-      sections.push({
-        id: "customerToBusiness",
-        title: "On the way back",
-        status: "CustomerToBusiness",
-        bagItems: packedItems,
-        deliveryStep: 1,
-        deliveryStatusText: "Received by UPS",
-        deliveryTrackingUrl: "",
-      })
+
+    return {
+      id: "customerToBusiness",
+      title: "Order returned",
+      status: "CustomerToBusiness",
+      bagItems: filteredBagItems,
+      deliveryStep: 3,
+      deliveryStatusText: "Shipped",
+      deliveryTrackingUrl: this.getInboundTrackingUrl(filteredBagItems),
     }
-    if (shippedToBusinessItems.length > 0) {
-      sections.push({
-        id: "customerToBusiness",
-        title: "On the way back",
-        status: "CustomerToBusiness",
-        bagItems: shippedToBusinessItems,
-        deliveryStep: 2,
-        deliveryStatusText: "Shipped",
-        deliveryTrackingUrl: "",
-      })
-    }
-    if (deliveredItems.length > 0) {
-      sections.push({
-        id: "customerToBusiness",
-        title: "Order returned",
-        status: "CustomerToBusiness",
-        bagItems: deliveredItems,
-        deliveryStep: 3,
-        deliveryStatusText: "Shipped",
-        deliveryTrackingUrl: "",
-      })
-    }
-    return sections
   }
 
-  private getBusinessToCustomerSection(bagItems) {
-    const businessToCustomerBagItems = bagItems.filter(b => {
-      const updatedMoreThan24HoursAgo =
-        b?.updatedAt &&
-        // @ts-ignore
-        DateTime.fromISO(b?.updatedAt.toISOString()).diffNow("days")?.values
-          ?.days <= -1
-      const beingShipped =
-        b.reservationPhysicalProduct?.status === "ShippedToCustomer"
-      const recentlyReceived =
-        b.reservationPhysicalProduct?.status === "ShippedToCustomer" &&
-        !updatedMoreThan24HoursAgo
+  // 1. Outbound step 1
+  private getPackedSection(bagItems: any, application: "spring" | "client") {
+    const isSpring = application === "spring"
+    const filteredBagItems = bagItems.filter(
+      b => b.reservationPhysicalProduct?.status === "Packed"
+    )
 
-      return beingShipped || recentlyReceived
+    return {
+      id: "packed",
+      title: isSpring ? "Packed" : "Order received",
+      status: "Packed",
+      bagItems: filteredBagItems,
+      deliveryStep: 1,
+      deliveryStatusText: "Received",
+      deliveryTrackingUrl: this.getOutboundTrackingUrl(filteredBagItems),
+    }
+  }
+
+  // 2. Outbound step 2
+  private getBusinessToCustomerSection(bagItems) {
+    const filteredBagItems = bagItems.filter(b => {
+      return b.reservationPhysicalProduct?.status === "ShippedToCustomer"
     })
 
     return {
       id: "businessToCustomer",
       title: "Order on the way",
       status: "BusinessToCustomer",
-      bagItems: businessToCustomerBagItems,
-      deliveryStep: 1,
-      deliveryStatusText: "Received",
-      deliveryTrackingUrl: "",
+      bagItems: filteredBagItems,
+      deliveryStep: 2,
+      deliveryStatusText: "Shipped",
+      deliveryTrackingUrl: this.getOutboundTrackingUrl(filteredBagItems),
+    }
+  }
+
+  // 3. Outbound step 3
+  private async getDeliveredToCustomerSection(bagItems) {
+    const filteredBagItems = bagItems.filter(b => {
+      const updatedMoreThan24HoursAgo =
+        b?.updatedAt &&
+        // @ts-ignore
+        DateTime.fromISO(b?.updatedAt.toISOString()).diffNow("days")?.values
+          ?.days <= -1
+
+      const noReturnPending = !b.reservationPhysicalProduct
+        ?.hasCustomerReturnIntent
+
+      return (
+        !updatedMoreThan24HoursAgo &&
+        b.reservationPhysicalProduct?.status === "DeliveredToCustomer" &&
+        noReturnPending
+      )
+    })
+
+    return {
+      id: "deliveredToCustomer",
+      title: "Order delivered",
+      status: "DeliveredToCustomer",
+      bagItems: filteredBagItems,
+      deliveryStep: 3,
+      deliveryStatusText: "Shipped",
+      deliveryTrackingUrl: this.getOutboundTrackingUrl(filteredBagItems),
     }
   }
 
   private async getReturnPendingSection(bagItems) {
     const filteredBagItems = bagItems.filter(
       b =>
-        [
-          "DeliveredToCustomer",
-          "ShippedToBusiness",
-          "DeliveredToBusiness",
-        ].includes(b.reservationPhysicalProduct?.status) &&
+        b.reservationPhysicalProduct?.status === "DeliveredToCustomer" &&
         b.reservationPhysicalProduct?.hasCustomerReturnIntent
     )
 
@@ -755,6 +818,26 @@ export class BagService {
       status: "ReturnPending",
       bagItems: filteredBagItems,
     }
+  }
+
+  private getOutboundTrackingUrl(bagItems) {
+    return (
+      bagItems?.find(
+        b =>
+          b.reservationPhysicalProduct?.outboundPackage?.shippingLabel
+            ?.trackingURL
+      ) ?? ""
+    )
+  }
+
+  private getInboundTrackingUrl(bagItems) {
+    return (
+      bagItems?.find(
+        b =>
+          b.reservationPhysicalProduct?.inboundPackage?.shippingLabel
+            ?.trackingURL
+      ) ?? ""
+    )
   }
 
   private getAddedSection(bagItems) {
