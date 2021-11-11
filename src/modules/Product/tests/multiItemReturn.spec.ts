@@ -344,4 +344,45 @@ describe("Return Items", () => {
       expect(!!reservationPhysProd.returnProcessedAt).toBe(true)
     }
   })
+
+  it("sets status to ReturnProcessed on reservationPhysicalProduct", async () => {
+    /**
+     * create customer
+     * make reservation
+     * set reservation to delivered
+     * query reservationPhysicalProducts related to reservation, filter by hasReturnProcessed
+     * check to see if the number of items returned matches the length of the filtered array
+     * check to see if the filtered array has a returnProcessAt
+     */
+
+    const productStates = []
+
+    for (let physicalProduct of physicalProducts) {
+      productStates.push({
+        productUID: physicalProduct.seasonsUID,
+        returned: true,
+        productStatus: "Dirty",
+        notes: "no notes needed here",
+      })
+    }
+    await resPhysProdService.returnMultiItems({
+      productStates,
+      droppedOffBy: "UPS",
+      trackingNumber: reservation.returnPackage.trackingNumber,
+    })
+    const reservationPhysProds = await prismaService.client.reservationPhysicalProduct.findMany(
+      {
+        where: {
+          reservationId: reservation.id,
+        },
+        select: {
+          status: true,
+        },
+      }
+    )
+
+    const hasReturnProcessedStatus = reservationPhysProds.every(
+      a => a.status === "ReturnProcessed"
+    )
+  })
 })

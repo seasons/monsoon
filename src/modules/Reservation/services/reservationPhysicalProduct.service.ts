@@ -2,7 +2,10 @@ import { ProductVariantService } from "@app/modules/Product/services/productVari
 import { InventoryStatus, PhysicalProductStatus } from "@app/prisma"
 import { PrismaService } from "@app/prisma/prisma.service"
 import { Injectable } from "@nestjs/common"
-import { ReservationDropOffAgent } from "@prisma/client"
+import {
+  ReservationDropOffAgent,
+  ReservationPhysicalProductStatus,
+} from "@prisma/client"
 import { DateTime } from "luxon"
 
 interface ProductState {
@@ -60,6 +63,7 @@ export class ReservationPhysicalProductService {
     let promises = []
 
     const reservationPhysicalProductData = {
+      status: <ReservationPhysicalProductStatus>"ReturnProcessed",
       hasReturnProcessed: true,
       returnProcessedAt: DateTime.local().toISO(),
       ...(returnedPackage && {
