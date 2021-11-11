@@ -1,7 +1,12 @@
 import { ProductUtilsService } from "@app/modules/Utils/services/product.utils.service"
 import { UtilsService } from "@app/modules/Utils/services/utils.service"
 import { Injectable } from "@nestjs/common"
-import { BagItem, InventoryStatus, Prisma } from "@prisma/client"
+import {
+  BagItem,
+  InventoryStatus,
+  Prisma,
+  ReservationPhysicalProductStatus,
+} from "@prisma/client"
 import { PrismaService } from "@prisma1/prisma.service"
 import { ApolloError } from "apollo-server"
 import { DateTime } from "luxon"
@@ -513,8 +518,14 @@ export class BagService {
     // Also, it should probably include the delivered statuses, since things can get stolen from stoops/lobbies etc.
     lostResPhysProds.forEach(resPhysProd => {
       if (
-        resPhysProd.status !== "ShippedToCustomer" &&
-        resPhysProd.status !== "ShippedToBusiness"
+        ([
+          "ScannedOnInbound",
+          "InTransitInbound",
+          "DeliveredToCustomer",
+          "ScannedOnOutbound",
+          "InTransitOutbound",
+          "DeliveredToBusiness",
+        ] as ReservationPhysicalProductStatus[]).includes(resPhysProd.status)
       ) {
         throw new Error(
           // TODO: This is gramatically incorrect. Fix
@@ -534,12 +545,19 @@ export class BagService {
         },
       })
     )
-    // TODO: Update status filters according to above comment
-    const lostOutboundResPhysProds = lostResPhysProds.filter(
-      a => a.status === "ShippedToCustomer"
+    const lostOutboundResPhysProds = lostResPhysProds.filter(a =>
+      ([
+        "ScannedOnOutbound",
+        "InTransitOutbound",
+        "DeliveredToCustomer",
+      ] as ReservationPhysicalProductStatus[]).includes(a.status)
     )
-    const lostInboundItemsResPhysProds = lostResPhysProds.filter(
-      a => a.status === "ShippedToBusiness"
+    const lostInboundItemsResPhysProds = lostResPhysProds.filter(a =>
+      ([
+        "ScannedOnInbound",
+        "InTransitInbound",
+        "DeliveredToBusiness",
+      ] as ReservationPhysicalProductStatus[]).includes(a.status)
     )
 
     if (lostOutboundResPhysProds) {
@@ -553,7 +571,7 @@ export class BagService {
           data: {
             lostAt: new Date(),
             lostInPhase: "BusinessToCustomer",
-            hasBeenLost: true, //TODO: Update
+            hasBeenLost: true,
           },
         })
       )
@@ -570,7 +588,7 @@ export class BagService {
           data: {
             lostAt: new Date(),
             lostInPhase: "CustomerToBusiness",
-            hasBeenLost: true, //TODO: update
+            hasBeenLost: true,
           },
         })
       )
