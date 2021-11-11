@@ -41,11 +41,15 @@ export const ProcessableReservationPhysicalProductSelect = Prisma.validator<
   id: true,
   status: true,
   deliveredToCustomerAt: true,
+  droppedOffAt: true,
+  droppedOffBy: true,
+  hasBeenScannedOnInbound: true,
+  scannedOnInboundAt: true,
+  returnProcessedAt: true,
   physicalProduct: {
     select: {
       id: true,
       seasonsUID: true,
-
       productVariant: {
         select: {
           product: {
@@ -558,6 +562,23 @@ export class RentalService {
         break
       case "DeliveredToCustomer":
         rentalEndedAt = getRentalEndedAt(today)
+        break
+      case "ReturnProcessed":
+        if (reservationPhysicalProduct.droppedOffBy === "Customer") {
+          rentalEndedAt = getRentalEndedAt(
+            reservationPhysicalProduct.droppedOffAt
+          )
+        } else if (reservationPhysicalProduct.hasBeenScannedOnInbound) {
+          rentalEndedAt = getRentalEndedAt(
+            reservationPhysicalProduct.scannedOnInboundAt
+          )
+        } else {
+          // TODO: Need to apply a cushion here and test this case
+          rentalEndedAt = getRentalEndedAt(
+            reservationPhysicalProduct.returnProcessedAt
+          )
+        }
+
         break
       default:
         throw new Error(

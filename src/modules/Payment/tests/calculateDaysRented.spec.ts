@@ -174,7 +174,7 @@ describe("Calculate Days Rented", () => {
         "DeliveredToCustomer"
       )
 
-      reservationPhysicalProductWithData = getReservationPhysicalProductWithDataWithParams(
+      reservationPhysicalProductWithData = await getReservationPhysicalProductWithDataWithParams(
         reservationPhysicalProduct.id
       )
       const {
@@ -194,7 +194,7 @@ describe("Calculate Days Rented", () => {
     })
 
     it("Reserved and shipped back", async () => {
-      const sevenDaysAgo = timeUtils.xDaysAgoISOString(23)
+      const nineDaysAgo = timeUtils.xDaysAgoISOString(9)
 
       initialReservation = await addToBagAndReserveForCustomerWithParams(1, {
         numDaysAgo: 25,
@@ -229,7 +229,7 @@ describe("Calculate Days Rented", () => {
         "ReturnProcessed"
       )
 
-      reservationPhysicalProductWithData = getReservationPhysicalProductWithDataWithParams(
+      reservationPhysicalProductWithData = await getReservationPhysicalProductWithDataWithParams(
         reservationPhysicalProduct.id
       )
       const {
@@ -242,9 +242,9 @@ describe("Calculate Days Rented", () => {
         reservationPhysicalProductWithData
       )
 
-      expect(daysRented).toBe(16)
+      expect(daysRented).toBe(14)
       expectTimeToEqual(rentalStartedAt, twentyThreeDaysAgo)
-      expectTimeToEqual(rentalEndedAt, sevenDaysAgo)
+      expectTimeToEqual(rentalEndedAt, nineDaysAgo)
       expect(comment).toBe("") // TODO:
     })
 
@@ -280,7 +280,7 @@ describe("Calculate Days Rented", () => {
         "ReturnProcessed"
       )
 
-      reservationPhysicalProductWithData = getReservationPhysicalProductWithDataWithParams(
+      reservationPhysicalProductWithData = await getReservationPhysicalProductWithDataWithParams(
         reservationPhysicalProduct.id
       )
       const {
