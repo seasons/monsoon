@@ -549,6 +549,13 @@ export class RentalService {
       return defaultDate
     }
 
+    const throwErrorIfRentalEndedAtUndefined = () => {
+      if (!rentalEndedAt) {
+        throw new Error(
+          `Failed to calculate days rented for item with status ${reservationPhysicalProduct.status}`
+        )
+      }
+    }
     switch (reservationPhysicalProduct.status) {
       case "Queued":
       case "Picked":
@@ -557,10 +564,11 @@ export class RentalService {
         rentalStartedAt = undefined
         break
       case "ScannedOnInbound":
-        // TODO:
-        break
       case "InTransitInbound":
-        // TODO:
+        rentalEndedAt = getRentalEndedAt(
+          reservationPhysicalProduct.scannedOnInboundAt
+        )
+        throwErrorIfRentalEndedAtUndefined()
         break
       case "ScannedOnOutbound":
         // TODO:
@@ -596,11 +604,7 @@ export class RentalService {
             )
           )
         }
-        if (!rentalEndedAt) {
-          throw new Error(
-            "Failed to calculate days rented for item with status ReturnProcessed"
-          )
-        }
+        throwErrorIfRentalEndedAtUndefined()
         break
       case "Lost":
         // TODO:
