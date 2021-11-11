@@ -459,6 +459,9 @@ export class BagService {
   }
 
   async processLostItems(lostBagItemsIds) {
+    // Probably best to query bagItemsWithData at the top, including the reservation physical products and the physical products.
+
+    // TODO: Add a test that confirms this errors as expected
     const lostResPhysProds = await this.prisma.client.reservationPhysicalProduct.findMany(
       {
         where: {
@@ -473,12 +476,15 @@ export class BagService {
       }
     )
 
+    // TODO: Once we update the statuses for in transit states, this needs to be updated.
+    // Also, it should probably include the delivered statuses, since things can get stolen from stoops/lobbies etc.
     lostResPhysProds.forEach(resPhysProd => {
       if (
         resPhysProd.status !== "ShippedToCustomer" &&
         resPhysProd.status !== "ShippedToBusiness"
       ) {
         throw new Error(
+          // TODO: This is gramatically incorrect. Fix
           "Items that are inbound or outbound can only be marked as lost"
         )
       }
@@ -495,6 +501,7 @@ export class BagService {
         },
       })
     )
+    // TODO: Update status filters according to above comment
     const lostOutboundResPhysProds = lostResPhysProds.filter(
       a => a.status === "ShippedToCustomer"
     )
@@ -513,7 +520,7 @@ export class BagService {
           data: {
             lostAt: new Date(),
             lostInPhase: "BusinessToCustomer",
-            isLost: true,
+            isLost: true, //TODO: Update
           },
         })
       )
@@ -530,7 +537,7 @@ export class BagService {
           data: {
             lostAt: new Date(),
             lostInPhase: "CustomerToBusiness",
-            isLost: true,
+            isLost: true, //TODO: update
           },
         })
       )
