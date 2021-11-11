@@ -193,7 +193,7 @@ describe("Calculate Days Rented", () => {
       expect(comment).toBe("") // TODO:
     })
 
-    it("Reserved and shipped back", async () => {
+    it("Reserved and shipped back (aka UPS Dropoff)", async () => {
       const nineDaysAgo = timeUtils.xDaysAgoISOString(9)
 
       initialReservation = await addToBagAndReserveForCustomerWithParams(1, {
@@ -300,7 +300,91 @@ describe("Calculate Days Rented", () => {
     })
 
     it("Reserved and returned with missing dropoff, scannedOnInbound timestamps", async () => {
-      expect(0).toBe(1)
+      const eightDaysAgo = timeUtils.xDaysAgoISOString(8)
+
+      initialReservation = await addToBagAndReserveForCustomerWithParams(1, {
+        numDaysAgo: 25,
+      })
+      const reservationPhysicalProduct =
+        initialReservation.reservationPhysicalProducts[0]
+      await setReservationPhysicalProductDeliveredToCustomerAtWithParams(
+        reservationPhysicalProduct.id,
+        23
+      )
+
+      // Fake the data
+      await setReservationPhysicalProductDeliveredToBusinessAtWithParams(
+        reservationPhysicalProduct.id,
+        5
+      )
+      await setReservationPhysicalProductReturnProcessedAtWithParams(
+        reservationPhysicalProduct.id,
+        5
+      )
+      await setReservationPhysicalProductStatusWithParams(
+        reservationPhysicalProduct.id,
+        "ReturnProcessed"
+      )
+
+      reservationPhysicalProductWithData = await getReservationPhysicalProductWithDataWithParams(
+        reservationPhysicalProduct.id
+      )
+      const {
+        daysRented,
+        comment,
+        rentalEndedAt,
+        rentalStartedAt,
+      } = await rentalService.calcDaysRented(
+        testCustomer.membership.rentalInvoices[0],
+        reservationPhysicalProductWithData
+      )
+
+      expect(daysRented).toBe(15) // received 23 days ago, processed 5 days ago == 18 days. 3 day cushion = 15.
+      expectTimeToEqual(rentalStartedAt, twentyThreeDaysAgo)
+      expectTimeToEqual(rentalEndedAt, eightDaysAgo)
+      expect(comment).toBe("") // TODO:
+    })
+
+    it("Reserved and returned with missing dropoff, scannedOnInbound, deliveredToBusinessAt timestamp", async () => {
+      const fourDaysAgo = timeUtils.xDaysAgoISOString(4)
+
+      initialReservation = await addToBagAndReserveForCustomerWithParams(1, {
+        numDaysAgo: 25,
+      })
+      const reservationPhysicalProduct =
+        initialReservation.reservationPhysicalProducts[0]
+      await setReservationPhysicalProductDeliveredToCustomerAtWithParams(
+        reservationPhysicalProduct.id,
+        23
+      )
+
+      // Fake the data
+      await setReservationPhysicalProductReturnProcessedAtWithParams(
+        reservationPhysicalProduct.id,
+        1
+      )
+      await setReservationPhysicalProductStatusWithParams(
+        reservationPhysicalProduct.id,
+        "ReturnProcessed"
+      )
+
+      reservationPhysicalProductWithData = await getReservationPhysicalProductWithDataWithParams(
+        reservationPhysicalProduct.id
+      )
+      const {
+        daysRented,
+        comment,
+        rentalEndedAt,
+        rentalStartedAt,
+      } = await rentalService.calcDaysRented(
+        testCustomer.membership.rentalInvoices[0],
+        reservationPhysicalProductWithData
+      )
+
+      expect(daysRented).toBe(19) // received 23 days ago, processed 1 days ago == 22 days. 3 day cushion = 19.
+      expectTimeToEqual(rentalStartedAt, twentyThreeDaysAgo)
+      expectTimeToEqual(rentalEndedAt, fourDaysAgo)
+      expect(comment).toBe("") // TODO:
     })
   })
 })

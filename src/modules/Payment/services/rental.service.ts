@@ -41,6 +41,7 @@ export const ProcessableReservationPhysicalProductSelect = Prisma.validator<
   id: true,
   status: true,
   deliveredToCustomerAt: true,
+  deliveredToBusinessAt: true,
   droppedOffAt: true,
   droppedOffBy: true,
   hasBeenScannedOnInbound: true,
@@ -549,17 +550,23 @@ export class RentalService {
     }
 
     switch (reservationPhysicalProduct.status) {
+      case "Queued":
       case "Picked":
       case "Packed":
-      case "Queued":
       case "Hold":
         rentalStartedAt = undefined
         break
-      case "ShippedToCustomer":
+      case "ScannedOnInbound":
         // TODO:
         break
-      case "ShippedToBusiness":
+      case "InTransitInbound":
         // TODO:
+        break
+      case "ScannedOnOutbound":
+        // TODO:
+        break
+      case "InTransitOutbound":
+        //TODO:
         break
       case "DeliveredToCustomer":
         rentalEndedAt = getRentalEndedAt(today)
@@ -580,12 +587,20 @@ export class RentalService {
             reservationPhysicalProduct.scannedOnInboundAt
           )
         } else {
-          // TODO: Need to apply a cushion here and test this case
           rentalEndedAt = getRentalEndedAt(
-            reservationPhysicalProduct.returnProcessedAt
+            this.timeUtils.xDaysBeforeDate(
+              reservationPhysicalProduct.deliveredToBusinessAt ||
+                reservationPhysicalProduct.returnProcessedAt,
+              3,
+              "date"
+            )
           )
         }
-
+        if (!rentalEndedAt) {
+          throw new Error(
+            "Failed to calculate days rented for item with status ReturnProcessed"
+          )
+        }
         break
       case "Lost":
         // TODO:
@@ -1452,29 +1467,5 @@ export class RentalService {
       ? undefined
       : itemDeliveredAt
     return rentalStartedAt
-  }
-
-  private getSafeSentPackageDeliveryDate = (
-    sentPackageDeliveryDate: Date | undefined,
-    reservationCreatedAtDate: Date
-  ) =>
-    new Date(
-      sentPackageDeliveryDate?.toISOString() ||
-        this.timeUtils.xDaysAfterDate(
-          reservationCreatedAtDate,
-          SENT_PACKAGE_CUSHION
-        )
-    )
-  private getSafeReturnPackageEntryDate = (
-    returnPackageScanDate: Date | undefined,
-    reservationCompletionDate: Date
-  ) => {
-    return new Date(
-      returnPackageScanDate ||
-        this.timeUtils.xDaysBeforeDate(
-          reservationCompletionDate,
-          RETURN_PACKAGE_CUSHION
-        )
-    )
   }
 }

@@ -378,7 +378,7 @@ export const setReservationPhysicalProductReturnProcessedAt = async (
     where: { id: reservationPhysicalProductId },
     data: {
       returnProcessedAt: processedAt,
-      hasBeenScannedOnInbound: true,
+      hasReturnProcessed: true,
     },
   })
 }
