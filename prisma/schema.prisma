@@ -1417,8 +1417,10 @@ enum ReservationPhysicalProductStatus {
   Queued
   Picked
   Packed
-  ShippedToCustomer
-  ShippedToBusiness
+  ScannedOnInbound
+  InTransitInbound
+  ScannedOnOutbound
+  InTransitOutbound
   DeliveredToCustomer
   DeliveredToBusiness
   ReturnProcessed
