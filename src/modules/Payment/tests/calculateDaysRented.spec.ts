@@ -298,5 +298,9 @@ describe("Calculate Days Rented", () => {
       expectTimeToEqual(rentalEndedAt, twoDaysAgo)
       expect(comment).toBe("") // TODO:
     })
+
+    it("Reserved and returned with missing dropoff, scannedOnInbound timestamps", async () => {
+      expect(0).toBe(1)
+    })
   })
 })

@@ -552,6 +552,7 @@ export class RentalService {
       case "Picked":
       case "Packed":
       case "Queued":
+      case "Hold":
         rentalStartedAt = undefined
         break
       case "ShippedToCustomer":
@@ -562,6 +563,12 @@ export class RentalService {
         break
       case "DeliveredToCustomer":
         rentalEndedAt = getRentalEndedAt(today)
+        break
+      case "DeliveredToBusiness":
+        //TODO:
+        break
+      case "ResetEarly":
+        //TODO:
         break
       case "ReturnProcessed":
         if (reservationPhysicalProduct.droppedOffBy === "Customer") {
@@ -579,6 +586,9 @@ export class RentalService {
           )
         }
 
+        break
+      case "Lost":
+        // TODO:
         break
       default:
         throw new Error(
