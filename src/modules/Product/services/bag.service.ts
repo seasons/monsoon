@@ -462,18 +462,51 @@ export class BagService {
     // Probably best to query bagItemsWithData at the top, including the reservation physical products and the physical products.
 
     // TODO: Add a test that confirms this errors as expected
-    const lostResPhysProds = await this.prisma.client.reservationPhysicalProduct.findMany(
-      {
-        where: {
-          id: {
-            in: lostBagItemsIds,
+    // const lostResPhysProds = await this.prisma.client.reservationPhysicalProduct.findMany(
+    //   {
+    //     where: {
+    //       id: {
+    //         in: lostBagItemsIds,
+    //       },
+    //     },
+    //     select: {
+    //       id: true,
+    //       status: true,
+    //     },
+    //   }
+    // )
+
+    const bagItemsWithData = await this.prisma.client.bagItem.findMany({
+      where: {
+        id: {
+          in: lostBagItemsIds,
+        },
+      },
+      select: {
+        reservationPhysicalProduct: {
+          select: {
+            id: true,
+            status: true,
           },
         },
-        select: {
-          id: true,
-          status: true,
+        physicalProduct: {
+          select: {
+            id: true,
+            productVariant: {
+              select: {
+                id: true,
+                reserved: true,
+                reservable: true,
+                nonReservable: true,
+              },
+            },
+          },
         },
-      }
+      },
+    })
+
+    const lostResPhysProds = bagItemsWithData.map(
+      a => a.reservationPhysicalProduct
     )
 
     // TODO: Once we update the statuses for in transit states, this needs to be updated.
@@ -520,7 +553,7 @@ export class BagService {
           data: {
             lostAt: new Date(),
             lostInPhase: "BusinessToCustomer",
-            isLost: true, //TODO: Update
+            hasBeenLost: true, //TODO: Update
           },
         })
       )
@@ -537,7 +570,7 @@ export class BagService {
           data: {
             lostAt: new Date(),
             lostInPhase: "CustomerToBusiness",
-            isLost: true, //TODO: update
+            hasBeenLost: true, //TODO: update
           },
         })
       )
