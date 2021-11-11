@@ -2,7 +2,10 @@ import { ProductVariantService } from "@app/modules/Product/services/productVari
 import { InventoryStatus, PhysicalProductStatus } from "@app/prisma"
 import { PrismaService } from "@app/prisma/prisma.service"
 import { Injectable } from "@nestjs/common"
-import { ReservationDropOffAgent } from "@prisma/client"
+import {
+  ReservationDropOffAgent,
+  ReservationPhysicalProductStatus,
+} from "@prisma/client"
 import { DateTime } from "luxon"
 
 interface ProductState {
@@ -19,11 +22,15 @@ export class ReservationPhysicalProductService {
     private readonly productVariantService: ProductVariantService
   ) {}
 
-  async returnMultiItems(
-    productStates: ProductState[],
-    droppedOffBy: ReservationDropOffAgent,
+  async returnMultiItems({
+    productStates,
+    droppedOffBy,
+    trackingNumber,
+  }: {
+    productStates: ProductState[]
+    droppedOffBy: ReservationDropOffAgent
     trackingNumber?: string
-  ) {
+  }) {
     const physicalProducts = await this.prisma.client.physicalProduct.findMany({
       where: {
         seasonsUID: {
@@ -56,6 +63,7 @@ export class ReservationPhysicalProductService {
     let promises = []
 
     const reservationPhysicalProductData = {
+      status: <ReservationPhysicalProductStatus>"ReturnProcessed",
       hasReturnProcessed: true,
       returnProcessedAt: DateTime.local().toISO(),
       ...(returnedPackage && {
@@ -190,5 +198,26 @@ export class ReservationPhysicalProductService {
 
     const results = await this.prisma.client.$transaction(promises)
     return !!results
+  }
+
+  async pickItems(itemIDs: string[]) {
+    const reservationPhysicalProducts = await this.prisma.client.reservationPhysicalProduct.findMany(
+      {
+        where: {
+          id: {
+            in: itemIDs,
+          },
+        },
+        select: {
+          id: true,
+          physicalProductId: true,
+          physicalProduct: {
+            select: {
+              id: true,
+            },
+          },
+        },
+      }
+    )
   }
 }

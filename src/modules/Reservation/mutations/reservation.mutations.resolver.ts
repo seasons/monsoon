@@ -32,11 +32,15 @@ export class ReservationMutationsResolver {
       )
     }
 
-    return this.reservationPhysicalProduct.returnMultiItems(
+    return this.reservationPhysicalProduct.returnMultiItems({
       productStates,
       droppedOffBy,
-      trackingNumber
-    )
+      trackingNumber,
+    })
+  }
+
+  async pickItems(@Args() { items }) {
+    return this.reservationPhysicalProduct.pickItems(items)
   }
 
   @Mutation()

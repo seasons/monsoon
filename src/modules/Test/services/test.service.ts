@@ -267,6 +267,7 @@ export class TestUtilsService {
       },
       membership: {
         create: {
+          purchaseCredits: 0,
           subscriptionId: chargebeeSubscriptionId,
           plan: { connect: { planID: "access-monthly" } },
           creditBalance: 0,

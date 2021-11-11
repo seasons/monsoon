@@ -23,7 +23,7 @@ export class SubscriptionsScheduledJobs {
     private readonly rental: RentalService
   ) {}
 
-  @Cron(CronExpression.EVERY_DAY_AT_4AM)
+  @Cron(CronExpression.EVERY_DAY_AT_7AM)
   async updateSubscriptionData() {
     this.logger.log(`Start update subscriptions field job`)
 

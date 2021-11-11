@@ -1,9 +1,8 @@
+import { ApplicationType } from "@app/decorators/application.decorator"
 import { WinstonLogger } from "@app/lib/logger"
 import { ErrorService } from "@app/modules/Error/services/error.service"
-import { RentalService } from "@app/modules/Payment/services/rental.service"
 import { ProductVariantService } from "@app/modules/Product/services/productVariant.service"
 import { PushNotificationService } from "@app/modules/PushNotification"
-import { ShippingMethodFieldsResolver } from "@app/modules/Shipping/fields/shippingMethod.fields.resolver"
 import { CustomerUtilsService } from "@app/modules/User/services/customer.utils.service"
 import { UtilsService } from "@app/modules/Utils/services/utils.service"
 import { InventoryStatus, PhysicalProductStatus } from "@app/prisma"
@@ -16,19 +15,15 @@ import { Injectable, Logger } from "@nestjs/common"
 import {
   AdminActionLog,
   Customer,
-  Package,
   PhysicalProduct,
   Prisma,
   PrismaPromise,
   Reservation,
   ReservationFeedback,
-  ReservationPhysicalProduct,
   ReservationStatus,
   ShippingCode,
-  WarehouseLocation,
 } from "@prisma/client"
 import { PrismaService } from "@prisma1/prisma.service"
-import { ApolloError } from "apollo-server"
 import chargebee from "chargebee"
 import cuid from "cuid"
 import { intersection, merge } from "lodash"
@@ -77,7 +72,6 @@ export class ReservationService {
     private readonly customerUtils: CustomerUtilsService
   ) {}
 
-  // TODO: Update ReservationPhysicalProducts here, instead of returnedProducts
   async cancelReturn(customer: Customer) {
     const lastReservation = await this.utils.getLatestReservation(customer.id)
 
@@ -400,11 +394,13 @@ export class ReservationService {
   }
 
   async draftReservationLineItems({
+    application,
     reservation,
     customer,
     filterBy = ReservationLineItemsFilter.AllItems,
     shippingCode = ShippingCode.UPSGround,
   }: {
+    application: ApplicationType
     reservation?: Reservation
     customer: Customer
     filterBy: ReservationLineItemsFilter
@@ -434,6 +430,13 @@ export class ReservationService {
         },
       },
     })
+
+    if (application !== "spring" && customerWithUser.membership === null) {
+      this.logger.log("Customer without membership trying to reserve", {
+        customer: customerWithUser,
+      })
+      throw new Error("Cannot reserve items without a membership")
+    }
 
     const productSelect = Prisma.validator<Prisma.ProductSelect>()({
       id: true,

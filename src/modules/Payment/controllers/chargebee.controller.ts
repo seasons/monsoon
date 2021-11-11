@@ -2,6 +2,7 @@ import { WinstonLogger } from "@app/lib/logger"
 import { SegmentService } from "@app/modules/Analytics/services/segment.service"
 import { EmailService } from "@app/modules/Email/services/email.service"
 import { ErrorService } from "@app/modules/Error/services/error.service"
+import { GRANDFATHERED_PLAN_IDS } from "@app/modules/Utils/constants"
 import { StatementsService } from "@app/modules/Utils/services/statements.service"
 import { UtilsService } from "@app/modules/Utils/services/utils.service"
 import { PrismaService } from "@app/prisma/prisma.service"
@@ -12,7 +13,6 @@ import { pick } from "lodash"
 
 import { PaymentService } from "../services/payment.service"
 import { RentalService } from "../services/rental.service"
-import { GRANDFATHERED_PLAN_IDS } from "../services/subscription.service"
 
 export type ChargebeeEvent = {
   content: any
@@ -66,8 +66,10 @@ export class ChargebeeController {
         await this.chargebeeCustomerChanged(body.content)
         break
       case CHARGEBEE_PAYMENT_SUCCEEDED:
-        await this.chargebeePaymentSucceeded(body.content)
+        // Add the cedits before doing other things so that a downstream failure doesn't get in the way of credit creation
         await this.addGrandfatheredPromotionalCredits(body.content)
+        await this.setPurchaseCredits(body.content)
+        await this.chargebeePaymentSucceeded(body.content)
         break
       case CHARGEBEE_PAYMENT_FAILED:
         await this.chargebeePaymentFailed(body.content)
@@ -120,8 +122,47 @@ export class ChargebeeController {
     }
   }
 
-  private async addGrandfatheredPromotionalCredits(content: any) {
+  private async setPurchaseCredits(content: any) {
     const chargebeeCustomerID = content.customer.id
+    const prismaCustomer = await this.prisma.client.customer.findFirst({
+      where: { user: { id: chargebeeCustomerID } },
+      select: {
+        id: true,
+        user: { select: { id: true } },
+        membership: {
+          select: {
+            id: true,
+            plan: {
+              select: {
+                planID: true,
+              },
+            },
+          },
+        },
+      },
+    })
+
+    const accessPlanIds = ["access-monthly", "access-yearly"]
+    const planId = prismaCustomer.membership.plan.planID
+
+    const isPlanPayment = content.invoice.line_items.some(
+      li => li.entity_type === "plan"
+    )
+
+    if (accessPlanIds.includes(planId) && isPlanPayment) {
+      await this.prisma.client.customerMembership.update({
+        where: { id: prismaCustomer.membership.id },
+        data: {
+          purchaseCredits: planId === "access-yearly" ? 3000 : 2000,
+        },
+      })
+    }
+  }
+
+  private async addGrandfatheredPromotionalCredits(content: any) {
+    const { customer, invoice } = content
+    const chargebeeCustomerID = customer.id
+    const invoiceId = invoice?.id || "N/A"
     const prismaCustomer = await this.prisma.client.customer.findFirst({
       where: { user: { id: chargebeeCustomerID } },
       select: {
@@ -138,6 +179,7 @@ export class ChargebeeController {
                 price: true,
               },
             },
+            creditUpdateHistory: { select: { reason: true } },
           },
         },
       },
@@ -149,8 +191,11 @@ export class ChargebeeController {
           li.entity_type === "plan" &&
           GRANDFATHERED_PLAN_IDS.includes(li.entity_id)
       )
+      const alreadyAddedCreditsForInvoice = prismaCustomer.membership.creditUpdateHistory.some(
+        a => a.reason.includes(`Invoice #${invoiceId}`)
+      )
 
-      if (isTraditionalPlanPayment) {
+      if (isTraditionalPlanPayment && !alreadyAddedCreditsForInvoice) {
         const planLineItem = content.invoice.line_items.find(
           a => a.entity_type === "plan"
         )
@@ -165,7 +210,7 @@ export class ChargebeeController {
             creditUpdateHistory: {
               create: {
                 amount: newCredits,
-                reason: `Grandfathered customer paid subscription dues on ${planLineItem.description} plan`,
+                reason: `Grandfathered customer paid subscription dues on ${planLineItem.description} plan. Invoice #${invoiceId}`,
               },
             },
           },

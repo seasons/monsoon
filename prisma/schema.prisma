@@ -421,6 +421,8 @@ enum OrderLineItemRecordType {
   Reservation
   Fee
   Total
+  Credit
+  PurchaseCredit
 }
 
 enum OrderStatus {
@@ -624,6 +626,7 @@ model Category {
 model Collection {
   id                 String                @id @default(cuid()) @db.VarChar(30)
   slug               String                @unique
+  featured           Boolean               @default(false)
   title              String?
   subTitle           String?
   published          Boolean
@@ -737,21 +740,22 @@ model CustomerDetail {
 }
 
 model CustomerMembership {
-  id                       String                              @id @default(cuid()) @db.VarChar(30)
-  subscriptionId           String
-  customerId               String                              @map("customer") @db.VarChar(30)
-  planId                   String                              @map("plan") @db.VarChar(30)
-  giftId                   String?
-  grandfathered            Boolean?                            @default(false)
-  creditBalance            Int                                 @default(0)
-  currentBalance           Int?
-  membershipSubscriptionId String?                             @map("subscription") @db.VarChar(30)
-  customer                 Customer                            @relation(fields: [customerId], references: [id])
-  plan                     PaymentPlan                         @relation(fields: [planId], references: [id])
-  subscription             CustomerMembershipSubscriptionData? @relation(fields: [membershipSubscriptionId], references: [id])
-  pauseRequests            PauseRequest[]
-  rentalInvoices           RentalInvoice[]
-  creditUpdateHistory      CreditBalanceUpdateLog[]
+  id                         String                              @id @default(cuid()) @db.VarChar(30)
+  subscriptionId             String
+  customerId                 String                              @map("customer") @db.VarChar(30)
+  planId                     String                              @map("plan") @db.VarChar(30)
+  giftId                     String?
+  purchaseCredits            Int?                                @default(0)
+  grandfathered              Boolean?                            @default(false)
+  creditBalance              Int                                 @default(0)
+  currentBalance             Int?
+  membershipSubscriptionId   String?                             @map("subscription") @db.VarChar(30)
+  customer                   Customer                            @relation(fields: [customerId], references: [id])
+  plan                       PaymentPlan                         @relation(fields: [planId], references: [id])
+  subscription               CustomerMembershipSubscriptionData? @relation(fields: [membershipSubscriptionId], references: [id])
+  pauseRequests              PauseRequest[]
+  rentalInvoices             RentalInvoice[]
+  creditUpdateHistory        CreditBalanceUpdateLog[]
 }
 
 model CreditBalanceUpdateLog {
@@ -834,10 +838,10 @@ model Image {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   url       String   @unique
+  position  Int?
   height    Int?
   width     Int?
   alt       String?
-  position  Int?
 
   // Don't those fields for now
   BlogPost              BlogPost[]
@@ -1413,14 +1417,15 @@ enum ReservationPhysicalProductStatus {
   Queued
   Picked
   Packed
-  ShippedToCustomer
-  ShippedToBusiness
+  ScannedOnInbound
+  InTransitInbound
+  ScannedOnOutbound
+  InTransitOutbound
   DeliveredToCustomer
   DeliveredToBusiness
   ReturnProcessed
   ResetEarly
   Hold
-  Returned
   Lost
 }
 
@@ -1428,7 +1433,7 @@ model ReservationPhysicalProduct {
   id    String  @id @default(cuid()) @db.VarChar(30)
   isNew Boolean @default(false)
 
-  isPurchased Boolean   @default(false)
+  hasBeenPurchased Boolean   @default(false)
   purchasedAt DateTime?
 
   status ReservationPhysicalProductStatus @default(value: Queued)
@@ -1442,21 +1447,21 @@ model ReservationPhysicalProduct {
   returnProcessedAt  DateTime?
 
   // admin marked item as returned early, it's still on its way
-  isResetEarlyByAdmin Boolean   @default(false)
+  hasBeenResetEarlyByAdmin Boolean   @default(false)
   resetEarlyByAdminAt DateTime?
 
   // denotes customer filling out the return flow
   hasCustomerReturnIntent Boolean   @default(false)
   customerReturnIntentAt  DateTime?
 
-  isLost      Boolean           @default(false)
+  hasBeenLost      Boolean           @default(false)
   lostAt      DateTime?
   lostInPhase ReservationPhase?
 
-  isDeliveredToCustomer Boolean   @default(false)
+  hasBeenDeliveredToCustomer Boolean   @default(false)
   deliveredToCustomerAt DateTime?
 
-  isDeliveredToBusiness Boolean   @default(false)
+  hasBeenDeliveredToBusiness Boolean   @default(false)
   deliveredToBusinessAt DateTime?
 
   // when UPS first gets the package into
