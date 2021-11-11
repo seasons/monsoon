@@ -350,9 +350,9 @@ describe("Return Items", () => {
      * create customer
      * make reservation
      * set reservation to delivered
-     * query reservationPhysicalProducts related to reservation, filter by hasReturnProcessed
-     * check to see if the number of items returned matches the length of the filtered array
-     * check to see if the filtered array has a returnProcessAt
+     * return all items on reservation
+     * query reserPhysProds rrelated to reservation
+     * check if all resPhysProds have a status of ReturnProcessed
      */
 
     const productStates = []
@@ -384,5 +384,6 @@ describe("Return Items", () => {
     const hasReturnProcessedStatus = reservationPhysProds.every(
       a => a.status === "ReturnProcessed"
     )
+    expect(hasReturnProcessedStatus).toBe(true)
   })
 })
