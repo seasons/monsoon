@@ -842,7 +842,6 @@ model Image {
   height    Int?
   width     Int?
   alt       String?
-  position  Int?
 
   // Don't those fields for now
   BlogPost              BlogPost[]
