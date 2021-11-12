@@ -368,6 +368,21 @@ export const setReservationPhysicalProductScannedOnInboundAt = async (
   })
 }
 
+export const setReservationPhysicalProductScannedOnOutboundAt = async (
+  reservationPhysicalProductId,
+  numDaysAgo,
+  { prisma, timeUtils }: PrismaOption & TimeUtilsOption
+) => {
+  const scannedAt = timeUtils.xDaysAgoISOString(numDaysAgo)
+  await prisma.client.reservationPhysicalProduct.update({
+    where: { id: reservationPhysicalProductId },
+    data: {
+      scannedOnOutboundAt: scannedAt,
+      hasBeenScannedOnOutbound: true,
+    },
+  })
+}
+
 export const setReservationPhysicalProductReturnProcessedAt = async (
   reservationPhysicalProductId,
   numDaysAgo,

@@ -47,6 +47,7 @@ export const ProcessableReservationPhysicalProductSelect = Prisma.validator<
   hasBeenScannedOnInbound: true,
   scannedOnInboundAt: true,
   returnProcessedAt: true,
+  createdAt: true,
   physicalProduct: {
     select: {
       id: true,
@@ -561,6 +562,8 @@ export class RentalService {
       case "Picked":
       case "Packed":
       case "Hold":
+      case "InTransitOutbound":
+      case "ScannedOnOutbound":
         rentalStartedAt = undefined
         break
       case "ScannedOnInbound":
@@ -569,12 +572,6 @@ export class RentalService {
           reservationPhysicalProduct.scannedOnInboundAt
         )
         throwErrorIfRentalEndedAtUndefined()
-        break
-      case "ScannedOnOutbound":
-        // TODO:
-        break
-      case "InTransitOutbound":
-        //TODO:
         break
       case "DeliveredToCustomer":
         rentalEndedAt = getRentalEndedAt(today)
@@ -1453,10 +1450,12 @@ export class RentalService {
     invoice: Pick<RentalInvoice, "billingStartAt" | "billingEndAt">,
     reservationPhysicalProduct: Pick<
       ReservationPhysicalProduct,
-      "deliveredToCustomerAt"
+      "deliveredToCustomerAt" | "createdAt"
     >
   ) => {
-    const itemDeliveredAt = reservationPhysicalProduct.deliveredToCustomerAt
+    const itemDeliveredAt =
+      reservationPhysicalProduct.deliveredToCustomerAt ||
+      reservationPhysicalProduct.createdAt
     const deliveredBeforeBillingCycle = this.timeUtils.isLaterDate(
       invoice.billingStartAt,
       itemDeliveredAt

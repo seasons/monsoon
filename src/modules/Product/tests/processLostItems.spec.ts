@@ -44,6 +44,7 @@ describe("Mark Items as Lost", () => {
     reservation = await addToBagAndReserveForCustomer(testCustomer.id, 2, {
       prisma: prismaService,
       reserveService,
+      timeUtils,
     })
   })
 
