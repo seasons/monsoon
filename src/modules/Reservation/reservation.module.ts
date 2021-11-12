@@ -22,6 +22,7 @@ import { ReservationUtilsService } from "./services/reservation.utils.service"
 import { ReservationFeedbackService } from "./services/reservationFeedback.service"
 import { ReservationPhysicalProductService } from "./services/reservationPhysicalProduct.service"
 import { ReserveService } from "./services/reserve.service"
+import { ReservationTestUtilsService } from "./tests/reservation.test.utils"
 
 export const RESERVATION_MODULE_DEF = {
   imports: [
@@ -49,8 +50,14 @@ export const RESERVATION_MODULE_DEF = {
     ReserveService,
     ReservationMutationsResolver,
     ReservationPhysicalProductService,
+    ReservationTestUtilsService,
   ],
-  exports: [ReservationService, ReservationUtilsService, ReserveService],
+  exports: [
+    ReservationService,
+    ReservationUtilsService,
+    ReserveService,
+    ReservationTestUtilsService,
+  ],
 }
 @Module(RESERVATION_MODULE_DEF)
 export class ReservationModule {}

@@ -1,4 +1,5 @@
 import { ReservationService } from "@app/modules/Reservation"
+import { ReservationTestUtilsService } from "@app/modules/Reservation/tests/reservation.test.utils"
 import { TestUtilsService } from "@app/modules/Test/services/test.service"
 import { UtilsService } from "@app/modules/Utils/services/utils.service"
 import { PrismaService } from "@app/prisma/prisma.service"
@@ -19,6 +20,7 @@ describe("Swap Bag Item", () => {
   let testCustomer: any
   let reservation
   let bagItem
+  let reservationTestUtils: ReservationTestUtilsService
 
   //create test customer
   //create res (call reserve items function)
@@ -32,6 +34,9 @@ describe("Swap Bag Item", () => {
     utilsService = moduleRef.get<UtilsService>(UtilsService)
     bagService = moduleRef.get<BagService>(BagService)
     testUtils = moduleRef.get<TestUtilsService>(TestUtilsService)
+    reservationTestUtils = moduleRef.get<ReservationTestUtilsService>(
+      ReservationTestUtilsService
+    )
   })
 
   beforeEach(async () => {
@@ -46,7 +51,7 @@ describe("Swap Bag Item", () => {
     cleanupFuncs.push(cleanupFunc)
     testCustomer = customer
 
-    const result = await testUtils.addToBagAndReserveForCustomer({
+    const result = await reservationTestUtils.addToBagAndReserveForCustomer({
       customer: testCustomer,
       numProductsToAdd: 1,
       options: { shippingCode: "UPSGround" },

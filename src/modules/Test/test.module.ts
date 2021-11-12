@@ -7,7 +7,7 @@ import { UtilsModule } from "../Utils/utils.module"
 import { TestUtilsService } from "./services/test.service"
 
 @Module({
-  imports: [PrismaModule, ReservationModule, UtilsModule, ReserveService],
+  imports: [PrismaModule, ReservationModule, UtilsModule],
   providers: [TestUtilsService],
   exports: [TestUtilsService],
 })
