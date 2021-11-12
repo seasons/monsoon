@@ -568,16 +568,20 @@ export class RentalService {
         break
       case "ScannedOnInbound":
       case "InTransitInbound":
+      case "DeliveredToBusiness":
         rentalEndedAt = getRentalEndedAt(
-          reservationPhysicalProduct.scannedOnInboundAt
+          reservationPhysicalProduct.scannedOnInboundAt ||
+            this.timeUtils.xDaysBeforeDate(
+              reservationPhysicalProduct.deliveredToBusinessAt ||
+                invoiceWithData.billingEndAt,
+              RETURN_PACKAGE_CUSHION,
+              "date"
+            )
         )
         throwErrorIfRentalEndedAtUndefined()
         break
       case "DeliveredToCustomer":
         rentalEndedAt = getRentalEndedAt(today)
-        break
-      case "DeliveredToBusiness":
-        //TODO:
         break
       case "ResetEarly":
         //TODO:
@@ -596,7 +600,7 @@ export class RentalService {
             this.timeUtils.xDaysBeforeDate(
               reservationPhysicalProduct.deliveredToBusinessAt ||
                 reservationPhysicalProduct.returnProcessedAt,
-              3,
+              RETURN_PACKAGE_CUSHION,
               "date"
             )
           )
