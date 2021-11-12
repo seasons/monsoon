@@ -541,18 +541,6 @@ export class RentalService {
     )
 
     const today = new Date()
-    const getRentalEndedAt = defaultDate => {
-      if (options.upTo === "today") {
-        return this.timeUtils.getEarlierDate(defaultDate, today)
-      }
-      if (options.upTo === "billingEnd") {
-        return this.timeUtils.getEarlierDate(
-          defaultDate,
-          invoiceWithData.billingEndAt
-        )
-      }
-      return defaultDate
-    }
 
     const throwErrorIfRentalEndedAtUndefined = () => {
       if (!rentalEndedAt) {
@@ -561,6 +549,9 @@ export class RentalService {
         )
       }
     }
+    const applyReturnPackageCushion = date =>
+      this.timeUtils.xDaysBeforeDate(date, RETURN_PACKAGE_CUSHION, "date")
+
     switch (reservationPhysicalProduct.status) {
       case "Queued":
       case "Picked":
@@ -568,58 +559,42 @@ export class RentalService {
       case "Hold":
       case "InTransitOutbound":
       case "ScannedOnOutbound":
+        // TODO: If we're doing an estimation, let this be 2 days from now
         rentalStartedAt = undefined
         break
       case "ScannedOnInbound":
       case "InTransitInbound":
       case "DeliveredToBusiness":
-        rentalEndedAt = getRentalEndedAt(
+        rentalEndedAt =
           reservationPhysicalProduct.scannedOnInboundAt ||
-            this.timeUtils.xDaysBeforeDate(
-              reservationPhysicalProduct.deliveredToBusinessAt ||
-                invoiceWithData.billingEndAt,
-              RETURN_PACKAGE_CUSHION,
-              "date"
-            )
-        )
+          applyReturnPackageCushion(
+            reservationPhysicalProduct.deliveredToBusinessAt ||
+              invoiceWithData.billingEndAt
+          )
         throwErrorIfRentalEndedAtUndefined()
         break
       case "DeliveredToCustomer":
-        rentalEndedAt = getRentalEndedAt(today)
+        rentalEndedAt = today
         break
       case "ResetEarly":
         if (reservationPhysicalProduct.hasBeenScannedOnInbound) {
-          rentalEndedAt = getRentalEndedAt(
-            reservationPhysicalProduct.scannedOnInboundAt
-          )
+          rentalEndedAt = reservationPhysicalProduct.scannedOnInboundAt
         } else {
-          rentalEndedAt = getRentalEndedAt(
-            this.timeUtils.xDaysBeforeDate(
-              reservationPhysicalProduct.resetEarlyByAdminAt,
-              RETURN_PACKAGE_CUSHION,
-              "date"
-            )
+          rentalEndedAt = applyReturnPackageCushion(
+            reservationPhysicalProduct.resetEarlyByAdminAt
           )
         }
         throwErrorIfRentalEndedAtUndefined()
         break
       case "ReturnProcessed":
         if (reservationPhysicalProduct.droppedOffBy === "Customer") {
-          rentalEndedAt = getRentalEndedAt(
-            reservationPhysicalProduct.droppedOffAt
-          )
+          rentalEndedAt = reservationPhysicalProduct.droppedOffAt
         } else if (reservationPhysicalProduct.hasBeenScannedOnInbound) {
-          rentalEndedAt = getRentalEndedAt(
-            reservationPhysicalProduct.scannedOnInboundAt
-          )
+          rentalEndedAt = reservationPhysicalProduct.scannedOnInboundAt
         } else {
-          rentalEndedAt = getRentalEndedAt(
-            this.timeUtils.xDaysBeforeDate(
-              reservationPhysicalProduct.deliveredToBusinessAt ||
-                reservationPhysicalProduct.returnProcessedAt,
-              RETURN_PACKAGE_CUSHION,
-              "date"
-            )
+          rentalEndedAt = applyReturnPackageCushion(
+            reservationPhysicalProduct.deliveredToBusinessAt ||
+              reservationPhysicalProduct.returnProcessedAt
           )
         }
         throwErrorIfRentalEndedAtUndefined()
@@ -630,12 +605,8 @@ export class RentalService {
         } else if (
           reservationPhysicalProduct.lostInPhase === "CustomerToBusiness"
         ) {
-          rentalEndedAt = getRentalEndedAt(
-            this.timeUtils.xDaysBeforeDate(
-              reservationPhysicalProduct.lostAt,
-              RETURN_PACKAGE_CUSHION,
-              "date"
-            )
+          rentalEndedAt = applyReturnPackageCushion(
+            reservationPhysicalProduct.lostAt
           )
           throwErrorIfRentalEndedAtUndefined()
         } else {
@@ -648,6 +619,19 @@ export class RentalService {
         throw new Error(
           `Unexpected reservation physical product status: ${reservationPhysicalProduct.status}`
         )
+    }
+
+    // Adjust rentalEndedAt if we're doing an estimation
+    if (!!rentalEndedAt && !!options.upTo) {
+      if (options.upTo === "today") {
+        rentalEndedAt = this.timeUtils.getEarlierDate(rentalEndedAt, today)
+      }
+      if (options.upTo === "billingEnd") {
+        rentalEndedAt = this.timeUtils.getEarlierDate(
+          rentalEndedAt,
+          invoiceWithData.billingEndAt
+        )
+      }
     }
 
     // If we end up in a nonsense situation, just don't charge them anything
