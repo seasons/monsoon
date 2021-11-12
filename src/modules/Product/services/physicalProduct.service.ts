@@ -370,20 +370,41 @@ export class PhysicalProductService {
       )
     })
 
-    const stowedProducts = await this.prisma.client.physicalProduct.updateMany({
-      where: {
-        id: {
-          in: ids,
+    const physicalProductsToBeStowed = await this.prisma.client.physicalProduct.findMany(
+      {
+        where: {
+          id: {
+            in: ids,
+          },
         },
-      },
-      data: {
-        warehouseLocationId: warehouseLocation.id,
-        locationId: location.id,
-        productStatus: "Clean",
-        inventoryStatus: "Reservable",
-      },
-    })
+        select: {
+          id: true,
+          productStatus: true,
+        },
+      }
+    )
 
+    let promises = []
+
+    for (let physicalProduct of physicalProductsToBeStowed) {
+      promises.push(
+        this.prisma.client.physicalProduct.update({
+          where: {
+            id: physicalProduct.id,
+          },
+          data: {
+            warehouseLocationId: warehouseLocation.id,
+            locationId: location.id,
+            productStatus:
+              physicalProduct.productStatus === "New" ? "New" : "Clean",
+            inventoryStatus: "Reservable",
+          },
+        })
+      )
+    }
+
+    const results = await this.prisma.client.$transaction(promises)
+    const stowedProducts = results.pop()
     await Promise.all(notifyUsersIfNeeded)
 
     return stowedProducts.count > 0
