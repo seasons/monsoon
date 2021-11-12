@@ -49,8 +49,26 @@ export class ReservationMutationsResolver {
         status: { in: ["Reserved", "Added"] },
         saved: false,
       },
-      select: { productVariant: { select: { id: true } } },
+      select: {
+        productVariant: {
+          select: {
+            id: true,
+            product: {
+              select: {
+                status: true,
+              },
+            },
+          },
+        },
+      },
     })
+    if (
+      itemsToReserve
+        .map(i => i.productVariant.product.status)
+        .includes("Upcoming")
+    ) {
+      throw new Error("Upcoming products are not reservable")
+    }
     const productVariantIDs = itemsToReserve.map(a => a.productVariant.id)
     const returnData = await this.reservation.reserveItems({
       items: productVariantIDs,
