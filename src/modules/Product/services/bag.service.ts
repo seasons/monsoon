@@ -39,6 +39,23 @@ export class BagService {
     const savedItems = custWithData.bagItems?.filter(a => a.saved === true)
     const customerPlanItemCount = custWithData.membership?.plan?.itemCount || 6
 
+    const productVariant = await this.prisma.client.productVariant.findUnique({
+      where: {
+        id: itemId,
+      },
+      select: {
+        product: {
+          select: {
+            status: true,
+          },
+        },
+      },
+    })
+
+    if (productVariant.product.status === "Upcoming") {
+      throw new Error("Upcoming products can not be added to bag")
+    }
+
     if (bag.some(i => i.productVariant?.id === itemId)) {
       throw new ApolloError("Item already in bag", "515")
     }
