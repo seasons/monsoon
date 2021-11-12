@@ -12,6 +12,7 @@ import { ErrorModule } from "../Error/error.module"
 import { ProductModule } from "../Product/product.module"
 import { ReservationFeedbackMutationsResolver } from "../Reservation/mutations/reservationFeedback.mutations.resolver"
 import { ReservationFeedbackQueriesResolver } from "../Reservation/queries/reservationFeedback.queries.resolver"
+import { TestModule } from "../Test/test.module"
 import { UtilsModule } from "../Utils/utils.module"
 import { ReservationFieldsResolver } from "./fields/reservation.fields.resolver"
 import { ReservationMutationsResolver } from "./mutations/reservation.mutations.resolver"
@@ -35,6 +36,7 @@ export const RESERVATION_MODULE_DEF = {
     UtilsModule,
     ErrorModule,
     forwardRef(() => UserModule),
+    forwardRef(() => TestModule),
   ],
   providers: [
     ReservationFeedbackMutationsResolver,
@@ -48,7 +50,7 @@ export const RESERVATION_MODULE_DEF = {
     ReservationMutationsResolver,
     ReservationPhysicalProductService,
   ],
-  exports: [ReservationService, ReservationUtilsService],
+  exports: [ReservationService, ReservationUtilsService, ReserveService],
 }
 @Module(RESERVATION_MODULE_DEF)
 export class ReservationModule {}

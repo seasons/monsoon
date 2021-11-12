@@ -1,4 +1,5 @@
 import { ReservationService } from "@app/modules/Reservation"
+import { ReserveService } from "@app/modules/Reservation/services/reserve.service"
 import { Inject, forwardRef } from "@nestjs/common"
 import {
   BagItem,
@@ -33,7 +34,9 @@ export class TestUtilsService {
     private readonly utils: UtilsService,
     private readonly timeUtils: TimeUtilsService,
     @Inject(forwardRef(() => ReservationService))
-    private readonly reservation: ReservationService
+    private readonly reservation: ReservationService,
+    @Inject(forwardRef(() => ReserveService))
+    private readonly reserve: ReserveService
   ) {}
 
   async createTestReservation({
@@ -386,8 +389,8 @@ export class TestUtilsService {
       select: { productVariant: { select: { id: true } } },
     })
     const prodVarsToReserve = bagItemsToReserve.map(a => a.productVariant.id)
-    const r = await this.reservation.reserveItems({
-      items: prodVarsToReserve,
+    const r = await this.reserve.reserveItems({
+      // items: prodVarsToReserve,
       shippingCode,
       customer: customer as any,
       select: {
