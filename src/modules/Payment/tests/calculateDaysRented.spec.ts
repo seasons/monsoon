@@ -567,6 +567,76 @@ describe("Calculate Days Rented", () => {
           expectTimeToEqual(rentalEndedAt, timeUtils.xDaysAgoISOString(4))
           expect(comment).toBe("") // TODO:
         })
+
+        describe("Reset Early", () => {
+          it("Has been scanned on inbound", async () => {
+            await setReservationPhysicalProductScannedOnInboundAtWithParams(
+              reservationPhysicalProductAfterReservation.id,
+              10
+            )
+            await prisma.client.reservationPhysicalProduct.update({
+              where: { id: reservationPhysicalProductAfterReservation.id },
+              data: {
+                resetEarlyByAdminAt: timeUtils.xDaysAgoISOString(8),
+                hasBeenResetEarlyByAdmin: true,
+              },
+            })
+            await setReservationPhysicalProductStatusWithParams(
+              reservationPhysicalProductAfterReservation.id,
+              "ResetEarly"
+            )
+
+            reservationPhysicalProductWithData = await getReservationPhysicalProductWithDataWithParams(
+              reservationPhysicalProductAfterReservation.id
+            )
+            const {
+              daysRented,
+              comment,
+              rentalEndedAt,
+              rentalStartedAt,
+            } = await rentalService.calcDaysRented(
+              testCustomer.membership.rentalInvoices[0],
+              reservationPhysicalProductWithData
+            )
+
+            expect(daysRented).toBe(13)
+            expectTimeToEqual(rentalStartedAt, twentyThreeDaysAgo)
+            expectTimeToEqual(rentalEndedAt, timeUtils.xDaysAgoISOString(10))
+            expect(comment).toBe("") // TODO:
+          })
+
+          it("Has not been scanned on inbound", async () => {
+            await prisma.client.reservationPhysicalProduct.update({
+              where: { id: reservationPhysicalProductAfterReservation.id },
+              data: {
+                resetEarlyByAdminAt: timeUtils.xDaysAgoISOString(8),
+                hasBeenResetEarlyByAdmin: true,
+              },
+            })
+            await setReservationPhysicalProductStatusWithParams(
+              reservationPhysicalProductAfterReservation.id,
+              "ResetEarly"
+            )
+
+            reservationPhysicalProductWithData = await getReservationPhysicalProductWithDataWithParams(
+              reservationPhysicalProductAfterReservation.id
+            )
+            const {
+              daysRented,
+              comment,
+              rentalEndedAt,
+              rentalStartedAt,
+            } = await rentalService.calcDaysRented(
+              testCustomer.membership.rentalInvoices[0],
+              reservationPhysicalProductWithData
+            )
+
+            expect(daysRented).toBe(12)
+            expectTimeToEqual(rentalStartedAt, twentyThreeDaysAgo)
+            expectTimeToEqual(rentalEndedAt, timeUtils.xDaysAgoISOString(11))
+            expect(comment).toBe("") // TODO:
+          })
+        })
       })
     })
 

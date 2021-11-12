@@ -51,6 +51,7 @@ export const ProcessableReservationPhysicalProductSelect = Prisma.validator<
   lostAt: true,
   lostInPhase: true,
   hasBeenLost: true,
+  resetEarlyByAdminAt: true,
   physicalProduct: {
     select: {
       id: true,
@@ -528,7 +529,7 @@ export class RentalService {
         },
       },
     })
-    const customer = invoiceWithData.membership.customer
+    // const customer = invoiceWithData.membership.customer
 
     let daysRented, rentalEndedAt, comment
     comment = ""
@@ -587,7 +588,20 @@ export class RentalService {
         rentalEndedAt = getRentalEndedAt(today)
         break
       case "ResetEarly":
-        //TODO:
+        if (reservationPhysicalProduct.hasBeenScannedOnInbound) {
+          rentalEndedAt = getRentalEndedAt(
+            reservationPhysicalProduct.scannedOnInboundAt
+          )
+        } else {
+          rentalEndedAt = getRentalEndedAt(
+            this.timeUtils.xDaysBeforeDate(
+              reservationPhysicalProduct.resetEarlyByAdminAt,
+              RETURN_PACKAGE_CUSHION,
+              "date"
+            )
+          )
+        }
+        throwErrorIfRentalEndedAtUndefined()
         break
       case "ReturnProcessed":
         if (reservationPhysicalProduct.droppedOffBy === "Customer") {
