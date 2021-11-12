@@ -873,13 +873,15 @@ export class ReservationService {
         shippingCode: updatedShippingCode,
       })
 
-      const chargebeeCharges = [...lines, ...processingFeeLines].map(line => {
-        return {
-          amount: line.price,
-          description: line.name,
-          taxable: line.recordType !== "Fee",
-        }
-      })
+      const chargebeeCharges = [...lines, ...processingFeeLines]
+        .map(line => {
+          return {
+            amount: line.price,
+            description: line.name,
+            taxable: line.recordType !== "Fee",
+          }
+        })
+        .filter(l => l.amount > 0)
 
       const {
         estimate: { invoice_estimate },
@@ -1303,13 +1305,15 @@ export class ReservationService {
           : UPSServiceLevel.Select,
     })
 
-    return [
-      {
-        name: "Shipping",
-        recordType: "Fee",
-        price: sentRate?.amount,
-      },
-    ].filter(a => a.price > 0)
+    return shippingCode === "Pickup"
+      ? []
+      : [
+          {
+            name: "Shipping",
+            recordType: "Fee",
+            price: sentRate?.amount || 0,
+          },
+        ]
   }
 
   private async updateLastReservation(lastReservation) {
