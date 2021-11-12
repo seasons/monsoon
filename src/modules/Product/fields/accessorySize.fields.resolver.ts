@@ -30,6 +30,15 @@ const measurementLoader = {
   },
 } as LoaderParams
 
+type MeasurementType =
+  | "height"
+  | "width"
+  | "minDrop"
+  | "maxDrop"
+  | "height"
+  | "length"
+  | "bridge"
+
 @Resolver("AccessorySize")
 export class AccessorySizeFieldsResolver {
   constructor(private readonly productUtilsService: ProductUtilsService) {}
@@ -41,19 +50,7 @@ export class AccessorySizeFieldsResolver {
     accessorySizeLoader
   ) {
     const accessorySize = await accessorySizeLoader.load(parent.id)
-    const measurementType =
-      accessorySize?.size?.productVariantInternal?.product?.category
-        ?.measurementType
-    if (measurementType && measurementType !== "Inches" && parent.bridge) {
-      return Math.round(
-        this.productUtilsService.convertInchesToMeasurementSize(
-          parent.bridge,
-          measurementType
-        )
-      )
-    } else {
-      return parent.bridge
-    }
+    return this.getMeasurement(accessorySize, "bridge")
   }
 
   @ResolveField()
@@ -63,19 +60,7 @@ export class AccessorySizeFieldsResolver {
     accessorySizeLoader
   ) {
     const accessorySize = await accessorySizeLoader.load(parent.id)
-    const measurementType =
-      accessorySize?.size?.productVariantInternal?.product?.category
-        ?.measurementType
-    if (measurementType && measurementType !== "Inches" && parent.length) {
-      return Math.round(
-        this.productUtilsService.convertInchesToMeasurementSize(
-          parent.length,
-          measurementType
-        )
-      )
-    } else {
-      return parent.length
-    }
+    return this.getMeasurement(accessorySize, "length")
   }
 
   @ResolveField()
@@ -85,19 +70,7 @@ export class AccessorySizeFieldsResolver {
     accessorySizeLoader
   ) {
     const accessorySize = await accessorySizeLoader.load(parent.id)
-    const measurementType =
-      accessorySize?.size?.productVariantInternal?.product?.category
-        ?.measurementType
-    if (measurementType && measurementType !== "Inches" && parent.width) {
-      return Math.round(
-        this.productUtilsService.convertInchesToMeasurementSize(
-          parent.width,
-          measurementType
-        )
-      )
-    } else {
-      return parent.width
-    }
+    return this.getMeasurement(accessorySize, "width")
   }
 
   @ResolveField()
@@ -107,19 +80,7 @@ export class AccessorySizeFieldsResolver {
     accessorySizeLoader
   ) {
     const accessorySize = await accessorySizeLoader.load(parent.id)
-    const measurementType =
-      accessorySize?.size?.productVariantInternal?.product?.category
-        ?.measurementType
-    if (measurementType && measurementType !== "Inches" && parent.maxDrop) {
-      return Math.round(
-        this.productUtilsService.convertInchesToMeasurementSize(
-          parent.maxDrop,
-          measurementType
-        )
-      )
-    } else {
-      return parent.maxDrop
-    }
+    return this.getMeasurement(accessorySize, "maxDrop")
   }
 
   @ResolveField()
@@ -129,19 +90,7 @@ export class AccessorySizeFieldsResolver {
     accessorySizeLoader
   ) {
     const accessorySize = await accessorySizeLoader.load(parent.id)
-    const measurementType =
-      accessorySize?.size?.productVariantInternal?.product?.category
-        ?.measurementType
-    if (measurementType && measurementType !== "Inches" && parent.minDrop) {
-      return Math.round(
-        this.productUtilsService.convertInchesToMeasurementSize(
-          parent.minDrop,
-          measurementType
-        )
-      )
-    } else {
-      return parent.minDrop
-    }
+    return this.getMeasurement(accessorySize, "minDrop")
   }
 
   @ResolveField()
@@ -151,18 +100,22 @@ export class AccessorySizeFieldsResolver {
     accessorySizeLoader
   ) {
     const accessorySize = await accessorySizeLoader.load(parent.id)
+    return this.getMeasurement(accessorySize, "height")
+  }
+
+  private getMeasurement = (accessorySize, key: MeasurementType) => {
     const measurementType =
       accessorySize?.size?.productVariantInternal?.product?.category
         ?.measurementType
-    if (measurementType && measurementType !== "Inches" && parent.height) {
+    if (measurementType && measurementType !== "Inches" && parent[key]) {
       return Math.round(
         this.productUtilsService.convertInchesToMeasurementSize(
-          parent.height,
+          parent[key],
           measurementType
         )
       )
     } else {
-      return parent.height
+      return parent[key]
     }
   }
 }
