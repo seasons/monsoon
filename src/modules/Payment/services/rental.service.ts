@@ -48,6 +48,9 @@ export const ProcessableReservationPhysicalProductSelect = Prisma.validator<
   scannedOnInboundAt: true,
   returnProcessedAt: true,
   createdAt: true,
+  lostAt: true,
+  lostInPhase: true,
+  hasBeenLost: true,
   physicalProduct: {
     select: {
       id: true,
@@ -608,7 +611,24 @@ export class RentalService {
         throwErrorIfRentalEndedAtUndefined()
         break
       case "Lost":
-        // TODO:
+        if (reservationPhysicalProduct.lostInPhase === "BusinessToCustomer") {
+          rentalStartedAt = undefined
+        } else if (
+          reservationPhysicalProduct.lostInPhase === "CustomerToBusiness"
+        ) {
+          rentalEndedAt = getRentalEndedAt(
+            this.timeUtils.xDaysBeforeDate(
+              reservationPhysicalProduct.lostAt,
+              RETURN_PACKAGE_CUSHION,
+              "date"
+            )
+          )
+          throwErrorIfRentalEndedAtUndefined()
+        } else {
+          throw new Error(
+            `Unexpected lostInPhase: ${reservationPhysicalProduct.lostInPhase}`
+          )
+        }
         break
       default:
         throw new Error(

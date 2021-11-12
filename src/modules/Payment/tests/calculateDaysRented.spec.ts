@@ -171,7 +171,86 @@ describe("Calculate Days Rented", () => {
       twentyThreeDaysAgo = timeUtils.xDaysAgoISOString(23)
     })
 
-    describe("Lost", () => {})
+    describe("Lost", () => {
+      it("Was lost on the way to the customer", async () => {
+        initialReservation = await addToBagAndReserveForCustomerWithParams(1, {
+          numDaysAgo: 23,
+        })
+        reservationPhysicalProductAfterReservation =
+          initialReservation.reservationPhysicalProducts[0]
+        await prisma.client.reservationPhysicalProduct.update({
+          where: { id: reservationPhysicalProductAfterReservation.id },
+          data: {
+            status: "Lost",
+            lostAt: timeUtils.xDaysAgoISOString(18),
+            hasBeenLost: true,
+            lostInPhase: "BusinessToCustomer",
+          },
+        })
+        reservationPhysicalProductWithData = await getReservationPhysicalProductWithDataWithParams(
+          initialReservation.reservationPhysicalProducts[0].id
+        )
+
+        const {
+          daysRented,
+          comment,
+          rentalEndedAt,
+          rentalStartedAt,
+        } = await rentalService.calcDaysRented(
+          testCustomer.membership.rentalInvoices[0],
+          reservationPhysicalProductWithData
+        )
+
+        expect(daysRented).toBe(0)
+        expect(rentalStartedAt).toBeUndefined()
+        expect(rentalEndedAt).toBeUndefined()
+        expect(comment).toBe("") // TODO:
+      })
+
+      it("Was lost on the way to us", async () => {
+        initialReservation = await addToBagAndReserveForCustomerWithParams(1, {
+          numDaysAgo: 23,
+        })
+        reservationPhysicalProductAfterReservation =
+          initialReservation.reservationPhysicalProducts[0]
+        await setReservationPhysicalProductScannedOnOutboundAtWithParams(
+          reservationPhysicalProductAfterReservation.id,
+          23
+        )
+        await setReservationPhysicalProductDeliveredToCustomerAtWithParams(
+          reservationPhysicalProductAfterReservation.id,
+          22
+        )
+
+        await prisma.client.reservationPhysicalProduct.update({
+          where: { id: reservationPhysicalProductAfterReservation.id },
+          data: {
+            status: "Lost",
+            lostAt: timeUtils.xDaysAgoISOString(5),
+            hasBeenLost: true,
+            lostInPhase: "CustomerToBusiness",
+          },
+        })
+        reservationPhysicalProductWithData = await getReservationPhysicalProductWithDataWithParams(
+          initialReservation.reservationPhysicalProducts[0].id
+        )
+
+        const {
+          daysRented,
+          comment,
+          rentalEndedAt,
+          rentalStartedAt,
+        } = await rentalService.calcDaysRented(
+          testCustomer.membership.rentalInvoices[0],
+          reservationPhysicalProductWithData
+        )
+
+        expect(daysRented).toBe(14)
+        expectTimeToEqual(rentalStartedAt, timeUtils.xDaysAgoISOString(22))
+        expectTimeToEqual(rentalEndedAt, timeUtils.xDaysAgoISOString(8))
+        expect(comment).toBe("") // TODO:
+      })
+    })
     describe("Reached customer", () => {
       beforeEach(async () => {
         initialReservation = await addToBagAndReserveForCustomerWithParams(1, {
