@@ -131,13 +131,13 @@ describe("Mark Items as Lost", () => {
         },
         select: {
           lostAt: true,
-          isLost: true,
+          hasBeenLost: true,
         },
       }
     )
 
     for (const reservationPhysProd of lostResPhysProds) {
-      expect(reservationPhysProd.isLost).toBe(true)
+      expect(reservationPhysProd.hasBeenLost).toBe(true)
       expect(!!reservationPhysProd.lostAt).toBe(true)
     }
   })

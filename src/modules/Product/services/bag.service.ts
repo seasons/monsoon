@@ -1,7 +1,12 @@
 import { ProductUtilsService } from "@app/modules/Utils/services/product.utils.service"
 import { UtilsService } from "@app/modules/Utils/services/utils.service"
 import { Injectable } from "@nestjs/common"
-import { BagItem, InventoryStatus, Prisma } from "@prisma/client"
+import {
+  BagItem,
+  InventoryStatus,
+  Prisma,
+  ReservationPhysicalProductStatus,
+} from "@prisma/client"
 import { PrismaService } from "@prisma1/prisma.service"
 import { ApolloError } from "apollo-server"
 import { DateTime } from "luxon"
@@ -475,8 +480,14 @@ export class BagService {
 
     lostResPhysProds.forEach(resPhysProd => {
       if (
-        resPhysProd.status !== "ShippedToCustomer" &&
-        resPhysProd.status !== "ShippedToBusiness"
+        ([
+          "ScannedOnInbound",
+          "InTransitInbound",
+          "DeliveredToCustomer",
+          "ScannedOnOutbound",
+          "InTransitOutbound",
+          "DeliveredToBusiness",
+        ] as ReservationPhysicalProductStatus[]).includes(resPhysProd.status)
       ) {
         throw new Error(
           "Items that are inbound or outbound can only be marked as lost"
@@ -495,11 +506,19 @@ export class BagService {
         },
       })
     )
-    const lostOutboundResPhysProds = lostResPhysProds.filter(
-      a => a.status === "ShippedToCustomer"
+    const lostOutboundResPhysProds = lostResPhysProds.filter(a =>
+      ([
+        "ScannedOnOutbound",
+        "InTransitOutbound",
+        "DeliveredToCustomer",
+      ] as ReservationPhysicalProductStatus[]).includes(a.status)
     )
-    const lostInboundItemsResPhysProds = lostResPhysProds.filter(
-      a => a.status === "ShippedToBusiness"
+    const lostInboundItemsResPhysProds = lostResPhysProds.filter(a =>
+      ([
+        "ScannedOnInbound",
+        "InTransitInbound",
+        "DeliveredToBusiness",
+      ] as ReservationPhysicalProductStatus[]).includes(a.status)
     )
 
     if (lostOutboundResPhysProds) {
@@ -513,7 +532,7 @@ export class BagService {
           data: {
             lostAt: new Date(),
             lostInPhase: "BusinessToCustomer",
-            isLost: true,
+            hasBeenLost: true,
           },
         })
       )
@@ -530,7 +549,7 @@ export class BagService {
           data: {
             lostAt: new Date(),
             lostInPhase: "CustomerToBusiness",
-            isLost: true,
+            hasBeenLost: true,
           },
         })
       )
