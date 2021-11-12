@@ -463,11 +463,14 @@ enum SyncTimingType {
 }
 
 model AccessorySize {
-  id     String @id @default(cuid()) @db.VarChar(30)
-  bridge Float?
-  length Float?
-  width  Float?
-  size   Size?
+  id      String @id @default(cuid()) @db.VarChar(30)
+  bridge  Float?
+  length  Float?
+  width   Float?
+  height  Float?
+  maxDrop Float?
+  minDrop Float?
+  size    Size?
 }
 
 model ActiveAdminUser {

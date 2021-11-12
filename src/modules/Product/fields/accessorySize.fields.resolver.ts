@@ -44,7 +44,7 @@ export class AccessorySizeFieldsResolver {
     const measurementType =
       accessorySize?.size?.productVariantInternal?.product?.category
         ?.measurementType
-    if (measurementType && parent.bridge) {
+    if (measurementType && measurementType !== "Inches" && parent.bridge) {
       return Math.round(
         this.productUtilsService.convertInchesToMeasurementSize(
           parent.bridge,
@@ -52,7 +52,7 @@ export class AccessorySizeFieldsResolver {
         )
       )
     } else {
-      return undefined
+      return parent.bridge
     }
   }
 
@@ -66,7 +66,7 @@ export class AccessorySizeFieldsResolver {
     const measurementType =
       accessorySize?.size?.productVariantInternal?.product?.category
         ?.measurementType
-    if (measurementType && parent.length) {
+    if (measurementType && measurementType !== "Inches" && parent.length) {
       return Math.round(
         this.productUtilsService.convertInchesToMeasurementSize(
           parent.length,
@@ -74,7 +74,7 @@ export class AccessorySizeFieldsResolver {
         )
       )
     } else {
-      return undefined
+      return parent.length
     }
   }
 
@@ -88,7 +88,7 @@ export class AccessorySizeFieldsResolver {
     const measurementType =
       accessorySize?.size?.productVariantInternal?.product?.category
         ?.measurementType
-    if (measurementType && parent.width) {
+    if (measurementType && measurementType !== "Inches" && parent.width) {
       return Math.round(
         this.productUtilsService.convertInchesToMeasurementSize(
           parent.width,
@@ -96,7 +96,73 @@ export class AccessorySizeFieldsResolver {
         )
       )
     } else {
-      return undefined
+      return parent.width
+    }
+  }
+
+  @ResolveField()
+  async maxDrop(
+    @Parent() parent,
+    @Loader(measurementLoader)
+    accessorySizeLoader
+  ) {
+    const accessorySize = await accessorySizeLoader.load(parent.id)
+    const measurementType =
+      accessorySize?.size?.productVariantInternal?.product?.category
+        ?.measurementType
+    if (measurementType && measurementType !== "Inches" && parent.maxDrop) {
+      return Math.round(
+        this.productUtilsService.convertInchesToMeasurementSize(
+          parent.maxDrop,
+          measurementType
+        )
+      )
+    } else {
+      return parent.maxDrop
+    }
+  }
+
+  @ResolveField()
+  async minDrop(
+    @Parent() parent,
+    @Loader(measurementLoader)
+    accessorySizeLoader
+  ) {
+    const accessorySize = await accessorySizeLoader.load(parent.id)
+    const measurementType =
+      accessorySize?.size?.productVariantInternal?.product?.category
+        ?.measurementType
+    if (measurementType && measurementType !== "Inches" && parent.minDrop) {
+      return Math.round(
+        this.productUtilsService.convertInchesToMeasurementSize(
+          parent.minDrop,
+          measurementType
+        )
+      )
+    } else {
+      return parent.minDrop
+    }
+  }
+
+  @ResolveField()
+  async height(
+    @Parent() parent,
+    @Loader(measurementLoader)
+    accessorySizeLoader
+  ) {
+    const accessorySize = await accessorySizeLoader.load(parent.id)
+    const measurementType =
+      accessorySize?.size?.productVariantInternal?.product?.category
+        ?.measurementType
+    if (measurementType && measurementType !== "Inches" && parent.height) {
+      return Math.round(
+        this.productUtilsService.convertInchesToMeasurementSize(
+          parent.height,
+          measurementType
+        )
+      )
+    } else {
+      return parent.height
     }
   }
 }
