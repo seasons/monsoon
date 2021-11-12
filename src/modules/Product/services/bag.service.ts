@@ -9,6 +9,7 @@ import {
 } from "@prisma/client"
 import { PrismaService } from "@prisma1/prisma.service"
 import { ApolloError } from "apollo-server"
+import cuid from "cuid"
 import { DateTime } from "luxon"
 
 import { ProductVariantService } from "../services/productVariant.service"
@@ -245,6 +246,8 @@ export class BagService {
         reservationPhysicalProduct: {
           select: {
             id: true,
+            status: true,
+            reservationId: true,
           },
         },
         customer: {
@@ -311,11 +314,13 @@ export class BagService {
       customerID
     )) as any
 
-    // TODO: We probably should gate based on the reservationPhysicalProduct status, rather than the reservation status,
-    // now that we're kind of relying less and less on reservation statuses.
-    if (!["Queued", "Hold"].includes(lastReservation.status)) {
+    if (
+      !["Queued", "Hold", "Picked"].includes(
+        oldReservationPhysicalProduct.status
+      )
+    ) {
       throw Error(
-        "Only reservations with status Hold or Queued can have a bag item swapped"
+        "Only bag items with status Hold, Picked, or Queued can be swapped"
       )
     }
 
@@ -381,21 +386,27 @@ export class BagService {
     const newPhysicalProductIDConnect = {
       connect: { id: newPhysicalProductID },
     }
-
-    const newReservationPhysicalProduct = await this.prisma.client.reservationPhysicalProduct.create(
-      {
+    const newReservationPhysProdId = cuid()
+    promises.push(
+      this.prisma.client.reservationPhysicalProduct.create({
         data: {
+          id: newReservationPhysProdId,
           isNew: true,
           physicalProduct: {
             connect: {
               id: newPhysicalProductID,
             },
           },
+          reservation: {
+            connect: {
+              id: oldReservationPhysicalProduct.reservationId,
+            },
+          },
         },
         select: {
           id: true,
         },
-      }
+      })
     )
 
     promises.push(
@@ -409,7 +420,7 @@ export class BagService {
               id: oldReservationPhysicalProduct.id,
             },
             connect: {
-              id: newReservationPhysicalProduct.id,
+              id: newReservationPhysProdId,
             },
           },
         },
@@ -432,7 +443,7 @@ export class BagService {
               id: oldReservationPhysicalProduct.id,
             },
             connect: {
-              id: newReservationPhysicalProduct.id,
+              id: newReservationPhysProdId,
             },
           },
         },
@@ -451,7 +462,7 @@ export class BagService {
           },
           reservationPhysicalProduct: {
             connect: {
-              id: newReservationPhysicalProduct.id,
+              id: newReservationPhysProdId,
             },
           },
           physicalProduct: newPhysicalProductIDConnect,
@@ -462,6 +473,11 @@ export class BagService {
           physicalProduct: newPhysicalProductIDConnect,
           status: "Reserved",
           saved: false,
+          reservationPhysicalProduct: {
+            connect: {
+              id: newReservationPhysProdId,
+            },
+          },
         },
         select,
       })
