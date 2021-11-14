@@ -1438,6 +1438,9 @@ model ReservationPhysicalProduct {
 
   status ReservationPhysicalProductStatus @default(value: Queued)
 
+  pickedAt DateTime?
+  packedAt DateTime?
+
   // customer or UPS
   droppedOffBy ReservationDropOffAgent?
   droppedOffAt DateTime?
