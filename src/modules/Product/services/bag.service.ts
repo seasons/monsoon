@@ -118,18 +118,20 @@ export class BagService {
       },
     })
 
+    let sections = []
+
     if (application === "spring") {
-      return [
-        this.getQueuedSection(bagItems),
+      sections = [
+        await this.getQueuedSection(bagItems),
         this.getPickedSection(bagItems),
         this.getPackedSection(bagItems, "spring"),
         this.getBusinessToCustomerSection(bagItems),
         this.getAtHomeSection(bagItems),
-        this.getReturnPendingSection(bagItems),
+        await this.getReturnPendingSection(bagItems),
         this.getCustomerToBusinessSection(bagItems),
       ]
     } else {
-      return [
+      sections = [
         this.getAddedSection(bagItems),
         this.getReturnPendingSection(bagItems),
 
@@ -154,6 +156,8 @@ export class BagService {
         this.getAtHomeSection(bagItems),
       ]
     }
+
+    return sections
   }
 
   async addToBag(
