@@ -39,8 +39,18 @@ export class ReservationMutationsResolver {
     })
   }
 
-  async pickItems(@Args() { items }) {
-    return this.reservationPhysicalProduct.pickItems(items)
+  @Mutation()
+  async pickItems(@Args() { bagItemIDs }) {
+    return this.reservationPhysicalProduct.pickItems(bagItemIDs)
+  }
+
+  @Mutation()
+  async packItems(@Args() { bagItemIDs }) {
+    return this.reservationPhysicalProduct.pickItems(bagItemIDs)
+  }
+
+  async printShippingLabel(@Customer() customer) {
+    return this.reservationPhysicalProduct.printShippingLabel(customer)
   }
 
   @Mutation()

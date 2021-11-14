@@ -93,7 +93,9 @@ enum BagSectionStatus {
   CustomerToBusiness
   AtHome
   BusinessToCustomer
+  DeliveredToCustomer
   ReturnPending
+  Reserving
 }
 
 type BagSection {
