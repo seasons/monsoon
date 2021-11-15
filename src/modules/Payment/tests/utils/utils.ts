@@ -23,28 +23,6 @@ export const UPS_GROUND_FEE = 1000
 export const UPS_SELECT_FEE = 2000
 export const BASE_PROCESSING_FEE = 550
 
-const DEFAULT_RESERVATION_ARGS = Prisma.validator<Prisma.ReservationArgs>()({
-  select: {
-    id: true,
-    reservationNumber: true,
-    reservationPhysicalProducts: {
-      select: ProcessableReservationPhysicalProductSelect,
-    },
-    sentPackage: { select: { id: true } },
-    returnPackages: {
-      orderBy: { createdAt: "desc" },
-      select: {
-        id: true,
-        shippingLabel: { select: { trackingNumber: true } },
-      },
-    },
-    shippingMethod: { select: { code: true } },
-  },
-})
-export type TestReservation = Prisma.ReservationGetPayload<
-  typeof DEFAULT_RESERVATION_ARGS
->
-
 export type TestCustomerWithId = Pick<Customer, "id">
 export type PrismaDateUpdateInput = Date | string | null
 export type PrismaOption = { prisma: PrismaService }
@@ -104,99 +82,6 @@ export const setCustomerSubscriptionNextBillingAt = async (
       membership: { update: { subscription: { update: { nextBillingAt } } } },
     },
   })
-}
-
-export const addToBagAndReserveForCustomer = async (
-  testCustomer: TestCustomerWithId,
-  numProductsToAdd: number,
-  {
-    prisma,
-    reserveService,
-    timeUtils,
-  }: PrismaOption & { reserveService: ReserveService } & TimeUtilsOption,
-  options: { shippingCode?: ShippingCode; numDaysAgo: number } = {
-    numDaysAgo: 0,
-  }
-) => {
-  const { shippingCode = "UPSGround", numDaysAgo } = options
-  const reservedBagItems = await prisma.client.bagItem.findMany({
-    where: {
-      customer: { id: testCustomer.id },
-      status: "Reserved",
-      saved: false,
-    },
-    select: {
-      productVariant: {
-        select: { sku: true, product: { select: { id: true } } },
-      },
-    },
-  })
-  const reservedSKUs = reservedBagItems.map(a => a.productVariant.sku)
-  const reservedProductIds = reservedBagItems.map(
-    b => b.productVariant.product.id
-  )
-  let reservableProdVars = []
-  let reservableProductIds = []
-  for (let i = 0; i < numProductsToAdd; i++) {
-    const nextProdVar = await prisma.client.productVariant.findFirst({
-      where: {
-        reservable: { gte: 1 },
-        sku: { notIn: reservedSKUs },
-        // Ensure we reserve diff products each time. Needed for some tests
-        product: {
-          id: { notIn: [...reservedProductIds, ...reservableProductIds] },
-        },
-        // We shouldn't need to check this since we're checking counts,
-        // but there's some corrupt data so we do this to circumvent that.
-        physicalProducts: { some: { inventoryStatus: "Reservable" } },
-      },
-      take: numProductsToAdd,
-      select: {
-        id: true,
-        productId: true,
-      },
-    })
-    reservableProdVars.push(nextProdVar)
-    reservableProductIds.push(nextProdVar.productId)
-  }
-  for (const prodVar of reservableProdVars) {
-    await prisma.client.bagItem.create({
-      data: {
-        customer: { connect: { id: testCustomer.id } },
-        productVariant: { connect: { id: prodVar.id } },
-        status: "Added",
-        saved: false,
-      },
-    })
-  }
-
-  const r = await reserveService.reserveItems({
-    shippingCode,
-    ...(shippingCode === "Pickup"
-      ? { pickupTime: { date: new Date().toISOString() } }
-      : {}),
-    customer: testCustomer as any,
-    select: DEFAULT_RESERVATION_ARGS.select,
-  })
-  const priceForPackage =
-    shippingCode === "UPSSelect" ? UPS_SELECT_FEE : UPS_GROUND_FEE
-  // await setPackageAmount(r.sentPackage.id, priceForPackage, { prisma })
-  // await setPackageAmount(r.returnPackages[0].id, priceForPackage, { prisma })
-  if (numDaysAgo > 0) {
-    await prisma.client.reservation.update({
-      where: { id: r.id },
-      data: {
-        createdAt: timeUtils.xDaysAgoISOString(numDaysAgo),
-        reservationPhysicalProducts: {
-          updateMany: {
-            where: { id: { in: r.reservationPhysicalProducts.map(a => a.id) } },
-            data: { createdAt: timeUtils.xDaysAgoISOString(numDaysAgo) },
-          },
-        },
-      },
-    })
-  }
-  return r
 }
 
 export const setPackageAmount = async (

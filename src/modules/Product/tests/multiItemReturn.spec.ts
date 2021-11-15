@@ -1,7 +1,4 @@
-import {
-  addToBagAndReserveForCustomer,
-  setReservationStatus,
-} from "@app/modules/Payment/tests/utils/utils"
+import { setReservationStatus } from "@app/modules/Payment/tests/utils/utils"
 import { ReservationPhysicalProductService } from "@app/modules/Reservation"
 import { ReserveService } from "@app/modules/Reservation/services/reserve.service"
 import { ReservationTestUtilsService } from "@app/modules/Reservation/tests/reservation.test.utils"

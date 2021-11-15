@@ -1,5 +1,4 @@
 import {
-  addToBagAndReserveForCustomer,
   setPackageDeliveredAt,
   setPackageEnteredSystemAt,
   setReservationCreatedAt,
@@ -7,6 +6,7 @@ import {
 } from "@app/modules/Payment/tests/utils/utils"
 import { ReservationPhysicalProductService } from "@app/modules/Reservation"
 import { ReserveService } from "@app/modules/Reservation/services/reserve.service"
+import { ReservationTestUtilsService } from "@app/modules/Reservation/tests/reservation.test.utils"
 import { TestUtilsService } from "@app/modules/Test/services/test.service"
 import { TimeUtilsService } from "@app/modules/Utils/services/time.service"
 import { PrismaService } from "@app/prisma/prisma.service"
@@ -22,6 +22,7 @@ describe("Mark Items as Lost", () => {
   let testUtils: TestUtilsService
   let reserveService: ReserveService
   let timeUtils: TimeUtilsService
+  let reservationTestUtils: ReservationTestUtilsService
   let reservation
   let cleanupFuncs = []
   let testCustomer
@@ -41,10 +42,9 @@ describe("Mark Items as Lost", () => {
     cleanupFuncs.push(cleanupFunc)
     testCustomer = customer
 
-    reservation = await addToBagAndReserveForCustomer(testCustomer.id, 2, {
-      prisma: prismaService,
-      reserveService,
-      timeUtils,
+    reservation = await reservationTestUtils.addToBagAndReserveForCustomer({
+      customer: testCustomer.id,
+      numProductsToAdd: 2,
     })
   })
 

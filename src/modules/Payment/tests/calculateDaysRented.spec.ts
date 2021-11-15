@@ -1,5 +1,6 @@
 import { APP_MODULE_DEF } from "@app/app.module"
 import { ReserveService } from "@app/modules/Reservation/services/reserve.service"
+import { ReservationTestUtilsService } from "@app/modules/Reservation/tests/reservation.test.utils"
 import { TestUtilsService } from "@app/modules/Test/services/test.service"
 import { TimeUtilsService } from "@app/modules/Utils/services/time.service"
 import { PrismaService } from "@app/prisma/prisma.service"
@@ -7,7 +8,6 @@ import { Test } from "@nestjs/testing"
 
 import { RentalService } from "../services/rental.service"
 import {
-  addToBagAndReserveForCustomer,
   expectTimeToEqual,
   getCustWithData,
   getReservationPhysicalProductWithData,
@@ -26,6 +26,7 @@ describe("Calculate Days Rented", () => {
   let rentalService: RentalService
   let timeUtils: TimeUtilsService
   let reserveService: ReserveService
+  let reservationTestUtils: ReservationTestUtilsService
 
   let addToBagAndReserveForCustomerWithParams
   let getCustWithDataWithParams
@@ -52,6 +53,9 @@ describe("Calculate Days Rented", () => {
     rentalService = moduleRef.get<RentalService>(RentalService)
     timeUtils = moduleRef.get<TimeUtilsService>(TimeUtilsService)
     reserveService = moduleRef.get<ReserveService>(ReserveService)
+    reservationTestUtils = moduleRef.get<ReservationTestUtilsService>(
+      ReservationTestUtilsService
+    )
 
     setReservationPhysicalProductScannedOnOutboundAtWithParams = (
       reservationPhysicalProductId,
@@ -62,17 +66,19 @@ describe("Calculate Days Rented", () => {
         numDaysAgo,
         { prisma, timeUtils }
       )
-    addToBagAndReserveForCustomerWithParams = (numBagItems, { numDaysAgo }) =>
-      addToBagAndReserveForCustomer(
-        testCustomer,
-        numBagItems,
-        {
-          prisma,
-          reserveService,
-          timeUtils,
-        },
-        { numDaysAgo }
-      )
+    addToBagAndReserveForCustomerWithParams = async (
+      numBagItems,
+      { numDaysAgo }
+    ) => {
+      const {
+        reservation,
+      } = await reservationTestUtils.addToBagAndReserveForCustomer({
+        customer: testCustomer,
+        numProductsToAdd: numBagItems,
+        options: { numDaysAgo },
+      })
+      return reservation
+    }
     getCustWithDataWithParams = () =>
       getCustWithData(testCustomer, {
         prisma,
