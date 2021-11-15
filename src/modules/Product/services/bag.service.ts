@@ -28,7 +28,7 @@ enum BagSectionStatus {
   DeliveredToBusiness = "DeliveredToBusiness",
   ReturnProcessed = "ReturnProcessed",
   ReturnPending = "ReturnPending",
-  ResetEarly = "ResetEary",
+  ResetEarly = "ResetEarly",
   Hold = "Hold",
   Lost = "Lost",
 }
