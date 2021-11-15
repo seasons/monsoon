@@ -61,13 +61,13 @@ export class BagService {
       case "Added":
         return await this.getAddedSection(bagItems)
       case "AtHome":
-        return await this.getAtHomeSection(bagItems)
+        return await this.atHomeSection(bagItems)
       case "CustomerToBusiness":
-        return this.getCustomerToBusinessSection(bagItems)
+        return this.customerToBusinessSection(bagItems)
       case "BusinessToCustomer":
-        return await this.getBusinessToCustomerSection(bagItems)
+        return await this.businessToCustomerSection(bagItems)
       case "ReturnPending":
-        return await this.getReturnPendingSection(bagItems)
+        return await this.returnPendingSection(bagItems)
       default:
         return null
     }
@@ -89,7 +89,6 @@ export class BagService {
           select: {
             id: true,
             status: true,
-            hasBeenScannedOnInbound: true,
             outboundPackage: {
               select: {
                 shippingLabel: {
@@ -120,38 +119,38 @@ export class BagService {
 
     if (application === "spring") {
       return [
-        this.getQueuedSection(bagItems),
-        this.getPickedSection(bagItems),
-        this.getPackedSection(bagItems, "spring"),
-        this.getBusinessToCustomerSection(bagItems),
-        this.getAtHomeSection(bagItems),
-        this.getReturnPendingSection(bagItems),
-        this.getCustomerToBusinessSection(bagItems),
+        this.queuedSection(bagItems),
+        this.pickedSection(bagItems),
+        this.packedSection(bagItems, "spring"),
+        this.businessToCustomerSection(bagItems),
+        this.atHomeSection(bagItems),
+        this.returnPendingSection(bagItems),
+        this.customerToBusinessSection(bagItems),
       ]
     } else {
       return [
         this.getAddedSection(bagItems),
-        this.getReturnPendingSection(bagItems),
+        this.returnPendingSection(bagItems),
 
         // Step 1 outbound,
-        this.getPackedSection(bagItems, "client"),
+        this.packedSection(bagItems, "client"),
 
         // Step 2 outbound
-        this.getBusinessToCustomerSection(bagItems),
+        this.businessToCustomerSection(bagItems),
 
         // Step 3 outbound
         this.getDeliveredToCustomerSection(bagItems),
 
         // Step 1 inbound
-        this.getHasBeenScannedOutboundSection(bagItems),
+        this.scannedOnOutboundSection(bagItems),
 
         // Step 2 inbound
-        this.getCustomerToBusinessSection(bagItems),
+        this.customerToBusinessSection(bagItems),
 
         // Step 3 inbound
         this.getDeliveredToBusinessSection(bagItems),
 
-        this.getAtHomeSection(bagItems),
+        this.atHomeSection(bagItems),
       ]
     }
   }
@@ -647,7 +646,7 @@ export class BagService {
     return bagItem
   }
 
-  private async getQueuedSection(bagItems) {
+  private async queuedSection(bagItems) {
     const filteredBagItems = bagItems.filter(
       b => b.reservationPhysicalProduct?.status === "Queued"
     )
@@ -660,7 +659,7 @@ export class BagService {
     }
   }
 
-  private getAtHomeSection(bagItems) {
+  private atHomeSection(bagItems) {
     const filteredBagItems = bagItems.filter(item => {
       const updatedMoreThan24HoursAgo =
         item?.updatedAt &&
@@ -686,7 +685,7 @@ export class BagService {
     }
   }
 
-  private getPickedSection(bagItems) {
+  private pickedSection(bagItems) {
     const filteredBagItems = bagItems.filter(
       b => b.reservationPhysicalProduct?.status === "Picked"
     )
@@ -699,15 +698,16 @@ export class BagService {
   }
 
   // 1. Inbound step 1
-  private getHasBeenScannedOutboundSection(bagItems) {
+  private scannedOnOutboundSection(bagItems) {
     const filteredBagItems = bagItems.filter(b => {
-      return b.reservationPhysicalProduct?.hasBeenScannedOnInbound
+      const resPhysProdStatus = b.reservationPhysicalProduct?.status
+      return resPhysProdStatus === "ScannedOnInbound"
     })
 
     return {
-      id: "customerToBusiness",
+      id: "scannedOnInbound",
       title: "On the way back",
-      status: "CustomerToBusiness",
+      status: "ScannedOnInbound",
       bagItems: filteredBagItems,
       deliveryStep: 1,
       deliveryStatusText: "Received by UPS",
@@ -716,7 +716,7 @@ export class BagService {
   }
 
   // 2. Inbound step 2
-  private getCustomerToBusinessSection(bagItems) {
+  private customerToBusinessSection(bagItems) {
     const filteredBagItems = bagItems.filter(b => {
       const resPhysProdStatus = b.reservationPhysicalProduct?.status
       return resPhysProdStatus === "ShippedToBusiness"
@@ -760,7 +760,7 @@ export class BagService {
   }
 
   // 1. Outbound step 1
-  private getPackedSection(bagItems: any, application: "spring" | "client") {
+  private packedSection(bagItems: any, application: "spring" | "client") {
     const isSpring = application === "spring"
     const filteredBagItems = bagItems.filter(
       b => b.reservationPhysicalProduct?.status === "Packed"
@@ -778,7 +778,7 @@ export class BagService {
   }
 
   // 2. Outbound step 2
-  private getBusinessToCustomerSection(bagItems) {
+  private businessToCustomerSection(bagItems) {
     const filteredBagItems = bagItems.filter(b => {
       return b.reservationPhysicalProduct?.status === "ShippedToCustomer"
     })
@@ -824,7 +824,7 @@ export class BagService {
     }
   }
 
-  private async getReturnPendingSection(bagItems) {
+  private async returnPendingSection(bagItems) {
     const filteredBagItems = bagItems.filter(
       b =>
         b.reservationPhysicalProduct?.status === "DeliveredToCustomer" &&
