@@ -1,4 +1,4 @@
-import { bootstrapServer } from "@app/index"
+import { bootstrapServer } from "@app/server"
 import { INestApplication, Logger } from "@nestjs/common"
 import request from "supertest"
 

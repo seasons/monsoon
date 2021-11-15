@@ -6,8 +6,8 @@ class ShippoMock {
     create: async () => ({
       object_id: "mock-object-id",
       rates: [
-        { servicelevel: { token: "ups_ground", amount: 1000 } },
-        { servicelevel: { token: "ups_3_day_select", amount: 2000 } },
+        { servicelevel: { token: "ups_ground" }, amount: 1000 },
+        { servicelevel: { token: "ups_3_day_select" }, amount: 2000 },
       ],
     }),
   }

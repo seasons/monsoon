@@ -689,14 +689,18 @@ export class RentalService {
   async createRentalInvoiceLineItems(
     invoice: Pick<RentalInvoice, "id" | "billingStartAt" | "billingEndAt"> & {
       reservations: (Pick<Reservation, "createdAt" | "reservationNumber"> & {
+        shippingMethod: Pick<ShippingMethod, "code">
+      } & {
         returnPackages: Array<
-          Pick<Package, "deliveredAt" | "amount"> & {
+          Pick<Package, "deliveredAt" | "amount" | "id"> & {
             items: Array<Pick<PhysicalProduct, "seasonsUID">>
           } & {
             shippingMethod?: Pick<ShippingMethod, "code">
           }
         >
-      } & { sentPackage: Pick<Package, "enteredDeliverySystemAt"> })[]
+      } & {
+        sentPackage: Pick<Package, "enteredDeliverySystemAt" | "amount">
+      })[]
       products: (Pick<PhysicalProduct, "id" | "seasonsUID"> & {
         productVariant: {
           product: Pick<Product, "computedRentalPrice">
@@ -781,7 +785,17 @@ export class RentalService {
     return lineItems
   }
 
-  private getInboundPackageLineItemDatas = invoice => {
+  private getInboundPackageLineItemDatas = (
+    invoice: Pick<RentalInvoice, "billingStartAt"> & {
+      reservations: Array<{
+        returnPackages: Array<
+          Pick<Package, "deliveredAt" | "id" | "amount"> & {
+            items: Array<Pick<PhysicalProduct, "seasonsUID">>
+          }
+        >
+      }>
+    }
+  ) => {
     const allReturnPackages = invoice.reservations.flatMap(
       a => a.returnPackages
     )
@@ -813,7 +827,15 @@ export class RentalService {
     return inboundPackagesLineItemDatas
   }
 
-  getOutboundPackageLineItemDatasFromThisBillingCycle = invoice => {
+  getOutboundPackageLineItemDatasFromThisBillingCycle = (
+    invoice: Pick<RentalInvoice, "billingStartAt"> & {
+      reservations: Array<
+        Pick<Reservation, "createdAt"> & {
+          shippingMethod: Pick<ShippingMethod, "code">
+        } & { sentPackage: Pick<Package, "enteredDeliverySystemAt" | "amount"> }
+      >
+    }
+  ) => {
     const newReservations = invoice.reservations.filter(a =>
       this.timeUtils.isLaterDate(a.createdAt, invoice.billingStartAt)
     )
@@ -1130,6 +1152,36 @@ export class RentalService {
       },
       select: {
         id: true,
+        billingEndAt: true,
+        billingStartAt: true,
+        reservations: {
+          select: {
+            createdAt: true,
+            shippingMethod: {
+              select: {
+                code: true,
+              },
+            },
+            sentPackage: {
+              select: {
+                amount: true,
+                enteredDeliverySystemAt: true,
+              },
+            },
+            returnPackages: {
+              select: {
+                deliveredAt: true,
+                id: true,
+                amount: true,
+                items: {
+                  select: {
+                    seasonsUID: true,
+                  },
+                },
+              },
+            },
+          },
+        },
         products: {
           select: {
             id: true,
@@ -1178,8 +1230,24 @@ export class RentalService {
 
       rentalPrices.push(price)
     }
+    const rentalBalance = rentalPrices.reduce((a, b) => a + b, 0)
 
-    return rentalPrices.reduce((a, b) => a + b, 0)
+    const outboundPackagesFromPreviousBillingCycleLineItemDatas = await this.getOutboundPackageLineItemDatasFromPreviousBillingCycle(
+      currentInvoice
+    )
+    const newReservationOutboundPackageLineItemDatas = this.getOutboundPackageLineItemDatasFromThisBillingCycle(
+      currentInvoice
+    )
+    const inboundPackagesLineItemDatas = this.getInboundPackageLineItemDatas(
+      currentInvoice
+    )
+    const packageBalance = [
+      ...outboundPackagesFromPreviousBillingCycleLineItemDatas,
+      ...newReservationOutboundPackageLineItemDatas,
+      ...inboundPackagesLineItemDatas,
+    ].reduce((acc, curval) => acc + curval.price, 0)
+
+    return rentalBalance + packageBalance
   }
 
   async updateEstimatedTotal(invoice: {
@@ -1249,10 +1317,8 @@ export class RentalService {
   calculateUnadjustedPriceForDaysRented = (product, daysRented) => {
     const rawDailyRentalPrice =
       product.productVariant.product.computedRentalPrice / 30
-    const roundedDailyRentalPriceAsString = rawDailyRentalPrice.toFixed(2)
-    const roundedDailyRentalPrice = +roundedDailyRentalPriceAsString
 
-    return Math.round(daysRented * roundedDailyRentalPrice * 100)
+    return Math.round(daysRented * rawDailyRentalPrice * 100)
   }
 
   private prismaLineItemToChargebeeChargeInput = prismaLineItem => {
