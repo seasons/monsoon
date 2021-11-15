@@ -31,6 +31,10 @@ enum BagSectionStatus {
   ResetEarly = "ResetEarly",
   Hold = "Hold",
   Lost = "Lost",
+
+  // Added sections: These combine multiple other statuses
+  Inbound = "Inbound",
+  Outbound = "Outbound",
 }
 
 @Injectable()
@@ -121,18 +125,18 @@ export class BagService {
     })
 
     if (application === "spring") {
-      const sections: BagSectionStatus[] = [
+      const sections = [
         BagSectionStatus.Queued,
         BagSectionStatus.Picked,
         BagSectionStatus.Packed,
-        BagSectionStatus.InTransitOutbound,
+        BagSectionStatus.Outbound,
         BagSectionStatus.DeliveredToCustomer,
         BagSectionStatus.ReturnPending,
-        BagSectionStatus.InTransitInbound,
+        BagSectionStatus.Inbound,
       ]
 
       return sections.map(status => {
-        this.getSection(status, bagItems, "admin")
+        return this.getSection(status, bagItems, "admin")
       })
     } else {
       const sections: BagSectionStatus[] = [
@@ -153,7 +157,7 @@ export class BagService {
       ]
 
       return sections.map(status => {
-        this.getSection(status, bagItems, "client")
+        return this.getSection(status, bagItems, "client")
       })
     }
   }
@@ -671,7 +675,7 @@ export class BagService {
 
   private getSection(
     status: BagSectionStatus,
-    bagItems: any,
+    bagItems,
     application: "client" | "admin"
   ) {
     const checkIfUpdatedMoreThan24HoursAgo = item => {
@@ -685,7 +689,7 @@ export class BagService {
     const isAdmin = application === "admin"
 
     let filteredBagItems = bagItems.filter(
-      b => b.reservationPhysicalProduct?.status === status
+      item => item.reservationPhysicalProduct?.status === status
     )
     let title: string = status
     let deliveryStep
@@ -693,6 +697,22 @@ export class BagService {
     let deliveryTrackingUrl
 
     switch (status) {
+      case "Outbound":
+        filteredBagItems = bagItems.filter(item => {
+          const status = item.reservationPhysicalProduct?.status
+          return (
+            status === "ScannedOnOutbound" || status === "InTransitOutbound"
+          )
+        })
+        title = "Shipped"
+        break
+      case "Inbound":
+        filteredBagItems = bagItems.filter(item => {
+          const status = item.reservationPhysicalProduct?.status
+          return status === "ScannedOnInbound" || status === "InTransitInbound"
+        })
+        title = "On the way back"
+        break
       case "ReturnPending":
         title = "Returning"
         break
@@ -724,14 +744,6 @@ export class BagService {
         deliveryTrackingUrl = this.getTrackingUrl(filteredBagItems, "inbound")
         break
       case "InTransitInbound":
-        if(isAdmin){
-          filteredBagItems = bagItems.filter(item => {
-            const itemStatus =
-              item.reservationPhysicalProduct?.status
-  
-            return itemStatus === "InTransitInbound" || 
-          })
-        }
         // 2. Inbound step 2
         title = "On the way back"
         deliveryStep = 2
