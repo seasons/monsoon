@@ -1,7 +1,7 @@
 import { APP_MODULE_DEF } from "@app/app.module"
 import { BagService } from "@app/modules/Product/services/bag.service"
 import { ReserveService } from "@app/modules/Reservation/services/reserve.service"
-import { TestUtilsService } from "@app/modules/Utils/services/test.service"
+import { TestUtilsService } from "@app/modules/Test/services/test.service"
 import { PrismaService } from "@app/prisma/prisma.service"
 import { Test, TestingModule } from "@nestjs/testing"
 import chargebee from "chargebee"

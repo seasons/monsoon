@@ -1,6 +1,7 @@
+import { APP_MODULE_DEF } from "@app/app.module"
 import { ReservationService } from "@app/modules/Reservation"
 import { ReserveService } from "@app/modules/Reservation/services/reserve.service"
-import { TestUtilsService } from "@app/modules/Utils/services/test.service"
+import { TestUtilsService } from "@app/modules/Test/services/test.service"
 import { TimeUtilsService } from "@app/modules/Utils/services/time.service"
 import { PrismaService } from "@app/prisma/prisma.service"
 import { Test } from "@nestjs/testing"
@@ -36,7 +37,7 @@ describe("Calculate Days Rented", () => {
   const now = new Date()
 
   beforeAll(async () => {
-    const moduleBuilder = await Test.createTestingModule(PAYMENT_MODULE_DEF)
+    const moduleBuilder = await Test.createTestingModule(APP_MODULE_DEF)
 
     const moduleRef = await moduleBuilder.compile()
 
