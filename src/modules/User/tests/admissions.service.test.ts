@@ -1,7 +1,7 @@
 import { AppModule } from "@app/app.module"
 import { SMSService } from "@app/modules/SMS/services/sms.service"
+import { TestUtilsService } from "@app/modules/Test/services/test.service"
 import { QueryUtilsService } from "@app/modules/Utils/services/queryUtils.service"
-import { TestUtilsService } from "@app/modules/Utils/services/test.service"
 import { TimeUtilsService } from "@app/modules/Utils/services/time.service"
 import { UtilsService } from "@app/modules/Utils/services/utils.service"
 import { UtilsModule } from "@app/modules/Utils/utils.module"
