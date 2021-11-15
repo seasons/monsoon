@@ -399,30 +399,12 @@ export class BagService {
           },
           reservation: {
             connect: {
-              id: oldReservationPhysicalProduct.reservationId,
+              id: lastReservation.id,
             },
           },
         },
         select: {
           id: true,
-        },
-      })
-    )
-
-    promises.push(
-      this.prisma.client.reservation.update({
-        where: {
-          id: lastReservation.id,
-        },
-        data: {
-          reservationPhysicalProducts: {
-            disconnect: {
-              id: oldReservationPhysicalProduct.id,
-            },
-            connect: {
-              id: newReservationPhysProdId,
-            },
-          },
         },
       })
     )
@@ -439,9 +421,6 @@ export class BagService {
         where: { id: activeRentalInvoice.id },
         data: {
           reservationPhysicalProducts: {
-            disconnect: {
-              id: oldReservationPhysicalProduct.id,
-            },
             connect: {
               id: newReservationPhysProdId,
             },
