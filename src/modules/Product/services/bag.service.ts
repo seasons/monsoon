@@ -465,10 +465,14 @@ export class BagService {
     const results = await this.prisma.client.$transaction(promises.flat())
     const addedBagItem = results.pop()
 
-    await this.productUtils.removeRestockNotifications(
-      [newProductVariantID],
-      customerID
-    )
+    try {
+      await this.productUtils.removeRestockNotifications(
+        [newProductVariantID],
+        customerID
+      )
+    } catch (e) {
+      // noop
+    }
 
     return addedBagItem
   }
