@@ -1,5 +1,5 @@
 import { ReserveService } from "@app/modules/Reservation/services/reserve.service"
-import { TestUtilsService } from "@app/modules/Utils/services/test.service"
+import { TestUtilsService } from "@app/modules/Test/services/test.service"
 import { TimeUtilsService } from "@app/modules/Utils/services/time.service"
 import { PrismaService } from "@app/prisma/prisma.service"
 import { Test } from "@nestjs/testing"
@@ -200,13 +200,13 @@ describe("Create Rental Invoice Line Items", () => {
           daysRented: 23,
           rentalStartedAt: timeUtils.xDaysAgoISOString(23),
           rentalEndedAt: now,
-          price: 3841,
+          price: 3833,
         },
         [reservationTwoSUIDs[0]]: {
           daysRented: 9,
           rentalStartedAt: timeUtils.xDaysAgoISOString(9),
           rentalEndedAt: now,
-          price: 3204, // expect a minimum charge of 12 days
+          price: 3200, // expect a minimum charge of 12 days
         },
         [reservationThreeSUIDs[0]]: {
           daysRented: 0,

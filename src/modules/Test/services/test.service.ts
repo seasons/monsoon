@@ -1,24 +1,19 @@
 import { Inject, forwardRef } from "@nestjs/common"
-import {
-  Customer,
-  InventoryStatus,
-  PhysicalProductStatus,
-  UserPushNotificationInterestType,
-} from "@prisma/client"
+import { InventoryStatus, PhysicalProductStatus } from "@prisma/client"
 import { Prisma } from "@prisma/client"
 import { PrismaService } from "@prisma1/prisma.service"
 import { merge } from "lodash"
 
+import { TimeUtilsService } from "../../Utils/services/time.service"
+import { UtilsService } from "../../Utils/services/utils.service"
 import {
-  CreateTestCustomerInput,
-  CreateTestCustomerOutput,
   CreateTestPhysicalProductInput,
   CreateTestProductInput,
   CreateTestProductOutput,
   CreateTestProductVariantInput,
-} from "../utils.types.d"
-import { TimeUtilsService } from "./time.service"
-import { UtilsService } from "./utils.service"
+} from "../../Utils/utils.types"
+
+export const UPS_GROUND_FEE = 1000
 
 export class TestUtilsService {
   constructor(

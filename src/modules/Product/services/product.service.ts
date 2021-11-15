@@ -27,6 +27,7 @@ import {
 import { PrismaService } from "@prisma1/prisma.service"
 import { ApolloError } from "apollo-server"
 import { difference, flatten, head, isArray, pick, sum } from "lodash"
+import { isEmpty } from "lodash"
 import { DateTime } from "luxon"
 
 import { UtilsService } from "../../Utils/services/utils.service"
@@ -49,6 +50,10 @@ export class ProductService {
   ) {}
 
   async getProducts(args, select) {
+    if (isEmpty(args.where)) {
+      return []
+    }
+
     const queryOptions = await this.productUtils.queryOptionsForProducts(args)
     const findManyArgs = QueryUtilsService.prismaOneToPrismaTwoArgs(
       {

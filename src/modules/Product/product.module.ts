@@ -2,6 +2,7 @@ import { EmailModule } from "@modules/Email/email.module"
 import { ErrorModule } from "@modules/Error/error.module"
 import { ImageModule } from "@modules/Image/image.module"
 import { ShippingModule } from "@modules/Shipping/shipping.module"
+import { TestModule } from "@modules/Test/test.module"
 import { UtilsModule } from "@modules/Utils/utils.module"
 import { Module, forwardRef } from "@nestjs/common"
 import { PrismaModule } from "@prisma1/prisma.module"
@@ -50,6 +51,7 @@ export const ProductModuleDef = {
     UtilsModule,
     forwardRef(() => UserModule),
     forwardRef(() => ReservationModule),
+    TestModule,
   ],
   providers: [
     BagService,

@@ -1,3 +1,4 @@
+import { ReservationModule } from "@modules/Reservation/reservation.module"
 import { Module } from "@nestjs/common"
 import { PrismaModule } from "@prisma1/prisma.module"
 
@@ -6,7 +7,6 @@ import { PaymentUtilsService } from "./services/paymentUtils.service"
 import { ProductUtilsService } from "./services/product.utils.service"
 import { QueryUtilsService } from "./services/queryUtils.service"
 import { StatementsService } from "./services/statements.service"
-import { TestUtilsService } from "./services/test.service"
 import { TimeUtilsService } from "./services/time.service"
 import { UtilsService } from "./services/utils.service"
 
@@ -14,7 +14,6 @@ import { UtilsService } from "./services/utils.service"
   imports: [PrismaModule, AnalyticsModule],
   providers: [
     UtilsService,
-    TestUtilsService,
     PaymentUtilsService,
     StatementsService,
     QueryUtilsService,
@@ -24,7 +23,6 @@ import { UtilsService } from "./services/utils.service"
   exports: [
     ProductUtilsService,
     UtilsService,
-    TestUtilsService,
     PaymentUtilsService,
     StatementsService,
     QueryUtilsService,
