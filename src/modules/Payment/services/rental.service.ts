@@ -7,12 +7,15 @@ import { Injectable, Logger } from "@nestjs/common"
 import {
   Customer,
   CustomerMembershipSubscriptionData,
+  Package,
   PhysicalProduct,
   Product,
   RentalInvoice,
   RentalInvoiceLineItem,
   RentalInvoiceStatus,
+  Reservation,
   ReservationPhysicalProduct,
+  ShippingMethod,
 } from "@prisma/client"
 import { Prisma } from "@prisma/client"
 import { PrismaService } from "@prisma1/prisma.service"
@@ -661,26 +664,7 @@ export class RentalService {
   }
 
   async createRentalInvoiceLineItems(
-    invoice: Pick<RentalInvoice, "id" | "billingStartAt" | "billingEndAt"> & {
-      reservations: (Pick<Reservation, "createdAt" | "reservationNumber"> & {
-        shippingMethod: Pick<ShippingMethod, "code">
-      } & {
-        returnPackages: Array<
-          Pick<Package, "deliveredAt" | "amount" | "id"> & {
-            items: Array<Pick<PhysicalProduct, "seasonsUID">>
-          } & {
-            shippingMethod?: Pick<ShippingMethod, "code">
-          }
-        >
-      } & {
-        sentPackage: Pick<Package, "enteredDeliverySystemAt" | "amount">
-      })[]
-      products: (Pick<PhysicalProduct, "id" | "seasonsUID"> & {
-        productVariant: {
-          product: Pick<Product, "computedRentalPrice">
-        }
-      })[]
-    },
+    invoice: ProcessableRentalInvoice,
     includeMinimumCharge: boolean = false
   ) {
     const custWithExtraData = await this.prisma.client.customer.findFirst({
@@ -1129,6 +1113,34 @@ export class RentalService {
       },
       select: {
         id: true,
+        billingEndAt: true,
+        billingStartAt: true,
+        reservations: {
+          select: {
+            createdAt: true,
+            shippingMethod: {
+              select: { code: true },
+            },
+            sentPackage: {
+              select: {
+                enteredDeliverySystemAt: true,
+                amount: true,
+              },
+            },
+            returnPackages: {
+              select: {
+                deliveredAt: true,
+                id: true,
+                amount: true,
+                items: {
+                  select: {
+                    seasonsUID: true,
+                  },
+                },
+              },
+            },
+          },
+        },
         reservationPhysicalProducts: {
           select: ProcessableReservationPhysicalProductSelect,
         },

@@ -12,7 +12,7 @@ import { Prisma } from "@prisma/client"
 import { head, merge } from "lodash"
 
 import { ProcessableRentalInvoiceSelect } from "../../Payment/services/rental.service"
-import { RESERVATION_MODULE_DEF } from "../reservation.module"
+import { ReservationModuleRef } from "../reservation.module"
 
 class PaymentServiceMock {
   addEarlySwapCharge = async () => null
@@ -67,7 +67,7 @@ describe("Reserve Service", () => {
   let reservation
 
   beforeAll(async () => {
-    const moduleBuilder = await Test.createTestingModule(RESERVATION_MODULE_DEF)
+    const moduleBuilder = await Test.createTestingModule(ReservationModuleRef)
     moduleBuilder.overrideProvider(PaymentService).useClass(PaymentServiceMock)
 
     const moduleRef = await moduleBuilder.compile()

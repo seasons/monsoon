@@ -6,10 +6,39 @@ import cuid from "cuid"
 
 import { ReserveService } from "../services/reserve.service"
 import { ReservationService } from ".."
-import { BagItem, Customer, Reservation, ShippingCode } from ".prisma/client"
+import {
+  BagItem,
+  Customer,
+  Prisma,
+  Reservation,
+  ShippingCode,
+} from ".prisma/client"
 
 export const UPS_GROUND_FEE = 1000
 
+const DefaultReservationSelect = Prisma.validator<Prisma.ReservationSelect>()({
+  id: true,
+  reservationNumber: true,
+  products: { select: { seasonsUID: true } },
+  newProducts: { select: { seasonsUID: true } },
+  sentPackage: { select: { id: true } },
+  returnPackages: {
+    orderBy: { createdAt: "desc" },
+    select: {
+      id: true,
+      shippingLabel: { select: { trackingNumber: true } },
+    },
+  },
+  shippingMethod: { select: { code: true } },
+})
+
+const DefaultReservationArgs = Prisma.validator<Prisma.ReservationArgs>()({
+  select: DefaultReservationSelect,
+})
+
+type AddToBagAndReserveForCustomerReservation = Prisma.ReservationGetPayload<
+  typeof DefaultReservationArgs
+>
 @Injectable()
 export class ReservationTestUtilsService {
   constructor(
@@ -23,12 +52,15 @@ export class ReservationTestUtilsService {
   async addToBagAndReserveForCustomer({
     customer,
     numProductsToAdd,
-    options,
+    options = {},
   }: {
     customer: Customer
     numProductsToAdd: number
-    options: { shippingCode?: ShippingCode }
-  }): Promise<{ reservation: Reservation; bagItems: BagItem[] }> {
+    options?: { shippingCode?: ShippingCode }
+  }): Promise<{
+    reservation: AddToBagAndReserveForCustomerReservation
+    bagItems: BagItem[]
+  }> {
     const { shippingCode = "UPSGround" } = options
     const reservedBagItems = await this.prisma.client.bagItem.findMany({
       where: {

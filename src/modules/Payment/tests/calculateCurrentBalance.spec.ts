@@ -1,5 +1,6 @@
 import { ReservationService } from "@app/modules/Reservation"
-import { TestUtilsService } from "@app/modules/Utils/services/test.service"
+import { ReservationTestUtilsService } from "@app/modules/Reservation/tests/reservation.test.utils"
+import { TestUtilsService } from "@app/modules/Test/services/test.service"
 import { TimeUtilsService } from "@app/modules/Utils/services/time.service"
 import { PrismaService } from "@app/prisma/prisma.service"
 import { Test } from "@nestjs/testing"
@@ -25,10 +26,10 @@ describe("Calculate Current Balance", () => {
   let rentalService: RentalService
   let timeUtils: TimeUtilsService
   let reservationService: ReservationService
+  let reservationTestUtils: ReservationTestUtilsService
 
   let testCustomer
 
-  let addToBagAndReserveForCustomerWithParams
   let setReservationCreatedAtWithParams
   let setPackageDeliveredAtWithParams
   let setReservationStatusWithParams
@@ -48,6 +49,9 @@ describe("Calculate Current Balance", () => {
     rentalService = moduleRef.get<RentalService>(RentalService)
     timeUtils = moduleRef.get<TimeUtilsService>(TimeUtilsService)
     reservationService = moduleRef.get<ReservationService>(ReservationService)
+    reservationTestUtils = moduleRef.get<ReservationTestUtilsService>(
+      ReservationTestUtilsService
+    )
 
     setReservationCreatedAtWithParams = (reservationId, numDaysAgo) =>
       setReservationCreatedAt(reservationId, numDaysAgo, {
@@ -60,11 +64,6 @@ describe("Calculate Current Balance", () => {
       setReservationStatus(reservationId, status, { prisma })
     setPackageEnteredSystemAtWithParams = (packageId, numDaysAgo) =>
       setPackageEnteredSystemAt(packageId, numDaysAgo, { prisma, timeUtils })
-    addToBagAndReserveForCustomerWithParams = numBagItems =>
-      addToBagAndReserveForCustomer(testCustomer, numBagItems, {
-        prisma,
-        reservationService,
-      })
     getCustWithDataWithParams = () =>
       getCustWithData(testCustomer, {
         prisma,
@@ -94,9 +93,12 @@ describe("Calculate Current Balance", () => {
       })
       testCustomer = customer
 
-      const initialReservation = await addToBagAndReserveForCustomerWithParams(
-        2
-      )
+      const {
+        reservation: initialReservation,
+      } = await reservationTestUtils.addToBagAndReserveForCustomer({
+        customer: testCustomer.id,
+        numProductsToAdd: 2,
+      })
       await setReservationCreatedAtWithParams(initialReservation.id, 17)
       await setPackageEnteredSystemAtWithParams(
         initialReservation.sentPackage.id,
@@ -158,9 +160,12 @@ describe("Calculate Current Balance", () => {
       testCustomer = customer
 
       // Place an initial reservation
-      const initialReservation = await addToBagAndReserveForCustomerWithParams(
-        2
-      )
+      const {
+        reservation: initialReservation,
+      } = await reservationTestUtils.addToBagAndReserveForCustomer({
+        customer: testCustomer,
+        numProductsToAdd: 2,
+      })
       await setReservationCreatedAtWithParams(initialReservation.id, 17)
       await setPackageEnteredSystemAtWithParams(
         initialReservation.sentPackage.id,
@@ -201,7 +206,12 @@ describe("Calculate Current Balance", () => {
       await setPackageDeliveredAtWithParams(returnPackage.id, 8)
 
       // Place another reservation
-      const secondReservation = await addToBagAndReserveForCustomerWithParams(2)
+      const {
+        reservation: secondReservation,
+      } = await reservationTestUtils.addToBagAndReserveForCustomer({
+        customer: testCustomer,
+        numProductsToAdd: 2,
+      })
       await setReservationCreatedAtWithParams(secondReservation.id, 5)
       await setPackageEnteredSystemAtWithParams(
         secondReservation.sentPackage.id,

@@ -4,6 +4,7 @@ import {
 } from "@app/modules/Payment/tests/utils/utils"
 import { ReservationPhysicalProductService } from "@app/modules/Reservation"
 import { ReserveService } from "@app/modules/Reservation/services/reserve.service"
+import { ReservationTestUtilsService } from "@app/modules/Reservation/tests/reservation.test.utils"
 import { TestUtilsService } from "@app/modules/Test/services/test.service"
 import { PrismaService } from "@app/prisma/prisma.service"
 import { Test } from "@nestjs/testing"
@@ -15,6 +16,7 @@ describe("Return Items", () => {
   let resPhysProdService: ReservationPhysicalProductService
   let reserveService: ReserveService
   let testUtils: TestUtilsService
+  let reservationTestUtil: ReservationTestUtilsService
 
   let testCustomer
   let cleanupFuncs = []
@@ -29,15 +31,18 @@ describe("Return Items", () => {
     )
     testUtils = moduleRef.get<TestUtilsService>(TestUtilsService)
     reserveService = moduleRef.get<ReserveService>(ReserveService)
+    reservationTestUtil = moduleRef.get<ReservationTestUtilsService>(
+      ReservationTestUtilsService
+    )
   })
 
   beforeEach(async () => {
     const { cleanupFunc, customer } = await testUtils.createTestCustomer({})
     cleanupFuncs.push(cleanupFunc)
     testCustomer = customer
-    reservation = await addToBagAndReserveForCustomer(testCustomer.id, 3, {
-      prisma: prismaService,
-      reserveService,
+    reservation = await reservationTestUtil.addToBagAndReserveForCustomer({
+      customer: testCustomer.id,
+      numProductsToAdd: 3,
     })
     await setReservationStatus(reservation.id, "Delivered", {
       prisma: prismaService,

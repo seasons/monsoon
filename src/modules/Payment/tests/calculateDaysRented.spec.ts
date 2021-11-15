@@ -1,26 +1,16 @@
 import { APP_MODULE_DEF } from "@app/app.module"
-import { ReservationService } from "@app/modules/Reservation"
 import { ReserveService } from "@app/modules/Reservation/services/reserve.service"
 import { TestUtilsService } from "@app/modules/Test/services/test.service"
 import { TimeUtilsService } from "@app/modules/Utils/services/time.service"
 import { PrismaService } from "@app/prisma/prisma.service"
 import { Test } from "@nestjs/testing"
-import { head } from "lodash"
 
-import { PAYMENT_MODULE_DEF } from "../payment.module"
+import { RentalService } from "../services/rental.service"
 import {
-  ProcessableReservationPhysicalProductSelect,
-  RentalService,
-} from "../services/rental.service"
-import {
-  TestReservation,
   addToBagAndReserveForCustomer,
   expectTimeToEqual,
   getCustWithData,
   getReservationPhysicalProductWithData,
-  setPackageDeliveredAt,
-  setPackageEnteredSystemAt,
-  setReservationCreatedAt,
   setReservationPhysicalProductDeliveredToBusinessAt,
   setReservationPhysicalProductDeliveredToCustomerAt,
   setReservationPhysicalProductDroppedOffAt,
@@ -28,7 +18,6 @@ import {
   setReservationPhysicalProductScannedOnInboundAt,
   setReservationPhysicalProductScannedOnOutboundAt,
   setReservationPhysicalProductStatus,
-  setReservationStatus,
 } from "./utils/utils"
 
 describe("Calculate Days Rented", () => {
