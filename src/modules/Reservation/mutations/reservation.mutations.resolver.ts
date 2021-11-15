@@ -46,7 +46,7 @@ export class ReservationMutationsResolver {
 
   @Mutation()
   async packItems(@Args() { bagItemIDs }) {
-    return this.reservationPhysicalProduct.pickItems(bagItemIDs)
+    return this.reservationPhysicalProduct.packItems(bagItemIDs)
   }
 
   async printShippingLabel(@Customer() customer) {

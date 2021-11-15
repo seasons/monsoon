@@ -312,6 +312,9 @@ export class ReservationPhysicalProductService {
           physicalProduct: {
             select: {
               id: true,
+              productVariant: {
+                select: {},
+              },
             },
           },
         },
