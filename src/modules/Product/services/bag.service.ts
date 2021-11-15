@@ -751,7 +751,7 @@ export class BagService {
         deliveryTrackingUrl = this.getTrackingUrl(filteredBagItems, "inbound")
         break
       case "DeliveredToBusiness":
-        // 2. Inbound step 3
+        // 3. Inbound step 3
         filteredBagItems = filteredBagItems.filter(item => {
           const updatedMoreThan24HoursAgo = checkIfUpdatedMoreThan24HoursAgo(
             item
