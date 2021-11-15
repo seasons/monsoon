@@ -1,6 +1,6 @@
 import { ReservationService } from "@app/modules/Reservation/services/reservation.service"
 import { ReserveService } from "@app/modules/Reservation/services/reserve.service"
-import { TestUtilsService } from "@app/modules/Utils/services/test.service"
+import { TestUtilsService } from "@app/modules/Test/services/test.service"
 import { TimeUtilsService } from "@app/modules/Utils/services/time.service"
 import { PrismaService } from "@app/prisma/prisma.service"
 import { Test } from "@nestjs/testing"
@@ -39,7 +39,7 @@ const CHARGEBEE_USAGE_LINE_ITEMS = [
     is_taxed: true,
   },
   {
-    amount: 3841,
+    amount: 3833,
     date_from: 1628741509,
     date_to: 1630642309,
     tax_amount: 307,

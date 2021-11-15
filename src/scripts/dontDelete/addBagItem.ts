@@ -27,6 +27,30 @@ const run = async () => {
     },
   })
   console.log("bag item added")
+
+  const activeRentalInvoice = await ps.client.rentalInvoice.findFirst({
+    where: { membership: { customer: { user: { email } } }, status: "Draft" },
+    orderBy: { createdAt: "desc" },
+    select: { id: true, products: { select: { seasonsUID: true } } },
+  })
+  const productsOnInvoice = activeRentalInvoice.products
+    .map(a => a.seasonsUID)
+    .includes(physicalProductSUID)
+  if (!productsOnInvoice) {
+    await ps.client.rentalInvoice.update({
+      where: { id: activeRentalInvoice.id },
+      data: {
+        products: {
+          connect: {
+            seasonsUID: physicalProductSUID,
+          },
+        },
+      },
+    })
+    console.log("Added product to rental invoice")
+  } else {
+    console.log("product already on invoice. did not add it")
+  }
 }
 
 run()

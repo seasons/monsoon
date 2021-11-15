@@ -1,5 +1,5 @@
 import { ReservationService } from "@app/modules/Reservation/services/reservation.service"
-import { TestUtilsService } from "@app/modules/Utils/services/test.service"
+import { TestUtilsService } from "@app/modules/Test/services/test.service"
 import { TimeUtilsService } from "@app/modules/Utils/services/time.service"
 import { UtilsService } from "@app/modules/Utils/services/utils.service"
 import { PrismaService } from "@app/prisma/prisma.service"
