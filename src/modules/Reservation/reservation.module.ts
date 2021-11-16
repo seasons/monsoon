@@ -24,7 +24,7 @@ import { ReservationPhysicalProductService } from "./services/reservationPhysica
 import { ReserveService } from "./services/reserve.service"
 import { ReservationTestUtilsService } from "./tests/reservation.test.utils"
 
-export const RESERVATION_MODULE_DEF = {
+export const ReservationModuleRef = {
   imports: [
     forwardRef(() => EmailModule),
     ImageModule,
@@ -59,5 +59,6 @@ export const RESERVATION_MODULE_DEF = {
     ReservationTestUtilsService,
   ],
 }
-@Module(RESERVATION_MODULE_DEF)
+
+@Module(ReservationModuleRef)
 export class ReservationModule {}

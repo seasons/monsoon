@@ -1,4 +1,5 @@
 import { ReserveService } from "@app/modules/Reservation/services/reserve.service"
+import { ReservationTestUtilsService } from "@app/modules/Reservation/tests/reservation.test.utils"
 import { TestUtilsService } from "@app/modules/Test/services/test.service"
 import { TimeUtilsService } from "@app/modules/Utils/services/time.service"
 import { PrismaService } from "@app/prisma/prisma.service"
@@ -6,12 +7,11 @@ import { Test } from "@nestjs/testing"
 
 import { PAYMENT_MODULE_DEF } from "../payment.module"
 import {
-  CREATE_RENTAL_INVOICE_LINE_ITEMS_INVOICE_SELECT,
+  ProcessableRentalInvoiceSelect,
   RentalService,
 } from "../services/rental.service"
 import {
   UPS_SELECT_FEE,
-  addToBagAndReserveForCustomer,
   createLineItemHash,
   createProcessingObjectKey,
   expectTimeToEqual,
@@ -32,6 +32,7 @@ describe("Create Rental Invoice Line Items", () => {
   let testUtils: TestUtilsService
   let prisma: PrismaService
   let rentalService: RentalService
+  let reservationTestUtils: ReservationTestUtilsService
 
   let testCustomer
   const now = new Date()
@@ -54,6 +55,9 @@ describe("Create Rental Invoice Line Items", () => {
     rentalService = moduleRef.get<RentalService>(RentalService)
     timeUtils = moduleRef.get<TimeUtilsService>(TimeUtilsService)
     reserveService = moduleRef.get<ReserveService>(ReserveService)
+    reservationTestUtils = moduleRef.get<ReservationTestUtilsService>(
+      ReservationTestUtilsService
+    )
 
     setPackageCreatedAtWithParams = (packageId, date) =>
       setPackageCreatedAt(packageId, date, { prisma, timeUtils })
@@ -61,15 +65,11 @@ describe("Create Rental Invoice Line Items", () => {
       numBagItems,
       { shippingCode } = { shippingCode: "UPSGround" as ShippingCode }
     ) =>
-      addToBagAndReserveForCustomer(
-        testCustomer,
-        numBagItems,
-        {
-          prisma,
-          reserveService,
-        },
-        { shippingCode }
-      )
+      reservationTestUtils.addToBagAndReserveForCustomer({
+        customer: testCustomer,
+        numProductsToAdd: numBagItems,
+        options: { shippingCode, numDaysAgo: 0 },
+      })
     getCustWithDataWithParams = (select: Prisma.CustomerSelect = {}) =>
       getCustWithData(testCustomer, {
         prisma,
@@ -104,8 +104,16 @@ describe("Create Rental Invoice Line Items", () => {
       testCustomer = customer
 
       // Two delivered reservations
-      initialReservation = await addToBagAndReserveForCustomerWithParams(2)
-      await setReservationCreatedAtWithParams(initialReservation.id, 25)
+      initialReservation = await reservationTestUtils.addToBagAndReserveForCustomer(
+        {
+          customer: testCustomer,
+          numProductsToAdd: 2,
+          options: { numDaysAgo: 25 },
+        }
+      )
+      // Set underlying reservation physical products to Delivered
+      // Create the inbound and outbound packages and set their timestamps
+      // Mark the underlying reservation as delivered.
       await setPackageEnteredSystemAtWithParams(
         initialReservation.sentPackage.id,
         25
@@ -158,7 +166,7 @@ describe("Create Rental Invoice Line Items", () => {
       const rentalInvoiceWithUpdatedPrices = await prisma.client.rentalInvoice.findUnique(
         {
           where: { id: rentalInvoice.id },
-          select: CREATE_RENTAL_INVOICE_LINE_ITEMS_INVOICE_SELECT,
+          select: ProcessableRentalInvoiceSelect,
         }
       )
       const lineItems = await rentalService.createRentalInvoiceLineItems(
@@ -200,13 +208,13 @@ describe("Create Rental Invoice Line Items", () => {
           daysRented: 23,
           rentalStartedAt: timeUtils.xDaysAgoISOString(23),
           rentalEndedAt: now,
-          price: 3841,
+          price: 3833,
         },
         [reservationTwoSUIDs[0]]: {
           daysRented: 9,
           rentalStartedAt: timeUtils.xDaysAgoISOString(9),
           rentalEndedAt: now,
-          price: 3204, // expect a minimum charge of 12 days
+          price: 3200, // expect a minimum charge of 12 days
         },
         [reservationThreeSUIDs[0]]: {
           daysRented: 0,
