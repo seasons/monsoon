@@ -11,7 +11,7 @@ export class WinstonLogger implements LoggerService {
   }
 
   public error(message: any, context?: any): any {
-    return this.logger.log("error", message, { context })
+    return this.logger.error(message, { context })
   }
 
   public warn(message: any, context?: any): any {

@@ -9,6 +9,7 @@ import {
 } from "@prisma/client"
 import { PrismaService } from "@prisma1/prisma.service"
 import { ApolloError } from "apollo-server"
+import cuid from "cuid"
 import { DateTime } from "luxon"
 
 import { ProductVariantService } from "../services/productVariant.service"
@@ -178,6 +179,23 @@ export class BagService {
     const savedItems = custWithData.bagItems?.filter(a => a.saved === true)
     const customerPlanItemCount = custWithData.membership?.plan?.itemCount || 6
 
+    const productVariant = await this.prisma.client.productVariant.findUnique({
+      where: {
+        id: itemId,
+      },
+      select: {
+        product: {
+          select: {
+            status: true,
+          },
+        },
+      },
+    })
+
+    if (productVariant.product.status === "Upcoming") {
+      throw new Error("Upcoming products can not be added to bag")
+    }
+
     if (bag.some(i => i.productVariant?.id === itemId)) {
       throw new ApolloError("Item already in bag", "515")
     }
@@ -241,6 +259,13 @@ export class BagService {
             stored: true,
           },
         },
+        reservationPhysicalProduct: {
+          select: {
+            id: true,
+            status: true,
+            reservationId: true,
+          },
+        },
         customer: {
           select: {
             id: true,
@@ -275,6 +300,7 @@ export class BagService {
         orderBy: { createdAt: "desc" },
       }
     )
+    const oldReservationPhysicalProduct = oldBagItem.reservationPhysicalProduct
 
     let newPhysicalProduct = await this.prisma.client.physicalProduct.findUnique(
       {
@@ -304,9 +330,13 @@ export class BagService {
       customerID
     )) as any
 
-    if (!["Queued", "Hold"].includes(lastReservation.status)) {
+    if (
+      !["Queued", "Hold", "Picked"].includes(
+        oldReservationPhysicalProduct.status
+      )
+    ) {
       throw Error(
-        "Only reservations with status Hold or Queued can have a bag item swapped"
+        "Only bag items with status Hold, Picked, or Queued can be swapped"
       )
     }
 
@@ -319,46 +349,6 @@ export class BagService {
     }
 
     const oldPhysicalProduct = oldBagItem.physicalProduct
-
-    promises.push(
-      this.prisma.client.reservation.update({
-        where: {
-          id: lastReservation.id,
-        },
-        data: {
-          products: {
-            disconnect: {
-              id: oldPhysicalProduct.id,
-            },
-          },
-          newProducts: {
-            disconnect: {
-              id: oldPhysicalProduct.id,
-            },
-          },
-          sentPackage: {
-            update: {
-              items: {
-                disconnect: {
-                  id: oldPhysicalProduct.id,
-                },
-              },
-            },
-          },
-        },
-      })
-    )
-    promises.push(
-      this.prisma.client.rentalInvoice.update({
-        where: { id: activeRentalInvoice.id },
-        data: {
-          products: {
-            disconnect: { id: oldPhysicalProduct.id },
-            connect: { id: newPhysicalProduct.id },
-          },
-        },
-      })
-    )
 
     const oldPhysicalProductNewInventoryStatus = !!oldPhysicalProduct.warehouseLocation
       ? "Reservable"
@@ -389,6 +379,15 @@ export class BagService {
     promises.push(
       this.prisma.client.bagItem.delete({ where: { id: oldBagItemID } })
     )
+
+    promises.push(
+      this.prisma.client.reservationPhysicalProduct.delete({
+        where: {
+          id: oldBagItem.reservationPhysicalProduct.id,
+        },
+      })
+    )
+
     const newProductVariantID = newPhysicalProduct.productVariant.id
     const [
       productVariantsCountsUpdatePromises,
@@ -403,20 +402,25 @@ export class BagService {
     const newPhysicalProductIDConnect = {
       connect: { id: newPhysicalProductID },
     }
-
+    const newReservationPhysProdId = cuid()
     promises.push(
-      this.prisma.client.reservation.update({
-        where: {
-          id: lastReservation.id,
-        },
+      this.prisma.client.reservationPhysicalProduct.create({
         data: {
-          newProducts: newPhysicalProductIDConnect,
-          products: newPhysicalProductIDConnect,
-          sentPackage: {
-            update: {
-              items: newPhysicalProductIDConnect,
+          id: newReservationPhysProdId,
+          isNew: true,
+          physicalProduct: {
+            connect: {
+              id: newPhysicalProductID,
             },
           },
+          reservation: {
+            connect: {
+              id: lastReservation.id,
+            },
+          },
+        },
+        select: {
+          id: true,
         },
       })
     )
@@ -425,6 +429,19 @@ export class BagService {
       this.prisma.client.physicalProduct.update({
         where: { id: newPhysicalProductID },
         data: { inventoryStatus: "Reserved" },
+      })
+    )
+
+    promises.push(
+      this.prisma.client.rentalInvoice.update({
+        where: { id: activeRentalInvoice.id },
+        data: {
+          reservationPhysicalProducts: {
+            connect: {
+              id: newReservationPhysProdId,
+            },
+          },
+        },
       })
     )
 
@@ -438,6 +455,11 @@ export class BagService {
           productVariant: {
             connect: { id: newProductVariantID },
           },
+          reservationPhysicalProduct: {
+            connect: {
+              id: newReservationPhysProdId,
+            },
+          },
           physicalProduct: newPhysicalProductIDConnect,
           status: "Reserved",
           saved: false,
@@ -446,6 +468,11 @@ export class BagService {
           physicalProduct: newPhysicalProductIDConnect,
           status: "Reserved",
           saved: false,
+          reservationPhysicalProduct: {
+            connect: {
+              id: newReservationPhysProdId,
+            },
+          },
         },
         select,
       })
@@ -454,10 +481,14 @@ export class BagService {
     const results = await this.prisma.client.$transaction(promises.flat())
     const addedBagItem = results.pop()
 
-    await this.productUtils.removeRestockNotifications(
-      [newProductVariantID],
-      customerID
-    )
+    try {
+      await this.productUtils.removeRestockNotifications(
+        [newProductVariantID],
+        customerID
+      )
+    } catch (e) {
+      // noop
+    }
 
     return addedBagItem
   }

@@ -47,6 +47,7 @@ import { AdminModule } from "./modules/Admin/admin.module"
 import { AnalyticsModule } from "./modules/Analytics/analytics.module"
 import { EmailModule } from "./modules/Email/email.module"
 import { HealthModule } from "./modules/Health/health.module"
+import { TestModule } from "./modules/Test/test.module"
 import { TwilioModule } from "./modules/Twilio/twilio.module"
 import { UtilsModule } from "./modules/Utils/utils.module"
 
@@ -209,6 +210,7 @@ export const APP_MODULE_DEF = {
     UserModule,
     UtilsModule,
     HealthModule,
+    TestModule,
   ],
   providers: [
     {
