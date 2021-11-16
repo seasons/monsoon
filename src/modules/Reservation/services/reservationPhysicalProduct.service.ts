@@ -307,29 +307,6 @@ export class ReservationPhysicalProductService {
   }
 
   async printShippingLabel(customer: Pick<Customer, "id">) {
-    const reservationPhysicalProducts = this.prisma.client.reservationPhysicalProduct.findMany(
-      {
-        where: {
-          status: "Packed",
-          reservation: {
-            customer: {
-              id: customer.id,
-            },
-          },
-        },
-        select: {
-          physicalProduct: {
-            select: {
-              id: true,
-              productVariant: {
-                select: {},
-              },
-            },
-          },
-        },
-      }
-    )
-
-    const promises = []
+    // Todo: implement
   }
 }
