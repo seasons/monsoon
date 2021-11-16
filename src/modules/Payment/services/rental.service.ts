@@ -740,7 +740,7 @@ export class RentalService {
     return lineItemsForPhysicalProductDatas
   }
 
-  private getInboundPackageLineItemDatas = (
+  getInboundPackageLineItemDatas = (
     invoice: Pick<RentalInvoice, "billingStartAt"> & {
       reservations: Array<{
         returnPackages: Array<

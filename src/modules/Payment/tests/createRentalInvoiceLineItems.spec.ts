@@ -149,6 +149,39 @@ describe("Create Rental Invoice Line Items", () => {
 
   describe("Package Line Items", () => {
     describe("Inbound Packages", () => {
+      let inboundPackagesLineItemDatas
+
+      beforeAll(() => {
+        // Mock the discountSHippingRate function. We don't want to test discounts here
+      })
+      afterAll(() => {
+        // Clear the discountShippingRate mock
+      })
+      it("Charges for the inbound package if a reservation was created in a previous billing cycle and returned in this one", () => {
+        const inboundPackageLineItemDatas = rentalService.getInboundPackageLineItemDatas(
+          {
+            billingStartAt: timeUtils.xDaysAgo(30),
+            reservations: [
+              {
+                createdAt: timeUtils.xDaysAgo(45),
+                returnPackages: [
+                  {
+                    id: "1",
+                    amount: 100,
+                    deliveredAt: timeUtils.xDaysAgo(15),
+                    items: [{ seasonsUID: "suid1" }],
+                  },
+                ],
+              },
+            ],
+          }
+        )
+
+        expect(inboundPackageLineItemDatas.length).toBe(1)
+        expect(inboundPackageLineItemDatas[0].name).toBe("InboundPackage-1")
+        expect(inboundPackageLineItemDatas[0].price).toBeGreaterThan(0)
+      })
+
       // Charges for the return package if a reservation was created in a previous billing cycle and returned in this one
       //Charges for the return package if a reservation was created and returned in this billing cycle
       // Charges for each inbound package only once

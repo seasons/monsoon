@@ -22,9 +22,19 @@ const run = async () => {
               billingEndAt: true,
               billingStartAt: true,
               reservations: { select: { reservationNumber: true } },
-              products: { select: { seasonsUID: true } },
               lineItems: {
-                select: { daysRented: true, price: true, comment: true },
+                select: {
+                  daysRented: true,
+                  price: true,
+                  comment: true,
+                  physicalProduct: {
+                    select: {
+                      productVariant: {
+                        select: { product: { select: { name: true } } },
+                      },
+                    },
+                  },
+                },
               },
             },
           },
