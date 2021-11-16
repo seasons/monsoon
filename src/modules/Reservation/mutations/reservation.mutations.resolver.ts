@@ -153,7 +153,7 @@ export class ReservationMutationsResolver {
   }
 
   @Mutation()
-  async cancelReturn(@Customer() customer) {
-    return this.reservation.cancelReturn(customer)
+  async cancelReturn(@Args() { bagItemId }, @Customer() customer) {
+    return this.reservation.cancelReturn(customer, bagItemId)
   }
 }

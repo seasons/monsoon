@@ -55,8 +55,10 @@ type Mutation {
     data: ReservationUpdateInput!
     where: ReservationWhereUniqueInput!
   ): Reservation @hasRole(roles: [Admin])
-  returnItems(items: [ID!]!): Reservation @hasRole(roles: [Customer])
-  cancelReturn: Reservation @hasRole(roles: [Customer])
+  returnItems(items: [ID!]!): [ReservationPhysicalProduct!]
+    @hasRole(roles: [Customer])
+  cancelReturn(bagItemId: ID): [ReservationPhysicalProduct!]
+    @hasRole(roles: [Customer])
   returnMultiItems(
     trackingNumber: String
     productStates: [ProductStateInput!]!

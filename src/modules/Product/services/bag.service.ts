@@ -36,6 +36,7 @@ enum BagSectionStatus {
   // Added sections: These combine multiple other statuses
   Inbound = "Inbound",
   Outbound = "Outbound",
+  QueuedOrPickedOrPacked = "QueuedOrPickedOrPacked",
 }
 
 @Injectable()
@@ -145,7 +146,7 @@ export class BagService {
         BagSectionStatus.ReturnPending,
 
         // Outbound
-        BagSectionStatus.Packed,
+        BagSectionStatus.QueuedOrPickedOrPacked,
         BagSectionStatus.InTransitOutbound,
         BagSectionStatus.DeliveredToCustomer,
 
@@ -795,9 +796,16 @@ export class BagService {
         deliveryStatusText = "Shipped"
         deliveryTrackingUrl = this.getTrackingUrl(filteredBagItems, "inbound")
         break
-      case "Packed":
+      case "QueuedOrPickedOrPacked":
         // 1. Outbound step 1
-        title = isAdmin ? "Packed" : "Order received"
+        filteredBagItems = bagItems.filter(item => {
+          const status = item.reservationPhysicalProduct?.status
+
+          return (
+            status === "Queued" || status === "Picked" || status === "Packed"
+          )
+        })
+        title = "Order received"
         deliveryStep = 1
         deliveryStatusText = "Received"
         deliveryTrackingUrl = this.getTrackingUrl(filteredBagItems, "outbound")
