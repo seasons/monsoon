@@ -103,8 +103,15 @@ describe("Reservation Service", () => {
       shippingCode: "UPSGround",
     })
 
-    expect(lineItems.filter(li => li.name === "Shipping").length).toBe(0)
-    expect(otherLineItems.filter(li => li.name === "Shipping").length).toBe(1)
+    const shippingLineItem = lineItems.filter(li => li.name === "Shipping")?.[0]
+    expect(shippingLineItem).toBeDefined()
+    expect(shippingLineItem.price).toBe(0)
+
+    const otherShippingLineItem = otherLineItems.filter(
+      li => li.name === "Shipping"
+    )?.[0]
+    expect(otherShippingLineItem).toBeDefined()
+    expect(otherShippingLineItem.price).toBeGreaterThan(0)
   })
 
   it("doesnt charge for shipping if Pickup is selected", async () => {
