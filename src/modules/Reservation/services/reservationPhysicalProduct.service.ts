@@ -4,6 +4,7 @@ import { PrismaService } from "@app/prisma/prisma.service"
 import { Injectable } from "@nestjs/common"
 import {
   Customer,
+  Prisma,
   ReservationDropOffAgent,
   ReservationPhysicalProductStatus,
 } from "@prisma/client"
@@ -201,7 +202,10 @@ export class ReservationPhysicalProductService {
     return !!results
   }
 
-  async pickItems(bagItemIDs: string[]) {
+  async pickItems(
+    bagItemIDs: string[],
+    select: Prisma.ReservationPhysicalProductSelect
+  ) {
     const bagItems = await this.prisma.client.bagItem.findMany({
       where: {
         id: {
@@ -245,15 +249,19 @@ export class ReservationPhysicalProductService {
               },
             },
           },
+          select,
         })
       )
     }
 
     const results = await this.prisma.client.$transaction(promises)
-    return !!results
+    return results
   }
 
-  async packItems(bagItemIDs: string[]) {
+  async packItems(
+    bagItemIDs: string[],
+    select: Prisma.ReservationPhysicalProductSelect
+  ) {
     const bagItems = await this.prisma.client.bagItem.findMany({
       where: {
         id: {
@@ -289,12 +297,13 @@ export class ReservationPhysicalProductService {
             status: "Packed",
             packedAt: new Date(),
           },
+          select,
         })
       )
     }
 
     const results = await this.prisma.client.$transaction(promises)
-    return !!results
+    return results
   }
 
   async printShippingLabel(customer: Pick<Customer, "id">) {

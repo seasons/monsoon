@@ -62,8 +62,10 @@ type Mutation {
     productStates: [ProductStateInput!]!
     droppedOffBy: ReservationDropOffAgent!
   ): Boolean @hasRole(roles: [Admin])
-  pickItems(bagItemIDs: [ID!]!): Boolean @hasRole(roles: [Admin])
-  packItems(bagItemIDs: [ID!]!): Boolean @hasRole(roles: [Admin])
+  pickItems(bagItemIDs: [ID!]!): [ReservationPhysicalProduct!]
+    @hasRole(roles: [Admin])
+  packItems(bagItemIDs: [ID!]!): [ReservationPhysicalProduct!]
+    @hasRole(roles: [Admin])
 }
 
 type ReservationFeedback {
