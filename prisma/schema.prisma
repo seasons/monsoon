@@ -1426,6 +1426,7 @@ enum ReservationPhysicalProductStatus {
   InTransitOutbound
   DeliveredToCustomer
   DeliveredToBusiness
+  ReturnPending
   ReturnProcessed
   ResetEarly
   Hold
