@@ -14,6 +14,7 @@ import {
   RentalInvoiceLineItem,
   RentalInvoiceStatus,
   Reservation,
+  ReservationPhysicalProduct,
   ShippingMethod,
 } from "@prisma/client"
 import { Prisma } from "@prisma/client"
@@ -37,14 +38,24 @@ type LineItemToDescriptionLineItem = Pick<
   }
 }
 
-export const CREATE_RENTAL_INVOICE_LINE_ITEMS_INVOICE_SELECT = Prisma.validator<
-  Prisma.RentalInvoiceSelect
+export const ProcessableReservationPhysicalProductSelect = Prisma.validator<
+  Prisma.ReservationPhysicalProductSelect
 >()({
   id: true,
-  billingStartAt: true,
-  billingEndAt: true,
-  reservationPhysicalProducts: { select: { id: true } },
-  products: {
+  status: true,
+  deliveredToCustomerAt: true,
+  deliveredToBusinessAt: true,
+  droppedOffAt: true,
+  droppedOffBy: true,
+  hasBeenScannedOnInbound: true,
+  scannedOnInboundAt: true,
+  returnProcessedAt: true,
+  createdAt: true,
+  lostAt: true,
+  lostInPhase: true,
+  hasBeenLost: true,
+  resetEarlyByAdminAt: true,
+  physicalProduct: {
     select: {
       id: true,
       seasonsUID: true,
@@ -63,6 +74,25 @@ export const CREATE_RENTAL_INVOICE_LINE_ITEMS_INVOICE_SELECT = Prisma.validator<
         },
       },
     },
+  },
+})
+
+const ProcessableReservationPhysicalProductArg = Prisma.validator<
+  Prisma.ReservationPhysicalProductArgs
+>()({ select: ProcessableReservationPhysicalProductSelect })
+
+export type ProcessableReservationPhysicalProduct = Prisma.ReservationPhysicalProductGetPayload<
+  typeof ProcessableReservationPhysicalProductArg
+>
+
+export const ProcessableRentalInvoiceSelect = Prisma.validator<
+  Prisma.RentalInvoiceSelect
+>()({
+  id: true,
+  billingStartAt: true,
+  billingEndAt: true,
+  reservationPhysicalProducts: {
+    select: ProcessableReservationPhysicalProductSelect,
   },
   reservations: {
     select: {
@@ -114,6 +144,15 @@ export const CREATE_RENTAL_INVOICE_LINE_ITEMS_INVOICE_SELECT = Prisma.validator<
   status: true,
   lineItems: { select: { id: true } },
 })
+
+const ProcessableRentalInvoiceArg = Prisma.validator<
+  Prisma.RentalInvoiceArgs
+>()({ select: ProcessableRentalInvoiceSelect })
+
+type ProcessableRentalInvoice = Prisma.RentalInvoiceGetPayload<
+  typeof ProcessableRentalInvoiceArg
+>
+
 @Injectable()
 export class RentalService {
   private readonly logger = (new Logger(
@@ -479,7 +518,7 @@ export class RentalService {
 
   async calcDaysRented(
     invoice: Pick<RentalInvoice, "id">,
-    physicalProduct: Pick<PhysicalProduct, "seasonsUID">,
+    reservationPhysicalProduct: ProcessableReservationPhysicalProduct,
     options: { upTo?: "today" | "billingEnd" | null } = { upTo: null }
   ) {
     const invoiceWithData = await this.prisma.client.rentalInvoice.findFirst({
@@ -493,173 +532,108 @@ export class RentalService {
         },
       },
     })
-    const customer = invoiceWithData.membership.customer
-    const sentPackage = await this.prisma.client.package.findFirst({
-      where: {
-        items: { some: { seasonsUID: physicalProduct.seasonsUID } },
-        reservationOnSentPackage: { customer: { id: customer.id } },
-      },
-      orderBy: { createdAt: "desc" },
-      select: {
-        id: true,
-        deliveredAt: true,
-        reservationOnSentPackage: {
-          select: this.rentalReservationSelect,
-        },
-      },
-    })
-    const initialReservation = sentPackage.reservationOnSentPackage
 
     let daysRented, rentalEndedAt, comment
-    comment = `Initial reservation: ${initialReservation.reservationNumber}, status ${initialReservation.status}, phase ${initialReservation.phase}`
+    comment = ""
     const addComment = line => (comment += `\n${line}`)
 
-    const itemDeliveredAt = this.getSafeSentPackageDeliveryDate(
-      sentPackage.deliveredAt,
-      initialReservation.createdAt
+    let rentalStartedAt = this.initializeRentalStartedAt(
+      invoiceWithData,
+      reservationPhysicalProduct
     )
 
-    const deliveredBeforeBillingCycle = this.timeUtils.isLaterDate(
-      invoiceWithData.billingStartAt,
-      itemDeliveredAt
-    )
-    const deliveredAfterBillingCycle = this.timeUtils.isLaterDate(
-      itemDeliveredAt,
-      invoiceWithData.billingEndAt
-    )
-    let rentalStartedAt = deliveredBeforeBillingCycle
-      ? invoiceWithData.billingStartAt
-      : deliveredAfterBillingCycle
-      ? undefined
-      : itemDeliveredAt
+    const today = new Date()
 
-    const itemStatusComments = {
-      returned: "Item status: returned",
-      withCustomer: "Item status: with customer",
-      preparing: "Item status: preparing for shipment",
-      unknown: "Item status: unknown",
-      enRoute: "Item status: en route to customer",
-      lostOnRouteToCustomer: "item status: lost en route to customer",
-      cancelled: "item status: never sent. initial reservation cancelled",
-      shippedB2C: "Item status: Either with us or with customer.",
-      unknownMinCharge: "Item status: Unknown. Applied minimum charge (7 days)",
-    }
-
-    const getRentalEndedAt = defaultDate => {
-      if (options.upTo === "today") {
-        return this.timeUtils.getEarlierDate(
-          defaultDate,
-          DateTime.local().toJSDate()
+    const throwErrorIfRentalEndedAtUndefined = () => {
+      if (!rentalEndedAt) {
+        throw new Error(
+          `Failed to calculate days rented for item with status ${reservationPhysicalProduct.status}`
         )
       }
-      if (options.upTo === "billingEnd") {
-        return this.timeUtils.getEarlierDate(
-          defaultDate,
-          invoiceWithData.billingEndAt
-        )
-      }
-      return defaultDate
     }
+    const applyReturnPackageCushion = date =>
+      this.timeUtils.xDaysBeforeDate(date, RETURN_PACKAGE_CUSHION, "date")
 
-    const getNewReservationRentalStartedAt = defaultDate => {
-      if (options.upTo === "today") {
-        return defaultDate
-      }
-      if (options.upTo === "billingEnd") {
-        return new Date(this.timeUtils.xDaysFromNowISOString(2))
-      }
-      return defaultDate
-    }
-
-    switch (initialReservation.status) {
-      case "Hold":
-      case "Blocked":
-      case "Unknown":
-        addComment(itemStatusComments["unknown"])
-        rentalStartedAt = undefined
-        break
+    switch (reservationPhysicalProduct.status) {
       case "Queued":
       case "Picked":
       case "Packed":
-        addComment(itemStatusComments["preparing"])
-        rentalStartedAt = getNewReservationRentalStartedAt(undefined)
-        break
-      case "Cancelled":
-        addComment(itemStatusComments["cancelled"])
+      case "Hold":
+      case "InTransitOutbound":
+      case "ScannedOnOutbound":
+        // TODO: If we're doing an estimation, let this be 2 days from now
         rentalStartedAt = undefined
         break
-      case "Shipped":
-        if (initialReservation.phase === "BusinessToCustomer") {
-          rentalStartedAt = getNewReservationRentalStartedAt(undefined)
-          addComment(itemStatusComments["enRoute"])
-        } else {
-          rentalEndedAt = getRentalEndedAt(invoiceWithData.billingEndAt)
-          addComment(itemStatusComments["shippedB2C"])
-        }
-        break
-      case "Delivered":
-        if (initialReservation.phase === "BusinessToCustomer") {
-          rentalEndedAt = getRentalEndedAt(invoiceWithData.billingEndAt)
-          addComment(itemStatusComments["withCustomer"])
-        } else {
-          rentalEndedAt = getRentalEndedAt(invoiceWithData.billingEndAt)
-          addComment(itemStatusComments["shippedB2C"])
-        }
-        break
-      case "ReturnPending":
-      case "Completed":
-        const possibleReturnReservations = [
-          initialReservation,
-          ...invoiceWithData.reservations.filter(a =>
-            this.timeUtils.isLaterDate(
-              a.createdAt,
-              initialReservation.createdAt
-            )
-          ),
-        ]
-        const returnReservation = possibleReturnReservations.find(a =>
-          a.returnedProducts
-            .map(b => b.seasonsUID)
-            .includes(physicalProduct.seasonsUID)
-        )
-
-        if (!!returnReservation) {
-          const returnPackage = returnReservation.returnPackages.find(b =>
-            b.items.map(c => c.seasonsUID).includes(physicalProduct.seasonsUID)
+      case "ScannedOnInbound":
+      case "InTransitInbound":
+      case "DeliveredToBusiness":
+        rentalEndedAt =
+          reservationPhysicalProduct.scannedOnInboundAt ||
+          applyReturnPackageCushion(
+            reservationPhysicalProduct.deliveredToBusinessAt ||
+              invoiceWithData.billingEndAt
           )
-          rentalEndedAt = getRentalEndedAt(
-            this.getSafeReturnPackageEntryDate(
-              // there may not be a return package yet, since an item can be
-              // in the returnedProducts array due to the customer filling out the
-              // return flow
-              returnPackage?.enteredDeliverySystemAt,
-              returnReservation.returnedAt ||
-                returnReservation.completedAt ||
-                invoiceWithData.billingEndAt
-            )
-          )
-          addComment(itemStatusComments["returned"])
-        } else {
-          rentalEndedAt = getRentalEndedAt(invoiceWithData.billingEndAt)
-          addComment(itemStatusComments["withCustomer"])
-        }
+        throwErrorIfRentalEndedAtUndefined()
         break
-
+      case "DeliveredToCustomer":
+        rentalEndedAt = today
+        break
+      case "ResetEarly":
+        if (reservationPhysicalProduct.hasBeenScannedOnInbound) {
+          rentalEndedAt = reservationPhysicalProduct.scannedOnInboundAt
+        } else {
+          rentalEndedAt = applyReturnPackageCushion(
+            reservationPhysicalProduct.resetEarlyByAdminAt
+          )
+        }
+        throwErrorIfRentalEndedAtUndefined()
+        break
+      case "ReturnProcessed":
+        if (reservationPhysicalProduct.droppedOffBy === "Customer") {
+          rentalEndedAt = reservationPhysicalProduct.droppedOffAt
+        } else if (reservationPhysicalProduct.hasBeenScannedOnInbound) {
+          rentalEndedAt = reservationPhysicalProduct.scannedOnInboundAt
+        } else {
+          rentalEndedAt = applyReturnPackageCushion(
+            reservationPhysicalProduct.deliveredToBusinessAt ||
+              reservationPhysicalProduct.returnProcessedAt
+          )
+        }
+        throwErrorIfRentalEndedAtUndefined()
+        break
       case "Lost":
-        if (initialReservation.lostInPhase === "BusinessToCustomer") {
+        if (reservationPhysicalProduct.lostInPhase === "BusinessToCustomer") {
           rentalStartedAt = undefined
-          addComment(itemStatusComments["lostOnRouteToCustomer"])
+        } else if (
+          reservationPhysicalProduct.lostInPhase === "CustomerToBusiness"
+        ) {
+          rentalEndedAt = applyReturnPackageCushion(
+            reservationPhysicalProduct.lostAt
+          )
+          throwErrorIfRentalEndedAtUndefined()
         } else {
-          rentalEndedAt = getRentalEndedAt(
-            new Date(this.timeUtils.xDaysAfterDate(rentalStartedAt, 7))
-          ) // minimum charge
-          addComment(itemStatusComments["unknownMinCharge"])
+          throw new Error(
+            `Unexpected lostInPhase: ${reservationPhysicalProduct.lostInPhase}`
+          )
         }
         break
       default:
         throw new Error(
-          `Unexpected reservation status: ${initialReservation.status}`
+          `Unexpected reservation physical product status: ${reservationPhysicalProduct.status}`
         )
+    }
+
+    // Adjust rentalEndedAt if we're doing an estimation
+    if (!!rentalEndedAt && !!options.upTo) {
+      if (options.upTo === "today") {
+        rentalEndedAt = this.timeUtils.getEarlierDate(rentalEndedAt, today)
+      }
+      if (options.upTo === "billingEnd") {
+        rentalEndedAt = this.timeUtils.getEarlierDate(
+          rentalEndedAt,
+          invoiceWithData.billingEndAt
+        )
+      }
     }
 
     // If we end up in a nonsense situation, just don't charge them anything
@@ -670,6 +644,9 @@ export class RentalService {
     ) {
       rentalStartedAt = undefined
       rentalEndedAt = undefined
+      addComment(
+        `rentalStartedAt later than rentalEndedAt: ${rentalStartedAt}, ${rentalEndedAt}`
+      )
     }
 
     daysRented =
@@ -682,31 +659,11 @@ export class RentalService {
       rentalStartedAt,
       rentalEndedAt,
       comment,
-      initialReservationId: initialReservation.id,
     }
   }
 
   async createRentalInvoiceLineItems(
-    invoice: Pick<RentalInvoice, "id" | "billingStartAt" | "billingEndAt"> & {
-      reservations: (Pick<Reservation, "createdAt" | "reservationNumber"> & {
-        shippingMethod: Pick<ShippingMethod, "code">
-      } & {
-        returnPackages: Array<
-          Pick<Package, "deliveredAt" | "amount" | "id"> & {
-            items: Array<Pick<PhysicalProduct, "seasonsUID">>
-          } & {
-            shippingMethod?: Pick<ShippingMethod, "code">
-          }
-        >
-      } & {
-        sentPackage: Pick<Package, "enteredDeliverySystemAt" | "amount">
-      })[]
-      products: (Pick<PhysicalProduct, "id" | "seasonsUID"> & {
-        productVariant: {
-          product: Pick<Product, "computedRentalPrice">
-        }
-      })[]
-    },
+    invoice: ProcessableRentalInvoice,
     includeMinimumCharge: boolean = false
   ) {
     const custWithExtraData = await this.prisma.client.customer.findFirst({
@@ -729,33 +686,36 @@ export class RentalService {
     })
 
     const lineItemsForPhysicalProductDatas = (await Promise.all(
-      invoice.products.map(async physicalProduct => {
-        const {
-          daysRented,
-          initialReservationId,
-          ...daysRentedMetadata
-        } = await this.calcDaysRented(invoice, physicalProduct)
+      invoice.reservationPhysicalProducts.map(
+        async reservationPhysicalProduct => {
+          const {
+            daysRented,
+            ...daysRentedMetadata
+          } = await this.calcDaysRented(invoice, reservationPhysicalProduct)
 
-        const {
-          price,
-          adjustedForPreviousMinimum,
-          appliedMinimum,
-        } = await this.calculatePriceForDaysRented({
-          invoice,
-          customer: custWithExtraData,
-          product: physicalProduct,
-          daysRented,
-        })
+          const {
+            price,
+            adjustedForPreviousMinimum,
+            appliedMinimum,
+          } = await this.calculatePriceForDaysRented({
+            invoice,
+            customer: custWithExtraData,
+            product: reservationPhysicalProduct.physicalProduct,
+            daysRented,
+          })
 
-        return {
-          ...daysRentedMetadata,
-          daysRented,
-          physicalProduct: { connect: { id: physicalProduct.id } },
-          price,
-          appliedMinimum,
-          adjustedForPreviousMinimum,
-        } as Partial<Prisma.RentalInvoiceLineItemCreateInput>
-      })
+          return {
+            ...daysRentedMetadata,
+            daysRented,
+            physicalProduct: {
+              connect: { id: reservationPhysicalProduct.physicalProduct.id },
+            },
+            price,
+            appliedMinimum,
+            adjustedForPreviousMinimum,
+          } as Partial<Prisma.RentalInvoiceLineItemCreateInput>
+        }
+      )
     )) as any
 
     const outboundPackagesFromPreviousBillingCycleLineItemDatas = await this.getOutboundPackageLineItemDatasFromPreviousBillingCycle(
@@ -1158,14 +1118,12 @@ export class RentalService {
           select: {
             createdAt: true,
             shippingMethod: {
-              select: {
-                code: true,
-              },
+              select: { code: true },
             },
             sentPackage: {
               select: {
-                amount: true,
                 enteredDeliverySystemAt: true,
+                amount: true,
               },
             },
             returnPackages: {
@@ -1182,48 +1140,24 @@ export class RentalService {
             },
           },
         },
-        products: {
-          select: {
-            id: true,
-            seasonsUID: true,
-            productVariant: {
-              select: {
-                product: {
-                  select: {
-                    id: true,
-                    name: true,
-                    computedRentalPrice: true,
-                    rentalPriceOverride: true,
-                    wholesalePrice: true,
-                    retailPrice: true,
-                    recoupment: true,
-                    category: {
-                      select: {
-                        dryCleaningFee: true,
-                        recoupment: true,
-                      },
-                    },
-                  },
-                },
-              },
-            },
-          },
+        reservationPhysicalProducts: {
+          select: ProcessableReservationPhysicalProductSelect,
         },
       },
     })
 
     const rentalPrices = []
 
-    for (const product of currentInvoice.products) {
+    for (const reservationPhysicalProduct of currentInvoice.reservationPhysicalProducts) {
       const { daysRented } = await this.calcDaysRented(
         currentInvoice,
-        product,
+        reservationPhysicalProduct,
         { upTo: options.upTo }
       )
 
       const { price } = await this.calculatePriceForDaysRented({
         invoice: currentInvoice,
-        product: product,
+        product: reservationPhysicalProduct.physicalProduct,
         customer: { id: customerId },
         daysRented,
       })
@@ -1595,27 +1529,30 @@ export class RentalService {
     )
   }
 
-  private getSafeSentPackageDeliveryDate = (
-    sentPackageDeliveryDate: Date | undefined,
-    reservationCreatedAtDate: Date
-  ) =>
-    new Date(
-      sentPackageDeliveryDate?.toISOString() ||
-        this.timeUtils.xDaysAfterDate(
-          reservationCreatedAtDate,
-          SENT_PACKAGE_CUSHION
-        )
-    )
-  private getSafeReturnPackageEntryDate = (
-    returnPackageScanDate: Date | undefined,
-    reservationCompletionDate: Date
+  // TODO: Add a fallback based on the initial reservation
+  private initializeRentalStartedAt = (
+    invoice: Pick<RentalInvoice, "billingStartAt" | "billingEndAt">,
+    reservationPhysicalProduct: Pick<
+      ReservationPhysicalProduct,
+      "deliveredToCustomerAt" | "createdAt"
+    >
   ) => {
-    return new Date(
-      returnPackageScanDate ||
-        this.timeUtils.xDaysBeforeDate(
-          reservationCompletionDate,
-          RETURN_PACKAGE_CUSHION
-        )
+    const itemDeliveredAt =
+      reservationPhysicalProduct.deliveredToCustomerAt ||
+      reservationPhysicalProduct.createdAt
+    const deliveredBeforeBillingCycle = this.timeUtils.isLaterDate(
+      invoice.billingStartAt,
+      itemDeliveredAt
     )
+    const deliveredAfterBillingCycle = this.timeUtils.isLaterDate(
+      itemDeliveredAt,
+      invoice.billingEndAt
+    )
+    const rentalStartedAt = deliveredBeforeBillingCycle
+      ? invoice.billingStartAt
+      : deliveredAfterBillingCycle
+      ? undefined
+      : itemDeliveredAt
+    return rentalStartedAt
   }
 }
