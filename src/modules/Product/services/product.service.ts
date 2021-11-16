@@ -27,7 +27,7 @@ import {
 import { PrismaService } from "@prisma1/prisma.service"
 import { ApolloError } from "apollo-server"
 import { difference, flatten, head, isArray, pick, sum } from "lodash"
-import { isEmpty } from "lodash"
+import { isEmpty, isUndefined } from "lodash"
 import { DateTime } from "luxon"
 
 import { UtilsService } from "../../Utils/services/utils.service"
@@ -49,8 +49,8 @@ export class ProductService {
     private readonly search: SearchService
   ) {}
 
-  async getProducts(args, select) {
-    if (isEmpty(args.where)) {
+  async getProducts(args, select, application) {
+    if (isEmpty(args.where) && application !== "spring") {
       return []
     }
 

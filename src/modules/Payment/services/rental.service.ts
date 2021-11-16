@@ -532,7 +532,6 @@ export class RentalService {
         },
       },
     })
-    // const customer = invoiceWithData.membership.customer
 
     let daysRented, rentalEndedAt, comment
     comment = ""
