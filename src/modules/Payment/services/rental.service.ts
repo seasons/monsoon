@@ -1,4 +1,4 @@
-import { WinstonLogger } from "@app/lib/logger"
+import { WinstonLogger } from "@app/lib/logger/logger/winston.logger"
 import { ErrorService } from "@app/modules/Error/services/error.service"
 import { ShippingService } from "@app/modules/Shipping/services/shipping.service"
 import { GRANDFATHERED_PLAN_IDS } from "@app/modules/Utils/constants"
@@ -667,25 +667,43 @@ export class RentalService {
     invoice: ProcessableRentalInvoice,
     includeMinimumCharge: boolean = false
   ) {
-    const custWithExtraData = await this.prisma.client.customer.findFirst({
-      where: { membership: { rentalInvoices: { some: { id: invoice.id } } } },
-      select: {
-        id: true,
-        user: { select: { createdAt: true } },
-        membership: {
-          select: {
-            rentalInvoices: { select: { id: true } },
-          },
-        },
-      },
-    })
-
     const addLineItemBasics = input => ({
       ...input,
       rentalInvoice: { connect: { id: invoice.id } },
       currencyCode: "USD",
     })
 
+    const rentalUsageLineItemDatas = await this.getRentalUsageLineItemDatas(
+      invoice
+    )
+    const outboundPackagesFromPreviousBillingCycleLineItemDatas = await this.getOutboundPackageLineItemDatasFromPreviousBillingCycle(
+      invoice
+    )
+    const newReservationOutboundPackageLineItemDatas = this.getOutboundPackageLineItemDatasFromThisBillingCycle(
+      invoice
+    )
+    const inboundPackagesLineItemDatas = this.getInboundPackageLineItemDatas(
+      invoice
+    )
+
+    const lineItemDatas = [
+      ...rentalUsageLineItemDatas,
+      ...newReservationOutboundPackageLineItemDatas,
+      ...outboundPackagesFromPreviousBillingCycleLineItemDatas,
+      ...inboundPackagesLineItemDatas,
+    ]
+    const formattedLineItemDatas = lineItemDatas.map(addLineItemBasics)
+    const lineItemPromises = formattedLineItemDatas.map(data =>
+      this.prisma.client.rentalInvoiceLineItem.create({
+        data,
+      })
+    )
+    const lineItems = await this.prisma.client.$transaction(lineItemPromises)
+
+    return lineItems
+  }
+
+  async getRentalUsageLineItemDatas(invoice: ProcessableRentalInvoice) {
     const lineItemsForPhysicalProductDatas = (await Promise.all(
       invoice.reservationPhysicalProducts.map(
         async reservationPhysicalProduct => {
@@ -700,7 +718,7 @@ export class RentalService {
             appliedMinimum,
           } = await this.calculatePriceForDaysRented({
             invoice,
-            customer: custWithExtraData,
+            customer: invoice.membership.customer,
             product: reservationPhysicalProduct.physicalProduct,
             daysRented,
           })
@@ -719,31 +737,7 @@ export class RentalService {
       )
     )) as any
 
-    const outboundPackagesFromPreviousBillingCycleLineItemDatas = await this.getOutboundPackageLineItemDatasFromPreviousBillingCycle(
-      invoice
-    )
-    const newReservationOutboundPackageLineItemDatas = this.getOutboundPackageLineItemDatasFromThisBillingCycle(
-      invoice
-    )
-    const inboundPackagesLineItemDatas = this.getInboundPackageLineItemDatas(
-      invoice
-    )
-
-    const lineItemDatas = [
-      ...lineItemsForPhysicalProductDatas,
-      ...newReservationOutboundPackageLineItemDatas,
-      ...outboundPackagesFromPreviousBillingCycleLineItemDatas,
-      ...inboundPackagesLineItemDatas,
-    ]
-    const formattedLineItemDatas = lineItemDatas.map(addLineItemBasics)
-    const lineItemPromises = formattedLineItemDatas.map(data =>
-      this.prisma.client.rentalInvoiceLineItem.create({
-        data,
-      })
-    )
-    const lineItems = await this.prisma.client.$transaction(lineItemPromises)
-
-    return lineItems
+    return lineItemsForPhysicalProductDatas
   }
 
   private getInboundPackageLineItemDatas = (

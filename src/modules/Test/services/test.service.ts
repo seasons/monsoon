@@ -3,6 +3,7 @@ import { InventoryStatus, PhysicalProductStatus } from "@prisma/client"
 import { Prisma } from "@prisma/client"
 import { PrismaService } from "@prisma1/prisma.service"
 import { merge } from "lodash"
+import moment from "moment"
 
 import { TimeUtilsService } from "../../Utils/services/time.service"
 import { UtilsService } from "../../Utils/services/utils.service"
@@ -286,6 +287,15 @@ export class TestUtilsService {
     const cleanupFunc = async () =>
       this.prisma.client.customer.delete({ where: { id: customer.id } })
     return { cleanupFunc, customer }
+  }
+
+  expectTimeToEqual = (time, expectedValue) => {
+    if (!expectedValue) {
+      expect(time).toBe(expectedValue)
+    }
+    expect(moment(time).format("ll")).toEqual(
+      moment(expectedValue).format("ll")
+    )
   }
 
   // returns the number of physical products with the given inventory status
