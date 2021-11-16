@@ -757,7 +757,11 @@ export class RentalService {
     const packagesReturned = allReturnPackages.filter(
       a =>
         !!a.deliveredAt &&
-        this.timeUtils.isLaterDate(a.deliveredAt, invoice.billingStartAt)
+        this.timeUtils.isBetweenDates(
+          a.deliveredAt,
+          invoice.billingStartAt,
+          invoice.billingEndAt
+        )
     )
     const uniquePackagesReturnedAndSorted = orderBy(
       uniqBy(packagesReturned, p => p.id),
