@@ -20,48 +20,21 @@ export class BagItemFieldsResolver {
               id: true,
             },
           },
+          reservationPhysicalProduct: {
+            select: {
+              status: true,
+            },
+          },
         }),
       },
     })
-    bagItemLoader,
-    @Loader({
-      params: {
-        model: "Reservation",
-        select: Prisma.validator<Prisma.ReservationSelect>()({
-          customer: { select: { id: true } },
-          status: true,
-          newProducts: { select: { id: true } },
-        }),
-        formatWhere: compositeKeys => {
-          const customerIds = []
-          const physicalProductIds = []
-          for (const compositeKey of compositeKeys) {
-            const [custId, physProdId] = compositeKey.split(",")
-            customerIds.push(custId)
-            physicalProductIds.push(physProdId)
-          }
-          return Prisma.validator<Prisma.ReservationWhereInput>()({
-            customer: { id: { in: customerIds } },
-            newProducts: { some: { id: { in: physicalProductIds } } },
-          })
-        },
-        getKeys: reservation => {
-          const customerId = reservation.customer.id
-          const physicalProductIds = reservation.newProducts.map(a => a.id)
-          return physicalProductIds.map(a => `${customerId},${a}`)
-        },
-        orderBy: { createdAt: "desc" },
-        keyToDataRelationship: "ManyToMany",
-      },
-    })
-    reservationLoader
+    bagItemLoader
   ) {
     const currentBagItem = await bagItemLoader.load(parent.id)
     if (currentBagItem.status !== "Reserved") {
       return false
     }
 
-    const customerId = currentBagItem.customer.id
     const physicalProductId = currentBagItem.physicalProductId
     if (!physicalProductId) {
       throw new Error(
@@ -69,15 +42,10 @@ export class BagItemFieldsResolver {
       )
     }
 
-    const possibleReservations = await reservationLoader.load(
-      `${customerId},${physicalProductId}`
+    const hasCorrectStatus = ["Queued", "Picked", "Hold"].includes(
+      currentBagItem.reservationPhysicalProduct.status
     )
 
-    const relevantReservation = head(possibleReservations)
-    const isQueueOrHold = ["Queued", "Hold"].includes(
-      relevantReservation?.status
-    )
-
-    return isQueueOrHold
+    return hasCorrectStatus
   }
 }

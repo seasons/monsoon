@@ -30,6 +30,15 @@ const measurementLoader = {
   },
 } as LoaderParams
 
+type MeasurementType =
+  | "height"
+  | "width"
+  | "minDrop"
+  | "maxDrop"
+  | "height"
+  | "length"
+  | "bridge"
+
 @Resolver("AccessorySize")
 export class AccessorySizeFieldsResolver {
   constructor(private readonly productUtilsService: ProductUtilsService) {}
@@ -41,19 +50,7 @@ export class AccessorySizeFieldsResolver {
     accessorySizeLoader
   ) {
     const accessorySize = await accessorySizeLoader.load(parent.id)
-    const measurementType =
-      accessorySize?.size?.productVariantInternal?.product?.category
-        ?.measurementType
-    if (measurementType && parent.bridge) {
-      return Math.round(
-        this.productUtilsService.convertInchesToMeasurementSize(
-          parent.bridge,
-          measurementType
-        )
-      )
-    } else {
-      return undefined
-    }
+    return this.getMeasurement(parent, accessorySize, "bridge")
   }
 
   @ResolveField()
@@ -63,19 +60,7 @@ export class AccessorySizeFieldsResolver {
     accessorySizeLoader
   ) {
     const accessorySize = await accessorySizeLoader.load(parent.id)
-    const measurementType =
-      accessorySize?.size?.productVariantInternal?.product?.category
-        ?.measurementType
-    if (measurementType && parent.length) {
-      return Math.round(
-        this.productUtilsService.convertInchesToMeasurementSize(
-          parent.length,
-          measurementType
-        )
-      )
-    } else {
-      return undefined
-    }
+    return this.getMeasurement(parent, accessorySize, "length")
   }
 
   @ResolveField()
@@ -85,18 +70,52 @@ export class AccessorySizeFieldsResolver {
     accessorySizeLoader
   ) {
     const accessorySize = await accessorySizeLoader.load(parent.id)
+    return this.getMeasurement(parent, accessorySize, "width")
+  }
+
+  @ResolveField()
+  async maxDrop(
+    @Parent() parent,
+    @Loader(measurementLoader)
+    accessorySizeLoader
+  ) {
+    const accessorySize = await accessorySizeLoader.load(parent.id)
+    return this.getMeasurement(parent, accessorySize, "maxDrop")
+  }
+
+  @ResolveField()
+  async minDrop(
+    @Parent() parent,
+    @Loader(measurementLoader)
+    accessorySizeLoader
+  ) {
+    const accessorySize = await accessorySizeLoader.load(parent.id)
+    return this.getMeasurement(parent, accessorySize, "minDrop")
+  }
+
+  @ResolveField()
+  async height(
+    @Parent() parent,
+    @Loader(measurementLoader)
+    accessorySizeLoader
+  ) {
+    const accessorySize = await accessorySizeLoader.load(parent.id)
+    return this.getMeasurement(parent, accessorySize, "height")
+  }
+
+  private getMeasurement = (parent, accessorySize, key: MeasurementType) => {
     const measurementType =
       accessorySize?.size?.productVariantInternal?.product?.category
         ?.measurementType
-    if (measurementType && parent.width) {
+    if (measurementType && measurementType !== "Inches" && parent[key]) {
       return Math.round(
         this.productUtilsService.convertInchesToMeasurementSize(
-          parent.width,
+          parent[key],
           measurementType
         )
       )
     } else {
-      return undefined
+      return parent[key]
     }
   }
 }

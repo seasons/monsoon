@@ -120,6 +120,16 @@ type BottomSize {
   inseam: Float
 }
 
+type AccessorySize {
+  id: ID!
+  bridge: Float
+  length: Float
+  width: Float
+  height: Float
+  maxDrop: Float
+  minDrop: Float
+}
+
 type Size {
   id: ID!
   slug: String!

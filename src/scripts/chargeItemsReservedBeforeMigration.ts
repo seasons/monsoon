@@ -8,7 +8,7 @@ import readlineSync from "readline-sync"
 
 import { ErrorService } from "../modules/Error/services/error.service"
 import {
-  CREATE_RENTAL_INVOICE_LINE_ITEMS_INVOICE_SELECT,
+  ProcessableRentalInvoiceSelect,
   RentalService,
 } from "../modules/Payment/services/rental.service"
 import { TimeUtilsService } from "../modules/Utils/services/time.service"

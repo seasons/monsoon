@@ -4,7 +4,7 @@ import { NestFactory } from "@nestjs/core"
 
 import { AppModule } from "../app.module"
 import {
-  CREATE_RENTAL_INVOICE_LINE_ITEMS_INVOICE_SELECT,
+  ProcessableRentalInvoiceSelect,
   RentalService,
 } from "../modules/Payment/services/rental.service"
 import { PrismaService } from "../prisma/prisma.service"
@@ -23,7 +23,7 @@ const run = async () => {
       },
       status: { in: ["Draft", "ChargeFailed"] },
     },
-    select: CREATE_RENTAL_INVOICE_LINE_ITEMS_INVOICE_SELECT,
+    select: ProcessableRentalInvoiceSelect,
   })
 
   for (const invoice of invoicesToHandle) {
