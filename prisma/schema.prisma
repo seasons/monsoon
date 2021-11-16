@@ -743,22 +743,22 @@ model CustomerDetail {
 }
 
 model CustomerMembership {
-  id                         String                              @id @default(cuid()) @db.VarChar(30)
-  subscriptionId             String
-  customerId                 String                              @map("customer") @db.VarChar(30)
-  planId                     String                              @map("plan") @db.VarChar(30)
-  giftId                     String?
-  purchaseCredits            Int?                                @default(0)
-  grandfathered              Boolean?                            @default(false)
-  creditBalance              Int                                 @default(0)
-  currentBalance             Int?
-  membershipSubscriptionId   String?                             @map("subscription") @db.VarChar(30)
-  customer                   Customer                            @relation(fields: [customerId], references: [id])
-  plan                       PaymentPlan                         @relation(fields: [planId], references: [id])
-  subscription               CustomerMembershipSubscriptionData? @relation(fields: [membershipSubscriptionId], references: [id])
-  pauseRequests              PauseRequest[]
-  rentalInvoices             RentalInvoice[]
-  creditUpdateHistory        CreditBalanceUpdateLog[]
+  id                       String                              @id @default(cuid()) @db.VarChar(30)
+  subscriptionId           String
+  customerId               String                              @map("customer") @db.VarChar(30)
+  planId                   String                              @map("plan") @db.VarChar(30)
+  giftId                   String?
+  purchaseCredits          Int?                                @default(0)
+  grandfathered            Boolean?                            @default(false)
+  creditBalance            Int                                 @default(0)
+  currentBalance           Int?
+  membershipSubscriptionId String?                             @map("subscription") @db.VarChar(30)
+  customer                 Customer                            @relation(fields: [customerId], references: [id])
+  plan                     PaymentPlan                         @relation(fields: [planId], references: [id])
+  subscription             CustomerMembershipSubscriptionData? @relation(fields: [membershipSubscriptionId], references: [id])
+  pauseRequests            PauseRequest[]
+  rentalInvoices           RentalInvoice[]
+  creditUpdateHistory      CreditBalanceUpdateLog[]
 }
 
 model CreditBalanceUpdateLog {
@@ -1005,6 +1005,8 @@ model RentalInvoiceLineItem {
 model Package {
   id                                           String                       @id @default(cuid()) @db.VarChar(30)
   weight                                       Float?
+  shippingMethodId                             String?                      @map("shippingMethod") @db.VarChar(30)
+  shippingMethod                               ShippingMethod?              @relation(fields: [shippingMethodId], references: [id])
   createdAt                                    DateTime                     @default(now())
   updatedAt                                    DateTime                     @updatedAt
   enteredDeliverySystemAt                      DateTime?
@@ -1438,7 +1440,7 @@ model ReservationPhysicalProduct {
   isNew Boolean @default(false)
 
   hasBeenPurchased Boolean   @default(false)
-  purchasedAt DateTime?
+  purchasedAt      DateTime?
 
   status ReservationPhysicalProductStatus @default(value: Queued)
 
@@ -1455,21 +1457,21 @@ model ReservationPhysicalProduct {
 
   // admin marked item as returned early, it's still on its way
   hasBeenResetEarlyByAdmin Boolean   @default(false)
-  resetEarlyByAdminAt DateTime?
+  resetEarlyByAdminAt      DateTime?
 
   // denotes customer filling out the return flow
   hasCustomerReturnIntent Boolean   @default(false)
   customerReturnIntentAt  DateTime?
 
-  hasBeenLost      Boolean           @default(false)
+  hasBeenLost Boolean           @default(false)
   lostAt      DateTime?
   lostInPhase ReservationPhase?
 
   hasBeenDeliveredToCustomer Boolean   @default(false)
-  deliveredToCustomerAt DateTime?
+  deliveredToCustomerAt      DateTime?
 
   hasBeenDeliveredToBusiness Boolean   @default(false)
-  deliveredToBusinessAt DateTime?
+  deliveredToBusinessAt      DateTime?
 
   // when UPS first gets the package into
   scannedOnInboundAt      DateTime?
@@ -1500,11 +1502,11 @@ model ReservationPhysicalProduct {
   shippingMethodId String?         @db.VarChar(30)
   shippingMethod   ShippingMethod? @relation(fields: [shippingMethodId], references: [id])
 
-  pickupWindowId String? 
+  pickupWindowId String?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  
+
 }
 
 model ReservationFeedback {
@@ -1556,6 +1558,7 @@ model ShippingMethod {
   updatedAt                   DateTime                     @updatedAt
   reservations                Reservation[]
   reservationPhysicalProducts ReservationPhysicalProduct[]
+  packages                    Package[]
 }
 
 model ShopifyProductVariant {

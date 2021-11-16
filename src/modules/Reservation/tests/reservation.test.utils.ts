@@ -1,4 +1,7 @@
+import { ProcessableReservationPhysicalProductSelect } from "@app/modules/Payment/services/rental.service"
+import { UPS_SELECT_FEE } from "@app/modules/Payment/tests/utils/utils"
 import { TestUtilsService } from "@app/modules/Test/services/test.service"
+import { TimeUtilsService } from "@app/modules/Utils/services/time.service"
 import { UtilsService } from "@app/modules/Utils/services/utils.service"
 import { PrismaService } from "@app/prisma/prisma.service"
 import { Injectable } from "@nestjs/common"
@@ -6,30 +9,50 @@ import cuid from "cuid"
 
 import { ReserveService } from "../services/reserve.service"
 import { ReservationService } from ".."
-import { BagItem, Customer, Reservation, ShippingCode } from ".prisma/client"
+import {
+  BagItem,
+  Customer,
+  Prisma,
+  Reservation,
+  ShippingCode,
+} from ".prisma/client"
 
 export const UPS_GROUND_FEE = 1000
 
+const DEFAULT_RESERVATION_ARGS = Prisma.validator<Prisma.ReservationArgs>()({
+  select: {
+    id: true,
+    reservationNumber: true,
+    reservationPhysicalProducts: {
+      select: ProcessableReservationPhysicalProductSelect,
+    },
+    shippingMethod: { select: { code: true } },
+  },
+})
+export type TestReservation = Prisma.ReservationGetPayload<
+  typeof DEFAULT_RESERVATION_ARGS
+>
 @Injectable()
 export class ReservationTestUtilsService {
   constructor(
     private readonly prisma: PrismaService,
-    private readonly reservation: ReservationService,
-    private readonly reserve: ReserveService,
-    private readonly utils: UtilsService,
-    private readonly test: TestUtilsService
+    private readonly timeUtils: TimeUtilsService,
+    private readonly reserve: ReserveService
   ) {}
 
   async addToBagAndReserveForCustomer({
     customer,
     numProductsToAdd,
-    options,
+    options = {},
   }: {
     customer: Customer
     numProductsToAdd: number
-    options: { shippingCode?: ShippingCode }
-  }): Promise<{ reservation: Reservation; bagItems: BagItem[] }> {
-    const { shippingCode = "UPSGround" } = options
+    options?: { shippingCode?: ShippingCode; numDaysAgo?: number }
+  }): Promise<{
+    reservation: TestReservation
+    bagItems: BagItem[]
+  }> {
+    const { shippingCode = "UPSGround", numDaysAgo = 0 } = options
     const reservedBagItems = await this.prisma.client.bagItem.findMany({
       where: {
         customer: { id: customer.id },
@@ -85,64 +108,31 @@ export class ReservationTestUtilsService {
       )
     }
 
-    const bagItemsToReserve = await this.prisma.client.bagItem.findMany({
-      where: {
-        customer: { id: customer.id },
-        status: { in: ["Added", "Reserved"] },
-        saved: false,
-      },
-      select: { productVariant: { select: { id: true } } },
-    })
-    const prodVarsToReserve = bagItemsToReserve.map(a => a.productVariant.id)
     const r = await this.reserve.reserveItems({
-      // items: prodVarsToReserve,
       shippingCode,
-      customer: customer as any,
-      select: {
-        reservationNumber: true,
-        products: { select: { seasonsUID: true } },
-        newProducts: { select: { seasonsUID: true } },
-        sentPackage: { select: { id: true } },
-        returnPackages: {
-          orderBy: { createdAt: "desc" },
-          select: {
-            id: true,
-            shippingLabel: { select: { trackingNumber: true } },
+      ...(shippingCode === "Pickup"
+        ? { pickupTime: { date: new Date().toISOString() } }
+        : {}),
+      customer,
+      select: DEFAULT_RESERVATION_ARGS.select,
+    })
+
+    if (numDaysAgo > 0) {
+      await this.prisma.client.reservation.update({
+        where: { id: r.id },
+        data: {
+          createdAt: this.timeUtils.xDaysAgoISOString(numDaysAgo),
+          reservationPhysicalProducts: {
+            updateMany: {
+              where: {
+                id: { in: r.reservationPhysicalProducts.map(a => a.id) },
+              },
+              data: { createdAt: this.timeUtils.xDaysAgoISOString(numDaysAgo) },
+            },
           },
         },
-        shippingMethod: { select: { code: true } },
-      },
-    })
-    const transactionID = cuid()
-    const sentPackage = await this.prisma.client.package.create({
-      data: {
-        reservationOnSentPackage: {
-          connect: {
-            id: r.id,
-          },
-        },
-        transactionID,
-      },
-    })
-    const returnPackage = await this.prisma.client.package.create({
-      data: {
-        reservationOnReturnPackages: {
-          connect: {
-            id: r.id,
-          },
-        },
-        transactionID,
-      },
-    })
-    const setPackageAmount = async (packageId, amount) => {
-      await this.prisma.client.package.update({
-        where: { id: packageId },
-        data: { amount },
       })
     }
-
-    await setPackageAmount(sentPackage.id, UPS_GROUND_FEE)
-    await setPackageAmount(returnPackage.id, UPS_GROUND_FEE)
     return {
       reservation: r,
       bagItems: createdBagItems,

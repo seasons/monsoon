@@ -11,8 +11,8 @@ import { Test } from "@nestjs/testing"
 import { Prisma } from "@prisma/client"
 import { head, merge } from "lodash"
 
-import { CREATE_RENTAL_INVOICE_LINE_ITEMS_INVOICE_SELECT } from "../../Payment/services/rental.service"
-import { RESERVATION_MODULE_DEF } from "../reservation.module"
+import { ProcessableRentalInvoiceSelect } from "../../Payment/services/rental.service"
+import { ReservationModuleRef } from "../reservation.module"
 
 class PaymentServiceMock {
   addEarlySwapCharge = async () => null
@@ -67,7 +67,7 @@ describe("Reserve Service", () => {
   let reservation
 
   beforeAll(async () => {
-    const moduleBuilder = await Test.createTestingModule(RESERVATION_MODULE_DEF)
+    const moduleBuilder = await Test.createTestingModule(ReservationModuleRef)
     moduleBuilder.overrideProvider(PaymentService).useClass(PaymentServiceMock)
 
     const moduleRef = await moduleBuilder.compile()
@@ -284,7 +284,7 @@ const getCustWithData = async (
     membership: {
       select: {
         rentalInvoices: {
-          select: CREATE_RENTAL_INVOICE_LINE_ITEMS_INVOICE_SELECT,
+          select: ProcessableRentalInvoiceSelect,
         },
       },
     },

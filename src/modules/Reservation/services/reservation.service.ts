@@ -401,7 +401,7 @@ export class ReservationService {
     shippingCode = ShippingCode.UPSGround,
   }: {
     application: ApplicationType
-    reservation?: Reservation
+    reservation?: Pick<Reservation, "id">
     customer: Customer
     filterBy?: ReservationLineItemsFilter
     shippingCode?: ShippingCode
