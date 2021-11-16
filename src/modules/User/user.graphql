@@ -91,7 +91,7 @@ enum BagSectionStatus {
   AtHome
   Inbound
   Outbound
-  Received
+  Processing
 
   # The following correspond directly to ReservationPhysicalProductStatus
   Queued
