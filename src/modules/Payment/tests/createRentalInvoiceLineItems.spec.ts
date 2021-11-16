@@ -1,6 +1,7 @@
 import { APP_MODULE_DEF } from "@app/app.module"
 import { ReserveService } from "@app/modules/Reservation/services/reserve.service"
 import { ReservationTestUtilsService } from "@app/modules/Reservation/tests/reservation.test.utils"
+import { ShippingService } from "@app/modules/Shipping/services/shipping.service"
 import { TestUtilsService } from "@app/modules/Test/services/test.service"
 import { TimeUtilsService } from "@app/modules/Utils/services/time.service"
 import { PrismaService } from "@app/prisma/prisma.service"
@@ -12,6 +13,7 @@ describe("Create Rental Invoice Line Items", () => {
   let testUtils: TestUtilsService
   let rentalService: RentalService
   let timeUtils: TimeUtilsService
+  let shipping: ShippingService
 
   beforeAll(async () => {
     const moduleBuilder = await Test.createTestingModule(APP_MODULE_DEF)
@@ -22,6 +24,7 @@ describe("Create Rental Invoice Line Items", () => {
     // prisma = moduleRef.get<PrismaService>(PrismaService)
     rentalService = moduleRef.get<RentalService>(RentalService)
     timeUtils = moduleRef.get<TimeUtilsService>(TimeUtilsService)
+    shipping = moduleRef.get<ShippingService>(ShippingService)
     // reserveService = moduleRef.get<ReserveService>(ReserveService)
     // reservationTestUtils = moduleRef.get<ReservationTestUtilsService>(
     //   ReservationTestUtilsService
@@ -149,21 +152,26 @@ describe("Create Rental Invoice Line Items", () => {
 
   describe("Package Line Items", () => {
     describe("Inbound Packages", () => {
-      let inboundPackagesLineItemDatas
+      let discountShippingRateMock
 
       beforeAll(() => {
-        // Mock the discountSHippingRate function. We don't want to test discounts here
+        discountShippingRateMock = jest
+          .spyOn(shipping, "discountShippingRate")
+          .mockImplementation((rate, servicelevel, shipmentType) => {
+            return rate
+          })
       })
       afterAll(() => {
-        // Clear the discountShippingRate mock
+        discountShippingRateMock.mockRestore()
       })
-      it("Charges for the inbound package if a reservation was created in a previous billing cycle and returned in this one", () => {
+
+      it("Creates a line item if an inbound package was delivered during this billing cycle", () => {
         const inboundPackageLineItemDatas = rentalService.getInboundPackageLineItemDatas(
           {
             billingStartAt: timeUtils.xDaysAgo(30),
+            billingEndAt: timeUtils.xDaysAgo(1),
             reservations: [
               {
-                createdAt: timeUtils.xDaysAgo(45),
                 returnPackages: [
                   {
                     id: "1",
@@ -179,12 +187,112 @@ describe("Create Rental Invoice Line Items", () => {
 
         expect(inboundPackageLineItemDatas.length).toBe(1)
         expect(inboundPackageLineItemDatas[0].name).toBe("InboundPackage-1")
-        expect(inboundPackageLineItemDatas[0].price).toBeGreaterThan(0)
+        expect(inboundPackageLineItemDatas[0].price).toBe(100)
       })
 
-      // Charges for the return package if a reservation was created in a previous billing cycle and returned in this one
-      //Charges for the return package if a reservation was created and returned in this billing cycle
-      // Charges for each inbound package only once
+      it("Does not create a line item if an inbound package was delivered before this billing cycle", () => {
+        const inboundPackageLineItemDatas = rentalService.getInboundPackageLineItemDatas(
+          {
+            billingStartAt: timeUtils.xDaysAgo(30),
+            billingEndAt: timeUtils.xDaysAgo(1),
+            reservations: [
+              {
+                returnPackages: [
+                  {
+                    id: "1",
+                    amount: 100,
+                    deliveredAt: timeUtils.xDaysAgo(45),
+                    items: [{ seasonsUID: "suid1" }],
+                  },
+                ],
+              },
+            ],
+          }
+        )
+
+        expect(inboundPackageLineItemDatas.length).toBe(0)
+      })
+
+      it("Does not create a line item if an inbound package was delivered after this billing cycle", () => {
+        const inboundPackageLineItemDatas = rentalService.getInboundPackageLineItemDatas(
+          {
+            billingStartAt: timeUtils.xDaysAgo(60),
+            billingEndAt: timeUtils.xDaysAgo(30),
+            reservations: [
+              {
+                returnPackages: [
+                  {
+                    id: "1",
+                    amount: 100,
+                    deliveredAt: timeUtils.xDaysAgo(29),
+                    items: [{ seasonsUID: "suid1" }],
+                  },
+                ],
+              },
+            ],
+          }
+        )
+
+        expect(inboundPackageLineItemDatas.length).toBe(0)
+      })
+
+      it("Does not create a line item if an inbound package has not been delivered", () => {
+        const inboundPackageLineItemDatas = rentalService.getInboundPackageLineItemDatas(
+          {
+            billingStartAt: timeUtils.xDaysAgo(30),
+            billingEndAt: timeUtils.xDaysAgo(1),
+            reservations: [
+              {
+                returnPackages: [
+                  {
+                    id: "1",
+                    amount: 100,
+                    deliveredAt: undefined,
+                    items: [{ seasonsUID: "suid1" }],
+                  },
+                ],
+              },
+            ],
+          }
+        )
+
+        expect(inboundPackageLineItemDatas.length).toBe(0)
+      })
+
+      it("Only charges for an inbound package once, even if it's on multiple reservations", () => {
+        const returnPackage1 = {
+          id: "1",
+          amount: 100,
+          deliveredAt: timeUtils.xDaysAgo(15),
+          items: [{ seasonsUID: "suid1" }],
+        }
+        const inboundPackageLineItemDatas = rentalService.getInboundPackageLineItemDatas(
+          {
+            billingStartAt: timeUtils.xDaysAgo(30),
+            billingEndAt: timeUtils.xDaysAgo(1),
+            reservations: [
+              {
+                returnPackages: [returnPackage1],
+              },
+              {
+                returnPackages: [
+                  { ...returnPackage1 },
+                  {
+                    id: "2",
+                    amount: 200,
+                    deliveredAt: timeUtils.xDaysAgo(5),
+                    items: [{ seasonsUID: "suid2" }],
+                  },
+                ],
+              },
+            ],
+          }
+        )
+
+        expect(inboundPackageLineItemDatas.length).toBe(2)
+        expect(inboundPackageLineItemDatas[0].price).toBe(100)
+        expect(inboundPackageLineItemDatas[1].price).toBe(200)
+      })
     })
 
     describe("Outbound Packages", () => {

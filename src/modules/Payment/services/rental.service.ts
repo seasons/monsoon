@@ -741,7 +741,7 @@ export class RentalService {
   }
 
   getInboundPackageLineItemDatas = (
-    invoice: Pick<RentalInvoice, "billingStartAt"> & {
+    invoice: Pick<RentalInvoice, "billingStartAt" | "billingEndAt"> & {
       reservations: Array<{
         returnPackages: Array<
           Pick<Package, "deliveredAt" | "id" | "amount"> & {
