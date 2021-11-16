@@ -787,19 +787,38 @@ export class RentalService {
   }
 
   getOutboundPackageLineItemDatasFromThisBillingCycle = (
-    invoice: Pick<RentalInvoice, "billingStartAt"> & {
-      reservations: Array<
-        Pick<Reservation, "createdAt"> & {
-          shippingMethod: Pick<ShippingMethod, "code">
-        } & { sentPackage: Pick<Package, "enteredDeliverySystemAt" | "amount"> }
-      >
+    invoice: Pick<RentalInvoice, "billingStartAt" | "billingEndAt"> & {
+      reservationPhysicalProducts: Array<{
+        outboundPackage: Pick<Package, "enteredDeliverySystemAt" | "createdAt">
+      }>
     }
   ) => {
-    const newReservations = invoice.reservations.filter(a =>
-      this.timeUtils.isLaterDate(a.createdAt, invoice.billingStartAt)
+    // Collect all the outbound packages on the reservation physical products on the invoice
+    // Filter for ones that entered the delivery system during the billing cycle
+    // Apply relevant logic to create line items
+    const packages = invoice.reservationPhysicalProducts.map(
+      a => a.outboundPackage
     )
-    const sortedNewReservations = orderBy(newReservations, "createdAt", "asc")
+    // If the package was not created this billing cycle,
+    // we don't want to check it in this function
+    const packagesCreatedThisBillingCycle = packages.filter(a =>
+      this.timeUtils.isBetweenDates(
+        a.createdAt,
+        invoice.billingStartAt,
+        invoice.billingEndAt
+      )
+    )
+    const packagesShippedAndCreatedThisBillingCycle = packagesCreatedThisBillingCycle.filter(
+      a =>
+        !!a.enteredDeliverySystemAt &&
+        this.timeUtils.isBetweenDates(
+          a.enteredDeliverySystemAt,
+          invoice.billingStartAt,
+          invoice.billingEndAt
+        )
+    )
     let haveProcessedOneActiveOutboundPackage = false
+    const datas = packagesShippedAndCreatedThisBillingCycle.map((p, idx) => {})
     const newReservationOutboundPackageLineItemDatas = sortedNewReservations.map(
       (r, idx) => {
         const usedPremiumShipping =

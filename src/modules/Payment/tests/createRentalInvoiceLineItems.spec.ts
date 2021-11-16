@@ -296,16 +296,70 @@ describe("Create Rental Invoice Line Items", () => {
     })
 
     describe("Outbound Packages", () => {
-      /* "If a customer picked up their reservation, do not charge for the outbound package" 
-        "If a customer picks up their first reservation, and their second reservation, and then has the third one shipped ground, do not charge him on the third reservation."
-        "If a customer picks up their first reservation, and their second reservation, and then has the third one shipped select, charge him on the third reservation"
-        "If a customer only has one shipped (ground) outbound package in this billing cycle, do not charge him" 
-        "If a customer only has one shipped, select package in this billing cycle, charge him"
-        "If a customer's first outbound package is select, and the second outbound package is ground, charge him for both"
-        "If a customer placed 3 reservations in the same day and chose ground shipping, then never reserved anything else in the billing cycle, do not charge him"
-        "If a customer's second outbound package includes items from multiple reservations placed in the same day, only charge him for one outbound package"
-        "If a customer has more than one shipped outbound package in this billing cycle, charge him for all but the first"
-        */
+      describe("This billing cycle", () => {
+        it("If a reservation was placed before this billing cycle, does not create a line item", () => {
+          const outboundPackageLineItemDatas = rentalService.getOutboundPackageLineItemDatasFromThisBillingCycle(
+            {
+              billingStartAt: timeUtils.xDaysAgo(30),
+              billingEndAt: timeUtils.xDaysAgo(1),
+              reservations: [
+                {
+                  createdAt: timeUtils.xDaysAgo(45),
+                  shippingMethod: { code: "UPSSelect" },
+                  sentPackage: {
+                    enteredDeliverySystemAt: timeUtils.xDaysAgo(45),
+                    amount: 100,
+                  },
+                },
+              ],
+            }
+          )
+        })
+
+        it("If a reservation was placed after this billing cycle, does not create a line item", () => {})
+
+        it("If a customer picked up their reservation, does not create a line item", () => {
+          expect(0).toBe(1)
+        })
+
+        it("If a customer picks up their first reservation and has the second one shipped ground, does not create a line item", () => {
+          expect(0).toBe(1)
+        })
+
+        it("If a customer picks up their first reservation and has the second one shipped select, creates a line item", () => {
+          expect(0).toBe(1)
+        })
+
+        it("If a customer only has one shipped (ground) outbound package in this billing cycle, does not create any line items", () => {
+          expect(0).toBe(1)
+        })
+
+        it("If a customer only has one shipped, select package in this billing cycle, creates a line item", () => {
+          expect(0).toBe(1)
+        })
+
+        it("If a customer's first outbound package is select, and the second outbound package is ground, create line items for both", () => {
+          expect(0).toBe(1)
+        })
+
+        it("If a customer placed 3 reservations in the same day and chose ground shipping, then never reserved anything else in the billing cycle, does not create any line items", () => {
+          expect(0).toBe(1)
+        })
+
+        it("If a customer's second outbound package includes items from multiple reservations placed in the same day, create only one outbound package line item", () => {
+          expect(0).toBe(1)
+        })
+
+        it("If a customer has more than one shipped outbound package in this billing cycle, charge him for all but the first", () => {
+          expect(0).toBe(1)
+        })
+      })
+
+      describe("Outbound Package created in previous billing cycle but entered delivery system in this billing cycle", () => {
+        it("TODO", () => {
+          expect(0).toBe(1)
+        })
+      })
     })
 
     describe("Package discounts", () => {
