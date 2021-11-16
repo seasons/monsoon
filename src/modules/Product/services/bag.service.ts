@@ -819,17 +819,19 @@ export class BagService {
         break
       case "DeliveredToCustomer":
         // 3. Outbound step 3
-        filteredBagItems = filteredBagItems.filter(item => {
-          const updatedMoreThan24HoursAgo = checkIfUpdatedMoreThan24HoursAgo(
-            item
-          )
+        if (!isAdmin) {
+          filteredBagItems = filteredBagItems.filter(item => {
+            const updatedMoreThan24HoursAgo = checkIfUpdatedMoreThan24HoursAgo(
+              item
+            )
 
-          const noReturnPending = !item.reservationPhysicalProduct
-            ?.hasCustomerReturnIntent
+            const noReturnPending = !item.reservationPhysicalProduct
+              ?.hasCustomerReturnIntent
 
-          return !updatedMoreThan24HoursAgo && noReturnPending
-        })
-        title = "Order delivered"
+            return !updatedMoreThan24HoursAgo && noReturnPending
+          })
+        }
+        title = isAdmin ? "At home" : "Order delivered"
         deliveryStep = 3
         deliveryStatusText = "Shipped"
         deliveryTrackingUrl = this.getTrackingUrl(filteredBagItems, "outbound")
