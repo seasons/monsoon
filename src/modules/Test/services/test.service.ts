@@ -3,6 +3,7 @@ import { InventoryStatus, PhysicalProductStatus } from "@prisma/client"
 import { Prisma } from "@prisma/client"
 import { PrismaService } from "@prisma1/prisma.service"
 import { merge } from "lodash"
+import { DateTime } from "luxon"
 import moment from "moment"
 
 import { TimeUtilsService } from "../../Utils/services/time.service"
@@ -289,13 +290,18 @@ export class TestUtilsService {
     return { cleanupFunc, customer }
   }
 
-  expectTimeToEqual = (time, expectedValue) => {
-    if (!expectedValue) {
-      expect(time).toBe(expectedValue)
+  expectTimeToEqual = (testTime: Date, expectedTime: Date | null) => {
+    if (!expectedTime) {
+      expect(testTime).toBe(expectedTime)
     }
-    expect(moment(time).format("ll")).toEqual(
-      moment(expectedValue).format("ll")
-    )
+    const timeLuxon = DateTime.fromJSDate(testTime)
+    const expectedValueLuxon = DateTime.fromJSDate(expectedTime)
+    const sameDay = timeLuxon.hasSame(expectedValueLuxon, "day")
+    const sameMonth = timeLuxon.hasSame(expectedValueLuxon, "month")
+    const sameYear = timeLuxon.hasSame(expectedValueLuxon, "year")
+    expect(sameDay).toBe(true)
+    expect(sameMonth).toBe(true)
+    expect(sameYear).toBe(true)
   }
 
   // returns the number of physical products with the given inventory status
