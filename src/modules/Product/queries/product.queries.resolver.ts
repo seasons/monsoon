@@ -39,9 +39,10 @@ export class ProductQueriesResolver {
     @Select({
       withFragment: `fragment EnsureId on Product { id }`,
     })
-    select
+    select,
+    @Application() application
   ) {
-    return await this.productService.getProducts(args, select)
+    return await this.productService.getProducts(args, select, application)
   }
 
   @Query()
