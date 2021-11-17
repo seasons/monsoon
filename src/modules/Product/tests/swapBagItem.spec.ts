@@ -656,6 +656,7 @@ describe("Swap Bag Item", () => {
         },
       })
 
+      // TODO: Fix this test setup. See processReturn spec
       expect(swap()).rejects.toThrow(
         "Only bag items with status Hold, Picked, or Queued can be swapped"
       )
@@ -671,6 +672,7 @@ describe("Swap Bag Item", () => {
         },
       })
 
+      // TODO: Fix this test setup. See processReturn spec
       expect(swap()).rejects.toThrow(
         new Error("Only Reserved bag items can be swapped")
       )
@@ -689,6 +691,7 @@ describe("Swap Bag Item", () => {
         }
       )
 
+      // TODO: Fix this test setup. See processReturn spec
       expect(swap()).rejects.toThrowError(
         new Error("This item is in the customer's bag and has been reserved")
       )
