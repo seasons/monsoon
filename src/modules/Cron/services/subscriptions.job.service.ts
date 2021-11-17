@@ -1,7 +1,7 @@
 import { ErrorService } from "@app/modules/Error/services/error.service"
 import { AccessPlanID } from "@app/modules/Payment/payment.types"
 import {
-  CREATE_RENTAL_INVOICE_LINE_ITEMS_INVOICE_SELECT,
+  ProcessableRentalInvoiceSelect,
   RentalService,
 } from "@app/modules/Payment/services/rental.service"
 import { PaymentUtilsService } from "@app/modules/Utils/services/paymentUtils.service"

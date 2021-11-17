@@ -86,14 +86,27 @@ enum ReservationLineItemsFilter {
 }
 
 enum BagSectionStatus {
+  # Custom BagSectionStatus
   Added
+  AtHome
+  Inbound
+  Outbound
+
+  # The following correspond directly to ReservationPhysicalProductStatus
+  Queued
   Picked
   Packed
-  Queued
-  CustomerToBusiness
-  AtHome
-  BusinessToCustomer
+  ScannedOnInbound
+  InTransitInbound
+  ScannedOnOutbound
+  InTransitOutbound
+  DeliveredToCustomer
+  DeliveredToBusiness
   ReturnPending
+  ReturnProcessed
+  ResetEarly
+  Hold
+  Lost
 }
 
 type BagSection {
