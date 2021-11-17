@@ -58,7 +58,7 @@ describe("Process Return", () => {
     testCustomer = customer
   })
 
-  xdescribe("Dropped off By UPS", () => {
+  describe("Dropped off By UPS", () => {
     beforeAll(async () => {
       const {
         reservation: _reservation,
@@ -283,7 +283,7 @@ describe("Process Return", () => {
     })
   })
 
-  xdescribe("Dropped off by Customer", () => {
+  describe("Dropped off by Customer", () => {
     beforeAll(async () => {
       const {
         reservation,
@@ -426,7 +426,7 @@ describe("Process Return", () => {
     })
     it("sets status to ReturnProcessed on reservationPhysicalProduct", async () => {
       resPhysProdsAfterReturn.forEach(a =>
-        expect(a.status).toBe("ReturnProcessedYo")
+        expect(a.status).toBe("ReturnProcessed")
       )
     })
 
@@ -531,7 +531,7 @@ describe("Process Return", () => {
           customerId: testCustomer.id,
         })
       ).rejects.toThrowError(
-        "Must specify return package tracking number when processing reservation asdasd"
+        "Must specify return package tracking number when processing reservation"
       )
     })
   })

@@ -1,4 +1,5 @@
 import { ProductVariantService } from "@app/modules/Product/services/productVariant.service"
+import { UtilsService } from "@app/modules/Utils/services/utils.service"
 import { InventoryStatus, PhysicalProductStatus } from "@app/prisma"
 import { PrismaService } from "@app/prisma/prisma.service"
 import { Injectable } from "@nestjs/common"
@@ -17,11 +18,37 @@ interface ProductState {
   notes: string
 }
 
+const ProcessReturnPhysicalProductsSelect = Prisma.validator<
+  Prisma.PhysicalProductSelect
+>()({
+  id: true,
+  seasonsUID: true,
+  inventoryStatus: true,
+  productVariant: {
+    select: {
+      id: true,
+      sku: true,
+      reserved: true,
+      reservable: true,
+      nonReservable: true,
+      product: true,
+    },
+  },
+})
+const ProcessReturnPhysicalProductFindManyArgs = Prisma.validator<
+  Prisma.PhysicalProductFindManyArgs
+>()({ select: ProcessReturnPhysicalProductsSelect })
+
+type ProcessReturnPhysicalProduct = Prisma.PhysicalProductGetPayload<
+  typeof ProcessReturnPhysicalProductFindManyArgs
+>
+
 @Injectable()
 export class ReservationPhysicalProductService {
   constructor(
     private readonly prisma: PrismaService,
-    private readonly productVariantService: ProductVariantService
+    private readonly productVariantService: ProductVariantService,
+    private readonly utils: UtilsService
   ) {}
 
   /*
@@ -53,23 +80,54 @@ export class ReservationPhysicalProductService {
           in: productStates.map(p => p.productUID),
         },
       },
-      select: {
-        id: true,
-        seasonsUID: true,
-        inventoryStatus: true,
-        productVariant: {
-          select: {
-            id: true,
-            sku: true,
-            reserved: true,
-            reservable: true,
-            nonReservable: true,
-            product: true,
-          },
-        },
-      },
+      select: ProcessReturnPhysicalProductsSelect,
     })
 
+    let promises = []
+    const {
+      promise: updateReservationPhysicalProductsPromise,
+    } = await this.updateReservationPhysicalProductsOnReturn(
+      physicalProducts,
+      trackingNumber,
+      droppedOffBy,
+      customerId
+    )
+    promises.push(updateReservationPhysicalProductsPromise)
+
+    promises.push(
+      this.prisma.client.bagItem.deleteMany({
+        where: {
+          physicalProductId: {
+            in: physicalProducts.map(a => {
+              return a.id
+            }),
+          },
+          customerId: customerId,
+        },
+      })
+    )
+
+    const {
+      promise: updateReservationPromise,
+    } = await this.updateReservationsOnReturn(productStates, customerId)
+    promises.push(updateReservationPromise)
+
+    const updateProductPromises = await this.updateProductsOnReturn(
+      productStates,
+      physicalProducts
+    )
+    promises.push(...updateProductPromises)
+
+    const results = await this.prisma.client.$transaction(promises)
+    return !!results
+  }
+
+  private async updateReservationPhysicalProductsOnReturn(
+    physicalProductsWithData: ProcessReturnPhysicalProduct[],
+    trackingNumber: string | undefined,
+    droppedOffBy: ReservationDropOffAgent,
+    customerId: string
+  ) {
     const returnedPackage = await this.prisma.client.package.findFirst({
       where: {
         shippingLabel: {
@@ -80,9 +138,6 @@ export class ReservationPhysicalProductService {
         id: true,
       },
     })
-
-    let promises = []
-
     const reservationPhysicalProductData = {
       status: <ReservationPhysicalProductStatus>"ReturnProcessed",
       hasReturnProcessed: true,
@@ -94,22 +149,27 @@ export class ReservationPhysicalProductService {
       droppedOffAt: DateTime.local().toISO(),
     }
 
-    promises.push(
-      this.prisma.client.reservationPhysicalProduct.updateMany({
-        where: {
-          physicalProductId: {
-            in: physicalProducts.map(a => {
-              return a.id
-            }),
-          },
-          bagItem: {
-            customerId: customerId,
-          },
+    const promise = this.prisma.client.reservationPhysicalProduct.updateMany({
+      where: {
+        physicalProductId: {
+          in: physicalProductsWithData.map(a => {
+            return a.id
+          }),
         },
-        data: { ...reservationPhysicalProductData },
-      })
-    )
+        bagItem: {
+          customerId: customerId,
+        },
+      },
+      data: { ...reservationPhysicalProductData },
+    })
 
+    return this.utils.wrapPrismaPromise(promise)
+  }
+
+  private async updateReservationsOnReturn(
+    productStates: ProductState[],
+    customerId: string
+  ) {
     const reservations = await this.prisma.client.reservation.findMany({
       where: {
         reservationPhysicalProducts: {
@@ -138,28 +198,13 @@ export class ReservationPhysicalProductService {
       },
     })
 
-    promises.push(
-      this.prisma.client.bagItem.deleteMany({
-        where: {
-          physicalProductId: {
-            in: physicalProducts.map(a => {
-              return a.id
-            }),
-          },
-          customerId: customerId,
-        },
-      })
-    )
-
-    const reservationWithStatusDelivered = reservations.filter(
-      a => a.status !== "Lost"
-    )
-
-    promises.push(
+    // Status Lost supercedes status Completed in importance
+    const reservationsToUpdate = reservations.filter(a => a.status !== "Lost")
+    return this.utils.wrapPrismaPromise(
       this.prisma.client.reservation.updateMany({
         where: {
           id: {
-            in: reservationWithStatusDelivered.map(a => a.id),
+            in: reservationsToUpdate.map(a => a.id),
           },
         },
         data: {
@@ -167,9 +212,15 @@ export class ReservationPhysicalProductService {
         },
       })
     )
+  }
 
+  private async updateProductsOnReturn(
+    productStates: ProductState[],
+    physicalProductsWithData: ProcessReturnPhysicalProduct[]
+  ) {
+    let promises = []
     for (let state of productStates) {
-      const physicalProduct = physicalProducts.find(
+      const physicalProduct = physicalProductsWithData.find(
         a => a.seasonsUID === state.productUID
       )
       const productVariant = physicalProduct.productVariant as any
@@ -222,8 +273,7 @@ export class ReservationPhysicalProductService {
       )
     }
 
-    const results = await this.prisma.client.$transaction(promises)
-    return !!results
+    return promises
   }
 
   async pickItems(
