@@ -24,6 +24,12 @@ export class ReservationPhysicalProductService {
     private readonly productVariantService: ProductVariantService
   ) {}
 
+  /*
+    Set data on reservation physical products
+    Delete bag items
+    Update reservation statuses
+
+  */
   async processReturn({
     productStates,
     droppedOffBy,

@@ -140,6 +140,11 @@ describe("Process Return", () => {
       inboundPackage = await prismaService.client.package.create({
         data: {
           transactionID,
+          shippingLabel: {
+            create: {
+              trackingNumber: "randomTrackingNumber",
+            },
+          },
         },
         select: {
           shippingLabel: {
