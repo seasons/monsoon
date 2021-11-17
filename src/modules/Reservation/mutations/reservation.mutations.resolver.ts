@@ -23,19 +23,14 @@ export class ReservationMutationsResolver {
   ) {}
 
   @Mutation()
-  async returnMultiItems(
-    @Args() { trackingNumber, productStates, droppedOffBy }
+  async processReturn(
+    @Args() { trackingNumber, productStates, droppedOffBy, customerId }
   ) {
-    if (droppedOffBy?.["UPS"] && trackingNumber === "") {
-      throw new Error(
-        `Must specify return package tracking number when processing reservation`
-      )
-    }
-
-    return this.reservationPhysicalProduct.returnMultiItems({
+    return this.reservationPhysicalProduct.processReturn({
       productStates,
       droppedOffBy,
       trackingNumber,
+      customerId,
     })
   }
 
@@ -136,25 +131,6 @@ export class ReservationMutationsResolver {
     })
 
     return returnData
-  }
-
-  @Mutation()
-  async processReservation(@Args() { data }) {
-    const { reservationNumber, productStates, trackingNumber = "" } = data
-
-    if (trackingNumber === "") {
-      throw new Error(
-        `Must specify return package tracking number when processing reservation`
-      )
-    }
-
-    const result = await this.reservation.processReservation(
-      reservationNumber,
-      productStates,
-      trackingNumber
-    )
-
-    return result
   }
 
   @Mutation()
