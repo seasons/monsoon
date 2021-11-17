@@ -30,7 +30,7 @@
     "prestart": "docker-compose up -d",
     "prettier": "prettier --write 'src/**/*.{js,ts,tsx,md,graphql}' --ignore-path ./.prettierignore",
     "start:debug": "nest start --debug --watch",
-    "start:production": "node -r dotenv/config dist/index.js",
+    "start:production": "node --max_old_space_size=2048 -r dotenv/config dist/index.js",
     "start:server": "dotenv -- nodemon -e ts,graphql -x ts-node src/index.ts",
     "start": "concurrently -k -n 'TSC,TS-NODE' -c 'gray.dim,blue.dim' 'yarn tsc -w' 'yarn start:server'",
     "test:cov": "jest --coverage",
