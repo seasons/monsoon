@@ -55,6 +55,19 @@ export const ProcessableReservationPhysicalProductSelect = Prisma.validator<
   lostInPhase: true,
   hasBeenLost: true,
   resetEarlyByAdminAt: true,
+  outboundPackage: {
+    select: {
+      id: true,
+      createdAt: true,
+      enteredDeliverySystemAt: true,
+      amount: true,
+      shippingMethod: {
+        select: {
+          code: true,
+        },
+      },
+    },
+  },
   physicalProduct: {
     select: {
       id: true,
@@ -788,7 +801,10 @@ export class RentalService {
   getOutboundPackageLineItemDatasFromThisBillingCycle = (
     invoice: Pick<RentalInvoice, "billingStartAt" | "billingEndAt"> & {
       reservationPhysicalProducts: Array<{
-        outboundPackage: Pick<Package, "enteredDeliverySystemAt" | "createdAt">
+        outboundPackage: Pick<
+          Package,
+          "enteredDeliverySystemAt" | "createdAt" | "amount" | "id"
+        > & { shippingMethod: Pick<ShippingMethod, "code"> }
       }>
     }
   ) => {
@@ -798,8 +814,6 @@ export class RentalService {
     const packages = invoice.reservationPhysicalProducts.map(
       a => a.outboundPackage
     )
-    // If the package was not created this billing cycle,
-    // we don't want to check it in this function
     const packagesCreatedThisBillingCycle = packages.filter(a =>
       this.timeUtils.isBetweenDates(
         a.createdAt,
@@ -816,66 +830,56 @@ export class RentalService {
           invoice.billingEndAt
         )
     )
-    let haveProcessedOneActiveOutboundPackage = false
-    const datas = packagesShippedAndCreatedThisBillingCycle.map((p, idx) => {})
-    const newReservationOutboundPackageLineItemDatas = sortedNewReservations.map(
-      (r, idx) => {
-        const usedPremiumShipping =
-          !!r && r.shippingMethod?.code === "UPSSelect"
-        const usedPickup = !!r && r.shippingMethod?.code === "Pickup"
-        const packageDidShip = !!r.sentPackage?.enteredDeliverySystemAt
 
-        const undiscountedPrice = r.sentPackage.amount
-        let price = this.shipping.discountShippingRate(
-          undiscountedPrice,
-          usedPremiumShipping ? "UPSSelect" : "UPSGround",
-          "Outbound"
-        )
-        let comment
-
-        const name =
-          "Reservation-" +
-          r.reservationNumber +
-          (usedPickup ? "-Pickup" : "-OutboundPackage")
-
-        const commentStart = `Reservation ${idx + 1} of billing cycle. `
-        if (usedPickup) {
-          comment = commentStart + "Customer picked up package. No charge."
-          price = 0
-        } else if (!packageDidShip) {
-          comment =
-            commentStart +
-            "Package did not ship before invoice billed. No charge."
-          price = 0
-        } else {
-          if (!haveProcessedOneActiveOutboundPackage) {
-            haveProcessedOneActiveOutboundPackage = true
-            if (usedPremiumShipping) {
-              comment =
-                commentStart +
-                `First active outbound package of billing cycle. Used premium shipping. Charge.`
-            } else {
-              comment =
-                commentStart +
-                "First active outbound package of billing cycle. Did not use premium shipping. Do not charge."
-              price = 0
-            }
-          } else {
-            comment =
-              commentStart +
-              "Active outbound package of billing cycle. One free package already given. Charge."
-          }
-        }
-
-        return {
-          name,
-          price,
-          comment,
-        }
-      }
+    const uniqueSortedPackagesToProcess = orderBy(
+      uniqBy(packagesShippedAndCreatedThisBillingCycle, p => p.id),
+      "createdAt",
+      "asc"
     )
 
-    return newReservationOutboundPackageLineItemDatas
+    const formatDate = date => {
+      const luxDate = DateTime.fromJSDate(date)
+      return luxDate
+        .toLocaleString({ month: "numeric", day: "numeric" })
+        .replace("/", ".")
+    }
+
+    const datas = uniqueSortedPackagesToProcess.map((p, idx) => {
+      const usedPremiumShipping = p.shippingMethod?.code === "UPSSelect"
+      const undiscountedPrice = p.amount
+
+      let price = this.shipping.discountShippingRate(
+        undiscountedPrice,
+        usedPremiumShipping ? "UPSSelect" : "UPSGround",
+        "Outbound"
+      )
+
+      const name = `Outbound package shipped ${formatDate(
+        p.enteredDeliverySystemAt
+      )}`
+
+      let comment
+      if (idx === 0 && !usedPremiumShipping) {
+        price = 0
+        comment =
+          "First shipped outbound package of billing cycle. Did not use premium shipping method. No charge"
+      } else if (idx === 0 && usedPremiumShipping) {
+        comment =
+          "First shipped outbound package of billing cycle. Used premium shipping method. Charge"
+      } else {
+        comment = `Shipped outbound package ${
+          idx + 1
+        } of billing cycle. Charge.`
+      }
+
+      return {
+        name,
+        price,
+        comment,
+      }
+    })
+
+    return datas
   }
   private getOutboundPackageLineItemDatasFromPreviousBillingCycle = async (
     invoice: Pick<RentalInvoice, "id" | "billingStartAt" | "billingEndAt">

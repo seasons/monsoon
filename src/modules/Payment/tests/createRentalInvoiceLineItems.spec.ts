@@ -296,66 +296,158 @@ describe("Create Rental Invoice Line Items", () => {
     })
 
     describe("Outbound Packages", () => {
-      describe("This billing cycle", () => {
-        it("If a reservation was placed before this billing cycle, does not create a line item", () => {
-          const outboundPackageLineItemDatas = rentalService.getOutboundPackageLineItemDatasFromThisBillingCycle(
-            {
-              billingStartAt: timeUtils.xDaysAgo(30),
-              billingEndAt: timeUtils.xDaysAgo(1),
-              reservations: [
-                {
-                  createdAt: timeUtils.xDaysAgo(45),
-                  shippingMethod: { code: "UPSSelect" },
-                  sentPackage: {
-                    enteredDeliverySystemAt: timeUtils.xDaysAgo(45),
-                    amount: 100,
+      let discountShippingRateMock
+
+      beforeAll(() => {
+        discountShippingRateMock = jest
+          .spyOn(shipping, "discountShippingRate")
+          .mockImplementation((rate, servicelevel, shipmentType) => {
+            return rate
+          })
+      })
+      afterAll(() => {
+        discountShippingRateMock.mockRestore()
+      })
+
+      describe("Outbound Pacakges created and shipped this billing cycle", () => {
+        describe("Packages created in another billing cycle", () => {
+          it("If a package was created before this billing cycle, does not create a line item", () => {
+            const lineItemDatas = rentalService.getOutboundPackageLineItemDatasFromThisBillingCycle(
+              {
+                billingStartAt: timeUtils.xDaysAgo(30),
+                billingEndAt: timeUtils.xDaysAgo(1),
+                reservationPhysicalProducts: [
+                  {
+                    outboundPackage: {
+                      id: "1",
+                      createdAt: timeUtils.xDaysAgo(45),
+                      enteredDeliverySystemAt: timeUtils.xDaysAgo(44),
+                      amount: 100,
+                      shippingMethod: { code: "UPSGround" },
+                    },
                   },
-                },
-              ],
-            }
-          )
+                  {
+                    outboundPackage: {
+                      id: "2",
+                      createdAt: timeUtils.xDaysAgo(40),
+                      enteredDeliverySystemAt: timeUtils.xDaysAgo(39),
+                      amount: 100,
+                      shippingMethod: { code: "UPSGround" },
+                    },
+                  },
+                ],
+              }
+            )
+
+            expect(lineItemDatas.length).toBe(0)
+          })
+
+          it("If a package was created after this billing cycle, does not create a line item", () => {
+            const lineItemDatas = rentalService.getOutboundPackageLineItemDatasFromThisBillingCycle(
+              {
+                billingStartAt: timeUtils.xDaysAgo(60),
+                billingEndAt: timeUtils.xDaysAgo(30),
+                reservationPhysicalProducts: [
+                  {
+                    outboundPackage: {
+                      id: "1",
+                      createdAt: timeUtils.xDaysAgo(15),
+                      enteredDeliverySystemAt: timeUtils.xDaysAgo(14),
+                      amount: 100,
+                      shippingMethod: { code: "UPSGround" },
+                    },
+                  },
+                  {
+                    outboundPackage: {
+                      id: "2",
+                      createdAt: timeUtils.xDaysAgo(5),
+                      enteredDeliverySystemAt: timeUtils.xDaysAgo(4),
+                      amount: 100,
+                      shippingMethod: { code: "UPSGround" },
+                    },
+                  },
+                ],
+              }
+            )
+
+            expect(lineItemDatas.length).toBe(0)
+          })
         })
 
-        it("If a reservation was placed after this billing cycle, does not create a line item", () => {})
+        describe("Packages created this billing cycle", () => {
+          describe("First shipped package of cycle", () => {
+            it("If it's select, creates a line item with nonzero price", () => {
+              const lineItemDatas = rentalService.getOutboundPackageLineItemDatasFromThisBillingCycle(
+                {
+                  billingStartAt: new Date(2021, 1, 1),
+                  billingEndAt: new Date(2021, 2, 1),
+                  reservationPhysicalProducts: [
+                    {
+                      outboundPackage: {
+                        id: "1",
+                        createdAt: new Date(2021, 1, 15),
+                        enteredDeliverySystemAt: new Date(2021, 1, 16),
+                        amount: 2000,
+                        shippingMethod: { code: "UPSSelect" },
+                      },
+                    },
+                  ],
+                }
+              )
 
-        it("If a customer picked up their reservation, does not create a line item", () => {
-          expect(0).toBe(1)
+              expect(lineItemDatas.length).toBe(1)
+              expect(lineItemDatas[0].price).toBe(2000)
+              expect(lineItemDatas[0].name).toBe(
+                "Outbound package shipped 2.16"
+              )
+              expect(lineItemDatas[0].comment).toBe(
+                "First shipped outbound package of billing cycle. Used premium shipping method. Charge"
+              )
+            })
+
+            it("If it's ground, creates a line with 0 price", () => {
+              const lineItemDatas = rentalService.getOutboundPackageLineItemDatasFromThisBillingCycle(
+                {
+                  billingStartAt: new Date(2021, 1, 1),
+                  billingEndAt: new Date(2021, 2, 1),
+                  reservationPhysicalProducts: [
+                    {
+                      outboundPackage: {
+                        id: "1",
+                        createdAt: new Date(2021, 1, 15),
+                        enteredDeliverySystemAt: new Date(2021, 1, 16),
+                        amount: 2000,
+                        shippingMethod: { code: "UPSGround" },
+                      },
+                    },
+                  ],
+                }
+              )
+
+              expect(lineItemDatas.length).toBe(1)
+              expect(lineItemDatas[0].price).toBe(0)
+              expect(lineItemDatas[0].name).toBe(
+                "Outbound package shipped 2.16"
+              )
+              expect(lineItemDatas[0].comment).toBe(
+                "First shipped outbound package of billing cycle. Did not use premium shipping method. No charge"
+              )
+            })
+          })
+
+          describe("2nd or later shipped packages of cycle", () => {
+            it("Creates a line item", () => {
+              expect(0).toBe(1)
+            })
+          })
         })
 
-        it("If a customer picks up their first reservation and has the second one shipped ground, does not create a line item", () => {
-          expect(0).toBe(1)
-        })
-
-        it("If a customer picks up their first reservation and has the second one shipped select, creates a line item", () => {
-          expect(0).toBe(1)
-        })
-
-        it("If a customer only has one shipped (ground) outbound package in this billing cycle, does not create any line items", () => {
-          expect(0).toBe(1)
-        })
-
-        it("If a customer only has one shipped, select package in this billing cycle, creates a line item", () => {
-          expect(0).toBe(1)
-        })
-
-        it("If a customer's first outbound package is select, and the second outbound package is ground, create line items for both", () => {
-          expect(0).toBe(1)
-        })
-
-        it("If a customer placed 3 reservations in the same day and chose ground shipping, then never reserved anything else in the billing cycle, does not create any line items", () => {
-          expect(0).toBe(1)
-        })
-
-        it("If a customer's second outbound package includes items from multiple reservations placed in the same day, create only one outbound package line item", () => {
-          expect(0).toBe(1)
-        })
-
-        it("If a customer has more than one shipped outbound package in this billing cycle, charge him for all but the first", () => {
+        it("Charges for any given package only once", () => {
           expect(0).toBe(1)
         })
       })
 
-      describe("Outbound Package created in previous billing cycle but entered delivery system in this billing cycle", () => {
+      describe("Outbound Package created in previous billing cycle but shipped this billing cycle", () => {
         it("TODO", () => {
           expect(0).toBe(1)
         })
