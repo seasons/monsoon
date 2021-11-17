@@ -58,7 +58,7 @@ describe("Process Return", () => {
     testCustomer = customer
   })
 
-  describe("Dropped off By UPS", () => {
+  xdescribe("Dropped off By UPS", () => {
     beforeAll(async () => {
       const {
         reservation: _reservation,
@@ -283,7 +283,7 @@ describe("Process Return", () => {
     })
   })
 
-  describe("Dropped off by Customer", () => {
+  xdescribe("Dropped off by Customer", () => {
     beforeAll(async () => {
       const {
         reservation,
@@ -426,7 +426,7 @@ describe("Process Return", () => {
     })
     it("sets status to ReturnProcessed on reservationPhysicalProduct", async () => {
       resPhysProdsAfterReturn.forEach(a =>
-        expect(a.status).toBe("ReturnProcessed")
+        expect(a.status).toBe("ReturnProcessedYo")
       )
     })
 
@@ -522,18 +522,16 @@ describe("Process Return", () => {
         }
       })
     })
-    it("throws an error when droppedOffBy is UPS but there is no trackingNumber", () => {
-      expect(
-        (async () => {
-          await resPhysProdService.processReturn({
-            productStates,
-            droppedOffBy: "UPS",
-            trackingNumber: "",
-            customerId: testCustomer.id,
-          })
-        })()
+    it("throws an error when droppedOffBy is UPS but there is no trackingNumber", async () => {
+      await expect(() =>
+        resPhysProdService.processReturn({
+          productStates,
+          droppedOffBy: "UPS",
+          trackingNumber: "",
+          customerId: testCustomer.id,
+        })
       ).rejects.toThrowError(
-        "Must specify return package tracking number when processing reservation"
+        "Must specify return package tracking number when processing reservation asdasd"
       )
     })
   })

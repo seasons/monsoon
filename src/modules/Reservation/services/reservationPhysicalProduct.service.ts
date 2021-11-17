@@ -41,7 +41,7 @@ export class ReservationPhysicalProductService {
     trackingNumber?: string
     customerId: string
   }) {
-    if (droppedOffBy?.["UPS"] && trackingNumber === "") {
+    if (droppedOffBy === "UPS" && !trackingNumber) {
       throw new Error(
         `Must specify return package tracking number when processing reservation`
       )
