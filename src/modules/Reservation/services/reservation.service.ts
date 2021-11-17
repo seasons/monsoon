@@ -72,49 +72,140 @@ export class ReservationService {
     private readonly customerUtils: CustomerUtilsService
   ) {}
 
-  async cancelReturn(customer: Customer) {
-    const lastReservation = await this.utils.getLatestReservation(customer.id)
+  async cancelReturn(customer: Customer, bagItemId: string) {
+    if (bagItemId) {
+      // If one bagItemId is passed just cancel the single return
+      const bagItem = await this.prisma.client.bagItem.findUnique({
+        where: {
+          id: bagItemId,
+        },
+        select: {
+          reservationPhysicalProduct: {
+            select: {
+              id: true,
+              status: true,
+            },
+          },
+        },
+      })
 
-    await this.prisma.client.reservation.update({
-      data: {
-        returnedProducts: { set: [] },
-        returnedAt: null,
-      },
-      where: { id: String(lastReservation.id) },
-    })
+      const reservationPhysicalProduct = await this.prisma.client.reservationPhysicalProduct.update(
+        {
+          where: {
+            id: bagItem.reservationPhysicalProduct.id,
+          },
+          data: {
+            status: "DeliveredToCustomer",
+          },
+          select: {
+            id: true,
+          },
+        }
+      )
 
-    return lastReservation
+      return [reservationPhysicalProduct]
+    } else {
+      // Cancel all the returns if no specific bag item is passed
+      const bagItems = await this.prisma.client.bagItem.findMany({
+        where: {
+          customer: {
+            id: customer.id,
+          },
+          saved: false,
+        },
+        select: {
+          reservationPhysicalProduct: {
+            select: {
+              id: true,
+              status: true,
+            },
+          },
+        },
+      })
+
+      const returnPendingBagItems = bagItems.filter(bagItem => {
+        return bagItem.reservationPhysicalProduct.status === "ReturnPending"
+      })
+
+      await this.prisma.client.reservationPhysicalProduct.updateMany({
+        where: {
+          id: {
+            in: returnPendingBagItems.map(
+              item => item.reservationPhysicalProduct.id
+            ),
+          },
+        },
+        data: {
+          status: "DeliveredToCustomer",
+        },
+      })
+
+      return this.prisma.client.reservationPhysicalProduct.findMany({
+        where: {
+          id: {
+            in: returnPendingBagItems.map(
+              item => item.reservationPhysicalProduct.id
+            ),
+          },
+        },
+        select: {
+          id: true,
+        },
+      })
+    }
   }
 
   async returnItems(items: string[], customer: Customer) {
-    const lastReservation: any = await this.utils.getLatestReservation(
-      customer.id
-    )
-
-    // If there's an item being returned that isn't in the current reservation
-    // throw an error
-    if (
-      intersection(
-        lastReservation.products.map(p => p.id),
-        items
-      ).length !== items.length
-    ) {
-      throw new Error(
-        "One of the returned items isn't in the current reservation"
-      )
-    }
-
-    await this.prisma.client.reservation.update({
-      data: {
-        returnedProducts: {
-          connect: items.map(item => ({ id: item })),
+    const bagItems = await this.prisma.client.bagItem.findMany({
+      where: {
+        customer: {
+          id: customer.id,
         },
-        returnedAt: new Date(),
+        saved: false,
       },
-      where: { id: String(lastReservation.id) },
+      select: {
+        physicalProduct: {
+          select: {
+            id: true,
+          },
+        },
+        reservationPhysicalProduct: {
+          select: {
+            id: true,
+          },
+        },
+      },
     })
 
-    return lastReservation
+    const bagItemsToUpdate = bagItems.filter(bagItem => {
+      return items.includes(bagItem.physicalProduct.id)
+    })
+
+    const reservationPhysicalProductIds = bagItemsToUpdate.map(
+      item => item.reservationPhysicalProduct.id
+    )
+
+    await this.prisma.client.reservationPhysicalProduct.updateMany({
+      where: {
+        id: {
+          in: reservationPhysicalProductIds,
+        },
+      },
+      data: {
+        status: "ReturnPending",
+      },
+    })
+
+    return this.prisma.client.reservationPhysicalProduct.findMany({
+      where: {
+        id: {
+          in: reservationPhysicalProductIds,
+        },
+      },
+      select: {
+        id: true,
+      },
+    })
   }
 
   private async getReservation(reservationNumber: number) {
