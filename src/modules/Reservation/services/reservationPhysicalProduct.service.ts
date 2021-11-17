@@ -3,6 +3,8 @@ import { InventoryStatus, PhysicalProductStatus } from "@app/prisma"
 import { PrismaService } from "@app/prisma/prisma.service"
 import { Injectable } from "@nestjs/common"
 import {
+  Customer,
+  Prisma,
   ReservationDropOffAgent,
   ReservationPhysicalProductStatus,
 } from "@prisma/client"
@@ -218,24 +220,111 @@ export class ReservationPhysicalProductService {
     return !!results
   }
 
-  async pickItems(itemIDs: string[]) {
-    const reservationPhysicalProducts = await this.prisma.client.reservationPhysicalProduct.findMany(
-      {
-        where: {
-          id: {
-            in: itemIDs,
+  async pickItems(
+    bagItemIDs: string[],
+    select: Prisma.ReservationPhysicalProductSelect
+  ) {
+    const bagItems = await this.prisma.client.bagItem.findMany({
+      where: {
+        id: {
+          in: bagItemIDs,
+        },
+      },
+      select: {
+        id: true,
+        reservationPhysicalProduct: {
+          select: {
+            id: true,
+            physicalProductId: true,
+            status: true,
           },
         },
-        select: {
-          id: true,
-          physicalProductId: true,
-          physicalProduct: {
-            select: {
-              id: true,
+      },
+    })
+
+    const promises = []
+
+    for (let bagItem of bagItems) {
+      const reservationPhysicalProduct = bagItem.reservationPhysicalProduct
+
+      if (reservationPhysicalProduct.status !== "Queued") {
+        throw new Error("Reservation physical product status should be Queued")
+      }
+
+      promises.push(
+        this.prisma.client.reservationPhysicalProduct.update({
+          where: {
+            id: reservationPhysicalProduct.id,
+          },
+          data: {
+            status: "Picked",
+            pickedAt: new Date(),
+            physicalProduct: {
+              update: {
+                warehouseLocation: {
+                  disconnect: true,
+                },
+              },
             },
           },
+          select,
+        })
+      )
+    }
+
+    const results = await this.prisma.client.$transaction(promises)
+    return results
+  }
+
+  async packItems(
+    bagItemIDs: string[],
+    select: Prisma.ReservationPhysicalProductSelect
+  ) {
+    const bagItems = await this.prisma.client.bagItem.findMany({
+      where: {
+        id: {
+          in: bagItemIDs,
         },
+      },
+      select: {
+        id: true,
+        reservationPhysicalProduct: {
+          select: {
+            id: true,
+            status: true,
+          },
+        },
+      },
+    })
+
+    const promises = []
+
+    for (let bagItem of bagItems) {
+      const reservationPhysicalProduct = bagItem.reservationPhysicalProduct
+
+      if (reservationPhysicalProduct.status !== "Picked") {
+        throw new Error("Reservation physical product status should be Picked")
       }
-    )
+
+      promises.push(
+        this.prisma.client.reservationPhysicalProduct.update({
+          where: {
+            id: reservationPhysicalProduct.id,
+          },
+          data: {
+            status: "Packed",
+            packedAt: new Date(),
+          },
+          select,
+        })
+      )
+    }
+
+    const results = await this.prisma.client.$transaction(promises)
+    return results
+  }
+
+  async printShippingLabel(customer: Pick<Customer, "id">) {
+    // Todo: implement
   }
 }
