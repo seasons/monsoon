@@ -501,10 +501,6 @@ export class BagService {
   }
 
   async processLostItems(lostBagItemsIds) {
-    // Probably best to query bagItemsWithData at the top, including the reservation physical products and the physical products.
-
-    // TODO: Add a test that confirms this errors as expected
-
     const bagItemsWithData = await this.prisma.client.bagItem.findMany({
       where: {
         id: {
@@ -516,6 +512,7 @@ export class BagService {
           select: {
             id: true,
             status: true,
+            reservationId: true,
           },
         },
         physicalProduct: {
@@ -540,8 +537,6 @@ export class BagService {
 
     const physicalProducts = bagItemsWithData.map(a => a.physicalProduct)
 
-    // TODO: Once we update the statuses for in transit states, this needs to be updated.
-    // Also, it should probably include the delivered statuses, since things can get stolen from stoops/lobbies etc.
     lostResPhysProds.forEach(resPhysProd => {
       if (
         !([
@@ -554,8 +549,7 @@ export class BagService {
         ] as ReservationPhysicalProductStatus[]).includes(resPhysProd.status)
       ) {
         throw new Error(
-          // TODO: This is gramatically incorrect. Fix
-          "Items that are inbound or outbound can only be marked as lost"
+          "Only inbound, outbound, or delivered items can be marked as lost"
         )
       }
     })
@@ -571,6 +565,20 @@ export class BagService {
         },
       })
     )
+
+    promises.push(
+      this.prisma.client.reservation.updateMany({
+        where: {
+          id: {
+            in: lostResPhysProds.map(a => a.reservationId),
+          },
+        },
+        data: {
+          status: "Lost",
+        },
+      })
+    )
+
     const lostOutboundResPhysProds = lostResPhysProds.filter(a =>
       ([
         "ScannedOnOutbound",

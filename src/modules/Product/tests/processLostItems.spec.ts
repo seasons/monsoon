@@ -4,14 +4,13 @@ import {
   setReservationCreatedAt,
   setReservationStatus,
 } from "@app/modules/Payment/tests/utils/utils"
-import { ReservationPhysicalProductService } from "@app/modules/Reservation"
 import { ReserveService } from "@app/modules/Reservation/services/reserve.service"
 import { ReservationTestUtilsService } from "@app/modules/Reservation/tests/reservation.test.utils"
 import { TestUtilsService } from "@app/modules/Test/services/test.service"
 import { TimeUtilsService } from "@app/modules/Utils/services/time.service"
 import { PrismaService } from "@app/prisma/prisma.service"
 import { Test } from "@nestjs/testing"
-import { PrimaryRegistryAliasFlag } from "aws-sdk/clients/ecrpublic"
+import cuid from "cuid"
 
 import { ProductModuleDef } from "../product.module"
 import { BagService } from "../services/bag.service"
@@ -23,344 +22,504 @@ describe("Mark Items as Lost", () => {
   let reserveService: ReserveService
   let timeUtils: TimeUtilsService
   let reservationTestUtils: ReservationTestUtilsService
-  let reservation
+  let newReservation
   let cleanupFuncs = []
   let testCustomer
+  let shipPackage
 
-  beforeAll(async done => {
+  beforeAll(async () => {
     const moduleBuilder = await Test.createTestingModule(ProductModuleDef)
     const moduleRef = await moduleBuilder.compile()
     prismaService = moduleRef.get<PrismaService>(PrismaService)
     bagService = moduleRef.get<BagService>(BagService)
     testUtils = moduleRef.get<TestUtilsService>(TestUtilsService)
     reserveService = moduleRef.get<ReserveService>(ReserveService)
+    reservationTestUtils = moduleRef.get<ReservationTestUtilsService>(
+      ReservationTestUtilsService
+    )
     timeUtils = moduleRef.get<TimeUtilsService>(TimeUtilsService)
-  })
 
-  beforeEach(async () => {
     const { cleanupFunc, customer } = await testUtils.createTestCustomer({})
     cleanupFuncs.push(cleanupFunc)
     testCustomer = customer
 
-    reservation = await reservationTestUtils.addToBagAndReserveForCustomer({
-      customer: testCustomer.id,
-      numProductsToAdd: 2,
-    })
-  })
+    shipPackage = async (outboundPackage, preLostResPhysProds) => {
+      await prismaService.client.reservationPhysicalProduct.updateMany({
+        where: {
+          id: {
+            in: preLostResPhysProds.map(a => a.id),
+          },
+        },
+        data: {
+          status: "ScannedOnOutbound",
+          hasBeenScannedOnOutbound: true,
+          scannedOnOutboundAt: new Date(),
+        },
+      })
 
-  describe("Inbound Package", () => {
-    // Declare any variables needed to run expects
-    beforeAll(() => {
+      await setPackageEnteredSystemAt(outboundPackage.id, 2, {
+        prisma: prismaService,
+        timeUtils,
+      })
+    }
+  })
+  let outboundPackage
+  let inboundPackage
+  let preLostBagItems
+  let preLostBagItemIds
+  let preLostResPhysProds
+  let preLostPhysicalProduct
+  let preLostProductVariants
+  let postLostResPhysProds
+  let postLostPhysicalProds
+  let postLostProductVariants
+
+  describe("Outbound Package", () => {
+    beforeAll(async () => {
       // Do the setup just once, then just run expects in the its
       // set declared variables here
-    })
-    it("removes bag items from customer's bag", async () => {
-      /**
-       * create customer
-       * place reservation(add items to bag, make reservation)
-       * ship reservation to customer
-       * mark items as lost
-       * check to see if items were removed from customer's bag
-       */
 
+      const {
+        reservation,
+        bagItems,
+      } = await reservationTestUtils.addToBagAndReserveForCustomer({
+        customer: testCustomer,
+        numProductsToAdd: 3,
+        options: { shippingCode: "UPSGround" },
+      })
+      newReservation = reservation
       await setReservationCreatedAt(reservation.id, 4, {
         prisma: prismaService,
         timeUtils,
       })
-      let reservationPackage = reservation.sentPackage
-      await setPackageEnteredSystemAt(reservationPackage, 2, {
-        prisma: prismaService,
-        timeUtils,
-      })
 
-      const preLostBagItems = await prismaService.client.bagItem.findMany({
-        where: {
-          reservationPhysicalProduct: {
-            reservation: {
+      const transactionID = cuid()
+      outboundPackage = await prismaService.client.package.create({
+        data: {
+          reservationOnSentPackage: {
+            connect: {
               id: reservation.id,
             },
+          },
+          transactionID,
+        },
+      })
+
+      preLostBagItems = await prismaService.client.bagItem.findMany({
+        where: {
+          id: {
+            in: bagItems.map(a => a.id),
           },
         },
         select: {
           id: true,
+          reservationPhysicalProduct: {
+            select: {
+              id: true,
+              hasBeenLost: true,
+              lostInPhase: true,
+              lostAt: true,
+            },
+          },
+          physicalProduct: {
+            select: {
+              id: true,
+              inventoryStatus: true,
+              productStatus: true,
+            },
+          },
+          productVariant: {
+            select: {
+              id: true,
+              reserved: true,
+              reservable: true,
+              nonReservable: true,
+            },
+          },
         },
       })
 
-      await bagService.processLostItems({ preLostBagItems })
+      preLostBagItemIds = preLostBagItems.map(a => a.id)
+      preLostResPhysProds = preLostBagItems.map(
+        a => a.reservationPhysicalProduct
+      )
+      preLostPhysicalProduct = preLostBagItems.map(a => a.physicalProduct)
+      preLostProductVariants = preLostBagItems.map(a => a.productVariant)
 
-      const postLostBagItems = await prismaService.client.bagItem.findMany({
+      await prismaService.client.reservationPhysicalProduct.updateMany({
         where: {
           id: {
-            in: preLostBagItems.map(a => a.id),
+            in: preLostResPhysProds.map(a => a.id),
           },
         },
-      })
-      expect(postLostBagItems.length).toBe(0)
-    })
-
-    it("sets the lostAt, hasBeenLost for relevant reservationPhysicalProducts", async () => {
-      /**
-       * create reservation
-       * place reservation
-       * ship reservation
-       * mark items as lost
-       * check to see if reservationPhysicalProduct's lostAt time stamp has been set
-       * check to see if reservationPhysicalProduct's hasBeenLost boolean has been set
-       */
-
-      await setReservationCreatedAt(reservation.id, 4, {
-        prisma: prismaService,
-        timeUtils,
-      })
-      const sentPackage = reservation.sentPackage
-      await setPackageEnteredSystemAt(sentPackage.id, 2, {
-        prisma: prismaService,
-        timeUtils,
-      })
-      const bagItems = await prismaService.client.bagItem.findMany({
-        where: {
-          reservationPhysicalProduct: {
-            reservation: {
-              id: reservation.id,
-            },
-          },
+        data: {
+          status: "ScannedOnOutbound",
+          hasBeenScannedOnOutbound: true,
+          scannedOnOutboundAt: new Date(),
         },
       })
 
-      await bagService.processLostItems(bagItems.map(a => a.id))
+      await setPackageEnteredSystemAt(outboundPackage.id, 2, {
+        prisma: prismaService,
+        timeUtils,
+      })
 
-      const lostResPhysProds = await prismaService.client.reservationPhysicalProduct.findMany(
+      await bagService.processLostItems(preLostBagItemIds)
+
+      postLostResPhysProds = await prismaService.client.reservationPhysicalProduct.findMany(
         {
           where: {
-            reservation: {
-              id: reservation.id,
+            id: {
+              in: preLostResPhysProds.map(a => a.id),
             },
           },
           select: {
+            id: true,
+            status: true,
             lostAt: true,
             hasBeenLost: true,
-          },
-        }
-      )
-
-      for (const reservationPhysProd of lostResPhysProds) {
-        expect(reservationPhysProd.hasBeenLost).toBe(true)
-        expect(!!reservationPhysProd.lostAt).toBe(true)
-      }
-    })
-
-    it("sets lostInPhase for inbound package to CustomerToBusiness", async () => {
-      /**
-       * create reservation
-       * place reservation
-       * ship reservation to customer
-       * set package as delivered
-       * ship reservation back to business
-       * mark items as lost
-       * check to see that lostInPhase is set to CustomerToBusiness
-       */
-
-      await setReservationCreatedAt(reservation.id, 25, {
-        prisma: prismaService,
-        timeUtils,
-      })
-      const sentPackage = reservation.sentPackage
-      await setPackageEnteredSystemAt(sentPackage.id, 23, {
-        prisma: prismaService,
-        timeUtils,
-      })
-      const bagItems = await prismaService.client.bagItem.findMany({
-        where: {
-          reservationPhysicalProduct: {
-            reservation: {
-              id: reservation.id,
-            },
-          },
-        },
-      })
-      await setPackageDeliveredAt(sentPackage.id, 21, {
-        prisma: prismaService,
-        timeUtils,
-      })
-
-      await setPackageEnteredSystemAt(reservation.returnPackage, 5, {
-        prisma: prismaService,
-        timeUtils,
-      })
-
-      const lostResPhysProds = await prismaService.client.reservationPhysicalProduct.findMany(
-        {
-          where: {
-            reservation: {
-              id: reservation.id,
-            },
-          },
-          select: {
             lostInPhase: true,
-          },
-        }
-      )
-
-      for (const reservationPhysProds of lostResPhysProds) {
-        expect(reservationPhysProds.lostInPhase).toBe("CustomerToBusiness")
-      }
-    })
-
-    it("updates product variant counts", async () => {
-      /**
-       * create reservation
-       * place reservation
-       * ship reservation
-       * mark items as lost
-       * check product variant counts
-       */
-      await setReservationCreatedAt(reservation.id, 25, {
-        prisma: prismaService,
-        timeUtils,
-      })
-      const sentPackage = reservation.sentPackage
-      await setPackageEnteredSystemAt(sentPackage.id, 23, {
-        prisma: prismaService,
-        timeUtils,
-      })
-      const bagItems = await prismaService.client.bagItem.findMany({
-        where: {
-          reservationPhysicalProduct: {
-            reservation: {
-              id: reservation.id,
-            },
-          },
-        },
-      })
-
-      await bagService.processLostItems(bagItems.map(a => a.id))
-
-      const postLostProductVariants = await prismaService.client.productVariant.findMany(
-        {
-          where: {
-            physicalProducts: {
-              some: {
-                reservationPhysicalProduct: {
-                  some: {
-                    reservationId: reservation.id,
+            physicalProduct: {
+              select: {
+                id: true,
+                inventoryStatus: true,
+                productStatus: true,
+                productVariant: {
+                  select: {
+                    id: true,
+                    reservable: true,
+                    reserved: true,
+                    nonReservable: true,
                   },
                 },
               },
             },
           },
+        }
+      )
+
+      postLostPhysicalProds = postLostResPhysProds.map(a => a.physicalProduct)
+      postLostProductVariants = postLostPhysicalProds.map(a => a.productVariant)
+    })
+
+    it("removes bag items from customer's bag", async () => {
+      const postLostBagItems = await prismaService.client.bagItem.findMany({
+        where: {
+          id: {
+            in: preLostBagItemIds,
+          },
+        },
+      })
+
+      expect(postLostBagItems.length).toBe(0)
+    })
+
+    it("sets lostAt on reservationPhysicalProducts", () => {
+      postLostResPhysProds.map(a => expect(!!a.lostAt).toBe(true))
+    })
+    it("sets hasBeenLost on reservationPhysicalProducts", () => {
+      postLostResPhysProds.map(a => expect(a.hasBeenLost).toBe(true))
+    })
+    it("sets lostInPhase on reservationPhysicalProducts", () => {
+      postLostResPhysProds.map(a =>
+        expect(a.lostInPhase).toBe("BusinessToCustomer")
+      )
+    })
+
+    it("updates productVariant counts", () => {
+      postLostProductVariants.map((productVariant, index) => {
+        const preLostProdVariant = preLostProductVariants[index]
+        expect(preLostProdVariant.nonReservable + 1).toBe(
+          productVariant.nonReservable
+        )
+        expect(preLostProdVariant.reserved - 1).toBe(productVariant.reserved)
+      })
+    })
+
+    it("sets physicalProduct inventoryStatus to NonReservable", () => {
+      postLostPhysicalProds.every(a =>
+        expect(a.inventoryStatus).toBe("NonReservable")
+      )
+    })
+
+    it("sets physicalProduct productStatus to Lost", () => {
+      postLostPhysicalProds.every(a => expect(a.productStatus).toBe("Lost"))
+    })
+
+    it("updates reservation status to lost", async () => {
+      const updatedReservation = await prismaService.client.reservation.findUnique(
+        {
+          where: {
+            id: newReservation.id,
+          },
           select: {
-            reservable: true,
-            reserved: true,
-            nonReservable: true,
+            status: true,
           },
         }
       )
-      for (const productVariant of postLostProductVariants) {
-        expect(productVariant.nonReservable).toBe(
-          productVariant.nonReservable - 1
-        )
-      }
+      expect(updatedReservation.status).toBe("Lost")
     })
+  })
 
-    it("sets physicalProduct inventory status to NonReservable and product status to lost", async () => {
-      /**
-       * create reseravtion
-       * place reservation
-       * ship reservation
-       * mark items as lost
-       * check physicalProduct inventory status
-       */
+  describe("Inbound Package", () => {
+    // Declare any variables needed to run expects
 
-      await setReservationCreatedAt(reservation.id, 25, {
+    beforeAll(async () => {
+      // Do the setup just once, then just run expects in the its
+      // set declared variables here
+
+      const {
+        reservation,
+        bagItems,
+      } = await reservationTestUtils.addToBagAndReserveForCustomer({
+        customer: testCustomer,
+        numProductsToAdd: 3,
+        options: { shippingCode: "UPSGround" },
+      })
+
+      await setReservationCreatedAt(reservation.id, 10, {
         prisma: prismaService,
         timeUtils,
       })
-      const sentPackage = reservation.sentPackage
-      await setPackageEnteredSystemAt(sentPackage.id, 23, {
-        prisma: prismaService,
-        timeUtils,
-      })
-      const bagItems = await prismaService.client.bagItem.findMany({
-        where: {
-          reservationPhysicalProduct: {
-            reservation: {
+
+      const transactionID = cuid()
+      inboundPackage = await prismaService.client.package.create({
+        data: {
+          reservationOnSentPackage: {
+            connect: {
               id: reservation.id,
+            },
+          },
+          transactionID,
+        },
+      })
+
+      preLostBagItems = await prismaService.client.bagItem.findMany({
+        where: {
+          id: {
+            in: bagItems.map(a => a.id),
+          },
+        },
+        select: {
+          id: true,
+          reservationPhysicalProduct: {
+            select: {
+              id: true,
+              hasBeenLost: true,
+              lostInPhase: true,
+              lostAt: true,
+            },
+          },
+          physicalProduct: {
+            select: {
+              id: true,
+              inventoryStatus: true,
+              productStatus: true,
+            },
+          },
+          productVariant: {
+            select: {
+              id: true,
+              reserved: true,
+              reservable: true,
+              nonReservable: true,
             },
           },
         },
       })
-      await bagService.processLostItems(bagItems.map(a => a.id))
 
-      const lostPhysicalProducts = await prismaService.client.physicalProduct.findMany(
+      preLostBagItemIds = preLostBagItems.map(a => a.id)
+      preLostResPhysProds = preLostBagItems.map(
+        a => a.reservationPhysicalProduct
+      )
+      preLostPhysicalProduct = preLostBagItems.map(a => a.physicalProduct)
+      preLostProductVariants = preLostBagItems.map(a => a.productVariant)
+
+      await prismaService.client.reservationPhysicalProduct.updateMany({
+        where: {
+          id: {
+            in: preLostResPhysProds.map(a => a.id),
+          },
+        },
+        data: {
+          status: "ScannedOnInbound",
+          hasBeenScannedOnOutbound: true,
+          scannedOnOutboundAt: new Date(),
+        },
+      })
+
+      await setPackageEnteredSystemAt(inboundPackage.id, 9, {
+        prisma: prismaService,
+        timeUtils,
+      })
+
+      await bagService.processLostItems(preLostBagItemIds)
+
+      postLostResPhysProds = await prismaService.client.reservationPhysicalProduct.findMany(
         {
           where: {
-            reservationPhysicalProduct: {
-              some: {
-                reservation: {
-                  id: reservation.id,
+            id: {
+              in: preLostResPhysProds.map(a => a.id),
+            },
+          },
+          select: {
+            id: true,
+            status: true,
+            lostAt: true,
+            hasBeenLost: true,
+            lostInPhase: true,
+            physicalProduct: {
+              select: {
+                id: true,
+                inventoryStatus: true,
+                productStatus: true,
+                productVariant: {
+                  select: {
+                    id: true,
+                    reservable: true,
+                    reserved: true,
+                    nonReservable: true,
+                  },
                 },
               },
             },
           },
-          select: {
-            inventoryStatus: true,
-            productStatus: true,
-          },
         }
       )
 
-      for (const lostPhysProd of lostPhysicalProducts) {
-        expect(lostPhysProd.inventoryStatus).toBe("NonReservable")
-        expect(lostPhysProd.productStatus).toBe("Lost")
-      }
+      postLostPhysicalProds = postLostResPhysProds.map(a => a.physicalProduct)
+      postLostProductVariants = postLostPhysicalProds.map(a => a.productVariant)
+    })
+
+    it("removes bag items from customer's bag", async () => {
+      const postLostBagItems = await prismaService.client.bagItem.findMany({
+        where: {
+          id: {
+            in: preLostBagItemIds,
+          },
+        },
+      })
+
+      expect(postLostBagItems.length).toBe(0)
+    })
+
+    it("sets lostAt on reservationPhysicalProducts", () => {
+      postLostResPhysProds.map(a => expect(!!a.lostAt).toBe(true))
+    })
+    it("sets hasBeenLost on reservationPhysicalProducts", () => {
+      postLostResPhysProds.map(a => expect(a.hasBeenLost).toBe(true))
+    })
+    it("sets lostInPhase on reservationPhysicalProducts", () => {
+      postLostResPhysProds.map(a =>
+        expect(a.lostInPhase).toBe("CustomerToBusiness")
+      )
+    })
+
+    it("updates productVariant counts", () => {
+      postLostProductVariants.map((productVariant, index) => {
+        const preLostProdVariant = preLostProductVariants[index]
+        expect(preLostProdVariant.nonReservable + 1).toBe(
+          productVariant.nonReservable
+        )
+        expect(preLostProdVariant.reserved - 1).toBe(productVariant.reserved)
+      })
+    })
+
+    it("sets physicalProduct inventoryStatus to NonReservable", () => {
+      postLostPhysicalProds.every(a =>
+        expect(a.inventoryStatus).toBe("NonReservable")
+      )
+    })
+
+    it("sets physicalProduct productStatus to Lost", () => {
+      postLostPhysicalProds.every(a => expect(a.productStatus).toBe("Lost"))
+    })
+
+    it("updates reservation status to lost", async () => {
+      const updatedReservation = await prismaService.client.reservation.findUnique(
+        {
+          where: {
+            id: newReservation.id,
+          },
+          select: {
+            status: true,
+          },
+        }
+      )
+      expect(updatedReservation.status).toBe("Lost")
     })
   })
 
-  it("sets lostInPhase for outbound ppackage as BusinessToCustomer", async () => {
-    /**
-     * create reservation
-     * place reservation
-     * ship reservation to customer
-     * mark items as lost
-     * check to see that lostInPhase is set to BusinessToCustomer
-     */
-    await setReservationCreatedAt(reservation.id, 4, {
-      prisma: prismaService,
-      timeUtils,
-    })
-    const sentPackage = reservation.sentPackage
-    await setPackageEnteredSystemAt(sentPackage.id, 2, {
-      prisma: prismaService,
-      timeUtils,
-    })
-    const bagItems = await prismaService.client.bagItem.findMany({
-      where: {
-        reservationPhysicalProduct: {
-          reservation: {
-            id: reservation.id,
-          },
-        },
-      },
-    })
-    await bagService.processLostItems(bagItems.map(a => a.id))
+  describe("Properly throws errors when the right conditions aren't met", () => {
+    beforeEach(async () => {
+      const {
+        reservation,
+        bagItems,
+      } = await reservationTestUtils.addToBagAndReserveForCustomer({
+        customer: testCustomer,
+        numProductsToAdd: 3,
+        options: { shippingCode: "UPSGround" },
+      })
 
-    const lostResPhysProds = await prismaService.client.reservationPhysicalProduct.findMany(
-      {
+      await setReservationCreatedAt(reservation.id, 10, {
+        prisma: prismaService,
+        timeUtils,
+      })
+
+      const transactionID = cuid()
+      outboundPackage = await prismaService.client.package.create({
+        data: {
+          reservationOnSentPackage: {
+            connect: {
+              id: reservation.id,
+            },
+          },
+          transactionID,
+        },
+      })
+
+      preLostBagItems = await prismaService.client.bagItem.findMany({
         where: {
-          reservation: {
-            id: reservation.id,
+          id: {
+            in: bagItems.map(a => a.id),
           },
         },
         select: {
-          lostInPhase: true,
+          id: true,
+          reservationPhysicalProduct: {
+            select: {
+              id: true,
+              hasBeenLost: true,
+              lostInPhase: true,
+              lostAt: true,
+            },
+          },
+          physicalProduct: {
+            select: {
+              id: true,
+              inventoryStatus: true,
+              productStatus: true,
+            },
+          },
+          productVariant: {
+            select: {
+              id: true,
+              reserved: true,
+              reservable: true,
+              nonReservable: true,
+            },
+          },
         },
+      })
+      preLostBagItemIds = preLostBagItems.map(a => a.id)
+    })
+    it("throws an error when the items don't have the correct status", () => {
+      const processLostItems = async () => {
+        await bagService.processLostItems(preLostBagItemIds)
       }
-    )
-
-    for (const reservationPhysProds of lostResPhysProds) {
-      expect(reservationPhysProds.lostInPhase).toBe("BusinessToCustomer")
-    }
+      expect(processLostItems()).rejects.toThrowError(
+        "Only inbound, outbound, or delivered items can be marked as lost"
+      )
+    })
   })
-
-  it("Throws an error if an item is not in a state in which it could have been lost", () => {})
 })
