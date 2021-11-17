@@ -49,9 +49,6 @@ type Mutation {
     input: ProductVariantFeedbackUpdateInput!
     responses: JSON
   ): ProductVariantFeedback! @hasRole(roles: [Customer])
-  processReservation(data: ReservationProcessReturnInput!): ReservationReceipt
-    @hasRole(roles: [Admin, Partner])
-    @deprecated(reason: "replaced with processReturn")
   updateReservation(
     data: ReservationUpdateInput!
     where: ReservationWhereUniqueInput!

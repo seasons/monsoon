@@ -134,25 +134,6 @@ export class ReservationMutationsResolver {
   }
 
   @Mutation()
-  async processReservation(@Args() { data }) {
-    const { reservationNumber, productStates, trackingNumber = "" } = data
-    throw new Error("processReservation has been deprecated")
-    if (trackingNumber === "") {
-      throw new Error(
-        `Must specify return package tracking number when processing reservation`
-      )
-    }
-
-    const result = await this.reservation.processReservation(
-      reservationNumber,
-      productStates,
-      trackingNumber
-    )
-
-    return result
-  }
-
-  @Mutation()
   async returnItems(@Args() { items }, @Customer() customer) {
     return this.reservation.returnItems(items, customer)
   }
