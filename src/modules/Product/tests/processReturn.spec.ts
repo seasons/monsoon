@@ -22,6 +22,7 @@ describe("Process Return", () => {
   let testCustomer
   let cleanupFuncs = []
   let reservation
+  let reservationAfterReturn
   let physicalProductsBeforeReturn
   let physicalProductsAfterReturn
   let resPhysProdsBeforeReturn
@@ -60,12 +61,13 @@ describe("Process Return", () => {
   describe("Dropped off By UPS", () => {
     beforeAll(async () => {
       const {
-        reservation,
+        reservation: _reservation,
         bagItems,
       } = await reservationTestUtil.addToBagAndReserveForCustomer({
         customer: testCustomer,
         numProductsToAdd: 3,
       })
+      reservation = _reservation
       await setReservationStatus(reservation.id, "Delivered", {
         prisma: prismaService,
       })
@@ -135,7 +137,7 @@ describe("Process Return", () => {
 
       droppedOffBy = "UPS"
       const transactionID = cuid()
-      inboundPackage = prismaService.client.package.create({
+      inboundPackage = await prismaService.client.package.create({
         data: {
           transactionID,
         },
@@ -189,6 +191,11 @@ describe("Process Return", () => {
                 },
               },
             },
+            reservation: {
+              select: {
+                status: true,
+              },
+            },
           },
         }
       )
@@ -200,75 +207,72 @@ describe("Process Return", () => {
         a => a.productVariant
       )
 
-      bagItemsAfterReturn = resPhysProdsAfterReturn.map(a => a.bagItem)
+      bagItemsAfterReturn = await prismaService.client.bagItem.findMany({
+        where: { id: { in: bagItems.map(a => a.id) } },
+      })
+      reservationAfterReturn = resPhysProdsAfterReturn[0].reservation
     })
 
     it("sets status to ReturnProcessed on reservationPhysicalProduct", async () => {
-      resPhysProdsAfterReturn.map(a => expect(a.status).toBe("ReturnProcessed"))
+      resPhysProdsAfterReturn.forEach(a =>
+        expect(a.status).toBe("ReturnProcessed")
+      )
     })
 
     it("sets hasReturnProcessed to true on reservationPhysicalProduct", () => {
-      resPhysProdsAfterReturn.map(a => expect(a.hasReturnProcessed).toBe(true))
+      resPhysProdsAfterReturn.forEach(a =>
+        expect(a.hasReturnProcessed).toBe(true)
+      )
     })
 
     it("sets returnProcessedAt on reservationPhysicalProduct", () => {
-      resPhysProdsAfterReturn.map(a =>
+      resPhysProdsAfterReturn.forEach(a =>
         expectTimeToEqual(a.returnProcessAt, new Date())
       )
     })
 
     it("sets inboundPackage on reservationPhysicalProduct", () => {
-      resPhysProdsAfterReturn.map(a => expect(!!a.inboundPackage).toBe(true))
+      resPhysProdsAfterReturn.forEach(a =>
+        expect(!!a.inboundPackage).toBe(true)
+      )
     })
 
     it("sets droppedOffBy to UPS on reservationPhysicalProduct", () => {
-      resPhysProdsAfterReturn.map(a => expect(a.droppedOffBy).toBe("UPS"))
+      resPhysProdsAfterReturn.forEach(a => expect(a.droppedOffBy).toBe("UPS"))
     })
 
     it("sets droppedOffAt on reservationPhysicalProduct", () => {
-      resPhysProdsAfterReturn.map(a =>
+      resPhysProdsAfterReturn.forEach(a =>
         expectTimeToEqual(a.droppedOffAt, new Date())
       )
     })
 
     it("updates reservations status to Completed if status isn't set to Lost", async () => {
-      const reservations = await prismaService.client.reservation.findMany({
-        where: {
-          reservationPhysicalProducts: {
-            some: {
-              id: {
-                in: resPhysProdsAfterReturn.map(a => a.id),
-              },
-            },
-          },
-        },
-        select: {
-          status: true,
-        },
-      })
-      reservations.map(a => expect(a.status).toBe("Completed"))
+      expect(reservationAfterReturn.status).toBe("Completed")
     })
 
     it("deletes bagItems from customer's bag", () => {
-      bagItemsAfterReturn.map(a => expect(a).toBeUndefined)
+      expect(bagItemsAfterReturn.length).toBe(0)
     })
 
     it("updates productVariant counts", () => {
-      productVariantsAfterReturn.map((a, index) => {
-        const productVariant = productVariantsBeforeReturn[index]
-        expect(productVariant.nonReservable + 1).toBe(a.nonReservable)
-        expect(productVariant.reserved - 1).toBe(a.reserved)
+      productVariantsAfterReturn.forEach((a, index) => {
+        const productVariantBeforeReturn = productVariantsBeforeReturn[index]
+        expect(productVariantBeforeReturn.nonReservable + 1).toBe(
+          a.nonReservable
+        )
+        expect(productVariantBeforeReturn.reserved - 1).toBe(a.reserved)
       })
     })
 
     it("sets productStatus to what is choosen (this case it's Dirty) on physicalProdut", () => {
-      physicalProductsAfterReturn.map(a =>
+      physicalProductsAfterReturn.forEach(a =>
         expect(a.productStatus).toBe("Dirty")
       )
     })
 
-    it("sets inventoryStatus NonReservable on physicalProdut", () => {
-      physicalProductsAfterReturn.map(a =>
+    it("sets inventoryStatus NonReservable on physicalProduct", () => {
+      physicalProductsAfterReturn.forEach(a =>
         expect(a.inventoryStatus).toBe("NonReservable")
       )
     })
@@ -394,6 +398,11 @@ describe("Process Return", () => {
                 },
               },
             },
+            reservation: {
+              select: {
+                status: true,
+              },
+            },
           },
         }
       )
@@ -405,81 +414,79 @@ describe("Process Return", () => {
         a => a.productVariant
       )
 
-      bagItemsAfterReturn = resPhysProdsAfterReturn.map(a => a.bagItem)
+      bagItemsAfterReturn = await prismaService.client.bagItem.findMany({
+        where: { id: { in: bagItems.map(a => a.id) } },
+      })
+      reservationAfterReturn = resPhysProdsAfterReturn[0].reservation
     })
     it("sets status to ReturnProcessed on reservationPhysicalProduct", async () => {
-      resPhysProdsAfterReturn.map(a => expect(a.status).toBe("ReturnProcessed"))
+      resPhysProdsAfterReturn.forEach(a =>
+        expect(a.status).toBe("ReturnProcessed")
+      )
     })
 
     it("sets hasReturnProcessed to true on reservationPhysicalProduct", () => {
-      resPhysProdsAfterReturn.map(a => expect(a.hasReturnProcessed).toBe(true))
+      resPhysProdsAfterReturn.forEach(a =>
+        expect(a.hasReturnProcessed).toBe(true)
+      )
     })
 
     it("sets returnProcessedAt on reservationPhysicalProduct", () => {
-      resPhysProdsAfterReturn.map(a =>
+      resPhysProdsAfterReturn.forEach(a =>
         expectTimeToEqual(a.returnProcessAt, new Date())
       )
     })
 
     it("doesn't set inboundPackage on reservationPhysicalProduct", () => {
-      resPhysProdsAfterReturn.map(a => expect(!!a.inboundPackage).toBe(false))
+      resPhysProdsAfterReturn.forEach(a =>
+        expect(!!a.inboundPackage).toBe(false)
+      )
     })
 
     it("sets droppedOffBy to Customer on reservationPhysicalProduct", () => {
-      resPhysProdsAfterReturn.map(a => expect(a.droppedOffBy).toBe("Customer"))
+      resPhysProdsAfterReturn.forEach(a =>
+        expect(a.droppedOffBy).toBe("Customer")
+      )
     })
 
     it("sets droppedOffAt on reservationPhysicalProduct", () => {
-      resPhysProdsAfterReturn.map(a =>
+      resPhysProdsAfterReturn.forEach(a =>
         expectTimeToEqual(a.droppedOffAt, new Date())
       )
     })
 
     it("updates reservations status to Completed if status isn't set to Lost", async () => {
-      const reservations = await prismaService.client.reservation.findMany({
-        where: {
-          reservationPhysicalProducts: {
-            some: {
-              id: {
-                in: resPhysProdsAfterReturn.map(a => a.id),
-              },
-            },
-          },
-        },
-        select: {
-          status: true,
-        },
-      })
-      reservations.map(a => expect(a.status).toBe("Completed"))
+      expect(reservationAfterReturn.status).toBe("Completed")
     })
 
     it("deletes bagItems from customer's bag", () => {
-      bagItemsAfterReturn.map(a => expect(a).toBeUndefined)
+      expect(bagItemsAfterReturn.length).toBe(0)
     })
 
     it("updates productVariant counts", () => {
       productVariantsAfterReturn.map((a, index) => {
-        const productVariant = productVariantsBeforeReturn[index]
-        expect(productVariant.nonReservable + 1).toBe(a.nonReservable)
-        expect(productVariant.reserved - 1).toBe(a.reserved)
+        const productVariantBeforeReturn = productVariantsBeforeReturn[index]
+        expect(productVariantBeforeReturn.nonReservable + 1).toBe(
+          a.nonReservable
+        )
+        expect(productVariantBeforeReturn.reserved - 1).toBe(a.reserved)
       })
     })
 
     it("sets productStatus to what is choosen (this case it's Dirty) on physicalProdut", () => {
-      physicalProductsAfterReturn.map(a =>
+      physicalProductsAfterReturn.forEach(a =>
         expect(a.productStatus).toBe("Dirty")
       )
     })
 
     it("sets inventoryStatus NonReservable on physicalProdut", () => {
-      physicalProductsAfterReturn.map(a =>
+      physicalProductsAfterReturn.forEach(a =>
         expect(a.inventoryStatus).toBe("NonReservable")
       )
     })
   })
 
   describe("Properly throws errors when right conditions aren't met", () => {
-    let processReturn
     beforeAll(async () => {
       const {
         reservation,
@@ -492,59 +499,14 @@ describe("Process Return", () => {
         prisma: prismaService,
       })
 
-      resPhysProdsBeforeReturn = await prismaService.client.reservationPhysicalProduct.findMany(
+      physicalProductsBeforeReturn = await prismaService.client.physicalProduct.findMany(
         {
           where: {
-            reservationId: reservation.id,
+            bagItems: { some: { id: { in: bagItems.map(a => a.id) } } },
           },
-          select: {
-            id: true,
-            status: true,
-            hasReturnProcessed: true,
-            droppedOffAt: true,
-            droppedOffBy: true,
-            inboundPackage: {
-              select: {
-                id: true,
-                shippingLabel: {
-                  select: {
-                    trackingNumber: true,
-                  },
-                },
-              },
-            },
-            physicalProduct: {
-              select: {
-                id: true,
-                seasonsUID: true,
-                inventoryStatus: true,
-                productStatus: true,
-                productVariant: {
-                  select: {
-                    id: true,
-                    reserved: true,
-                    nonReservable: true,
-                  },
-                },
-              },
-            },
-            bagItem: {
-              select: {
-                id: true,
-              },
-            },
-          },
+          select: { seasonsUID: true },
         }
       )
-
-      physicalProductsBeforeReturn = resPhysProdsBeforeReturn.map(
-        a => a.physicalProduct
-      )
-      productVariantsBeforeReturn = physicalProductsBeforeReturn.map(
-        a => a.productVariant
-      )
-
-      bagItemsBeforeReturn = resPhysProdsBeforeReturn.map(a => a.bagItem)
 
       productStates = physicalProductsBeforeReturn.map(a => {
         return {
@@ -554,17 +516,18 @@ describe("Process Return", () => {
           notes: "Typical return notes here",
         }
       })
-      processReturn = async (droppedOffBy, trackingNumber) => {
-        await resPhysProdService.processReturn({
-          productStates,
-          droppedOffBy,
-          trackingNumber,
-          customerId: testCustomer.id,
-        })
-      }
     })
     it("throws an error when droppedOffBy is UPS but there is no trackingNumber", () => {
-      expect(processReturn("UPS", "")).rejects.toThrowError(
+      expect(
+        (async () => {
+          await resPhysProdService.processReturn({
+            productStates,
+            droppedOffBy: "UPS",
+            trackingNumber: "",
+            customerId: testCustomer.id,
+          })
+        })()
+      ).rejects.toThrowError(
         "Must specify return package tracking number when processing reservation"
       )
     })
