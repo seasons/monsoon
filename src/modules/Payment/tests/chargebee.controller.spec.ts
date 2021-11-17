@@ -1,4 +1,4 @@
-import { TestUtilsService } from "@app/modules/Utils/services/test.service"
+import { TestUtilsService } from "@app/modules/Test/services/test.service"
 import { PrismaService } from "@app/prisma/prisma.service"
 import { INestApplication } from "@nestjs/common"
 import { Test } from "@nestjs/testing"

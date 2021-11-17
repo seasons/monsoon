@@ -1,0 +1,4 @@
+-- AlterTable
+ALTER TABLE "AccessorySize" ADD COLUMN     "height" DOUBLE PRECISION,
+ADD COLUMN     "maxDrop" DOUBLE PRECISION,
+ADD COLUMN     "minDrop" DOUBLE PRECISION;
