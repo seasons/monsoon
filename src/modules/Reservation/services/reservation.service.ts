@@ -168,7 +168,7 @@ export class ReservationService {
   ) {
     // Update status on physical products depending on whether
     // the item was returned, and update associated product variant counts
-
+    throw new Error("processReservation has been deprecated")
     const physicalProducts = await this.prisma.client.physicalProduct.findMany({
       where: {
         seasonsUID: {

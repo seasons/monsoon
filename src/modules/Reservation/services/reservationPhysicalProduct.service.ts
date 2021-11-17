@@ -22,15 +22,23 @@ export class ReservationPhysicalProductService {
     private readonly productVariantService: ProductVariantService
   ) {}
 
-  async returnMultiItems({
+  async processReturn({
     productStates,
     droppedOffBy,
     trackingNumber,
+    customerId,
   }: {
     productStates: ProductState[]
     droppedOffBy: ReservationDropOffAgent
     trackingNumber?: string
+    customerId: string
   }) {
+    if (droppedOffBy?.["UPS"] && trackingNumber === "") {
+      throw new Error(
+        `Must specify return package tracking number when processing reservation`
+      )
+    }
+
     const physicalProducts = await this.prisma.client.physicalProduct.findMany({
       where: {
         seasonsUID: {
@@ -54,10 +62,14 @@ export class ReservationPhysicalProductService {
       },
     })
 
-    // This query is incorrect. Should check for where: {label: {trackingNumber}}
     const returnedPackage = await this.prisma.client.package.findFirst({
       where: {
-        shippingLabelId: trackingNumber,
+        shippingLabel: {
+          trackingNumber,
+        },
+      },
+      select: {
+        id: true,
       },
     })
 
@@ -68,31 +80,28 @@ export class ReservationPhysicalProductService {
       hasReturnProcessed: true,
       returnProcessedAt: DateTime.local().toISO(),
       ...(returnedPackage && {
-        inboundPackage: {
-          connect: {
-            // Does this work?
-            returnedPackage,
-          },
-        },
+        inboundPackageId: returnedPackage.id,
       }),
-      // Don't need a set here
-      droppedOffBy: { set: droppedOffBy },
+      droppedOffBy,
       droppedOffAt: DateTime.local().toISO(),
     }
-    // Should be in the promise. See comment on line 134 for how to do that.
-    await this.prisma.client.reservationPhysicalProduct.updateMany({
-      where: {
-        physicalProductId: {
-          in: physicalProducts.map(a => {
-            return a.id
-          }),
-        },
-      },
-      data: { ...reservationPhysicalProductData },
-    })
 
-    // This needs to be scoped to the relevant customer, or it will
-    // also update reservations for other customers who reserved the same product
+    promises.push(
+      this.prisma.client.reservationPhysicalProduct.updateMany({
+        where: {
+          physicalProductId: {
+            in: physicalProducts.map(a => {
+              return a.id
+            }),
+          },
+          bagItem: {
+            customerId: customerId,
+          },
+        },
+        data: { ...reservationPhysicalProductData },
+      })
+    )
+
     const reservations = await this.prisma.client.reservation.findMany({
       where: {
         reservationPhysicalProducts: {
@@ -104,21 +113,24 @@ export class ReservationPhysicalProductService {
                 }),
               },
             },
+            bagItem: {
+              customerId: customerId,
+            },
           },
         },
       },
       select: {
         id: true,
+        status: true,
         reservationPhysicalProducts: {
           select: {
-            hasReturnProcessed: true,
+            physicalProductId: true,
           },
         },
       },
     })
 
     promises.push(
-      // to be safe, i'd scope this to the customer as well
       this.prisma.client.bagItem.deleteMany({
         where: {
           physicalProductId: {
@@ -126,31 +138,27 @@ export class ReservationPhysicalProductService {
               return a.id
             }),
           },
+          customerId: customerId,
         },
       })
     )
 
-    for (let reservation of reservations) {
-      // Should be hasReturnProcessed || hasBeenLost || hasBeenBought
-      // Filter out ones that are getting returned now and check only ones
-      // that aren't in the current payload. That way, we can keep everything in one transaction
-      const allProductsReturned = reservation.reservationPhysicalProducts.every(
-        a => a.hasReturnProcessed
-      )
+    const reservationWithStatusDelivered = reservations.filter(
+      a => a.status !== "Lost"
+    )
 
-      if (allProductsReturned) {
-        promises.push(
-          this.prisma.client.reservation.update({
-            where: {
-              id: reservation.id,
-            },
-            data: {
-              status: "Completed",
-            },
-          })
-        )
-      }
-    }
+    promises.push(
+      this.prisma.client.reservation.updateMany({
+        where: {
+          id: {
+            in: reservationWithStatusDelivered.map(a => a.id),
+          },
+        },
+        data: {
+          status: "Completed",
+        },
+      })
+    )
 
     for (let state of productStates) {
       const physicalProduct = physicalProducts.find(

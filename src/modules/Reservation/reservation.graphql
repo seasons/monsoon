@@ -51,16 +51,18 @@ type Mutation {
   ): ProductVariantFeedback! @hasRole(roles: [Customer])
   processReservation(data: ReservationProcessReturnInput!): ReservationReceipt
     @hasRole(roles: [Admin, Partner])
+    @deprecated(reason: "replaced with processReturn")
   updateReservation(
     data: ReservationUpdateInput!
     where: ReservationWhereUniqueInput!
   ): Reservation @hasRole(roles: [Admin])
   returnItems(items: [ID!]!): Reservation @hasRole(roles: [Customer])
   cancelReturn: Reservation @hasRole(roles: [Customer])
-  returnMultiItems(
+  processReturn(
     trackingNumber: String
     productStates: [ProductStateInput!]!
     droppedOffBy: ReservationDropOffAgent!
+    customerId: String
   ): Boolean @hasRole(roles: [Admin])
   pickItems(items: [ID!]!): Reservation @hasRole(roles: [Admin])
 }
