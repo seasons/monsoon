@@ -1,4 +1,5 @@
 import { ProductVariantService } from "@app/modules/Product/services/productVariant.service"
+import { ShippingService } from "@app/modules/Shipping/services/shipping.service"
 import { InventoryStatus, PhysicalProductStatus } from "@app/prisma"
 import { PrismaService } from "@app/prisma/prisma.service"
 import { Injectable } from "@nestjs/common"
@@ -7,6 +8,8 @@ import {
   Prisma,
   ReservationDropOffAgent,
   ReservationPhysicalProductStatus,
+  ShippingCode,
+  ShippingMethod,
 } from "@prisma/client"
 import { DateTime } from "luxon"
 
@@ -21,7 +24,8 @@ interface ProductState {
 export class ReservationPhysicalProductService {
   constructor(
     private readonly prisma: PrismaService,
-    private readonly productVariantService: ProductVariantService
+    private readonly productVariantService: ProductVariantService,
+    private readonly shippingService: ShippingService
   ) {}
 
   async returnMultiItems({
@@ -306,7 +310,85 @@ export class ReservationPhysicalProductService {
     return results
   }
 
-  async printShippingLabel(customer: Pick<Customer, "id">) {
+  async printShippingLabel({ customer }: { customer: Pick<Customer, "id"> }) {
     // Todo: implement
+    const bagItems = await this.prisma.client.bagItem.findMany({
+      where: {
+        reservationPhysicalProduct: {
+          status: "Packed",
+        },
+        customerId: customer.id,
+      },
+      select: {
+        id: true,
+        reservationPhysicalProduct: {
+          select: {
+            id: true,
+            reservation: {
+              select: {
+                id: true,
+                shippingMethod: true,
+              },
+            },
+            physicalProduct: {
+              select: {
+                id: true,
+                productVariant: {
+                  select: {
+                    id: true,
+                    weight: true,
+                    product: {
+                      select: {
+                        id: true,
+                        wholesalePrice: true,
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    })
+
+    const electShippingCode = () => {
+      const shippingCodes = bagItems.map(
+        a => a.reservationPhysicalProduct.reservation.shippingMethod.code
+      )
+
+      let shippingCode: ShippingCode = "UPSGround"
+
+      if (shippingCodes.includes("Pickup")) {
+        shippingCode = "Pickup"
+      } else if (shippingCodes.includes("UPSSelect")) {
+        shippingCode = "UPSSelect"
+      }
+
+      return shippingCode
+    }
+
+    const productVariantIds: string[] = bagItems.map(a => {
+      return a.reservationPhysicalProduct.physicalProduct.productVariant.id
+    })
+
+    // Creates Outbound (if appropriate) and Inbound labels
+    const [
+      outboundLabel,
+      inboundLabel,
+    ] = await this.shippingService.createReservationShippingLabels(
+      productVariantIds,
+      customer,
+      electShippingCode()
+    )
+
+    // Create Label and Package records
+    const outboundPackage = await this.prisma.client.package.create({
+      data: {},
+    })
+
+    const inboundPackage = await this.prisma.client.package.create({
+      data: {},
+    })
   }
 }

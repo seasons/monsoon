@@ -2,9 +2,9 @@ import { Int } from "@app/prisma/prisma.binding"
 import { PrismaService } from "@app/prisma/prisma.service"
 import { UtilsService } from "@modules/Utils/services/utils.service"
 import { Injectable } from "@nestjs/common"
-import { Customer, Package, ShippingCode, User } from "@prisma/client"
+import { Customer, Package, ShippingCode } from "@prisma/client"
 import { ApolloError } from "apollo-server"
-import { pick, startCase, toLower } from "lodash"
+import { pick } from "lodash"
 import shippo from "shippo"
 
 import {
@@ -142,11 +142,15 @@ export class ShippingService {
       serviceLevelToken = UPSServiceLevel.Select
     }
 
-    const seasonsToCustomerTransaction = await this.createShippingLabel({
-      shipment: seasonsToShippoShipment,
-      carrier_account: process.env.UPS_ACCOUNT_ID,
-      servicelevel_token: serviceLevelToken,
-    })
+    const seasonsToCustomerTransaction =
+      shippingCode === "Pickup"
+        ? null
+        : await this.createShippingLabel({
+            shipment: seasonsToShippoShipment,
+            carrier_account: process.env.UPS_ACCOUNT_ID,
+            servicelevel_token: serviceLevelToken,
+          })
+
     const customerToSeasonsTransaction = await this.createShippingLabel({
       shipment: customerToSeasonsShipment,
       carrier_account: process.env.UPS_ACCOUNT_ID,
