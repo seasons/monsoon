@@ -44,7 +44,7 @@ export class HerokuJobs {
     const downDynos = dynos.filter(dyno => dyno.state === "crashed")
 
     for (let downDyno of downDynos) {
-      await fetch(
+      const res = await fetch(
         `https://api.heroku.com/apps/${app}/dynos/${downDyno.name}/restart`,
         {
           headers: {
@@ -53,8 +53,9 @@ export class HerokuJobs {
             Authorization: `Bearer ${this.token}`,
           },
         }
-      )
-      this.logger.log(`♺  Restarting ${downDyno.name}...`)
+      ).then(res => res.json())
+
+      this.logger.log(`♺  Restarting ${downDyno.name}...`, res)
     }
   }
 
