@@ -30,7 +30,6 @@ enum BagSectionStatus {
   ReturnProcessed = "ReturnProcessed",
   ReturnPending = "ReturnPending",
   ResetEarly = "ResetEarly",
-  Hold = "Hold",
   Lost = "Lost",
 
   // Added sections: These combine multiple other statuses
@@ -342,14 +341,8 @@ export class BagService {
       customerID
     )) as any
 
-    if (
-      !["Queued", "Hold", "Picked"].includes(
-        oldReservationPhysicalProduct.status
-      )
-    ) {
-      throw Error(
-        "Only bag items with status Hold, Picked, or Queued can be swapped"
-      )
+    if (!["Queued", "Picked"].includes(oldReservationPhysicalProduct.status)) {
+      throw Error("Only bag items with status Picked, or Queued can be swapped")
     }
 
     if (oldBagItem.status !== "Reserved") {
@@ -735,17 +728,21 @@ export class BagService {
     switch (status) {
       case "Outbound":
         filteredBagItems = bagItems.filter(item => {
-          const status = item.reservationPhysicalProduct?.status
+          const itemStatus = item.reservationPhysicalProduct?.status
           return (
-            status === "ScannedOnOutbound" || status === "InTransitOutbound"
+            itemStatus === "ScannedOnOutbound" ||
+            itemStatus === "InTransitOutbound"
           )
         })
         title = "Shipped"
         break
       case "Inbound":
         filteredBagItems = bagItems.filter(item => {
-          const status = item.reservationPhysicalProduct?.status
-          return status === "ScannedOnInbound" || status === "InTransitInbound"
+          const itemStatus = item.reservationPhysicalProduct?.status
+          return (
+            itemStatus === "ScannedOnInbound" ||
+            itemStatus === "InTransitInbound"
+          )
         })
         title = "On the way back"
         break
@@ -803,10 +800,12 @@ export class BagService {
       case "Processing":
         // 1. Outbound step 1
         filteredBagItems = bagItems.filter(item => {
-          const status = item.reservationPhysicalProduct?.status
+          const itemStatus = item.reservationPhysicalProduct?.status
 
           return (
-            status === "Queued" || status === "Picked" || status === "Packed"
+            itemStatus === "Queued" ||
+            itemStatus === "Picked" ||
+            itemStatus === "Packed"
           )
         })
         title = "Order received"
