@@ -48,9 +48,9 @@ export class ReplayCommands {
       description:
         "Which mode to run the replay in. If await, we will await each request before sending the next." +
         "If every100MS, we will wait 100 ms, then send the next request." +
-        "If realtime, we'll send it at the actual cadence it happened on production , accurate to within 50ms",
+        "If realtimish, we'll send it at the actual cadence it happened on production, with a max time between requests of 5 seconds",
       default: "every100MS",
-      choices: ["every100MS", "await", "realtime"],
+      choices: ["every100MS", "await", "realtimish"],
       type: "string",
     })
     mode
@@ -68,9 +68,9 @@ export class ReplayCommands {
     let i = 0
     const getTimestampForLog = log => log.attributes.timestamp.getTime()
 
-    const productionTimeOfFirstRequest = getTimestampForLog(allLogs[0])
-    const replayTimeOfFirstRequest = new Date().getTime()
-
+    let prodTimeOfLastRequest = getTimestampForLog(allLogs[0])
+    let prodTimeOfCurrentRequest
+    let replayTimeOfLastRequest = new Date().getTime()
     for (log of allLogs) {
       i++
       let urlSuffix
@@ -78,7 +78,7 @@ export class ReplayCommands {
       let requestUserEmail
       let url
 
-      const timestamp = getTimestampForLog(log)
+      prodTimeOfCurrentRequest = getTimestampForLog(log)
       const attributes = log.attributes?.attributes
 
       const urlDetailsPath = attributes?.http?.url_details?.path
@@ -143,13 +143,15 @@ export class ReplayCommands {
       } else if (mode === "every100MS") {
         sendQueryWithPromise()
         await this.utils.sleep(100)
-      } else if (mode === "realtime") {
+      } else if (mode === "realtimish") {
         await this.runRequestInRealtime(
-          timestamp,
-          replayTimeOfFirstRequest,
-          productionTimeOfFirstRequest,
+          replayTimeOfLastRequest,
+          prodTimeOfCurrentRequest,
+          prodTimeOfLastRequest,
           sendQueryWithPromise
         )
+        replayTimeOfLastRequest = new Date().getTime()
+        prodTimeOfLastRequest = getTimestampForLog(log)
       } else {
         throw new Error(`Unknown mode: ${mode}`)
       }
@@ -157,21 +159,28 @@ export class ReplayCommands {
   }
 
   private async runRequestInRealtime(
-    timestamp,
-    replayTimeOfFirstRequest,
-    productionTimeOfFirstRequest,
+    replayTimeOfLastRequest,
+    prodTimeOfCurrentRequest,
+    productionTimeOfLastRequest,
     sendQueryWithPromise
   ) {
+    let override = false
     while (true) {
-      const replayTimeSinceFirstRequest =
-        new Date().getTime() - replayTimeOfFirstRequest
-      const productionTimeSinceFirstRequest =
-        timestamp - productionTimeOfFirstRequest
-      const diff = replayTimeSinceFirstRequest - productionTimeSinceFirstRequest
+      if (override) {
+        console.log("send request")
+        sendQueryWithPromise()
+        break
+      }
+
+      const replayTimeSinceLastRequest =
+        new Date().getTime() - replayTimeOfLastRequest
+      const prodTimeSinceLastRequest =
+        prodTimeOfCurrentRequest - productionTimeOfLastRequest
+      const diff = replayTimeSinceLastRequest - prodTimeSinceLastRequest
 
       const absoluteValueDiff = diff < 0 ? -1 * diff : diff
       console.log(
-        `replay gap is ${absoluteValueDiff} seconds ${
+        `replay gap is ${absoluteValueDiff / 1000} seconds ${
           diff < 0 ? "less" : "more"
         } than realtime gap`
       )
@@ -180,10 +189,14 @@ export class ReplayCommands {
         sendQueryWithPromise()
         break
       } else {
+        const sleepTime = Math.min(5000, absoluteValueDiff)
+        if (sleepTime === 5000) {
+          override = true
+        }
         console.log(
-          `pausing ${absoluteValueDiff} seconds before sending request`
+          `pausing ${sleepTime / 1000} seconds before sending request`
         )
-        await this.utils.sleep(absoluteValueDiff)
+        await this.utils.sleep(sleepTime)
       }
     }
     return
