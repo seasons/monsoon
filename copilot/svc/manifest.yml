@@ -13,7 +13,6 @@ http:
   path: "/"
   # You can specify a custom health check path. The default is "/".
   healthcheck: "/health"
-  alias: monsoon
 
 # Configuration for your containers and service.
 image:
