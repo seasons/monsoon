@@ -99,8 +99,8 @@ export class UpdatePaymentService {
           .request()
       }
 
-      let _brand = card?.brand
-      let _last4 = card?.last4
+      let _brand
+      let _last4
       let intent
 
       if (token && tokenType) {
@@ -115,12 +115,18 @@ export class UpdatePaymentService {
         _last4 = last4
         _brand = brand
       } else if (paymentMethodID && billing) {
-        const { paymentIntent } = await this.updatePaymentWithGWToken(
+        const {
+          last4,
+          brand,
+          paymentIntent,
+        } = await this.updatePaymentWithGWToken(
           planID,
           chargebeeBillingAddress,
           paymentMethodID,
           user.id
         )
+        _last4 = last4
+        _brand = brand
         intent = paymentIntent
       } else {
         throw new Error(
@@ -145,6 +151,8 @@ export class UpdatePaymentService {
             ...data,
             expiration_month: card?.expMonth,
             expiration_year: card?.expYear,
+            brand: card?.brand,
+            last_digits: card?.last4,
           },
         })
 
@@ -220,6 +228,8 @@ export class UpdatePaymentService {
     ) {
       return {
         paymentIntent: intent,
+        last4: "",
+        brand: "",
       }
     }
 
