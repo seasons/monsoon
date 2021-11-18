@@ -26,7 +26,7 @@
     "prisma-deploy:staging": "dotenv -e .env.staging yarn prisma migrate deploy",
     "prisma-deploy:production": "dotenv -e .env.production yarn prisma migrate deploy",
     "prisma-dev": "prisma migrate dev",
-    "gcp-build": "tsc",
+    "postinstall": "yarn build",
     "prestart": "docker-compose up -d",
     "prettier": "prettier --write 'src/**/*.{js,ts,tsx,md,graphql}' --ignore-path ./.prettierignore",
     "start:debug": "nest start --debug --watch",
