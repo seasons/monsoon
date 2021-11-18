@@ -1,5 +1,6 @@
 import { DataScheduledJobs } from "@app/modules/Cron/services/data.job.service"
 import { TimeUtilsService } from "@app/modules/Utils/services/time.service"
+import { UtilsService } from "@app/modules/Utils/services/utils.service"
 import { PrismaService } from "@app/prisma/prisma.service"
 import { v2 } from "@datadog/datadog-api-client"
 import { Injectable, Logger } from "@nestjs/common"
@@ -16,9 +17,8 @@ export class ReplayCommands {
   private readonly logger = new Logger(ReplayCommands.name)
 
   constructor(
-    private readonly scriptsService: ScriptsService,
-    private readonly moduleRef: ModuleRef,
-    private readonly timeUtils: TimeUtilsService
+    private readonly timeUtils: TimeUtilsService,
+    private readonly utils: UtilsService
   ) {}
 
   @Command({
@@ -38,58 +38,30 @@ export class ReplayCommands {
     @Option({
       name: "startFrom",
       description:
-        "ISO string for the moment in time in which you wish to replay",
+        "ISO string for the moment in time in which you wish to replay. If none is given, defaults to 24h ago",
       default: "",
       type: "string",
     })
     startFrom
   ) {
-    const configuration = v2.createConfiguration()
-    const apiInstance = new v2.LogsApi(configuration)
     const urlPrefix =
       replayEnv === "local"
         ? "http://localhost:4000"
         : "https://monsoon-staging.herokuapp.com"
 
-    let filterFrom =
-      startFrom === ""
-        ? new Date(this.timeUtils.xDaysAgoISOString(1))
-        : new Date(startFrom)
+    // TODO: Make it pull the datadog environment variables from AWS
+    const allLogs = await this.fetchLogs(startFrom)
 
-    if (this.timeUtils.numDaysBetween(filterFrom, new Date()) >= 14) {
-      throw new Error(
-        "Can only replay events from within last 14 days. Datadog does not hold older logs"
-      )
-    }
-    // TODO: Make it pull the right environment variables for the auth overriidng and DD keys from the relevant place
-    let params: v2.LogsApiListLogsGetRequest = {
-      //   string | Search query following logs syntax. (optional)
-      filterQuery: "service:monsoon-production",
-      // string | For customers with multiple indexes, the indexes to search Defaults to '*' which means all indexes (optional)
-      //   filterIndex: "main",
-      //   // Date | Minimum timestamp for requested logs. (optional)
-      filterFrom: filterFrom,
-      //   // Date | Maximum timestamp for requested logs. (optional)
-      //   filterTo: new Date("2019-01-03T09:42:36.320Z"),
-      //   // LogsSort | Order of logs in results. (optional)
-      sort: "timestamp",
-      //   // string | List following results with a cursor provided in the previous query. (optional)
-      //   pageCursor:
-      //     "eyJzdGFydEF0IjoiQVFBQUFYS2tMS3pPbm40NGV3QUFBQUJCV0V0clRFdDZVbG8zY3pCRmNsbHJiVmxDWlEifQ==",
-      //   // number | Maximum number of logs in the response. (optional)
-      pageLimit: 25,
-    }
-
-    const logs = await apiInstance.listLogsGet(params)
-    const data = logs.data
     let log: any
-    for (log of data) {
+    for (log of allLogs) {
       let urlSuffix
       let body = {}
       let requestUserEmail
       let url
 
-      const urlDetailsPath = log.attributes?.attributes?.http?.url_details?.path
+      const attributes = log.attributes?.attributes
+
+      const urlDetailsPath = attributes?.http?.url_details?.path
       const isWebhookEvent = [
         "/segment_events",
         "/chargebee_events",
@@ -101,14 +73,15 @@ export class ReplayCommands {
       ].includes(urlDetailsPath)
       if (isWebhookEvent) {
         urlSuffix = urlDetailsPath
-        body = log.attributes.attributes.http.body
+        body = attributes.http.body
       } else {
-        urlSuffix = log?.attributes?.attributes?.req?.originalUrl
-        requestUserEmail = log?.attributes?.attributes?.email
+        urlSuffix = attributes?.req?.originalUrl
+        requestUserEmail = attributes?.email
       }
 
       if (!urlSuffix) {
-        continue
+        console.dir(log, { depth: null })
+        throw "Unable to construct url. Please run in debug mode to fix."
       }
       url = urlPrefix + urlSuffix
       const payload = {
@@ -119,20 +92,72 @@ export class ReplayCommands {
         payload["method"] = "post"
       } else {
         payload["method"] = "get"
-        payload["headers"] = {
-          "override-auth": requestUserEmail,
-          "override-auth-token": process.env.OVERRIDE_AUTH_TOKEN,
+        if (!!requestUserEmail) {
+          payload["headers"] = {
+            "override-auth": requestUserEmail,
+            "override-auth-token": process.env.OVERRIDE_AUTH_TOKEN,
+          }
         }
       }
       axios
         .request(payload)
         .then(a => console.log(a.status))
         .catch(e => console.log(e))
-      await this.sleep(100)
+      await this.utils.sleep(100)
     }
   }
 
-  async sleep(ms) {
-    return new Promise(resolve => setTimeout(resolve, ms))
+  private async fetchLogs(startFrom) {
+    const configuration = v2.createConfiguration()
+    const apiInstance = new v2.LogsApi(configuration)
+
+    let filterFrom =
+      startFrom === ""
+        ? new Date(this.timeUtils.xDaysAgoISOString(1))
+        : new Date(startFrom)
+
+    if (filterFrom.toString() === "Invalid Date") {
+      this.logger.error(`Invalid date: ${startFrom}`)
+      return
+    }
+    if (this.timeUtils.numDaysBetween(filterFrom, new Date()) >= 14) {
+      this.logger.error(
+        "Can only replay events from within last 14 days. Datadog does not hold older logs"
+      )
+      return
+    }
+    const filterTo = this.timeUtils.xHoursAfterDate(filterFrom, 24, "date")
+
+    let params: v2.LogsApiListLogsGetRequest = {
+      filterQuery: "service:monsoon-production",
+      filterFrom: filterFrom,
+      filterTo: filterTo as Date,
+      sort: "timestamp",
+      pageLimit: 5000, // this is the max allowed
+    }
+
+    let allLogs = []
+    let i = 0
+    while (true) {
+      console.log(
+        `Datadog fetch ${i++}. Number logs collected so far: ${allLogs.length}`
+      )
+      const logs = await apiInstance.listLogsGet(params)
+      allLogs.push(...logs.data)
+      if (logs.data.length === 0) {
+        break
+      } else {
+        params["pageCursor"] = logs.meta.page.after
+      }
+    }
+
+    const httpRequestLogs = allLogs.filter(
+      a =>
+        // if there's not a requestId, it's not an http request
+        !!a.attributes?.attributes?.requestId &&
+        // If the below applies, it's a jwt expired log
+        a.attributes?.attributes?.context?.code !== "invalid_token"
+    )
+    return httpRequestLogs
   }
 }

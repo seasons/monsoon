@@ -86,6 +86,10 @@ export class UtilsService {
     return Math.random().toString(36).slice(2)
   }
 
+  async sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms))
+  }
+
   dateSort(dateOne: DateTime, dateTwo: DateTime) {
     return moment(dateOne).isAfter(moment(dateTwo)) ? -1 : 1
   }
