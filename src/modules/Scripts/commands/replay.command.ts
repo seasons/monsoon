@@ -46,9 +46,11 @@ export class ReplayCommands {
     @Option({
       name: "mode",
       description:
-        "Which mode to run the replay in. If await, we will await each request before sending the next. If every100MS, we will wait 100 ms, then send the next request.",
+        "Which mode to run the replay in. If await, we will await each request before sending the next." +
+        "If every100MS, we will wait 100 ms, then send the next request." +
+        "If realtime, we'll send it at the actual cadence it happened on production , accurate to within 50ms",
       default: "every100MS",
-      choices: ["every100MS", "await"],
+      choices: ["every100MS", "await", "realtime"],
       type: "string",
     })
     mode
@@ -64,6 +66,11 @@ export class ReplayCommands {
     let log: any
     console.log(`Replaying ${allLogs.length} logs`)
     let i = 0
+    const getTimestampForLog = log => log.attributes.timestamp.getTime()
+
+    const productionTimeOfFirstRequest = getTimestampForLog(allLogs[0])
+    const replayTimeOfFirstRequest = new Date().getTime()
+
     for (log of allLogs) {
       i++
       let urlSuffix
@@ -71,6 +78,7 @@ export class ReplayCommands {
       let requestUserEmail
       let url
 
+      const timestamp = getTimestampForLog(log)
       const attributes = log.attributes?.attributes
 
       const urlDetailsPath = attributes?.http?.url_details?.path
@@ -112,6 +120,13 @@ export class ReplayCommands {
         payload["method"] = attributes?.http?.method || "get" // need this because sometimes its an OPTIONS or POST request
       }
 
+      const sendQueryWithPromise = () =>
+        axios
+          .request(payload)
+          .then(a => console.log(`log ${i} of ${allLogs.length}: ${a.status}`))
+          .catch(e => {
+            console.log(e)
+          })
       if (mode === "await") {
         try {
           const response: any = await axios.request(payload)
@@ -126,19 +141,53 @@ export class ReplayCommands {
           }
         }
       } else if (mode === "every100MS") {
-        axios
-          .request(payload)
-          .then(a => console.log(`log ${i} of ${allLogs.length}: ${a.status}`))
-          .catch(e => {
-            console.log(e)
-          })
+        sendQueryWithPromise()
         await this.utils.sleep(100)
+      } else if (mode === "realtime") {
+        await this.runRequestInRealtime(
+          timestamp,
+          replayTimeOfFirstRequest,
+          productionTimeOfFirstRequest,
+          sendQueryWithPromise
+        )
       } else {
         throw new Error(`Unknown mode: ${mode}`)
       }
     }
   }
 
+  private async runRequestInRealtime(
+    timestamp,
+    replayTimeOfFirstRequest,
+    productionTimeOfFirstRequest,
+    sendQueryWithPromise
+  ) {
+    while (true) {
+      const replayTimeSinceFirstRequest =
+        new Date().getTime() - replayTimeOfFirstRequest
+      const productionTimeSinceFirstRequest =
+        timestamp - productionTimeOfFirstRequest
+      const diff = replayTimeSinceFirstRequest - productionTimeSinceFirstRequest
+
+      const absoluteValueDiff = diff < 0 ? -1 * diff : diff
+      console.log(
+        `replay gap is ${absoluteValueDiff} seconds ${
+          diff < 0 ? "less" : "more"
+        } than realtime gap`
+      )
+      if (diff > 0) {
+        console.log("send request")
+        sendQueryWithPromise()
+        break
+      } else {
+        console.log(
+          `pausing ${absoluteValueDiff} seconds before sending request`
+        )
+        await this.utils.sleep(absoluteValueDiff)
+      }
+    }
+    return
+  }
   private async fetchLogs(startFrom) {
     const configuration = v2.createConfiguration()
     const apiInstance = new v2.LogsApi(configuration)
