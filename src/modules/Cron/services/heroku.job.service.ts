@@ -41,12 +41,9 @@ export class HerokuJobs {
       this.logger.log(`${name} is ${state}`)
     }
 
-    const downDynos = dynos.filter(dyno => dyno.state === "down")
-
-    const messages = []
+    const downDynos = dynos.filter(dyno => dyno.state === "crashed")
 
     for (let downDyno of downDynos) {
-      messages.push(`${downDyno.type} ${downDyno.name} is down 🔴`)
       await fetch(
         `https://api.heroku.com/apps/${app}/dynos/${downDyno.name}/restart`,
         {
@@ -57,7 +54,7 @@ export class HerokuJobs {
           },
         }
       )
-      this.logger.log(`♺ Restarting ${downDyno.name}...`)
+      this.logger.log(`♺  Restarting ${downDyno.name}...`)
     }
   }
 
