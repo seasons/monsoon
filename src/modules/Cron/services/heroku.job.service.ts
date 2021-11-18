@@ -45,8 +45,9 @@ export class HerokuJobs {
 
     for (let downDyno of downDynos) {
       const res = await fetch(
-        `https://api.heroku.com/apps/${app}/dynos/${downDyno.name}/restart`,
+        `https://api.heroku.com/apps/${app}/dynos/${downDyno.name}`,
         {
+          method: "DELETE",
           headers: {
             "Content-Type": "application/json",
             Accept: "application/vnd.heroku+json; version=3",
