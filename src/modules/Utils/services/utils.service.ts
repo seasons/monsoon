@@ -52,6 +52,12 @@ type InfoStringPath = "user" | "customer"
 export class UtilsService {
   constructor(private readonly prisma: PrismaService) {}
 
+  wrapPrismaPromise(prismaPromise) {
+    return {
+      promise: prismaPromise,
+    }
+  }
+
   formatUTMForSegment = (utm: UTMData) => ({
     utm_source: utm?.source,
     utm_content: utm?.content,

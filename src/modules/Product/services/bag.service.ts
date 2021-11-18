@@ -36,6 +36,7 @@ enum BagSectionStatus {
   // Added sections: These combine multiple other statuses
   Inbound = "Inbound",
   Outbound = "Outbound",
+  Processing = "Processing",
 }
 
 @Injectable()
@@ -125,6 +126,8 @@ export class BagService {
       },
     })
 
+    let sections = []
+
     if (application === "spring") {
       const sections = [
         BagSectionStatus.Queued,
@@ -145,7 +148,7 @@ export class BagService {
         BagSectionStatus.ReturnPending,
 
         // Outbound
-        BagSectionStatus.Packed,
+        BagSectionStatus.Processing,
         BagSectionStatus.InTransitOutbound,
         BagSectionStatus.DeliveredToCustomer,
 
@@ -161,6 +164,8 @@ export class BagService {
         return this.getSection(status, bagItems, "client")
       })
     }
+
+    return sections
   }
 
   async addToBag(
@@ -808,9 +813,16 @@ export class BagService {
         deliveryStatusText = "Shipped"
         deliveryTrackingUrl = this.getTrackingUrl(filteredBagItems, "inbound")
         break
-      case "Packed":
+      case "Processing":
         // 1. Outbound step 1
-        title = isAdmin ? "Packed" : "Order received"
+        filteredBagItems = bagItems.filter(item => {
+          const status = item.reservationPhysicalProduct?.status
+
+          return (
+            status === "Queued" || status === "Picked" || status === "Packed"
+          )
+        })
+        title = "Order received"
         deliveryStep = 1
         deliveryStatusText = "Received"
         deliveryTrackingUrl = this.getTrackingUrl(filteredBagItems, "outbound")
@@ -824,17 +836,19 @@ export class BagService {
         break
       case "DeliveredToCustomer":
         // 3. Outbound step 3
-        filteredBagItems = filteredBagItems.filter(item => {
-          const updatedMoreThan24HoursAgo = checkIfUpdatedMoreThan24HoursAgo(
-            item
-          )
+        if (!isAdmin) {
+          filteredBagItems = filteredBagItems.filter(item => {
+            const updatedMoreThan24HoursAgo = checkIfUpdatedMoreThan24HoursAgo(
+              item
+            )
 
-          const noReturnPending = !item.reservationPhysicalProduct
-            ?.hasCustomerReturnIntent
+            const noReturnPending = !item.reservationPhysicalProduct
+              ?.hasCustomerReturnIntent
 
-          return !updatedMoreThan24HoursAgo && noReturnPending
-        })
-        title = "Order delivered"
+            return !updatedMoreThan24HoursAgo && noReturnPending
+          })
+        }
+        title = isAdmin ? "At home" : "Order delivered"
         deliveryStep = 3
         deliveryStatusText = "Shipped"
         deliveryTrackingUrl = this.getTrackingUrl(filteredBagItems, "outbound")
