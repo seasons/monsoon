@@ -1,4 +1,5 @@
 import { DataScheduledJobs } from "@app/modules/Cron/services/data.job.service"
+import { TimeUtilsService } from "@app/modules/Utils/services/time.service"
 import { PrismaService } from "@app/prisma/prisma.service"
 import { v2 } from "@datadog/datadog-api-client"
 import { Injectable, Logger } from "@nestjs/common"
@@ -16,7 +17,8 @@ export class ReplayCommands {
 
   constructor(
     private readonly scriptsService: ScriptsService,
-    private readonly moduleRef: ModuleRef
+    private readonly moduleRef: ModuleRef,
+    private readonly timeUtils: TimeUtilsService
   ) {}
 
   @Command({
@@ -27,11 +29,20 @@ export class ReplayCommands {
   async replay(
     @Option({
       name: "environment",
+      description: "environment against which to replay events",
       default: "local",
       type: "string",
       choices: ["local", "staging"],
     })
-    replayEnv
+    replayEnv,
+    @Option({
+      name: "startFrom",
+      description:
+        "ISO string for the moment in time in which you wish to replay",
+      default: "",
+      type: "string",
+    })
+    startFrom
   ) {
     const configuration = v2.createConfiguration()
     const apiInstance = new v2.LogsApi(configuration)
@@ -40,6 +51,16 @@ export class ReplayCommands {
         ? "http://localhost:4000"
         : "https://monsoon-staging.herokuapp.com"
 
+    let filterFrom =
+      startFrom === ""
+        ? new Date(this.timeUtils.xDaysAgoISOString(1))
+        : new Date(startFrom)
+
+    if (this.timeUtils.numDaysBetween(filterFrom, new Date()) >= 14) {
+      throw new Error(
+        "Can only replay events from within last 14 days. Datadog does not hold older logs"
+      )
+    }
     // TODO: Make it pull the right environment variables for the auth overriidng and DD keys from the relevant place
     let params: v2.LogsApiListLogsGetRequest = {
       //   string | Search query following logs syntax. (optional)
@@ -47,7 +68,7 @@ export class ReplayCommands {
       // string | For customers with multiple indexes, the indexes to search Defaults to '*' which means all indexes (optional)
       //   filterIndex: "main",
       //   // Date | Minimum timestamp for requested logs. (optional)
-      //   filterFrom: new Date("2019-01-02T09:42:36.320Z"),
+      filterFrom: filterFrom,
       //   // Date | Maximum timestamp for requested logs. (optional)
       //   filterTo: new Date("2019-01-03T09:42:36.320Z"),
       //   // LogsSort | Order of logs in results. (optional)
@@ -56,7 +77,7 @@ export class ReplayCommands {
       //   pageCursor:
       //     "eyJzdGFydEF0IjoiQVFBQUFYS2tMS3pPbm40NGV3QUFBQUJCV0V0clRFdDZVbG8zY3pCRmNsbHJiVmxDWlEifQ==",
       //   // number | Maximum number of logs in the response. (optional)
-      //   pageLimit: 25,
+      pageLimit: 25,
     }
 
     const logs = await apiInstance.listLogsGet(params)
