@@ -53,7 +53,15 @@ export class ReplayCommands {
       choices: ["every100MS", "await", "realtimish"],
       type: "string",
     })
-    mode
+    mode,
+    @Option({
+      name: "skipNumQueries",
+      description:
+        "An integer number of queries to skip. For example passing 50 will skip the first 50 queries",
+      type: "number",
+      default: 0,
+    })
+    skipNumQeries
   ) {
     const urlPrefix =
       replayEnv === "local"
@@ -73,6 +81,9 @@ export class ReplayCommands {
     let replayTimeOfLastRequest = new Date().getTime()
     for (log of allLogs) {
       i++
+      if (i < skipNumQeries) {
+        continue
+      }
       let urlSuffix
       let body = {}
       let requestUserEmail
