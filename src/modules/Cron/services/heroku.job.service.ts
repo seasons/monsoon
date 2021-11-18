@@ -5,10 +5,7 @@ import fetch from "node-fetch"
 @Injectable()
 export class HerokuJobs {
   private readonly logger = new Logger(`Cron: ${HerokuJobs.name}`)
-
-  constructor() {}
-
-  token: string = null
+  private token: string = null
 
   @Cron(CronExpression.EVERY_MINUTE)
   async restartDynos() {
