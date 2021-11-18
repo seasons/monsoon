@@ -75,7 +75,7 @@ export class PaymentMutationsResolver {
 
   @Mutation()
   async updatePaymentMethod(
-    @Args() { planID, paymentMethodID, billing },
+    @Args() { planID, paymentMethodID, billing, card },
     @Customer() customer
   ) {
     const intent = await this.updatePaymentService.updatePaymentMethod(
@@ -84,7 +84,8 @@ export class PaymentMutationsResolver {
       null,
       null,
       paymentMethodID,
-      billing
+      billing,
+      card
     )
     return intent
   }
@@ -115,6 +116,7 @@ export class PaymentMutationsResolver {
       customer,
       token,
       tokenType,
+      null,
       null,
       null
     )

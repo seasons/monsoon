@@ -39,7 +39,8 @@ export class UpdatePaymentService {
     token,
     tokenType,
     paymentMethodID,
-    billing
+    billing,
+    card
   ) {
     try {
       const customerWithUserData = await this.prisma.client.customer.findUnique(
@@ -98,8 +99,8 @@ export class UpdatePaymentService {
           .request()
       }
 
-      let _brand
-      let _last4
+      let _brand = card?.brand
+      let _last4 = card?.last4
       let intent
 
       if (token && tokenType) {
@@ -114,18 +115,12 @@ export class UpdatePaymentService {
         _last4 = last4
         _brand = brand
       } else if (paymentMethodID && billing) {
-        const {
-          last4,
-          brand,
-          paymentIntent,
-        } = await this.updatePaymentWithGWToken(
+        const { paymentIntent } = await this.updatePaymentWithGWToken(
           planID,
           chargebeeBillingAddress,
           paymentMethodID,
           user.id
         )
-        _last4 = last4
-        _brand = brand
         intent = paymentIntent
       } else {
         throw new Error(
@@ -133,10 +128,37 @@ export class UpdatePaymentService {
         )
       }
 
-      await this.prisma.client.billingInfo.update({
-        where: { id: billingInfo.id },
-        data: { ...prismaBillingAddress, brand: _brand, last_digits: _last4 },
-      })
+      const data = {
+        ...prismaBillingAddress,
+        brand: _brand,
+        last_digits: _last4,
+      }
+
+      if (billingInfo?.id) {
+        await this.prisma.client.billingInfo.update({
+          where: { id: billingInfo?.id },
+          data,
+        })
+      } else {
+        const billingInfo = await this.prisma.client.billingInfo.create({
+          data: {
+            ...data,
+            expiration_month: card?.expMonth,
+            expiration_year: card?.expYear,
+          },
+        })
+
+        await this.prisma.client.customer.update({
+          where: {
+            id: customer.id,
+          },
+          data: {
+            billingInfo: {
+              connect: { id: billingInfo.id },
+            },
+          },
+        })
+      }
 
       return intent
     } catch (e) {
@@ -161,9 +183,7 @@ export class UpdatePaymentService {
       tmp_token: token.tokenId,
       replace_primary_payment_source: true,
     }
-    const payload = await chargebee.payment_source
-      .create_using_temp_token(params)
-      .request()
+    await chargebee.payment_source.create_using_temp_token(params).request()
     await chargebee.customer
       .update_billing_info(userId, { billing_address: chargebeeBillingAddress })
       .request()
@@ -200,8 +220,6 @@ export class UpdatePaymentService {
     ) {
       return {
         paymentIntent: intent,
-        last4: "",
-        brand: "",
       }
     }
 
