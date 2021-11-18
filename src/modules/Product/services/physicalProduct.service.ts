@@ -314,9 +314,16 @@ export class PhysicalProductService {
 
     const productVariants = physProdsBeforeUpdate.map(
       a =>
-        (a?.productVariant as unknown) as Pick<
-          ProductVariant,
-          "reservable" | "id"
+        (a?.productVariant as unknown) as Partial<
+          Pick<
+            ProductVariant,
+            | "reserved"
+            | "reservable"
+            | "offloaded"
+            | "nonReservable"
+            | "stored"
+            | "id"
+          >
         > & {
           product: Pick<Product, "id" | "slug" | "name"> & {
             brand: Pick<Brand, "name">
@@ -325,9 +332,81 @@ export class PhysicalProductService {
     )
 
     // If the physical product is being stowed and there are currently no reservable units, notify users
+    let promises = []
 
+    const {
+      prodVariantPromises,
+      notifyUsersIfNeeded,
+    } = await this.prodVariantUpdatesForMultiItemStow(
+      productVariants,
+      physProdsBeforeUpdate
+    )
+    promises.push(...prodVariantPromises)
+
+    const physicalProductsToBeStowed = await this.prisma.client.physicalProduct.findMany(
+      {
+        where: {
+          id: {
+            in: ids,
+          },
+        },
+        select: {
+          id: true,
+          productStatus: true,
+        },
+      }
+    )
+
+    for (let physicalProduct of physicalProductsToBeStowed) {
+      promises.push(
+        this.prisma.client.physicalProduct.update({
+          where: {
+            id: physicalProduct.id,
+          },
+          data: {
+            warehouseLocationId: warehouseLocation.id,
+            locationId: location.id,
+            productStatus:
+              physicalProduct.productStatus === "New" ? "New" : "Clean",
+            inventoryStatus: "Reservable",
+          },
+        })
+      )
+    }
+
+    const results = await this.prisma.client.$transaction(promises)
+    const stowedProducts = results.pop()
+    await Promise.all(notifyUsersIfNeeded)
+
+    return stowedProducts.count > 0
+  }
+
+  private async prodVariantUpdatesForMultiItemStow(
+    productVariants,
+    physProdsBeforeUpdate
+  ) {
+    const prodVariantPromises = []
     const notifyUsersIfNeeded = []
-    productVariants.forEach(async prodVariant => {
+    for (const [index, prodVariant] of productVariants.entries()) {
+      const productVariantData = await this.productVariantService.getCountsForStatusChange(
+        {
+          productVariant: prodVariant,
+          oldInventoryStatus: physProdsBeforeUpdate[index].inventoryStatus,
+          newInventoryStatus: "Reservable",
+        }
+      )
+
+      prodVariantPromises.push(
+        this.prisma.client.productVariant.update({
+          where: {
+            id: prodVariant.id,
+          },
+          data: {
+            ...productVariantData,
+          },
+        })
+      )
+
       if (prodVariant.reservable !== 0) {
         return
       }
@@ -368,46 +447,8 @@ export class PhysicalProductService {
       notifyUsersIfNeeded.push(
         this.emails.sendRestockNotificationEmails(emails, product)
       )
-    })
-
-    const physicalProductsToBeStowed = await this.prisma.client.physicalProduct.findMany(
-      {
-        where: {
-          id: {
-            in: ids,
-          },
-        },
-        select: {
-          id: true,
-          productStatus: true,
-        },
-      }
-    )
-
-    let promises = []
-
-    for (let physicalProduct of physicalProductsToBeStowed) {
-      promises.push(
-        this.prisma.client.physicalProduct.update({
-          where: {
-            id: physicalProduct.id,
-          },
-          data: {
-            warehouseLocationId: warehouseLocation.id,
-            locationId: location.id,
-            productStatus:
-              physicalProduct.productStatus === "New" ? "New" : "Clean",
-            inventoryStatus: "Reservable",
-          },
-        })
-      )
     }
-
-    const results = await this.prisma.client.$transaction(promises)
-    const stowedProducts = results.pop()
-    await Promise.all(notifyUsersIfNeeded)
-
-    return stowedProducts.count > 0
+    return { prodVariantPromises, notifyUsersIfNeeded }
   }
 
   async activeReservationWithPhysicalProduct(id: string) {
