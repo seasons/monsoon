@@ -50,7 +50,7 @@ export class AccessorySizeFieldsResolver {
     accessorySizeLoader
   ) {
     const accessorySize = await accessorySizeLoader.load(parent.id)
-    return this.getMeasurement(accessorySize, "bridge")
+    return this.getMeasurement(parent, accessorySize, "bridge")
   }
 
   @ResolveField()
@@ -60,7 +60,7 @@ export class AccessorySizeFieldsResolver {
     accessorySizeLoader
   ) {
     const accessorySize = await accessorySizeLoader.load(parent.id)
-    return this.getMeasurement(accessorySize, "length")
+    return this.getMeasurement(parent, accessorySize, "length")
   }
 
   @ResolveField()
@@ -70,7 +70,7 @@ export class AccessorySizeFieldsResolver {
     accessorySizeLoader
   ) {
     const accessorySize = await accessorySizeLoader.load(parent.id)
-    return this.getMeasurement(accessorySize, "width")
+    return this.getMeasurement(parent, accessorySize, "width")
   }
 
   @ResolveField()
@@ -80,7 +80,7 @@ export class AccessorySizeFieldsResolver {
     accessorySizeLoader
   ) {
     const accessorySize = await accessorySizeLoader.load(parent.id)
-    return this.getMeasurement(accessorySize, "maxDrop")
+    return this.getMeasurement(parent, accessorySize, "maxDrop")
   }
 
   @ResolveField()
@@ -90,7 +90,7 @@ export class AccessorySizeFieldsResolver {
     accessorySizeLoader
   ) {
     const accessorySize = await accessorySizeLoader.load(parent.id)
-    return this.getMeasurement(accessorySize, "minDrop")
+    return this.getMeasurement(parent, accessorySize, "minDrop")
   }
 
   @ResolveField()
@@ -100,10 +100,10 @@ export class AccessorySizeFieldsResolver {
     accessorySizeLoader
   ) {
     const accessorySize = await accessorySizeLoader.load(parent.id)
-    return this.getMeasurement(accessorySize, "height")
+    return this.getMeasurement(parent, accessorySize, "height")
   }
 
-  private getMeasurement = (accessorySize, key: MeasurementType) => {
+  private getMeasurement = (parent, accessorySize, key: MeasurementType) => {
     const measurementType =
       accessorySize?.size?.productVariantInternal?.product?.category
         ?.measurementType
