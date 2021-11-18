@@ -10,7 +10,7 @@ export function createGetUserMiddleware(prisma: PrismaClient, logger) {
     const overrideAuth = req.headers["override-auth"]
     const overrideAuthToken = req.headers["override-auth-token"]
 
-    // If we're not on staging, allow the client to override authentication
+    // If we're not on prod, allow the client to override authentication
     if (
       process.env.NODE_ENV !== "production" &&
       overrideAuthToken === process.env.OVERRIDE_AUTH_TOKEN &&
@@ -23,6 +23,10 @@ export function createGetUserMiddleware(prisma: PrismaClient, logger) {
         req.user = { ...prismaUser }
         return next()
       })
+    }
+    if (!!overrideAuth) {
+      // If we're here, it means this header is on the request inapproriapiately
+      throw new Error("Invalid override auth header")
     }
 
     // Get auth0 user from request
