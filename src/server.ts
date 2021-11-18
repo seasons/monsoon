@@ -2,6 +2,7 @@ import "module-alias/register"
 
 import "./lib/tracer"
 
+import memwatch from "@airbnb/node-memwatch"
 import { NestFactory } from "@nestjs/core"
 import { ExpressAdapter } from "@nestjs/platform-express"
 import * as Sentry from "@sentry/node"
@@ -38,6 +39,19 @@ function handleErrors(logger) {
   }
 }
 
+const setupMemwatch = logger => {
+  memwatch.on("stats", stats => {
+    logger.info(`Heap Stats after Garbage Collection`, { stats })
+  })
+
+  let diffStart = new memwatch.HeapDiff()
+  setInterval(() => {
+    const diffEnd = diffStart.end()
+    logger.info(`Heap Diff`, { diff: diffEnd, interval: "10 Minutes" })
+    diffStart = new memwatch.HeapDiff()
+  }, 600000) // 10 minutes
+}
+
 export const addMiddlewares = async server => {
   const cors = await createCorsMiddleware(readClient)
 
@@ -45,6 +59,8 @@ export const addMiddlewares = async server => {
   const expressWinstonHandler = createExpressWinstonHandler(
     nestWinstonLogger.logger
   )
+
+  setupMemwatch(nestWinstonLogger)
 
   server.use(
     expressWinstonHandler,
