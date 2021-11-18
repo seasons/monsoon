@@ -6,7 +6,7 @@
   "bin": "bin/cli.js",
   "main": "dist/index.js",
   "engines": {
-    "node": "16.x"
+    "node": "14.x"
   },
   "resolutions": {
     "graphql": "14.5.7",
@@ -30,7 +30,7 @@
     "prestart": "docker-compose up -d",
     "prettier": "prettier --write 'src/**/*.{js,ts,tsx,md,graphql}' --ignore-path ./.prettierignore",
     "start:debug": "nest start --debug --watch",
-    "start:production": "node --max_old_space_size=4096 -r dotenv/config dist/index.js",
+    "start:production": "node --optimize_for_size --max_old_space_size=8192 -r dotenv/config dist/index.js",
     "start:server": "dotenv -- nodemon -e ts,graphql -x ts-node src/index.ts",
     "start": "concurrently -k -n 'TSC,TS-NODE' -c 'gray.dim,blue.dim' 'yarn tsc -w' 'yarn start:server'",
     "test:cov": "jest --coverage",
