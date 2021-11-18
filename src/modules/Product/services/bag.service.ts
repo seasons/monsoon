@@ -559,7 +559,36 @@ export class BagService {
     return promises
   }
 
-  private updatePhysicalProductsOnLost(physicalProduct) {}
+  private updatePhysicalProductsOnLost(physicalProducts) {
+    const physicalProductPromises = []
+    physicalProducts.forEach(physicalProduct => {
+      const productVariantData = this.productVariantService.getCountsForStatusChange(
+        {
+          productVariant: physicalProduct.productVariant,
+          oldInventoryStatus: "Reserved",
+          newInventoryStatus: "NonReservable",
+        }
+      )
+
+      physicalProductPromises.push(
+        this.prisma.client.physicalProduct.update({
+          where: {
+            id: physicalProduct.id,
+          },
+          data: {
+            productStatus: "Lost",
+            inventoryStatus: "NonReservable",
+            productVariant: {
+              update: {
+                ...productVariantData,
+              },
+            },
+          },
+        })
+      )
+    })
+    return physicalProductPromises
+  }
 
   async processLostItems(lostBagItemsIds) {
     const bagItemsWithData = await this.prisma.client.bagItem.findMany({
@@ -644,32 +673,7 @@ export class BagService {
       ...this.updateInboundAndOutboundResPhysProdsOnLost(lostResPhysProds)
     )
 
-    physicalProducts.forEach(physicalProduct => {
-      const productVariantData = this.productVariantService.getCountsForStatusChange(
-        {
-          productVariant: physicalProduct.productVariant,
-          oldInventoryStatus: "Reserved",
-          newInventoryStatus: "NonReservable",
-        }
-      )
-
-      promises.push(
-        this.prisma.client.physicalProduct.update({
-          where: {
-            id: physicalProduct.id,
-          },
-          data: {
-            productStatus: "Lost",
-            inventoryStatus: "NonReservable",
-            productVariant: {
-              update: {
-                ...productVariantData,
-              },
-            },
-          },
-        })
-      )
-    })
+    promises.push(...this.updatePhysicalProductsOnLost(physicalProducts))
 
     await this.prisma.client.$transaction(promises)
 
