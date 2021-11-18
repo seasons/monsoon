@@ -42,7 +42,16 @@ export class ReplayCommands {
       default: "",
       type: "string",
     })
-    startFrom
+    startFrom,
+    @Option({
+      name: "mode",
+      description:
+        "Which mode to run the replay in. If await, we will await each request before sending the next. If every100MS, we will wait 100 ms, then send the next request.",
+      default: "every100MS",
+      choices: ["every100MS", "await"],
+      type: "string",
+    })
+    mode
   ) {
     const urlPrefix =
       replayEnv === "local"
@@ -53,7 +62,10 @@ export class ReplayCommands {
     const allLogs = await this.fetchLogs(startFrom)
 
     let log: any
+    console.log(`Replaying ${allLogs.length} logs`)
+    let i = 0
     for (log of allLogs) {
+      i++
       let urlSuffix
       let body = {}
       let requestUserEmail
@@ -91,19 +103,39 @@ export class ReplayCommands {
         payload["data"] = body
         payload["method"] = "post"
       } else {
-        payload["method"] = "get"
         if (!!requestUserEmail) {
           payload["headers"] = {
             "override-auth": requestUserEmail,
             "override-auth-token": process.env.OVERRIDE_AUTH_TOKEN,
           }
         }
+        payload["method"] = attributes?.http?.method || "get" // need this because sometimes its an OPTIONS or POST request
       }
-      axios
-        .request(payload)
-        .then(a => console.log(a.status))
-        .catch(e => console.log(e))
-      await this.utils.sleep(100)
+
+      if (mode === "await") {
+        try {
+          const response: any = await axios.request(payload)
+          console.log(
+            `log ${i} of ${allLogs.length} response status: ${response.status}`
+          )
+        } catch (err) {
+          // there are some post requests for which we lack a body, so they throw errors
+          // ignore those for now...
+          if (urlSuffix !== "/" && payload["method"] !== "post") {
+            console.log(err)
+          }
+        }
+      } else if (mode === "every100MS") {
+        axios
+          .request(payload)
+          .then(a => console.log(`log ${i} of ${allLogs.length}: ${a.status}`))
+          .catch(e => {
+            console.log(e)
+          })
+        await this.utils.sleep(100)
+      } else {
+        throw new Error(`Unknown mode: ${mode}`)
+      }
     }
   }
 
@@ -156,7 +188,9 @@ export class ReplayCommands {
         // if there's not a requestId, it's not an http request
         !!a.attributes?.attributes?.requestId &&
         // If the below applies, it's a jwt expired log
-        a.attributes?.attributes?.context?.code !== "invalid_token"
+        a.attributes?.attributes?.context?.code !== "invalid_token" &&
+        // every http request should have an http object
+        !!a.attributes?.attributes?.http
     )
     return httpRequestLogs
   }
