@@ -1,6 +1,7 @@
 import fs from "fs"
 
 import AWS from "aws-sdk"
+import { DateTime } from "luxon"
 import * as pprof from "pprof"
 
 const s3 = new AWS.S3()
@@ -10,6 +11,8 @@ export const setupHeapProfiler = async logger => {
   const intervalBytes = 512 * 1024
   // The maximum stack depth for samples collected.
   const stackDepth = 64
+  const dynoName = (process.env.DYNO || "web.1").replace(".", "")
+  const appName = process.env.HEROKU_APP_NAME || "monsoon-dev"
 
   await pprof.heap.start(intervalBytes, stackDepth)
 
@@ -18,7 +21,10 @@ export const setupHeapProfiler = async logger => {
       const profile = await pprof.heap.profile()
       const buf = await pprof.encode(profile)
 
-      const filename = `pprof-heap-${Date.now()}.pb.gz`
+      const filename = `${appName}-${dynoName}/heap-${DateTime.local().toLocaleString(
+        DateTime.DATETIME_SHORT as any
+      )}.pb.gz`
+
       fs.writeFile(filename, buf, err => {
         if (err) {
           logger.error(err)
