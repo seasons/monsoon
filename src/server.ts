@@ -60,7 +60,7 @@ export const addMiddlewares = async server => {
     nestWinstonLogger.logger
   )
 
-  setupMemwatch(nestWinstonLogger)
+  // setupMemwatch(nestWinstonLogger)
 
   server.use(
     expressWinstonHandler,
