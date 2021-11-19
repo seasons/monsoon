@@ -1,0 +1,763 @@
+[32m[Nest] 49761   - [39m11/19/2021, 7:06:10 AM   [38;5;3m[NestFactory] [39m[32mStarting Nest application...[39m
+[32m[Nest] 49761   - [39m11/19/2021, 7:06:10 AM   [38;5;3m[InstanceLoader] [39m[32mTwilioModule dependencies initialized[39m[38;5;3m +251ms[39m
+[32m[Nest] 49761   - [39m11/19/2021, 7:06:10 AM   [38;5;3m[InstanceLoader] [39m[32mSlackModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 49761   - [39m11/19/2021, 7:06:10 AM   [38;5;3m[InstanceLoader] [39m[32mPrismaModule dependencies initialized[39m[38;5;3m +27ms[39m
+[32m[Nest] 49761   - [39m11/19/2021, 7:06:10 AM   [38;5;3m[InstanceLoader] [39m[32mErrorModule dependencies initialized[39m[38;5;3m +3ms[39m
+[32m[Nest] 49761   - [39m11/19/2021, 7:06:10 AM   [38;5;3m[InstanceLoader] [39m[32mCommandModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 49761   - [39m11/19/2021, 7:06:10 AM   [38;5;3m[InstanceLoader] [39m[32mUtilsModule dependencies initialized[39m[38;5;3m +1ms[39m
+[32m[Nest] 49761   - [39m11/19/2021, 7:06:10 AM   [38;5;3m[InstanceLoader] [39m[32mImageModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 49761   - [39m11/19/2021, 7:06:10 AM   [38;5;3m[InstanceLoader] [39m[32mDripModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 49761   - [39m11/19/2021, 7:06:10 AM   [38;5;3m[InstanceLoader] [39m[32mPushNotificationModule dependencies initialized[39m[38;5;3m +1ms[39m
+[32m[Nest] 49761   - [39m11/19/2021, 7:06:10 AM   [38;5;3m[InstanceLoader] [39m[32mShopifyModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 49761   - [39m11/19/2021, 7:06:10 AM   [38;5;3m[InstanceLoader] [39m[32mSyncModule dependencies initialized[39m[38;5;3m +3ms[39m
+[32m[Nest] 49761   - [39m11/19/2021, 7:06:10 AM   [38;5;3m[InstanceLoader] [39m[32mSearchModule dependencies initialized[39m[38;5;3m +1ms[39m
+[32m[Nest] 49761   - [39m11/19/2021, 7:06:10 AM   [38;5;3m[InstanceLoader] [39m[32mAnalyticsModule dependencies initialized[39m[38;5;3m +1ms[39m
+[32m[Nest] 49761   - [39m11/19/2021, 7:06:10 AM   [38;5;3m[InstanceLoader] [39m[32mEmailModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 49761   - [39m11/19/2021, 7:06:10 AM   [38;5;3m[InstanceLoader] [39m[32mShippingModule dependencies initialized[39m[38;5;3m +1ms[39m
+[32m[Nest] 49761   - [39m11/19/2021, 7:06:10 AM   [38;5;3m[InstanceLoader] [39m[32mSMSModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 49761   - [39m11/19/2021, 7:06:10 AM   [38;5;3m[InstanceLoader] [39m[32mScriptsModule dependencies initialized[39m[38;5;3m +1ms[39m
+[32m[Nest] 49761   - [39m11/19/2021, 7:06:10 AM   [38;5;3m[InstanceLoader] [39m[32mReservationModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 49761   - [39m11/19/2021, 7:06:10 AM   [38;5;3m[InstanceLoader] [39m[32mUserModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 49761   - [39m11/19/2021, 7:06:10 AM   [38;5;3m[InstanceLoader] [39m[32mCronModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 49761   - [39m11/19/2021, 7:06:10 AM   [38;5;3m[InstanceLoader] [39m[32mPaymentModule dependencies initialized[39m[38;5;3m +1ms[39m
+[32m[Nest] 49761   - [39m11/19/2021, 7:06:10 AM   [38;5;3m[InstanceLoader] [39m[32mProductModule dependencies initialized[39m[38;5;3m +0ms[39m
+Running health check...
+/*********** REPORT ***********/
+PRODUCT VARIANT + PHYSICAL PRODUCT HEALTH
+--- mismatched suid/sku combos: 0
+--- number of product variants with incorrect number of physical products attached: 0
+--- number of product variants with a count profile that doesn't match the attached physical product statuses: 0
+--- number of product variants with total != reserved + reservable + nonreservable + stored + offloaded: 0
+
+--- physical products with an erroneous inventorystatus situation: 291
+[
+  {
+    inventoryStatus: 'NonReservable',
+    seasonsUID: 'AURA-BLU-SS-011-01',
+    issues: [ 'Has status NonReservable but is on an active reservation' ],
+    siblingsWithIssues: [],
+    activeReservation: { reservationNumber: 863049530, status: 'Lost' }
+  },
+  {
+    inventoryStatus: 'NonReservable',
+    seasonsUID: 'JQMU-YLW-MM-019-02',
+    issues: [ 'Has status NonReservable but is on an active reservation' ],
+    siblingsWithIssues: [],
+    activeReservation: { reservationNumber: 427044739, status: 'Lost' }
+  },
+  {
+    inventoryStatus: 'NonReservable',
+    seasonsUID: 'DEVA-GRN-MM-017-01',
+    issues: [ 'Has status NonReservable but is on an active reservation' ],
+    siblingsWithIssues: [],
+    activeReservation: { reservationNumber: 936286848, status: 'ReturnPending' }
+  },
+  {
+    inventoryStatus: 'NonReservable',
+    seasonsUID: 'JOEL-WTE-LL-010-01',
+    issues: [ 'Has status NonReservable but is on an active reservation' ],
+    siblingsWithIssues: [],
+    activeReservation: { reservationNumber: 652116352, status: 'Lost' }
+  },
+  {
+    inventoryStatus: 'NonReservable',
+    seasonsUID: 'NANU-BWN-LL-014-01',
+    issues: [ 'Has status NonReservable but is on an active reservation' ],
+    siblingsWithIssues: [],
+    activeReservation: { reservationNumber: 652116352, status: 'Lost' }
+  },
+  {
+    inventoryStatus: 'NonReservable',
+    seasonsUID: 'CSBA-RED-LL-021-01',
+    issues: [ 'Has status NonReservable but is on an active reservation' ],
+    siblingsWithIssues: [],
+    activeReservation: { reservationNumber: 652116352, status: 'Lost' }
+  },
+  {
+    inventoryStatus: 'NonReservable',
+    seasonsUID: 'BODE-WTE-MM-014-03',
+    issues: [ 'Has status NonReservable but is on an active reservation' ],
+    siblingsWithIssues: [],
+    activeReservation: { reservationNumber: 147836814, status: 'Delivered' }
+  },
+  {
+    inventoryStatus: 'NonReservable',
+    seasonsUID: 'JQMU-ORG-SS-002-01',
+    issues: [ 'Has status NonReservable but is on an active reservation' ],
+    siblingsWithIssues: [],
+    activeReservation: { reservationNumber: 480420736, status: 'ReturnPending' }
+  },
+  {
+    inventoryStatus: 'NonReservable',
+    seasonsUID: 'JQMU-BWN-XL-029-01',
+    issues: [ 'Has status NonReservable but is on an active reservation' ],
+    siblingsWithIssues: [],
+    activeReservation: { reservationNumber: 900370825, status: 'ReturnPending' }
+  },
+  {
+    inventoryStatus: 'NonReservable',
+    seasonsUID: 'MKIM-BLU-MM-001-01',
+    issues: [ 'Has status NonReservable but is on an active reservation' ],
+    siblingsWithIssues: [],
+    activeReservation: { reservationNumber: 322585310, status: 'Delivered' }
+  },
+  {
+    inventoryStatus: 'NonReservable',
+    seasonsUID: 'JQMU-BWN-LL-029-02',
+    issues: [ 'Has status NonReservable but is on an active reservation' ],
+    siblingsWithIssues: [],
+    activeReservation: { reservationNumber: 815034036, status: 'Lost' }
+  },
+  {
+    inventoryStatus: 'NonReservable',
+    seasonsUID: 'PAAN-RED-MM-001-01',
+    issues: [
+      'Has warehouse location SR-A100-A140. It should either be reservable, stored, or be on a queued reservation. Active Reservation: none'
+    ],
+    siblingsWithIssues: []
+  },
+  {
+    inventoryStatus: 'NonReservable',
+    seasonsUID: 'BODE-GRN-306-022-02',
+    issues: [ 'Has status NonReservable but is on an active reservation' ],
+    siblingsWithIssues: [],
+    activeReservation: { reservationNumber: 815034036, status: 'Lost' }
+  },
+  {
+    inventoryStatus: 'NonReservable',
+    seasonsUID: 'BODE-WTE-LL-025-01',
+    issues: [ 'Has status NonReservable but is on an active reservation' ],
+    siblingsWithIssues: [],
+    activeReservation: { reservationNumber: 815034036, status: 'Lost' }
+  },
+  {
+    inventoryStatus: 'NonReservable',
+    seasonsUID: 'STUS-PNK-MM-005-01',
+    issues: [ 'Has status NonReservable but is on an active reservation' ],
+    siblingsWithIssues: [],
+    activeReservation: { reservationNumber: 517338455, status: 'ReturnPending' }
+  },
+  {
+    inventoryStatus: 'NonReservable',
+    seasonsUID: 'MRNI-BLU-LL-019-01',
+    issues: [ 'Has status NonReservable but is on an active reservation' ],
+    siblingsWithIssues: [],
+    activeReservation: { reservationNumber: 131168291, status: 'ReturnPending' }
+  },
+  {
+    inventoryStatus: 'NonReservable',
+    seasonsUID: 'BODE-WTE-LL-033-03',
+    issues: [ 'Has status NonReservable but is on an active reservation' ],
+    siblingsWithIssues: [],
+    activeReservation: { reservationNumber: 928354915, status: 'ReturnPending' }
+  },
+  {
+    inventoryStatus: 'NonReservable',
+    seasonsUID: 'SNBD-BWN-UNI-005-04',
+    issues: [ 'Has status NonReservable but is on an active reservation' ],
+    siblingsWithIssues: [],
+    activeReservation: { reservationNumber: 830415669, status: 'Delivered' }
+  },
+  {
+    inventoryStatus: 'NonReservable',
+    seasonsUID: 'NANU-BLK-LL-018-01',
+    issues: [ 'Has status NonReservable but is on an active reservation' ],
+    siblingsWithIssues: [],
+    activeReservation: { reservationNumber: 815034036, status: 'Lost' }
+  },
+  {
+    inventoryStatus: 'NonReservable',
+    seasonsUID: 'AURA-BLU-3030-010-01',
+    issues: [ 'Has status NonReservable but is on an active reservation' ],
+    siblingsWithIssues: [],
+    activeReservation: { reservationNumber: 863049530, status: 'Lost' }
+  },
+  {
+    inventoryStatus: 'NonReservable',
+    seasonsUID: 'ERL1-BWN-XL-004-01',
+    issues: [ 'Has status NonReservable but is on an active reservation' ],
+    siblingsWithIssues: [],
+    activeReservation: { reservationNumber: 421626835, status: 'Lost' }
+  },
+  {
+    inventoryStatus: 'NonReservable',
+    seasonsUID: 'WLSB-BLU-3434-013-01',
+    issues: [ 'Has status NonReservable but is on an active reservation' ],
+    siblingsWithIssues: [],
+    activeReservation: { reservationNumber: 144707956, status: 'Delivered' }
+  },
+  {
+    inventoryStatus: 'Reservable',
+    seasonsUID: 'ALDE-BLU-318-020-01',
+    issues: [ 'Has status Reservable but is on an active reservation' ],
+    siblingsWithIssues: [],
+    activeReservation: { reservationNumber: 488125752, status: 'ReturnPending' }
+  },
+  {
+    inventoryStatus: 'Offloaded',
+    seasonsUID: 'VNTG-BLK-LL-086-01',
+    issues: [
+      'Has warehouse location DB-A100-D100. It should either be reservable, stored, or be on a queued reservation. Active Reservation: none'
+    ],
+    siblingsWithIssues: []
+  },
+  {
+    inventoryStatus: 'NonReservable',
+    seasonsUID: 'JWA-BLU-XL-006-01',
+    issues: [ 'Has status NonReservable but is on an active reservation' ],
+    siblingsWithIssues: [],
+    activeReservation: { reservationNumber: 861638580, status: 'Delivered' }
+  },
+  {
+    inventoryStatus: 'NonReservable',
+    seasonsUID: 'MTAL-GRY-UNI-001-05',
+    issues: [ 'Has status NonReservable but is on an active reservation' ],
+    siblingsWithIssues: [],
+    activeReservation: { reservationNumber: 548324851, status: 'ReturnPending' }
+  },
+  {
+    inventoryStatus: 'NonReservable',
+    seasonsUID: 'JQMU-BLU-LL-009-01',
+    issues: [ 'Has status NonReservable but is on an active reservation' ],
+    siblingsWithIssues: [],
+    activeReservation: { reservationNumber: 270091535, status: 'Lost' }
+  },
+  {
+    inventoryStatus: 'NonReservable',
+    seasonsUID: 'JQMU-BLU-XL-009-01',
+    issues: [ 'Has status NonReservable but is on an active reservation' ],
+    siblingsWithIssues: [],
+    activeReservation: { reservationNumber: 355619151, status: 'ReturnPending' }
+  },
+  {
+    inventoryStatus: 'NonReservable',
+    seasonsUID: 'PRDA-BLK-SS-005-01',
+    issues: [ 'Has status NonReservable but is on an active reservation' ],
+    siblingsWithIssues: [],
+    activeReservation: { reservationNumber: 212706345, status: 'Lost' }
+  },
+  {
+    inventoryStatus: 'Reserved',
+    seasonsUID: 'MAHO-BWN-MM-001-01',
+    issues: [
+      'Has warehouse location SR-A100-A190. It should either be reservable, stored, or be on a queued reservation. Active Reservation: none'
+    ],
+    siblingsWithIssues: []
+  },
+  {
+    inventoryStatus: 'NonReservable',
+    seasonsUID: 'MAMU-GRY-LL-001-01',
+    issues: [ 'Has status NonReservable but is on an active reservation' ],
+    siblingsWithIssues: [],
+    activeReservation: { reservationNumber: 422871262, status: 'Delivered' }
+  },
+  {
+    inventoryStatus: 'NonReservable',
+    seasonsUID: 'CSBA-BLU-LL-034-01',
+    issues: [ 'Has status NonReservable but is on an active reservation' ],
+    siblingsWithIssues: [],
+    activeReservation: { reservationNumber: 814181763, status: 'Lost' }
+  },
+  {
+    inventoryStatus: 'NonReservable',
+    seasonsUID: 'MRNI-BLU-MM-016-02',
+    issues: [ 'Has status NonReservable but is on an active reservation' ],
+    siblingsWithIssues: [],
+    activeReservation: { reservationNumber: 129132812, status: 'ReturnPending' }
+  },
+  {
+    inventoryStatus: 'Reservable',
+    seasonsUID: 'CSBA-GRN-LL-036-01',
+    issues: [ 'Has status Reservable but is on an active reservation' ],
+    siblingsWithIssues: [],
+    activeReservation: { reservationNumber: 983359368, status: 'ReturnPending' }
+  },
+  {
+    inventoryStatus: 'Offloaded',
+    seasonsUID: 'STUS-YLW-LL-012-01',
+    issues: [
+      'Has warehouse location IN-TRANSIT. It should either be reservable, stored, or be on a queued reservation. Active Reservation: none'
+    ],
+    siblingsWithIssues: []
+  },
+  {
+    inventoryStatus: 'NonReservable',
+    seasonsUID: 'CSBA-GRN-MM-035-02',
+    issues: [ 'Has status NonReservable but is on an active reservation' ],
+    siblingsWithIssues: [],
+    activeReservation: { reservationNumber: 798448559, status: 'Shipped' }
+  },
+  {
+    inventoryStatus: 'NonReservable',
+    seasonsUID: 'JOEL-RED-SS-007-01',
+    issues: [ 'Has status NonReservable but is on an active reservation' ],
+    siblingsWithIssues: [],
+    activeReservation: { reservationNumber: 303306666, status: 'Delivered' }
+  },
+  {
+    inventoryStatus: 'NonReservable',
+    seasonsUID: 'CSBA-WTE-SS-033-01',
+    issues: [ 'Has status NonReservable but is on an active reservation' ],
+    siblingsWithIssues: [],
+    activeReservation: { reservationNumber: 591137106, status: 'ReturnPending' }
+  },
+  {
+    inventoryStatus: 'Reserved',
+    seasonsUID: 'HEPR-WTE-MM-001-01',
+    issues: [
+      'Has warehouse location SR-A100-A110. It should either be reservable, stored, or be on a queued reservation. Active Reservation: none'
+    ],
+    siblingsWithIssues: []
+  },
+  {
+    inventoryStatus: 'Reserved',
+    seasonsUID: 'ACNE-BLK-LL-001-01',
+    issues: [
+      'Has warehouse location SR-A120-B120. It should either be reservable, stored, or be on a queued reservation. Active Reservation: none'
+    ],
+    siblingsWithIssues: []
+  },
+  {
+    inventoryStatus: 'NonReservable',
+    seasonsUID: 'NOAH-BLK-3429-012-01',
+    issues: [ 'Has status NonReservable but is on an active reservation' ],
+    siblingsWithIssues: [],
+    activeReservation: { reservationNumber: 240306142, status: 'Delivered' }
+  },
+  {
+    inventoryStatus: 'Offloaded',
+    seasonsUID: 'UNCV-RED-LL-002-01',
+    issues: [
+      'Has warehouse location DB-A100-C110. It should either be reservable, stored, or be on a queued reservation. Active Reservation: none'
+    ],
+    siblingsWithIssues: []
+  },
+  {
+    inventoryStatus: 'NonReservable',
+    seasonsUID: 'DEVA-BWN-MM-008-01',
+    issues: [ 'Has status NonReservable but is on an active reservation' ],
+    siblingsWithIssues: [],
+    activeReservation: { reservationNumber: 322585310, status: 'Delivered' }
+  },
+  {
+    inventoryStatus: 'NonReservable',
+    seasonsUID: 'ELST-RED-3031-010-01',
+    issues: [ 'Has status NonReservable but is on an active reservation' ],
+    siblingsWithIssues: [],
+    activeReservation: { reservationNumber: 471000053, status: 'Delivered' }
+  },
+  {
+    inventoryStatus: 'NonReservable',
+    seasonsUID: 'MNSR-BLU-MM-009-02',
+    issues: [ 'Has status NonReservable but is on an active reservation' ],
+    siblingsWithIssues: [],
+    activeReservation: { reservationNumber: 549994401, status: 'ReturnPending' }
+  },
+  {
+    inventoryStatus: 'NonReservable',
+    seasonsUID: 'AURA-BLK-MM-027-01',
+    issues: [ 'Has status NonReservable but is on an active reservation' ],
+    siblingsWithIssues: [],
+    activeReservation: { reservationNumber: 784194449, status: 'Shipped' }
+  },
+  {
+    inventoryStatus: 'Reserved',
+    seasonsUID: 'AMBU-RED-MM-001-01',
+    issues: [
+      'Has warehouse location SR-A120-B180. It should either be reservable, stored, or be on a queued reservation. Active Reservation: none'
+    ],
+    siblingsWithIssues: []
+  },
+  {
+    inventoryStatus: 'NonReservable',
+    seasonsUID: 'RHUD-BLK-LL-004-01',
+    issues: [ 'Has status NonReservable but is on an active reservation' ],
+    siblingsWithIssues: [],
+    activeReservation: { reservationNumber: 919493645, status: 'Lost' }
+  },
+  {
+    inventoryStatus: 'Reserved',
+    seasonsUID: 'AMBU-BLU-SS-002-01',
+    issues: [
+      'Has warehouse location SR-A110-B160. It should either be reservable, stored, or be on a queued reservation. Active Reservation: none'
+    ],
+    siblingsWithIssues: []
+  },
+  {
+    inventoryStatus: 'Reservable',
+    seasonsUID: 'JQMU-BLU-LL-001-01',
+    issues: [ 'Has status Reservable but is on an active reservation' ],
+    siblingsWithIssues: [],
+    activeReservation: { reservationNumber: 355619151, status: 'ReturnPending' }
+  },
+  {
+    inventoryStatus: 'Reserved',
+    seasonsUID: 'OFFW-GRY-MM-001-01',
+    issues: [
+      'Has warehouse location SR-A100-B200. It should either be reservable, stored, or be on a queued reservation. Active Reservation: none'
+    ],
+    siblingsWithIssues: []
+  },
+  {
+    inventoryStatus: 'NonReservable',
+    seasonsUID: 'JOEL-PNK-SS-009-01',
+    issues: [ 'Has status NonReservable but is on an active reservation' ],
+    siblingsWithIssues: [],
+    activeReservation: { reservationNumber: 712548387, status: 'ReturnPending' }
+  },
+  {
+    inventoryStatus: 'NonReservable',
+    seasonsUID: 'NANU-BLU-3026-032-01',
+    issues: [ 'Has status NonReservable but is on an active reservation' ],
+    siblingsWithIssues: [],
+    activeReservation: { reservationNumber: 280952443, status: 'Delivered' }
+  },
+  {
+    inventoryStatus: 'Reservable',
+    seasonsUID: 'JQMU-BLU-MM-012-01',
+    issues: [ 'Has status Reservable but is on an active reservation' ],
+    siblingsWithIssues: [],
+    activeReservation: { reservationNumber: 907418328, status: 'ReturnPending' }
+  },
+  {
+    inventoryStatus: 'Reserved',
+    seasonsUID: 'STUS-PRP-LL-014-01',
+    issues: [
+      'Has warehouse location SR-A110-B190. It should either be reservable, stored, or be on a queued reservation. Active Reservation: none'
+    ],
+    siblingsWithIssues: []
+  },
+  {
+    inventoryStatus: 'Reservable',
+    seasonsUID: 'JISA-BLK-3225-002-01',
+    issues: [ 'Has status Reservable but is on an active reservation' ],
+    siblingsWithIssues: [],
+    activeReservation: { reservationNumber: 355619151, status: 'ReturnPending' }
+  },
+  {
+    inventoryStatus: 'NonReservable',
+    seasonsUID: 'DEVA-BWN-XL-007-01',
+    issues: [ 'Has status NonReservable but is on an active reservation' ],
+    siblingsWithIssues: [],
+    activeReservation: { reservationNumber: 925258507, status: 'Lost' }
+  },
+  {
+    inventoryStatus: 'NonReservable',
+    seasonsUID: 'CDGS-BLK-SS-006-01',
+    issues: [ 'Has status NonReservable but is on an active reservation' ],
+    siblingsWithIssues: [],
+    activeReservation: { reservationNumber: 280952443, status: 'Delivered' }
+  },
+  {
+    inventoryStatus: 'NonReservable',
+    seasonsUID: 'CDGS-BLU-LL-007-01',
+    issues: [ 'Has status NonReservable but is on an active reservation' ],
+    siblingsWithIssues: [],
+    activeReservation: { reservationNumber: 605513836, status: 'Delivered' }
+  },
+  {
+    inventoryStatus: 'NonReservable',
+    seasonsUID: 'RHUD-RED-298-006-01',
+    issues: [ 'Has status NonReservable but is on an active reservation' ],
+    siblingsWithIssues: [],
+    activeReservation: { reservationNumber: 482432224, status: 'ReturnPending' }
+  },
+  {
+    inventoryStatus: 'NonReservable',
+    seasonsUID: 'RHUD-ORG-MM-007-01',
+    issues: [ 'Has status NonReservable but is on an active reservation' ],
+    siblingsWithIssues: [],
+    activeReservation: { reservationNumber: 236101523, status: 'Blocked' }
+  },
+  {
+    inventoryStatus: 'NonReservable',
+    seasonsUID: 'CRGR-ORG-XL-032-01',
+    issues: [ 'Has status NonReservable but is on an active reservation' ],
+    siblingsWithIssues: [],
+    activeReservation: { reservationNumber: 131168291, status: 'ReturnPending' }
+  },
+  {
+    inventoryStatus: 'NonReservable',
+    seasonsUID: 'S2W8-PRP-MM-002-01',
+    issues: [ 'Has status NonReservable but is on an active reservation' ],
+    siblingsWithIssues: [],
+    activeReservation: { reservationNumber: 194544707, status: 'Delivered' }
+  },
+  {
+    inventoryStatus: 'Reservable',
+    seasonsUID: 'CRGR-ORG-SS-032-01',
+    issues: [ 'Has status Reservable but is on an active reservation' ],
+    siblingsWithIssues: [],
+    activeReservation: { reservationNumber: 768111437, status: 'ReturnPending' }
+  },
+  {
+    inventoryStatus: 'Reserved',
+    seasonsUID: 'CSBA-BLU-XL-014-01',
+    issues: [
+      'Has warehouse location SR-A120-B130. It should either be reservable, stored, or be on a queued reservation. Active Reservation: none'
+    ],
+    siblingsWithIssues: []
+  },
+  {
+    inventoryStatus: 'NonReservable',
+    seasonsUID: 'VNTG-GRY-SS-039-01',
+    issues: [ 'Has status NonReservable but is on an active reservation' ],
+    siblingsWithIssues: [],
+    activeReservation: { reservationNumber: 718311638, status: 'ReturnPending' }
+  },
+  {
+    inventoryStatus: 'NonReservable',
+    seasonsUID: 'CRGR-ORG-MM-032-01',
+    issues: [ 'Has status NonReservable but is on an active reservation' ],
+    siblingsWithIssues: [],
+    activeReservation: { reservationNumber: 706897399, status: 'Delivered' }
+  },
+  {
+    inventoryStatus: 'NonReservable',
+    seasonsUID: 'ALDE-RED-LL-001-01',
+    issues: [ 'Has status NonReservable but is on an active reservation' ],
+    siblingsWithIssues: [],
+    activeReservation: { reservationNumber: 605513836, status: 'Delivered' }
+  },
+  {
+    inventoryStatus: 'NonReservable',
+    seasonsUID: 'DVNN-BLK-3230-014-01',
+    issues: [ 'Has status NonReservable but is on an active reservation' ],
+    siblingsWithIssues: [],
+    activeReservation: { reservationNumber: 481711527, status: 'ReturnPending' }
+  },
+  {
+    inventoryStatus: 'NonReservable',
+    seasonsUID: 'JQMU-BLU-SS-001-01',
+    issues: [ 'Has status NonReservable but is on an active reservation' ],
+    siblingsWithIssues: [],
+    activeReservation: { reservationNumber: 974683955, status: 'Lost' }
+  },
+  {
+    inventoryStatus: 'NonReservable',
+    seasonsUID: 'STIS-GRN-LL-029-01',
+    issues: [ 'Has status NonReservable but is on an active reservation' ],
+    siblingsWithIssues: [],
+    activeReservation: { reservationNumber: 907439110, status: 'ReturnPending' }
+  },
+  {
+    inventoryStatus: 'Reservable',
+    seasonsUID: 'BODE-WTE-MM-032-02',
+    issues: [ 'Has status Reservable but is on an active reservation' ],
+    siblingsWithIssues: [],
+    activeReservation: { reservationNumber: 567799123, status: 'ReturnPending' }
+  },
+  {
+    inventoryStatus: 'NonReservable',
+    seasonsUID: 'RHUD-BLK-LL-010-02',
+    issues: [ 'Has status NonReservable but is on an active reservation' ],
+    siblingsWithIssues: [],
+    activeReservation: { reservationNumber: 668950863, status: 'Delivered' }
+  },
+  {
+    inventoryStatus: 'Reserved',
+    seasonsUID: 'AMIR-BLU-SS-001-01',
+    issues: [
+      'Has warehouse location SR-A110-B120. It should either be reservable, stored, or be on a queued reservation. Active Reservation: none'
+    ],
+    siblingsWithIssues: []
+  },
+  {
+    inventoryStatus: 'NonReservable',
+    seasonsUID: 'AMBU-ORG-MM-003-01',
+    issues: [ 'Has status NonReservable but is on an active reservation' ],
+    siblingsWithIssues: [],
+    activeReservation: { reservationNumber: 212706345, status: 'Lost' }
+  },
+  {
+    inventoryStatus: 'Reservable',
+    seasonsUID: 'MNSR-BLK-XL-001-01',
+    issues: [ 'Has status Reservable but is on an active reservation' ],
+    siblingsWithIssues: [],
+    activeReservation: { reservationNumber: 726508296, status: 'Shipped' }
+  },
+  {
+    inventoryStatus: 'NonReservable',
+    seasonsUID: 'ACNE-GRN-MM-023-01',
+    issues: [ 'Has status NonReservable but is on an active reservation' ],
+    siblingsWithIssues: [],
+    activeReservation: { reservationNumber: 236101523, status: 'Blocked' }
+  },
+  {
+    inventoryStatus: 'NonReservable',
+    seasonsUID: 'AURA-BWN-MM-018-02',
+    issues: [ 'Has status NonReservable but is on an active reservation' ],
+    siblingsWithIssues: [],
+    activeReservation: { reservationNumber: 830415669, status: 'Delivered' }
+  },
+  {
+    inventoryStatus: 'Offloaded',
+    seasonsUID: 'MKTS-BLU-LL-002-01',
+    issues: [
+      'Has warehouse location IN-TRANSIT. It should either be reservable, stored, or be on a queued reservation. Active Reservation: none'
+    ],
+    siblingsWithIssues: []
+  },
+  {
+    inventoryStatus: 'NonReservable',
+    seasonsUID: 'CSBA-WTE-SS-005-01',
+    issues: [ 'Has status NonReservable but is on an active reservation' ],
+    siblingsWithIssues: [],
+    activeReservation: { reservationNumber: 712548387, status: 'ReturnPending' }
+  },
+  {
+    inventoryStatus: 'Reserved',
+    seasonsUID: 'CAVE-BWN-MM-002-01',
+    issues: [
+      'Has warehouse location SR-A100-B130. It should either be reservable, stored, or be on a queued reservation. Active Reservation: none'
+    ],
+    siblingsWithIssues: []
+  },
+  {
+    inventoryStatus: 'NonReservable',
+    seasonsUID: 'CAVE-BWN-LL-002-01',
+    issues: [
+      'Has warehouse location SR-A100-B180. It should either be reservable, stored, or be on a queued reservation. Active Reservation: none'
+    ],
+    siblingsWithIssues: []
+  },
+  {
+    inventoryStatus: 'Reserved',
+    seasonsUID: 'BIYD-GRN-LL-002-01',
+    issues: [
+      'Has warehouse location SR-A100-B190. It should either be reservable, stored, or be on a queued reservation. Active Reservation: none'
+    ],
+    siblingsWithIssues: []
+  },
+  {
+    inventoryStatus: 'NonReservable',
+    seasonsUID: 'WLSB-ORG-MM-018-01',
+    issues: [ 'Has status NonReservable but is on an active reservation' ],
+    siblingsWithIssues: [],
+    activeReservation: { reservationNumber: 276917914, status: 'ReturnPending' }
+  },
+  {
+    inventoryStatus: 'Reserved',
+    seasonsUID: 'BTWL-WTE-MM-001-01',
+    issues: [
+      'Has warehouse location SR-A110-B140. It should either be reservable, stored, or be on a queued reservation. Active Reservation: none'
+    ],
+    siblingsWithIssues: []
+  },
+  {
+    inventoryStatus: 'Reserved',
+    seasonsUID: 'BTWL-WTE-SS-001-01',
+    issues: [
+      'Has warehouse location SR-A110-B180. It should either be reservable, stored, or be on a queued reservation. Active Reservation: none'
+    ],
+    siblingsWithIssues: []
+  },
+  {
+    inventoryStatus: 'NonReservable',
+    seasonsUID: 'CSBA-WTE-LL-009-02',
+    issues: [ 'Has status NonReservable but is on an active reservation' ],
+    siblingsWithIssues: [],
+    activeReservation: { reservationNumber: 983359368, status: 'ReturnPending' }
+  },
+  {
+    inventoryStatus: 'Reservable',
+    seasonsUID: 'KNKE-BWN-3232-012-02',
+    issues: [ 'Has status Reservable but is on an active reservation' ],
+    siblingsWithIssues: [],
+    activeReservation: { reservationNumber: 520262246, status: 'ReturnPending' }
+  },
+  {
+    inventoryStatus: 'Reserved',
+    seasonsUID: 'CDGS-BLK-MM-005-01',
+    issues: [
+      'Has warehouse location DB-A110-A100. It should either be reservable, stored, or be on a queued reservation. Active Reservation: none'
+    ],
+    siblingsWithIssues: []
+  },
+  {
+    inventoryStatus: 'NonReservable',
+    seasonsUID: 'CDGS-BLK-LL-001-01',
+    issues: [ 'Has status NonReservable but is on an active reservation' ],
+    siblingsWithIssues: [],
+    activeReservation: { reservationNumber: 742860517, status: 'Delivered' }
+  },
+  {
+    inventoryStatus: 'NonReservable',
+    seasonsUID: 'CDGS-WTE-XL-002-01',
+    issues: [ 'Has status NonReservable but is on an active reservation' ],
+    siblingsWithIssues: [],
+    activeReservation: { reservationNumber: 845709516, status: 'Lost' }
+  },
+  {
+    inventoryStatus: 'NonReservable',
+    seasonsUID: 'MNSR-BLK-MM-010-01',
+    issues: [ 'Has status NonReservable but is on an active reservation' ],
+    siblingsWithIssues: [],
+    activeReservation: { reservationNumber: 784194449, status: 'Shipped' }
+  },
+  {
+    inventoryStatus: 'Reserved',
+    seasonsUID: 'DUO-BLU-LL-002-01',
+    issues: [
+      'Has warehouse location SR-A110-B150. It should either be reservable, stored, or be on a queued reservation. Active Reservation: none'
+    ],
+    siblingsWithIssues: []
+  },
+  {
+    inventoryStatus: 'Reserved',
+    seasonsUID: 'DUO-BLU-LL-001-01',
+    issues: [
+      'Has warehouse location SR-A120-A100. It should either be reservable, stored, or be on a queued reservation. Active Reservation: none'
+    ],
+    siblingsWithIssues: []
+  },
+  {
+    inventoryStatus: 'Offloaded',
+    seasonsUID: 'CAVE-RED-LL-007-01',
+    issues: [
+      'Has warehouse location IN-TRANSIT. It should either be reservable, stored, or be on a queued reservation. Active Reservation: none'
+    ],
+    siblingsWithIssues: []
+  },
+  {
+    inventoryStatus: 'Reserved',
+    seasonsUID: 'DVNN-BLU-MM-001-01',
+    issues: [
+      'Has warehouse location SR-A100-B110. It should either be reservable, stored, or be on a queued reservation. Active Reservation: none'
+    ],
+    siblingsWithIssues: []
+  },
+  {
+    inventoryStatus: 'Reserved',
+    seasonsUID: 'DVNN-BLK-MM-003-01',
+    issues: [
+      'Has warehouse location SR-A100-B100. It should either be reservable, stored, or be on a queued reservation. Active Reservation: none'
+    ],
+    siblingsWithIssues: []
+  },
+  {
+    inventoryStatus: 'Reserved',
+    seasonsUID: 'DVNN-BLK-SS-003-01',
+    issues: [
+      'Has warehouse location SR-A100-B170. It should either be reservable, stored, or be on a queued reservation. Active Reservation: none'
+    ],
+    siblingsWithIssues: []
+  },
+  {
+    inventoryStatus: 'Reserved',
+    seasonsUID: 'DVNN-BLU-SS-004-01',
+    issues: [
+      'Has warehouse location SR-A100-A180. It should either be reservable, stored, or be on a queued reservation. Active Reservation: none'
+    ],
+    siblingsWithIssues: []
+  },
+  {
+    inventoryStatus: 'Reserved',
+    seasonsUID: 'JOEL-RED-LL-004-01',
+    issues: [
+      'Has warehouse location SR-A110-A160. It should either be reservable, stored, or be on a queued reservation. Active Reservation: none'
+    ],
+    siblingsWithIssues: []
+  },
+  ... 191 more items
+]
