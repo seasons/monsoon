@@ -1,7 +1,5 @@
 import "module-alias/register"
 
-import "./lib/tracer"
-
 import { NestFactory } from "@nestjs/core"
 import { ExpressAdapter } from "@nestjs/platform-express"
 import * as Sentry from "@sentry/node"
