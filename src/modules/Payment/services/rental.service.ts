@@ -558,7 +558,6 @@ export class RentalService {
       case "Queued":
       case "Picked":
       case "Packed":
-      case "Hold":
       case "InTransitOutbound":
       case "ScannedOnOutbound":
         // TODO: If we're doing an estimation, let this be 2 days from now

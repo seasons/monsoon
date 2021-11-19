@@ -1431,7 +1431,6 @@ enum ReservationPhysicalProductStatus {
   ReturnPending
   ReturnProcessed
   ResetEarly
-  Hold
   Lost
 }
 
@@ -1446,6 +1445,8 @@ model ReservationPhysicalProduct {
 
   pickedAt DateTime?
   packedAt DateTime?
+
+  isOnHold Boolean   @default(false)
 
   // customer or UPS
   droppedOffBy ReservationDropOffAgent?
