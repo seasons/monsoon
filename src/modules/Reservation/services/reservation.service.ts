@@ -72,49 +72,140 @@ export class ReservationService {
     private readonly customerUtils: CustomerUtilsService
   ) {}
 
-  async cancelReturn(customer: Customer) {
-    const lastReservation = await this.utils.getLatestReservation(customer.id)
+  async cancelReturn(customer: Customer, bagItemId: string) {
+    if (bagItemId) {
+      // If one bagItemId is passed just cancel the single return
+      const bagItem = await this.prisma.client.bagItem.findUnique({
+        where: {
+          id: bagItemId,
+        },
+        select: {
+          reservationPhysicalProduct: {
+            select: {
+              id: true,
+              status: true,
+            },
+          },
+        },
+      })
 
-    await this.prisma.client.reservation.update({
-      data: {
-        returnedProducts: { set: [] },
-        returnedAt: null,
-      },
-      where: { id: String(lastReservation.id) },
-    })
+      const reservationPhysicalProduct = await this.prisma.client.reservationPhysicalProduct.update(
+        {
+          where: {
+            id: bagItem.reservationPhysicalProduct.id,
+          },
+          data: {
+            status: "DeliveredToCustomer",
+          },
+          select: {
+            id: true,
+          },
+        }
+      )
 
-    return lastReservation
+      return [reservationPhysicalProduct]
+    } else {
+      // Cancel all the returns if no specific bag item is passed
+      const bagItems = await this.prisma.client.bagItem.findMany({
+        where: {
+          customer: {
+            id: customer.id,
+          },
+          saved: false,
+        },
+        select: {
+          reservationPhysicalProduct: {
+            select: {
+              id: true,
+              status: true,
+            },
+          },
+        },
+      })
+
+      const returnPendingBagItems = bagItems.filter(bagItem => {
+        return bagItem.reservationPhysicalProduct.status === "ReturnPending"
+      })
+
+      await this.prisma.client.reservationPhysicalProduct.updateMany({
+        where: {
+          id: {
+            in: returnPendingBagItems.map(
+              item => item.reservationPhysicalProduct.id
+            ),
+          },
+        },
+        data: {
+          status: "DeliveredToCustomer",
+        },
+      })
+
+      return this.prisma.client.reservationPhysicalProduct.findMany({
+        where: {
+          id: {
+            in: returnPendingBagItems.map(
+              item => item.reservationPhysicalProduct.id
+            ),
+          },
+        },
+        select: {
+          id: true,
+        },
+      })
+    }
   }
 
   async returnItems(items: string[], customer: Customer) {
-    const lastReservation: any = await this.utils.getLatestReservation(
-      customer.id
-    )
-
-    // If there's an item being returned that isn't in the current reservation
-    // throw an error
-    if (
-      intersection(
-        lastReservation.products.map(p => p.id),
-        items
-      ).length !== items.length
-    ) {
-      throw new Error(
-        "One of the returned items isn't in the current reservation"
-      )
-    }
-
-    await this.prisma.client.reservation.update({
-      data: {
-        returnedProducts: {
-          connect: items.map(item => ({ id: item })),
+    const bagItems = await this.prisma.client.bagItem.findMany({
+      where: {
+        customer: {
+          id: customer.id,
         },
-        returnedAt: new Date(),
+        saved: false,
       },
-      where: { id: String(lastReservation.id) },
+      select: {
+        physicalProduct: {
+          select: {
+            id: true,
+          },
+        },
+        reservationPhysicalProduct: {
+          select: {
+            id: true,
+          },
+        },
+      },
     })
 
-    return lastReservation
+    const bagItemsToUpdate = bagItems.filter(bagItem => {
+      return items.includes(bagItem.physicalProduct.id)
+    })
+
+    const reservationPhysicalProductIds = bagItemsToUpdate.map(
+      item => item.reservationPhysicalProduct.id
+    )
+
+    await this.prisma.client.reservationPhysicalProduct.updateMany({
+      where: {
+        id: {
+          in: reservationPhysicalProductIds,
+        },
+      },
+      data: {
+        status: "ReturnPending",
+      },
+    })
+
+    return this.prisma.client.reservationPhysicalProduct.findMany({
+      where: {
+        id: {
+          in: reservationPhysicalProductIds,
+        },
+      },
+      select: {
+        id: true,
+      },
+    })
   }
 
   private async getReservation(reservationNumber: number) {
@@ -159,226 +250,6 @@ export class ReservationService {
         },
       },
     })
-  }
-
-  async processReservation(
-    reservationNumber,
-    productStates: ProductState[],
-    trackingNumber: string
-  ) {
-    // Update status on physical products depending on whether
-    // the item was returned, and update associated product variant counts
-
-    const physicalProducts = await this.prisma.client.physicalProduct.findMany({
-      where: {
-        seasonsUID: {
-          in: productStates.map(p => p.productUID),
-        },
-      },
-      select: {
-        id: true,
-        seasonsUID: true,
-        inventoryStatus: true,
-        productVariant: {
-          select: {
-            id: true,
-            sku: true,
-            reserved: true,
-            reservable: true,
-            nonReservable: true,
-            product: true,
-          },
-        },
-      },
-    })
-
-    let promises = []
-
-    for (let state of productStates) {
-      if (state.returned) {
-        const physicalProduct = physicalProducts.find(
-          a => a.seasonsUID === state.productUID
-        )
-        const productVariant = physicalProduct.productVariant as any
-        const product = productVariant.product
-
-        const inventoryStatus: InventoryStatus =
-          product.status === "Stored" ? "Stored" : "NonReservable"
-
-        const updateData = {
-          productStatus: state.productStatus,
-          inventoryStatus,
-        }
-
-        const productVariantData = this.productVariantService.getCountsForStatusChange(
-          {
-            productVariant,
-            oldInventoryStatus: physicalProduct.inventoryStatus as InventoryStatus,
-            newInventoryStatus: updateData.inventoryStatus as InventoryStatus,
-          }
-        )
-
-        promises.push(
-          this.prisma.client.product.update({
-            where: {
-              id: product.id,
-            },
-            data: {
-              variants: {
-                update: {
-                  where: {
-                    id: productVariant.id,
-                  },
-                  data: {
-                    ...productVariantData,
-                    physicalProducts: {
-                      update: {
-                        where: {
-                          id: physicalProduct.id,
-                        },
-                        data: {
-                          ...updateData,
-                        },
-                      },
-                    },
-                  },
-                },
-              },
-            },
-          })
-        )
-      }
-    }
-
-    const receiptPromise = this.prisma.client.reservationReceipt.create({
-      data: {
-        reservation: {
-          connect: { reservationNumber },
-        },
-        items: {
-          create: productStates
-            .filter(a => a.returned)
-            .map(productState => {
-              return {
-                product: {
-                  connect: {
-                    seasonsUID: productState.productUID,
-                  },
-                },
-                productStatus: productState.productStatus,
-                notes: productState.notes,
-              }
-            }),
-        },
-      },
-    })
-
-    const reservation = await this.getReservation(reservationNumber)
-
-    const prismaUser = await this.prisma.client.user.findUnique({
-      where: {
-        email: reservation.customer.user.email,
-      },
-    })
-
-    const returnedPhysicalProducts = reservation.products.filter(p => {
-      const physicalProduct = productStates.find(
-        s => s.productUID === p.seasonsUID
-      )
-      return physicalProduct.returned
-    })
-
-    // Mark reservation as completed
-    const reservationPromise = this.prisma.client.reservation.update({
-      where: {
-        id: reservation.id,
-      },
-      data: {
-        status: "Completed",
-        returnedAt: new Date(),
-        returnedProducts: {
-          connect: productStates
-            .filter(a => a.returned)
-            .map(productState => ({
-              seasonsUID: productState.productUID,
-            })),
-        },
-      },
-    })
-
-    if (reservation.status === "ReturnPending") {
-      promises.push(
-        this.prisma.client.reservation.updateMany({
-          where: {
-            customerId: { equals: reservation.customer.id },
-            status: "ReturnPending",
-          },
-          data: {
-            status: "Completed",
-          },
-        })
-      )
-    }
-
-    const updateBagPromise = this.prisma.client.bagItem.deleteMany({
-      where: {
-        customer: { id: reservation.customer.id },
-        saved: false,
-        productVariant: {
-          id: {
-            in: returnedPhysicalProducts.map(p => (p.productVariant as any).id),
-          },
-        },
-        status: "Reserved",
-      },
-    })
-
-    // Create reservationFeedback datamodels for the returned product variants
-    const [
-      reservationFeedbackPromise,
-    ] = await this.createReservationFeedbacksForVariants(
-      await this.prisma.client.productVariant.findMany({
-        where: {
-          id: {
-            in: returnedPhysicalProducts.map(p => (p.productVariant as any).id),
-          },
-        },
-      }),
-      prismaUser,
-      reservation
-    )
-
-    const [
-      updateReturnPackagePromise,
-    ] = await this.reservationUtils.updateReturnPackageOnCompletedReservation(
-      reservation,
-      returnedPhysicalProducts,
-      trackingNumber
-    )
-
-    await this.prisma.client.$transaction(
-      [
-        ...(promises as PrismaPromise<any>[]),
-        receiptPromise,
-        reservationPromise,
-        updateBagPromise,
-        reservationFeedbackPromise,
-        updateReturnPackagePromise,
-      ].filter(Boolean)
-    )
-
-    await this.pushNotifs.pushNotifyUsers({
-      emails: [prismaUser.email],
-      pushNotifID: "ResetBag",
-    })
-
-    await this.emails.sendYouCanNowReserveAgainEmail(prismaUser)
-
-    await this.emails.sendAdminConfirmationEmail(
-      prismaUser,
-      returnedPhysicalProducts,
-      reservation
-    )
   }
 
   interpretReservationLogs(logs: AdminActionLog[]) {
