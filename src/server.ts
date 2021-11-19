@@ -41,13 +41,20 @@ function handleErrors(logger) {
 
 const setupMemwatch = logger => {
   memwatch.on("stats", stats => {
-    logger.info(`Heap Stats after Garbage Collection`, { stats })
+    logger.info(`Heap Stats after Garbage Collection`, {
+      stats,
+      dyno: process.env.DYNO || "not available",
+    })
   })
 
   let diffStart = new memwatch.HeapDiff()
   setInterval(() => {
     const diffEnd = diffStart.end()
-    logger.info(`Heap Diff`, { diff: diffEnd, interval: "10 Minutes" })
+    logger.info(`Heap Diff`, {
+      diff: diffEnd,
+      interval: "10 Minutes",
+      dyno: process.env.DYNO || "not available",
+    })
     diffStart = new memwatch.HeapDiff()
   }, 600000) // 10 minutes
 }
