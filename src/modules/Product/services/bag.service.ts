@@ -646,15 +646,15 @@ export class BagService {
 
     const promises = []
 
-    promises.push(
-      this.prisma.client.bagItem.deleteMany({
-        where: {
-          id: {
-            in: lostBagItemsIds,
-          },
-        },
-      })
-    )
+    // promises.push(
+    //   this.prisma.client.bagItem.deleteMany({
+    //     where: {
+    //       id: {
+    //         in: lostBagItemsIds,
+    //       },
+    //     },
+    //   })
+    // )
 
     promises.push(
       this.prisma.client.reservation.updateMany({
