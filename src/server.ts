@@ -41,10 +41,10 @@ function handleErrors(logger) {
 export const printMemoryUsage = logger => {
   setInterval(() => {
     const { rss, heapUsed, heapTotal, external } = process.memoryUsage()
-    const dynoName = (process.env.DYNO || "web.1").replace(".", "")
+    const dynoName = (process.env.DYNO || "unknown").replace(".", "")
     const appName = process.env.HEROKU_APP_NAME || "monsoon-dev"
 
-    logger.log("Memory Usage", {
+    logger.info("Memory Usage", {
       rss: numeral(rss).format("0.0 ib"),
       heapTotal: numeral(heapTotal).format("0.0 ib"),
       heapUsed: numeral(heapUsed).format("0.0 ib"),

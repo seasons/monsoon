@@ -11,7 +11,7 @@ export const setupHeapProfiler = async logger => {
   const intervalBytes = 512 * 1024
   // The maximum stack depth for samples collected.
   const stackDepth = 64
-  const dynoName = (process.env.DYNO || "web.1").replace(".", "")
+  const dynoName = (process.env.DYNO || "unknown").replace(".", "")
   const appName = process.env.HEROKU_APP_NAME || "monsoon-dev"
 
   await pprof.heap.start(intervalBytes, stackDepth)
