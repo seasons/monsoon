@@ -106,7 +106,6 @@ enum BagSectionStatus {
   ReturnPending
   ReturnProcessed
   ResetEarly
-  Hold
   Lost
 }
 
