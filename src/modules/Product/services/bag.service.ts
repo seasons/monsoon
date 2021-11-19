@@ -136,6 +136,8 @@ export class BagService {
         BagSectionStatus.DeliveredToCustomer,
         BagSectionStatus.ReturnPending,
         BagSectionStatus.Inbound,
+        BagSectionStatus.DeliveredToBusiness,
+        BagSectionStatus.Lost,
       ]
 
       return sections.map(status => {
