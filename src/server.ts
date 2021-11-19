@@ -11,6 +11,7 @@ import express from "express"
 import httpContext from "express-http-context"
 
 import { AppModule } from "./app.module"
+import { setupHeapProfiler } from "./heapProfiler"
 import {
   createExpressWinstonHandler,
   createNestWinstonLogger,
@@ -45,6 +46,8 @@ export const addMiddlewares = async server => {
   const expressWinstonHandler = createExpressWinstonHandler(
     nestWinstonLogger.logger
   )
+
+  setupHeapProfiler(nestWinstonLogger.logger)
 
   server.use(
     expressWinstonHandler,
