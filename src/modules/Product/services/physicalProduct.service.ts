@@ -372,7 +372,7 @@ export class PhysicalProductService {
 
       // If there are currently no reservable units, notify users of the restock
       if (prodVariant.reservable !== 0) {
-        return
+        continue
       }
       const product = prodVariant.product
       const notifications = await this.prisma.client.productNotification.findMany(
