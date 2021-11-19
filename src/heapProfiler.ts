@@ -21,9 +21,11 @@ export const setupHeapProfiler = async logger => {
       const profile = await pprof.heap.profile()
       const buf = await pprof.encode(profile)
 
-      const filename = `${appName}-${dynoName}/heap-${DateTime.local().toLocaleString(
-        DateTime.DATETIME_SHORT as any
+      const filename = `${appName}-${dynoName}/heap-${DateTime.local().toFormat(
+        "hh-mm-ss"
       )}.pb.gz`
+
+      console.log(filename)
 
       fs.writeFile(filename, buf, err => {
         if (err) {
