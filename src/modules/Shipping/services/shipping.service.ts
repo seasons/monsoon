@@ -225,19 +225,19 @@ export class ShippingService {
           "street1",
         ]),
       }
-      throw new ApolloError("Need to Suggest Address", "400", {
-        suggestedAddress,
-        failureMode: !streetMatches
-          ? "Street mismatch"
-          : !cityMatches
-          ? "City mismatch"
-          : !stateMatches
-          ? "State mismatch"
-          : !zipMatches
-          ? "Zip mismatch"
-          : "",
-        originalAddress: address,
-      })
+      // throw new ApolloError("Need to Suggest Address", "400", {
+      //   suggestedAddress,
+      //   failureMode: !streetMatches
+      //     ? "Street mismatch"
+      //     : !cityMatches
+      //     ? "City mismatch"
+      //     : !stateMatches
+      //     ? "State mismatch"
+      //     : !zipMatches
+      //     ? "Zip mismatch"
+      //     : "",
+      //   originalAddress: address,
+      // })
     }
     const message = validationResults?.messages?.[0]
 
