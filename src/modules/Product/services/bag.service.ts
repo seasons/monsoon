@@ -1,12 +1,7 @@
 import { ProductUtilsService } from "@app/modules/Utils/services/product.utils.service"
 import { UtilsService } from "@app/modules/Utils/services/utils.service"
 import { Injectable } from "@nestjs/common"
-import {
-  BagItem,
-  InventoryStatus,
-  Prisma,
-  ReservationPhysicalProductStatus,
-} from "@prisma/client"
+import { BagItem, InventoryStatus, Prisma } from "@prisma/client"
 import { PrismaService } from "@prisma1/prisma.service"
 import { ApolloError } from "apollo-server"
 import cuid from "cuid"
@@ -399,7 +394,6 @@ export class BagService {
     const newProductVariantID = newPhysicalProduct.productVariant.id
     const [
       productVariantsCountsUpdatePromises,
-      productsBeingReserved,
     ] = await this.productVariantService.updateProductVariantCounts(
       [newProductVariantID],
       customerID
@@ -501,96 +495,69 @@ export class BagService {
     return addedBagItem
   }
 
-  private updateInboundAndOutboundResPhysProdsOnLost(lostResPhysProds) {
-    const promises = []
-    const lostOutboundResPhysProds = lostResPhysProds.filter(a =>
-      ([
-        "ScannedOnOutbound",
-        "InTransitOutbound",
-        "DeliveredToCustomer",
-      ] as ReservationPhysicalProductStatus[]).includes(a.status)
-    )
-    const lostInboundItemsResPhysProds = lostResPhysProds.filter(a =>
-      ([
-        "ScannedOnInbound",
-        "InTransitInbound",
-        "DeliveredToBusiness",
-      ] as ReservationPhysicalProductStatus[]).includes(a.status)
-    )
+  private getLostPhase(lostResPhysProd) {
+    const lostOutboundResPhysProds = [
+      "ScannedOnOutbound",
+      "InTransitOutbound",
+      "DeliveredToCustomer",
+    ].includes(lostResPhysProd.status)
+
+    const lostInboundItemsResPhysProds = [
+      "ScannedOnInbound",
+      "InTransitInbound",
+      "DeliveredToBusiness",
+    ].includes(lostResPhysProd.status)
 
     if (lostOutboundResPhysProds) {
-      promises.push(
-        this.prisma.client.reservationPhysicalProduct.updateMany({
-          where: {
-            id: {
-              in: lostOutboundResPhysProds.map(a => a.id),
-            },
-          },
-          data: {
-            lostAt: new Date(),
-            lostInPhase: "BusinessToCustomer",
-            hasBeenLost: true,
-          },
-        })
+      return "BusinessToCustomer"
+    } else if (lostInboundItemsResPhysProds) {
+      return "CustomerToBusiness"
+    } else {
+      throw new Error(
+        "Lost phase is undefined, status does not match an inbound or outbound phase"
       )
     }
-
-    if (lostInboundItemsResPhysProds) {
-      promises.push(
-        this.prisma.client.reservationPhysicalProduct.updateMany({
-          where: {
-            id: {
-              in: lostInboundItemsResPhysProds.map(a => a.id),
-            },
-          },
-          data: {
-            lostAt: new Date(),
-            lostInPhase: "CustomerToBusiness",
-            hasBeenLost: true,
-          },
-        })
-      )
-    }
-    return promises
   }
 
-  private updatePhysicalProductsOnLost(physicalProducts) {
+  private updatePhysicalProductsOnLost(physicalProduct) {
     const physicalProductPromises = []
-    physicalProducts.forEach(physicalProduct => {
-      const productVariantData = this.productVariantService.getCountsForStatusChange(
-        {
-          productVariant: physicalProduct.productVariant,
-          oldInventoryStatus: "Reserved",
-          newInventoryStatus: "NonReservable",
-        }
-      )
+    const productVariantData = this.productVariantService.getCountsForStatusChange(
+      {
+        productVariant: physicalProduct.productVariant,
+        oldInventoryStatus: "Reserved",
+        newInventoryStatus: "NonReservable",
+      }
+    )
 
-      physicalProductPromises.push(
-        this.prisma.client.physicalProduct.update({
-          where: {
-            id: physicalProduct.id,
-          },
-          data: {
-            productStatus: "Lost",
-            inventoryStatus: "NonReservable",
-            productVariant: {
-              update: {
-                ...productVariantData,
-              },
+    physicalProductPromises.push(
+      this.prisma.client.physicalProduct.update({
+        where: {
+          id: physicalProduct.id,
+        },
+        data: {
+          productStatus: "Lost",
+          inventoryStatus: "NonReservable",
+          productVariant: {
+            update: {
+              ...productVariantData,
             },
           },
-        })
-      )
-    })
+        },
+      })
+    )
     return physicalProductPromises
   }
 
-  async processLostItems(lostBagItemsIds) {
-    const bagItemsWithData = await this.prisma.client.bagItem.findMany({
+  // async markAsFound(
+  //   lostBagItemId,
+  //   status: "DeliveredToCustomer" | "DeliveredToBusiness"
+  // ) {
+  // }
+
+  async markAsLost(lostBagItemId) {
+    const bagItemWithData = await this.prisma.client.bagItem.findUnique({
       where: {
-        id: {
-          in: lostBagItemsIds,
-        },
+        id: lostBagItemId,
       },
       select: {
         reservationPhysicalProduct: {
@@ -616,47 +583,15 @@ export class BagService {
       },
     })
 
-    const lostResPhysProds = bagItemsWithData.map(
-      a => a.reservationPhysicalProduct
-    )
-
-    const physicalProducts = bagItemsWithData.map(a => a.physicalProduct)
-
-    lostResPhysProds.forEach(resPhysProd => {
-      if (
-        !([
-          "ScannedOnInbound",
-          "InTransitInbound",
-          "DeliveredToCustomer",
-          "ScannedOnOutbound",
-          "InTransitOutbound",
-          "DeliveredToBusiness",
-        ] as ReservationPhysicalProductStatus[]).includes(resPhysProd.status)
-      ) {
-        throw new Error(
-          "Only inbound, outbound, or delivered items can be marked as lost"
-        )
-      }
-    })
+    const physicalProduct = bagItemWithData.physicalProduct
+    const lostResPhysProd = bagItemWithData.reservationPhysicalProduct
 
     const promises = []
 
-    // promises.push(
-    //   this.prisma.client.bagItem.deleteMany({
-    //     where: {
-    //       id: {
-    //         in: lostBagItemsIds,
-    //       },
-    //     },
-    //   })
-    // )
-
     promises.push(
-      this.prisma.client.reservation.updateMany({
+      this.prisma.client.reservation.update({
         where: {
-          id: {
-            in: lostResPhysProds.map(a => a.reservationId),
-          },
+          id: lostResPhysProd.reservationId,
         },
         data: {
           status: "Lost",
@@ -664,11 +599,23 @@ export class BagService {
       })
     )
 
-    promises.push(
-      ...this.updateInboundAndOutboundResPhysProdsOnLost(lostResPhysProds)
-    )
+    const lostInPhase = this.getLostPhase(lostResPhysProd)
 
-    promises.push(...this.updatePhysicalProductsOnLost(physicalProducts))
+    promises.push(...this.updatePhysicalProductsOnLost(physicalProduct))
+
+    promises.push(
+      this.prisma.client.reservationPhysicalProduct.update({
+        where: {
+          id: lostResPhysProd.id,
+        },
+        data: {
+          status: "Lost",
+          lostInPhase,
+          lostAt: new Date().toISOString(),
+          hasBeenLost: true,
+        },
+      })
+    )
 
     await this.prisma.client.$transaction(promises)
 
