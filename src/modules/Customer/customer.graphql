@@ -43,7 +43,6 @@ enum DeleteBagItemType {
 type Mutation {
   swapBagItem(oldItemID: ID!, seasonsUID: String!): BagItem!
     @hasRole(roles: [Admin])
-  processLostItems(lostBagItemIds: [String]): Boolean @hasRole(roles: [Admin])
   addToBag(
     item: ID!
     customerID: ID
