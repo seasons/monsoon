@@ -815,13 +815,15 @@ export class BagService {
         break
       case "DeliveredToBusiness":
         // 3. Inbound step 3
-        filteredBagItems = filteredBagItems.filter(item => {
-          const updatedMoreThan24HoursAgo = checkIfUpdatedMoreThan24HoursAgo(
-            item
-          )
+        if (!isAdmin) {
+          filteredBagItems = filteredBagItems.filter(item => {
+            const updatedMoreThan24HoursAgo = checkIfUpdatedMoreThan24HoursAgo(
+              item
+            )
 
-          return !updatedMoreThan24HoursAgo
-        })
+            return !updatedMoreThan24HoursAgo
+          })
+        }
         title = "Order returned"
         deliveryStep = 3
         deliveryStatusText = "Shipped"
