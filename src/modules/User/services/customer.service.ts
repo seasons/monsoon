@@ -94,6 +94,7 @@ export class CustomerService {
     const customerWithData = await this.prisma.client.customer.findUnique({
       where: { id: customerID },
       select: {
+        user: { select: { email: true } },
         bagItems: { select: { status: true } },
         membership: {
           select: {
@@ -101,7 +102,7 @@ export class CustomerService {
               select: { subscriptionId: true },
             },
             rentalInvoices: {
-              where: { status: "Draft" },
+              where: { status: { in: ["Draft", "ChargeFailed"] } },
               select: { id: true, billingEndAt: true },
             },
           },
@@ -109,7 +110,9 @@ export class CustomerService {
       },
     })
     if (customerWithData.membership.rentalInvoices.length !== 1) {
-      throw new Error("Customer has incorrect number of draft rental invoices")
+      throw new Error(
+        "Customer has incorrect number of draft/chargefailed rental invoices"
+      )
     }
     if (
       customerWithData.bagItems.filter(a => a.status === "Reserved").length > 0
@@ -130,10 +133,13 @@ export class CustomerService {
     await this.rental.processInvoice(invoiceWithData, {
       onError: err => {
         invoiceDidError = true
-        this.logger.error("Rental invoice billing failed", {
-          activeInvoice,
-          error: err,
-        })
+        this.logger.error(
+          `Rental invoice billing failed for customer ${customerWithData.user.email}`,
+          {
+            activeInvoice,
+            error: err,
+          }
+        )
       },
       forceImmediateCharge: true,
       createNextInvoice: false,
