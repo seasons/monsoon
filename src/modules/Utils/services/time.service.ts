@@ -26,6 +26,9 @@ export class TimeUtilsService {
   }
 
   isBetweenDates(date: Date, startDate: Date, endDate: Date) {
+    if (!date) {
+      return false
+    }
     return (
       date.getTime() - startDate.getTime() >= 0 &&
       date.getTime() - endDate.getTime() <= 0

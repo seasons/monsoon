@@ -395,7 +395,7 @@ describe("Create Rental Invoice Line Items", () => {
                 "Outbound package shipped 2.16"
               )
               expect(lineItemDatas[0].comment).toBe(
-                "First shipped outbound package of billing cycle. Used premium shipping method. Charge"
+                "First shipped outbound package of current billing cycle. Used premium shipping method. Charge"
               )
             })
 
@@ -424,7 +424,7 @@ describe("Create Rental Invoice Line Items", () => {
                 "Outbound package shipped 2.16"
               )
               expect(lineItemDatas[0].comment).toBe(
-                "First shipped outbound package of billing cycle. Did not use premium shipping method. No charge"
+                "First shipped outbound package of current billing cycle. Did not use premium shipping method. No charge"
               )
             })
           })
@@ -463,7 +463,7 @@ describe("Create Rental Invoice Line Items", () => {
               expect(secondLineItem.price).toBeGreaterThan(0)
               expect(secondLineItem.name).toBe("Outbound package shipped 2.21")
               expect(secondLineItem.comment).toBe(
-                "Shipped outbound package 2 of billing cycle. Charge."
+                "Shipped outbound package 2 of current billing cycle. Charge."
               )
             })
 
@@ -500,7 +500,7 @@ describe("Create Rental Invoice Line Items", () => {
               expect(secondLineItem.price).toBeGreaterThan(0)
               expect(secondLineItem.name).toBe("Outbound package shipped 2.21")
               expect(secondLineItem.comment).toBe(
-                "Shipped outbound package 2 of billing cycle. Charge."
+                "Shipped outbound package 2 of current billing cycle. Charge."
               )
             })
           })
@@ -535,54 +535,10 @@ describe("Create Rental Invoice Line Items", () => {
       })
 
       describe("Function: Get Outbound Package Line Item Datas From Previous Billing Cycle", () => {
-        let testCustomer
-        let currentRentalInvoiceWithData
-        beforeEach(async () => {
-          const { customer } = await testUtils.createTestCustomer({
-            create: {
-              membership: {
-                create: {
-                  rentalInvoices: {
-                    createMany: {
-                      data: [
-                        {
-                          id: cuid(),
-                          billingStartAt: timeUtils.xDaysAgoISOString(60),
-                          billingEndAt: timeUtils.xDaysAgoISOString(30),
-                          status: "Billed",
-                        },
-                      ],
-                    },
-                  },
-                } as any,
-              },
-            },
-            select: { id: true },
-          })
-
-          const customerWithData = await prisma.client.customer.findUnique({
-            where: { id: customer.id },
-            select: {
-              membership: {
-                select: {
-                  rentalInvoices: {
-                    orderBy: { billingStartAt: "asc" },
-                    select: {
-                      status: true,
-                      id: true,
-                      billingEndAt: true,
-                      billingStartAt: true,
-                    },
-                  },
-                },
-              },
-            },
-          })
-          testCustomer = customerWithData
-
-          currentRentalInvoiceWithData = customerWithData.membership.rentalInvoices.find(
-            a => a.status === "Draft"
-          )
+        let mocksToRestore = []
+        afterEach(async () => {
+          mocksToRestore.forEach(mock => mock.mockRestore())
+          mocksToRestore = []
         })
 
         it("(Helper Func) Get Previous Rental Invoice with Package Data queries the proper invoice", async () => {
@@ -628,6 +584,10 @@ describe("Create Rental Invoice Line Items", () => {
         })
 
         it("If there's no previous invoice, creates no line items", async () => {
+          const previousRentalInvoiceMock = jest
+            .spyOn(rentalService, "getPreviousRentalInvoiceWithPackageData")
+            .mockReturnValue(null)
+          mocksToRestore.push(previousRentalInvoiceMock)
           const lineItemDatas = await rentalService.getOutboundPackageLineItemDatasFromPreviousBillingCycle(
             {
               id: cuid(),
@@ -646,19 +606,38 @@ describe("Create Rental Invoice Line Items", () => {
               ],
             }
           )
-
           expect(lineItemDatas.length).toBe(0)
         })
         it("Ignores packages created in this billing cycle", async () => {
+          const previousRentalInvoiceMock = jest
+            .spyOn(rentalService, "getPreviousRentalInvoiceWithPackageData")
+            .mockReturnValue({
+              id: cuid(),
+              billingStartAt: timeUtils.xDaysAgo(60),
+              billingEndAt: timeUtils.xDaysAgo(30),
+              reservationPhysicalProducts: [
+                {
+                  outboundPackage: {
+                    id: true,
+                    createdAt: timeUtils.xDaysAgo(36),
+                    enteredDeliverySystemAt: timeUtils.xDaysAgo(35),
+                  },
+                },
+              ],
+              lineItems: [],
+            } as any)
+          mocksToRestore.push(previousRentalInvoiceMock)
           const lineItemDatas = await rentalService.getOutboundPackageLineItemDatasFromPreviousBillingCycle(
             {
-              ...currentRentalInvoiceWithData,
+              id: cuid(),
+              billingEndAt: new Date(),
+              billingStartAt: timeUtils.xDaysAgo(30),
               reservationPhysicalProducts: [
                 {
                   outboundPackage: {
                     id: "1",
-                    createdAt: timeUtils.xDaysAgoISOString(15),
-                    enteredDeliverySystemAt: timeUtils.xDaysAgoISOString(14),
+                    createdAt: timeUtils.xDaysAgo(15),
+                    enteredDeliverySystemAt: timeUtils.xDaysAgo(14),
                     amount: 2000,
                     shippingMethod: { code: "UPSSelect" },
                   },
