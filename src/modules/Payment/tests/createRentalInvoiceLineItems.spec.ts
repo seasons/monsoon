@@ -504,8 +504,30 @@ describe("Create Rental Invoice Line Items", () => {
           })
         })
 
-        it("Charges for any given package only once", () => {
-          expect(0).toBe(1)
+        it("Creates only one line item per package", () => {
+          const outboundPackage = {
+            id: "1",
+            createdAt: new Date(2021, 1, 15),
+            enteredDeliverySystemAt: new Date(2021, 1, 16),
+            amount: 2000,
+            shippingMethod: { code: "UPSGround" },
+          } as any
+          const lineItemDatas = rentalService.getOutboundPackageLineItemDatasFromThisBillingCycle(
+            {
+              billingStartAt: new Date(2021, 1, 1),
+              billingEndAt: new Date(2021, 2, 1),
+              reservationPhysicalProducts: [
+                {
+                  outboundPackage,
+                },
+                {
+                  outboundPackage,
+                },
+              ],
+            }
+          )
+
+          expect(lineItemDatas.length).toBe(1)
         })
       })
 
