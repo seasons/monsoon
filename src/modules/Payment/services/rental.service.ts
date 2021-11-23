@@ -442,7 +442,7 @@ export class RentalService {
       )
       if (planID === "access-monthly") {
         billingEndAt = this.timeUtils.xDaysBeforeDate(
-          thirtyDaysFromBillingStartAt,
+          thirtyDaysFromNextBillingAt,
           1,
           "date"
         )
@@ -450,7 +450,7 @@ export class RentalService {
         billingEndAt = thirtyDaysFromNextBillingAt
       } else {
         billingEndAt = this.timeUtils.xDaysAfterDate(
-          thirtyDaysFromBillingStartAt,
+          thirtyDaysFromNextBillingAt,
           1,
           "date"
         )
@@ -1309,7 +1309,16 @@ export class RentalService {
       )
     }
 
-    return billingEndAtDate
+    const billingEndAtWithTime = new Date(
+      billingEndAtDate.getFullYear(),
+      billingEndAtDate.getMonth(),
+      billingEndAtDate.getDate(),
+      billingStartAt.getHours(),
+      billingStartAt.getMinutes(),
+      billingStartAt.getSeconds()
+    )
+
+    return billingEndAtWithTime
   }
 
   calculateUnadjustedPriceForDaysRented = (product, daysRented) => {
