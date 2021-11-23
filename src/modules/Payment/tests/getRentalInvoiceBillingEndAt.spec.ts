@@ -349,10 +349,11 @@ describe("Get Rental Invoice Billing End At", () => {
 
     // use august 31st because "30" days from it will be september 30. This allows
     // us to test a very edgey case
-    let augustThirtyFirst2021 = new Date(2030, 7, 31) // aug 31
+    let augustThirtyFirst2030 = new Date(2030, 7, 31) // aug 31
+    let billingAt = new Date(2030, 7, 29) // aug 29
     beforeAll(async () => {
       await setCustomerSubscriptionNextBillingAtWithParams(
-        augustThirtyFirst2021
+        augustThirtyFirst2030
       )
       isLessThanXDaysFromNowMock = jest
         .spyOn<any, any>(timeUtils, "isLessThanXDaysFromNow")
@@ -366,7 +367,7 @@ describe("Get Rental Invoice Billing End At", () => {
       await setCustomerPlanTypeWithParams("access-monthly")
       const rentalInvoiceBillingEndAt = await rentalService.getRentalInvoiceBillingEndAt(
         custWithData.membership.id,
-        augustThirtyFirst2021
+        billingAt
       )
       expectTimeToEqual(
         rentalInvoiceBillingEndAt,
@@ -378,7 +379,7 @@ describe("Get Rental Invoice Billing End At", () => {
       await setCustomerPlanTypeWithParams("access-yearly")
       const rentalInvoiceBillingEndAt = await rentalService.getRentalInvoiceBillingEndAt(
         custWithData.membership.id,
-        augustThirtyFirst2021
+        billingAt
       )
       expectTimeToEqual(rentalInvoiceBillingEndAt, septemberThirtieth)
     })
@@ -388,7 +389,7 @@ describe("Get Rental Invoice Billing End At", () => {
         await setCustomerPlanTypeWithParams("essential-1")
         const rentalInvoiceBillingEndAt = await rentalService.getRentalInvoiceBillingEndAt(
           custWithData.membership.id,
-          augustThirtyFirst2021
+          billingAt
         )
         expectTimeToEqual(
           rentalInvoiceBillingEndAt,
@@ -399,7 +400,7 @@ describe("Get Rental Invoice Billing End At", () => {
         await setCustomerPlanTypeWithParams("essential-2")
         const rentalInvoiceBillingEndAt = await rentalService.getRentalInvoiceBillingEndAt(
           custWithData.membership.id,
-          augustThirtyFirst2021
+          billingAt
         )
         expectTimeToEqual(
           rentalInvoiceBillingEndAt,
@@ -410,7 +411,7 @@ describe("Get Rental Invoice Billing End At", () => {
         await setCustomerPlanTypeWithParams("essential")
         const rentalInvoiceBillingEndAt = await rentalService.getRentalInvoiceBillingEndAt(
           custWithData.membership.id,
-          augustThirtyFirst2021
+          billingAt
         )
         expectTimeToEqual(
           rentalInvoiceBillingEndAt,
@@ -422,7 +423,7 @@ describe("Get Rental Invoice Billing End At", () => {
         await setCustomerPlanTypeWithParams("essential-6")
         const rentalInvoiceBillingEndAt = await rentalService.getRentalInvoiceBillingEndAt(
           custWithData.membership.id,
-          augustThirtyFirst2021
+          billingAt
         )
         expectTimeToEqual(
           rentalInvoiceBillingEndAt,
@@ -433,7 +434,7 @@ describe("Get Rental Invoice Billing End At", () => {
         await setCustomerPlanTypeWithParams("all-access-1")
         const rentalInvoiceBillingEndAt = await rentalService.getRentalInvoiceBillingEndAt(
           custWithData.membership.id,
-          augustThirtyFirst2021
+          billingAt
         )
         expectTimeToEqual(
           rentalInvoiceBillingEndAt,
@@ -444,7 +445,7 @@ describe("Get Rental Invoice Billing End At", () => {
         await setCustomerPlanTypeWithParams("all-access-2")
         const rentalInvoiceBillingEndAt = await rentalService.getRentalInvoiceBillingEndAt(
           custWithData.membership.id,
-          augustThirtyFirst2021
+          billingAt
         )
         expectTimeToEqual(
           rentalInvoiceBillingEndAt,
@@ -455,13 +456,34 @@ describe("Get Rental Invoice Billing End At", () => {
         await setCustomerPlanTypeWithParams("all-access")
         const rentalInvoiceBillingEndAt = await rentalService.getRentalInvoiceBillingEndAt(
           custWithData.membership.id,
-          augustThirtyFirst2021
+          billingAt
         )
         expectTimeToEqual(
           rentalInvoiceBillingEndAt,
           oneDayAfterNextNextBillingAt
         )
       })
+    })
+  })
+
+  describe("nextBillingAt is less than 24h from now (particular edge case)", () => {
+    it("Customer is on essential plan. Returns 1 day after next next billing at", async () => {
+      const isLessThanXDaysFromNowMock = jest
+        .spyOn<any, any>(timeUtils, "isLessThanXDaysFromNow")
+        .mockReturnValue(true)
+      await setCustomerPlanTypeWithParams("essential")
+      await setCustomerSubscriptionNextBillingAtWithParams(
+        new Date("2030-11-20T00:43:03.000Z")
+      )
+      const rentalInvoiceBillingEndAt = await rentalService.getRentalInvoiceBillingEndAt(
+        custWithData.membership.id,
+        new Date("2030-11-19T00:00:00.000Z")
+      )
+      expectTimeToEqual(
+        rentalInvoiceBillingEndAt,
+        new Date("2030-12-21T00:43:03.000Z")
+      )
+      isLessThanXDaysFromNowMock.mockRestore()
     })
   })
   describe("CalculateBillingEndDateFromStartDate", () => {

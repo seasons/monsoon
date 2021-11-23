@@ -7,6 +7,9 @@ import * as pprof from "pprof"
 const s3 = new AWS.S3()
 
 export const setupHeapProfiler = async logger => {
+  if (process.env.IS_TEST_ENV) {
+    return
+  }
   // The average number of bytes between samples.
   const intervalBytes = 512 * 1024
   // The maximum stack depth for samples collected.
