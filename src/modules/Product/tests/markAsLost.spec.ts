@@ -1,9 +1,7 @@
 import {
   expectTimeToEqual,
-  setPackageDeliveredAt,
   setPackageEnteredSystemAt,
   setReservationCreatedAt,
-  setReservationStatus,
 } from "@app/modules/Payment/tests/utils/utils"
 import { ReserveService } from "@app/modules/Reservation/services/reserve.service"
 import { ReservationTestUtilsService } from "@app/modules/Reservation/tests/reservation.test.utils"
@@ -45,7 +43,11 @@ describe("Mark Items as Lost", () => {
     cleanupFuncs.push(cleanupFunc)
     testCustomer = customer
 
-    shipPackage = async (shippedPackage, preLostResPhysProd, status) => {
+    shipPackage = async (
+      shippedPackage,
+      preLostResPhysProd,
+      status: "ScannedOnInbound" | "ScannedOnOutbound"
+    ) => {
       await prismaService.client.reservationPhysicalProduct.update({
         where: {
           id: preLostResPhysProd.id,
@@ -64,7 +66,7 @@ describe("Mark Items as Lost", () => {
               },
       })
 
-      await setPackageEnteredSystemAt(outboundPackage.id, 2, {
+      await setPackageEnteredSystemAt(shippedPackage.id, 2, {
         prisma: prismaService,
         timeUtils,
       })
@@ -158,9 +160,7 @@ describe("Mark Items as Lost", () => {
       postLostResPhysProd = await prismaService.client.reservationPhysicalProduct.findFirst(
         {
           where: {
-            id: {
-              in: preLostResPhysProd.id,
-            },
+            id: preLostResPhysProd.id,
           },
           select: {
             id: true,
@@ -226,20 +226,6 @@ describe("Mark Items as Lost", () => {
 
     it("sets physicalProduct productStatus to Lost", () => {
       expect(postLostPhysicalProd.productStatus).toBe("Lost")
-    })
-
-    it("updates reservation status to lost", async () => {
-      const updatedReservation = await prismaService.client.reservation.findUnique(
-        {
-          where: {
-            id: newReservation.id,
-          },
-          select: {
-            status: true,
-          },
-        }
-      )
-      expect(updatedReservation.status).toBe("Lost")
     })
   })
 
@@ -381,20 +367,6 @@ describe("Mark Items as Lost", () => {
 
     it("sets physicalProduct productStatus to Lost", () => {
       expect(postLostPhysicalProd.productStatus).toBe("Lost")
-    })
-
-    it("updates reservation status to lost", async () => {
-      const updatedReservation = await prismaService.client.reservation.findUnique(
-        {
-          where: {
-            id: newReservation.id,
-          },
-          select: {
-            status: true,
-          },
-        }
-      )
-      expect(updatedReservation.status).toBe("Lost")
     })
   })
 
