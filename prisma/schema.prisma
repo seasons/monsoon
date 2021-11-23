@@ -912,6 +912,13 @@ model Location {
   Reservation                           Reservation[]
 }
 
+model OperationMetricsRecord {
+  id                              String      @id @default(cuid()) @db.VarChar(30)
+  numberOfQueuedItems             Int
+  numberOfQueuedReservations      Int
+  day                             DateTime    @default(now())
+}
+
 model Order {
   id            String             @id @default(cuid()) @db.VarChar(30)
   subTotal      Int?
