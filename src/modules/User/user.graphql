@@ -91,6 +91,7 @@ enum BagSectionStatus {
   AtHome
   Inbound
   Outbound
+  Processing
 
   # The following correspond directly to ReservationPhysicalProductStatus
   Queued
@@ -105,7 +106,6 @@ enum BagSectionStatus {
   ReturnPending
   ReturnProcessed
   ResetEarly
-  Hold
   Lost
 }
 
@@ -125,7 +125,7 @@ type Me @cacheControl(maxAge: 0, scope: PRIVATE) {
   customer: Customer
   activeReservation: Reservation
   bagSections: [BagSection!]
-  bagSection: BagSection
+  bagSection(status: BagSectionStatus): BagSection
   bag(status: BagItemStatus): [BagItem!]
   savedItems: [BagItem!]
   reservationLineItems(

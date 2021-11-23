@@ -23,24 +23,29 @@ export class ReservationMutationsResolver {
   ) {}
 
   @Mutation()
-  async returnMultiItems(
-    @Args() { trackingNumber, productStates, droppedOffBy }
+  async processReturn(
+    @Args() { trackingNumber, productStates, droppedOffBy, customerId }
   ) {
-    if (droppedOffBy?.["UPS"] && trackingNumber === "") {
-      throw new Error(
-        `Must specify return package tracking number when processing reservation`
-      )
-    }
-
-    return this.reservationPhysicalProduct.returnMultiItems({
+    return this.reservationPhysicalProduct.processReturn({
       productStates,
       droppedOffBy,
       trackingNumber,
+      customerId,
     })
   }
 
-  async pickItems(@Args() { items }) {
-    return this.reservationPhysicalProduct.pickItems(items)
+  @Mutation()
+  async pickItems(@Args() { bagItemIDs }, @Select() select) {
+    return this.reservationPhysicalProduct.pickItems(bagItemIDs, select)
+  }
+
+  @Mutation()
+  async packItems(@Args() { bagItemIDs }, @Select() select) {
+    return this.reservationPhysicalProduct.packItems(bagItemIDs, select)
+  }
+
+  async printShippingLabel(@Customer() customer) {
+    return this.reservationPhysicalProduct.printShippingLabel(customer)
   }
 
   @Mutation()
@@ -129,31 +134,12 @@ export class ReservationMutationsResolver {
   }
 
   @Mutation()
-  async processReservation(@Args() { data }) {
-    const { reservationNumber, productStates, trackingNumber = "" } = data
-
-    if (trackingNumber === "") {
-      throw new Error(
-        `Must specify return package tracking number when processing reservation`
-      )
-    }
-
-    const result = await this.reservation.processReservation(
-      reservationNumber,
-      productStates,
-      trackingNumber
-    )
-
-    return result
-  }
-
-  @Mutation()
   async returnItems(@Args() { items }, @Customer() customer) {
     return this.reservation.returnItems(items, customer)
   }
 
   @Mutation()
-  async cancelReturn(@Customer() customer) {
-    return this.reservation.cancelReturn(customer)
+  async cancelReturn(@Args() { bagItemId }, @Customer() customer) {
+    return this.reservation.cancelReturn(customer, bagItemId)
   }
 }

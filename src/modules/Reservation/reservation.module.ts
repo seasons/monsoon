@@ -16,6 +16,7 @@ import { TestModule } from "../Test/test.module"
 import { UtilsModule } from "../Utils/utils.module"
 import { ReservationFieldsResolver } from "./fields/reservation.fields.resolver"
 import { ReservationMutationsResolver } from "./mutations/reservation.mutations.resolver"
+import { ReservationPhysicalProductMutationsResolver } from "./mutations/reservationPhysicalProduct.mutations.resolver"
 import { ReservationQueriesResolver } from "./queries/reservation.queries.resolver"
 import { ReservationService } from "./services/reservation.service"
 import { ReservationUtilsService } from "./services/reservation.utils.service"
@@ -40,6 +41,7 @@ export const ReservationModuleRef = {
     forwardRef(() => TestModule),
   ],
   providers: [
+    ReservationPhysicalProductMutationsResolver,
     ReservationFeedbackMutationsResolver,
     ReservationFeedbackQueriesResolver,
     ReservationFeedbackService,
