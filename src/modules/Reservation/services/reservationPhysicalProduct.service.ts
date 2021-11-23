@@ -449,9 +449,35 @@ export class ReservationPhysicalProductService {
                 id: outboundPackage?.id,
               },
             },
+            physicalProduct: {
+              update: {
+                packages: {
+                  connect: [
+                    { id: inboundPackage?.id },
+                    { id: outboundPackage?.id },
+                  ],
+                },
+              },
+            },
+            reservation: {
+              update: {
+                sentPackage: {
+                  connect: {
+                    id: outboundPackage?.id,
+                  },
+                },
+                returnedPackage: {
+                  connect: {
+                    id: inboundPackage?.id,
+                  },
+                },
+              },
+            },
           },
         })
       )
     }
+
+    return this.prisma.client.$transaction(promises)
   }
 }
