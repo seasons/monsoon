@@ -2,7 +2,13 @@ import { Int } from "@app/prisma/prisma.binding"
 import { PrismaService } from "@app/prisma/prisma.service"
 import { UtilsService } from "@modules/Utils/services/utils.service"
 import { Injectable } from "@nestjs/common"
-import { Customer, Package, Prisma, ShippingCode } from "@prisma/client"
+import {
+  BagItem,
+  Customer,
+  Package,
+  Prisma,
+  ShippingCode,
+} from "@prisma/client"
 import { ApolloError } from "apollo-server"
 import { pick } from "lodash"
 import shippo from "shippo"
@@ -182,23 +188,6 @@ export class ShippingService {
     }[]
     customer: Pick<Customer, "id">
   }) {
-    const createPartialPackageCreateInput = (
-      shippoTransaction
-    ): Partial<Prisma.PackageCreateInput> & { transactionID: string } => {
-      return {
-        transactionID: shippoTransaction.object_id,
-        shippingLabel: {
-          create: {
-            image: shippoTransaction.label_url || "",
-            trackingNumber: shippoTransaction.tracking_number || "",
-            trackingURL: shippoTransaction.tracking_url_provider || "",
-            name: "UPS",
-          },
-        },
-        amount: Math.round(shippoTransaction.rate.amount * 100),
-      }
-    }
-
     const productVariantIDs = bagItems.map(a => {
       return a.reservationPhysicalProduct.physicalProduct.productVariant.id
     })
@@ -206,26 +195,6 @@ export class ShippingService {
     const shipmentWeight = await this.calcShipmentWeightFromProductVariantIDs(
       productVariantIDs as string[]
     )
-
-    const customerWithShippingAddress = await this.prisma.client.customer.findUnique(
-      {
-        where: {
-          id: customer.id,
-        },
-        select: {
-          id: true,
-          detail: {
-            select: {
-              shippingAddress: true,
-            },
-          },
-        },
-      }
-    )
-
-    const productVariantIds: string[] = bagItems.map(a => {
-      return a.reservationPhysicalProduct.physicalProduct.productVariant.id
-    })
 
     const electShippingCode = () => {
       const shippingCodes = bagItems.map(
@@ -243,6 +212,22 @@ export class ShippingService {
       return shippingCode
     }
 
+    const customerWithShippingAddress = await this.prisma.client.customer.findUnique(
+      {
+        where: {
+          id: customer.id,
+        },
+        select: {
+          id: true,
+          detail: {
+            select: {
+              shippingAddress: true,
+            },
+          },
+        },
+      }
+    )
+
     const customerShippingAddressRecordID =
       customerWithShippingAddress.detail.shippingAddress.id
 
@@ -251,7 +236,7 @@ export class ShippingService {
       outboundLabel,
       inboundLabel,
     ] = await this.createReservationShippingLabels(
-      productVariantIds,
+      productVariantIDs,
       customer,
       electShippingCode()
     )
@@ -259,37 +244,98 @@ export class ShippingService {
     // Create Label and Package records
     const outboundPackage =
       outboundLabel &&
-      (await this.prisma.client.package.create({
-        data: {
-          ...createPartialPackageCreateInput(outboundLabel),
-          weight: shipmentWeight,
-          items: {
-            connect: bagItems.map(a => ({
-              id: a.reservationPhysicalProduct.physicalProduct.id,
-            })),
-          },
-          fromAddress: {
-            connect: {
-              slug: process.env.SEASONS_CLEANER_LOCATION_SLUG,
-            },
-          },
-          toAddress: {
-            connect: { id: customerShippingAddressRecordID },
-          },
-        },
+      (await this.createPackage({
+        bagItems,
+        label: outboundLabel,
+        shipmentWeight,
+        locationSlug: customerShippingAddressRecordID,
+        direction: "Outbound",
       }))
 
-    const inboundPackage = await this.prisma.client.package.create({
-      data: {
-        ...createPartialPackageCreateInput(inboundLabel),
-        weight: shipmentWeight,
-      },
+    const inboundPackage = await this.createPackage({
+      bagItems,
+      label: inboundLabel,
+      shipmentWeight,
+      locationSlug: customerShippingAddressRecordID,
+      direction: "Inbound",
     })
 
     return {
       outboundPackage,
       inboundPackage,
     }
+  }
+
+  async createPackage({
+    bagItems,
+    label,
+    shipmentWeight,
+    locationSlug,
+    direction,
+  }: {
+    bagItems: {
+      reservationPhysicalProduct: {
+        physicalProduct: {
+          id: string
+          productVariant: {
+            id: string
+          }
+        }
+        reservation: {
+          id: string
+          shippingMethod: {
+            code: string
+          }
+        }
+      }
+    }[]
+    label: ShippoTransaction
+    shipmentWeight: number
+    locationSlug: string
+    direction: "Outbound" | "Inbound"
+  }) {
+    const createPartialPackageCreateInput = (
+      shippoTransaction
+    ): Partial<Prisma.PackageCreateInput> & { transactionID: string } => {
+      return {
+        transactionID: shippoTransaction.object_id,
+        shippingLabel: {
+          create: {
+            image: shippoTransaction.label_url || "",
+            trackingNumber: shippoTransaction.tracking_number || "",
+            trackingURL: shippoTransaction.tracking_url_provider || "",
+            name: "UPS",
+          },
+        },
+        amount: Math.round(shippoTransaction.rate.amount * 100),
+      }
+    }
+
+    const cleanersLocationSlug = process.env.SEASONS_CLEANER_LOCATION_SLUG
+
+    return this.prisma.client.package.create({
+      data: {
+        ...createPartialPackageCreateInput(label),
+        weight: shipmentWeight,
+        items: {
+          connect: bagItems.map(a => ({
+            id: a.reservationPhysicalProduct.physicalProduct.id,
+          })),
+        },
+        fromAddress: {
+          connect: {
+            slug:
+              direction === "Outbound" ? cleanersLocationSlug : locationSlug,
+          },
+        },
+        toAddress: {
+          connect: {
+            slug:
+              direction === "Outbound" ? locationSlug : cleanersLocationSlug,
+          },
+        },
+      },
+    })
   }
 
   async calcShipmentWeightFromProductVariantIDs(
