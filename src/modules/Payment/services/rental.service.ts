@@ -1421,6 +1421,9 @@ export class RentalService {
       (acc, curval) => acc + curval.price,
       0
     )
+    if (totalInvoiceCharges === 0) {
+      return [promises, invoicesCreated]
+    }
     const prismaUserId =
       lineItemsWithData[0].rentalInvoice.membership.customer.user.id
     const subscriptionStatus =
