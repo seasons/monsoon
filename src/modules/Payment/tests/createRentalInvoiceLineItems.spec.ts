@@ -6,6 +6,7 @@ import { TestUtilsService } from "@app/modules/Test/services/test.service"
 import { TimeUtilsService } from "@app/modules/Utils/services/time.service"
 import { PrismaService } from "@app/prisma/prisma.service"
 import { Test } from "@nestjs/testing"
+import cuid from "cuid"
 
 import { RentalService } from "../services/rental.service"
 
@@ -14,6 +15,7 @@ describe("Create Rental Invoice Line Items", () => {
   let rentalService: RentalService
   let timeUtils: TimeUtilsService
   let shipping: ShippingService
+  let prisma: PrismaService
 
   beforeAll(async () => {
     const moduleBuilder = await Test.createTestingModule(APP_MODULE_DEF)
@@ -21,7 +23,7 @@ describe("Create Rental Invoice Line Items", () => {
     const moduleRef = await moduleBuilder.compile()
 
     testUtils = moduleRef.get<TestUtilsService>(TestUtilsService)
-    // prisma = moduleRef.get<PrismaService>(PrismaService)
+    prisma = moduleRef.get<PrismaService>(PrismaService)
     rentalService = moduleRef.get<RentalService>(RentalService)
     timeUtils = moduleRef.get<TimeUtilsService>(TimeUtilsService)
     shipping = moduleRef.get<ShippingService>(ShippingService)
@@ -508,6 +510,7 @@ describe("Create Rental Invoice Line Items", () => {
           const outboundPackage = {
             id: "1",
             createdAt: new Date(2021, 1, 15),
+
             enteredDeliverySystemAt: new Date(2021, 1, 16),
             amount: 2000,
             shippingMethod: { code: "UPSGround" },
@@ -532,8 +535,167 @@ describe("Create Rental Invoice Line Items", () => {
       })
 
       describe("Function: Get Outbound Package Line Item Datas From Previous Billing Cycle", () => {
-        it("TODO", () => {
-          expect(0).toBe(1)
+        let testCustomer
+        let currentRentalInvoiceWithData
+        beforeEach(async () => {
+          const { customer } = await testUtils.createTestCustomer({
+            create: {
+              membership: {
+                create: {
+                  rentalInvoices: {
+                    createMany: {
+                      data: [
+                        {
+                          id: cuid(),
+                          billingStartAt: timeUtils.xDaysAgoISOString(60),
+                          billingEndAt: timeUtils.xDaysAgoISOString(30),
+                          status: "Billed",
+                        },
+                      ],
+                    },
+                  },
+                } as any,
+              },
+            },
+            select: { id: true },
+          })
+
+          const customerWithData = await prisma.client.customer.findUnique({
+            where: { id: customer.id },
+            select: {
+              membership: {
+                select: {
+                  rentalInvoices: {
+                    orderBy: { billingStartAt: "asc" },
+                    select: {
+                      status: true,
+                      id: true,
+                      billingEndAt: true,
+                      billingStartAt: true,
+                    },
+                  },
+                },
+              },
+            },
+          })
+          testCustomer = customerWithData
+
+          currentRentalInvoiceWithData = customerWithData.membership.rentalInvoices.find(
+            a => a.status === "Draft"
+          )
+        })
+
+        it("(Helper Func) Get Previous Rental Invoice with Package Data queries the proper invoice", async () => {
+          const previousRentalInvoiceId = cuid()
+          const { customer } = await testUtils.createTestCustomer({
+            create: {
+              membership: {
+                create: {
+                  rentalInvoices: {
+                    createMany: {
+                      data: [
+                        {
+                          id: previousRentalInvoiceId,
+                          billingStartAt: timeUtils.xDaysAgoISOString(60),
+                          billingEndAt: timeUtils.xDaysAgoISOString(30),
+                          status: "Billed",
+                        },
+                      ],
+                    },
+                  },
+                } as any,
+              },
+            },
+            select: {
+              id: true,
+              membership: {
+                select: {
+                  rentalInvoices: {
+                    select: { status: true, id: true, billingStartAt: true },
+                  },
+                },
+              },
+            },
+          })
+
+          const currentInvoice = customer.membership.rentalInvoices.find(
+            a => a.status === "Draft"
+          )
+          const previousRentalInvoice = await rentalService.getPreviousRentalInvoiceWithPackageData(
+            currentInvoice
+          )
+          expect(previousRentalInvoice.id).toBe(previousRentalInvoiceId)
+        })
+
+        it("If there's no previous invoice, creates no line items", async () => {
+          const lineItemDatas = await rentalService.getOutboundPackageLineItemDatasFromPreviousBillingCycle(
+            {
+              id: cuid(),
+              billingEndAt: new Date(),
+              billingStartAt: timeUtils.xDaysAgo(30),
+              reservationPhysicalProducts: [
+                {
+                  outboundPackage: {
+                    id: "1",
+                    createdAt: new Date(2021, 1, 15),
+                    enteredDeliverySystemAt: new Date(2021, 1, 16),
+                    amount: 2000,
+                    shippingMethod: { code: "UPSSelect" },
+                  },
+                },
+              ],
+            }
+          )
+
+          expect(lineItemDatas.length).toBe(0)
+        })
+        it("Ignores packages created in this billing cycle", async () => {
+          const lineItemDatas = await rentalService.getOutboundPackageLineItemDatasFromPreviousBillingCycle(
+            {
+              ...currentRentalInvoiceWithData,
+              reservationPhysicalProducts: [
+                {
+                  outboundPackage: {
+                    id: "1",
+                    createdAt: timeUtils.xDaysAgoISOString(15),
+                    enteredDeliverySystemAt: timeUtils.xDaysAgoISOString(14),
+                    amount: 2000,
+                    shippingMethod: { code: "UPSSelect" },
+                  },
+                },
+              ],
+            }
+          )
+
+          expect(lineItemDatas.length).toBe(0)
+        })
+
+        describe("Properly proceses packages created in the previous billing cycle", () => {
+          it("Ignores packages created and shipped in the previous billing cycle", () => {
+            // Add two reservation physical products with outbound packages
+            expect(0).toBe(1)
+          })
+
+          describe("Properly processes packages shipped in this billing cycle", () => {
+            describe("First shipped package of previous cycle", () => {
+              it("If it's select, creates a line item with nonzero price", () => {
+                expect(0).toBe(1)
+              })
+
+              it("if it's ground, creates a line item with zero price", () => {
+                expect(0).toBe(1)
+              })
+            })
+
+            describe("2nd or later package of previous billing cycle", () => {
+              it("If it's select, creates a line item with nonzero price", () => {
+                expect(0).toBe(1)
+              })
+              it("If it's ground, creates a line item with nonzero price", () => {
+                expect(0).toBe(1)
+              })
+            })
+          })
         })
       })
     })

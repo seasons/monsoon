@@ -888,8 +888,9 @@ export class RentalService {
 
     return datas
   }
-  private getOutboundPackageLineItemDatasFromPreviousBillingCycle = async (
-    invoice: Pick<RentalInvoice, "id" | "billingStartAt" | "billingEndAt">
+
+  getPreviousRentalInvoiceWithPackageData = async (
+    invoice: Pick<RentalInvoice, "id" | "billingStartAt">
   ) => {
     const previousRentalInvoice = await this.prisma.client.rentalInvoice.findFirst(
       {
@@ -926,6 +927,21 @@ export class RentalService {
           },
         },
       }
+    )
+    return previousRentalInvoice
+  }
+  getOutboundPackageLineItemDatasFromPreviousBillingCycle = async (
+    invoice: Pick<RentalInvoice, "billingStartAt" | "billingEndAt" | "id"> & {
+      reservationPhysicalProducts: Array<{
+        outboundPackage: Pick<
+          Package,
+          "enteredDeliverySystemAt" | "createdAt" | "amount" | "id"
+        > & { shippingMethod: Pick<ShippingMethod, "code"> }
+      }>
+    }
+  ) => {
+    const previousRentalInvoice = await this.getPreviousRentalInvoiceWithPackageData(
+      invoice
     )
     if (!previousRentalInvoice) {
       return []
