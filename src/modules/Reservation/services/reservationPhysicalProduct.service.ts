@@ -385,7 +385,6 @@ export class ReservationPhysicalProductService {
   }
 
   async printShippingLabel({ customer }: { customer: Pick<Customer, "id"> }) {
-    // Todo: implement
     const bagItems = await this.prisma.client.bagItem.findMany({
       where: {
         reservationPhysicalProduct: {
@@ -426,43 +425,33 @@ export class ReservationPhysicalProductService {
       },
     })
 
-    const electShippingCode = () => {
-      const shippingCodes = bagItems.map(
-        a => a.reservationPhysicalProduct.reservation.shippingMethod.code
+    const {
+      outboundPackage,
+      inboundPackage,
+    } = await this.shippingService.createPackages({ bagItems, customer })
+
+    const promises = []
+
+    for (let bagItem of bagItems) {
+      promises.push(
+        this.prisma.client.reservationPhysicalProduct.update({
+          where: {
+            id: bagItem.reservationPhysicalProduct.id,
+          },
+          data: {
+            inboundPackage: {
+              connect: {
+                id: inboundPackage?.id,
+              },
+            },
+            outboundPackage: {
+              connect: {
+                id: outboundPackage?.id,
+              },
+            },
+          },
+        })
       )
-
-      let shippingCode: ShippingCode = "UPSGround"
-
-      if (shippingCodes.includes("Pickup")) {
-        shippingCode = "Pickup"
-      } else if (shippingCodes.includes("UPSSelect")) {
-        shippingCode = "UPSSelect"
-      }
-
-      return shippingCode
     }
-
-    const productVariantIds: string[] = bagItems.map(a => {
-      return a.reservationPhysicalProduct.physicalProduct.productVariant.id
-    })
-
-    // Creates Outbound (if appropriate) and Inbound labels
-    const [
-      outboundLabel,
-      inboundLabel,
-    ] = await this.shippingService.createReservationShippingLabels(
-      productVariantIds,
-      customer,
-      electShippingCode()
-    )
-
-    // Create Label and Package records
-    const outboundPackage = await this.prisma.client.package.create({
-      data: {},
-    })
-
-    const inboundPackage = await this.prisma.client.package.create({
-      data: {},
-    })
   }
 }
