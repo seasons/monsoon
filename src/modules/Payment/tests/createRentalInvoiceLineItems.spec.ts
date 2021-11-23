@@ -170,16 +170,14 @@ describe("Create Rental Invoice Line Items", () => {
           {
             billingStartAt: timeUtils.xDaysAgo(30),
             billingEndAt: timeUtils.xDaysAgo(1),
-            reservations: [
+            reservationPhysicalProducts: [
               {
-                returnPackages: [
-                  {
-                    id: "1",
-                    amount: 100,
-                    deliveredAt: timeUtils.xDaysAgo(15),
-                    items: [{ seasonsUID: "suid1" }],
-                  },
-                ],
+                inboundPackage: {
+                  id: "1",
+                  amount: 100,
+                  deliveredAt: timeUtils.xDaysAgo(15),
+                  items: [{ seasonsUID: "suid1" }],
+                },
               },
             ],
           }
@@ -195,16 +193,14 @@ describe("Create Rental Invoice Line Items", () => {
           {
             billingStartAt: timeUtils.xDaysAgo(30),
             billingEndAt: timeUtils.xDaysAgo(1),
-            reservations: [
+            reservationPhysicalProducts: [
               {
-                returnPackages: [
-                  {
-                    id: "1",
-                    amount: 100,
-                    deliveredAt: timeUtils.xDaysAgo(45),
-                    items: [{ seasonsUID: "suid1" }],
-                  },
-                ],
+                inboundPackage: {
+                  id: "1",
+                  amount: 100,
+                  deliveredAt: timeUtils.xDaysAgo(45),
+                  items: [{ seasonsUID: "suid1" }],
+                },
               },
             ],
           }
@@ -218,16 +214,14 @@ describe("Create Rental Invoice Line Items", () => {
           {
             billingStartAt: timeUtils.xDaysAgo(60),
             billingEndAt: timeUtils.xDaysAgo(30),
-            reservations: [
+            reservationPhysicalProducts: [
               {
-                returnPackages: [
-                  {
-                    id: "1",
-                    amount: 100,
-                    deliveredAt: timeUtils.xDaysAgo(29),
-                    items: [{ seasonsUID: "suid1" }],
-                  },
-                ],
+                inboundPackage: {
+                  id: "1",
+                  amount: 100,
+                  deliveredAt: timeUtils.xDaysAgo(29),
+                  items: [{ seasonsUID: "suid1" }],
+                },
               },
             ],
           }
@@ -241,16 +235,14 @@ describe("Create Rental Invoice Line Items", () => {
           {
             billingStartAt: timeUtils.xDaysAgo(30),
             billingEndAt: timeUtils.xDaysAgo(1),
-            reservations: [
+            reservationPhysicalProducts: [
               {
-                returnPackages: [
-                  {
-                    id: "1",
-                    amount: 100,
-                    deliveredAt: undefined,
-                    items: [{ seasonsUID: "suid1" }],
-                  },
-                ],
+                inboundPackage: {
+                  id: "1",
+                  amount: 100,
+                  deliveredAt: undefined,
+                  items: [{ seasonsUID: "suid1" }],
+                },
               },
             ],
           }
@@ -264,26 +256,26 @@ describe("Create Rental Invoice Line Items", () => {
           id: "1",
           amount: 100,
           deliveredAt: timeUtils.xDaysAgo(15),
-          items: [{ seasonsUID: "suid1" }],
+          items: [{ seasonsUID: "suid1" }, { seasonsUID: "suid2" }],
         }
         const inboundPackageLineItemDatas = rentalService.getInboundPackageLineItemDatas(
           {
             billingStartAt: timeUtils.xDaysAgo(30),
             billingEndAt: timeUtils.xDaysAgo(1),
-            reservations: [
+            reservationPhysicalProducts: [
               {
-                returnPackages: [returnPackage1],
+                inboundPackage: returnPackage1,
               },
               {
-                returnPackages: [
-                  { ...returnPackage1 },
-                  {
-                    id: "2",
-                    amount: 200,
-                    deliveredAt: timeUtils.xDaysAgo(5),
-                    items: [{ seasonsUID: "suid2" }],
-                  },
-                ],
+                inboundPackage: returnPackage1,
+              },
+              {
+                inboundPackage: {
+                  id: "2",
+                  amount: 200,
+                  deliveredAt: timeUtils.xDaysAgo(5),
+                  items: [{ seasonsUID: "suid2" }],
+                },
               },
             ],
           }

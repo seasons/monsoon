@@ -68,6 +68,14 @@ export const ProcessableReservationPhysicalProductSelect = Prisma.validator<
       },
     },
   },
+  inboundPackage: {
+    select: {
+      id: true,
+      deliveredAt: true,
+      amount: true,
+      items: { select: { seasonsUID: true } },
+    },
+  },
   physicalProduct: {
     select: {
       id: true,
@@ -753,19 +761,19 @@ export class RentalService {
 
   getInboundPackageLineItemDatas = (
     invoice: Pick<RentalInvoice, "billingStartAt" | "billingEndAt"> & {
-      reservations: Array<{
-        returnPackages: Array<
-          Pick<Package, "deliveredAt" | "id" | "amount"> & {
-            items: Array<Pick<PhysicalProduct, "seasonsUID">>
-          }
-        >
+      reservationPhysicalProducts: Array<{
+        inboundPackage: Pick<Package, "deliveredAt" | "id" | "amount"> & {
+          items: Array<Pick<PhysicalProduct, "seasonsUID">>
+        }
       }>
     }
   ) => {
-    const allReturnPackages = invoice.reservations.flatMap(
-      a => a.returnPackages
+    const allInboundPackages = invoice.reservationPhysicalProducts.map(
+      a => a.inboundPackage
     )
-    const packagesReturned = allReturnPackages.filter(
+    const uniqueInboundPackages = uniqBy(allInboundPackages, p => p.id)
+
+    const returnedUniqueInboundPackages = uniqueInboundPackages.filter(
       a =>
         !!a.deliveredAt &&
         this.timeUtils.isBetweenDates(
@@ -774,12 +782,12 @@ export class RentalService {
           invoice.billingEndAt
         )
     )
-    const uniquePackagesReturnedAndSorted = orderBy(
-      uniqBy(packagesReturned, p => p.id),
+    const sortedReturnedUniqueInboundPackages = orderBy(
+      returnedUniqueInboundPackages,
       "deliveredAt",
       "asc"
     )
-    const inboundPackagesLineItemDatas = uniquePackagesReturnedAndSorted.map(
+    const inboundPackagesLineItemDatas = sortedReturnedUniqueInboundPackages.map(
       (p, idx) => {
         const undiscountedPrice = p.amount
         let price = this.shipping.discountShippingRate(
