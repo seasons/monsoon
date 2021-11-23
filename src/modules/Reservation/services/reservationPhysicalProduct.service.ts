@@ -207,10 +207,13 @@ export class ReservationPhysicalProductService {
       const reservationPhysicalProducts =
         reservation.reservationPhysicalProducts
       const resPhysProdsStatusCounts = {}
+      //set to the length of productStates because this shows the number of reservationPhysicalProducts to be returned
+      let returnProcessedCount = productStates.length
 
       for (const resPhysProd of reservationPhysicalProducts) {
         const status = resPhysProd.status
         if (status === "ReturnProcessed") {
+          returnProcessedCount += 1
           continue
         }
         if (resPhysProdsStatusCounts[status]) {
@@ -220,9 +223,6 @@ export class ReservationPhysicalProductService {
         resPhysProdsStatusCounts[status] = 1
       }
 
-      const returnProcessedCount =
-        reservationPhysicalProducts.filter(a => a.status === "ReturnProcessed")
-          .length + productStates.length
       const hasMajorityReturnProcessed = Object.values(
         resPhysProdsStatusCounts
       ).every(a => a <= returnProcessedCount)
