@@ -621,17 +621,6 @@ export class BagService {
 
     const promises = []
 
-    promises.push(
-      this.prisma.client.reservation.update({
-        where: {
-          id: lostResPhysProd.reservationId,
-        },
-        data: {
-          status: "Lost",
-        },
-      })
-    )
-
     const lostInPhase = this.getLostPhase(lostResPhysProd)
 
     promises.push(...this.updatePhysicalProductsOnLost(physicalProduct))
@@ -651,6 +640,40 @@ export class BagService {
     )
 
     await this.prisma.client.$transaction(promises)
+    const currentReservation = await this.prisma.client.reservation.findFirst({
+      where: {
+        reservationPhysicalProducts: {
+          some: {
+            id: lostResPhysProd.id,
+          },
+        },
+      },
+      select: {
+        id: true,
+        reservationPhysicalProducts: {
+          select: {
+            status: true,
+          },
+        },
+      },
+    })
+    const lostResPhysProdsOnReservation = currentReservation.reservationPhysicalProducts.filter(
+      a => a.status === "Lost"
+    )
+    const atLeastHalfAreLost =
+      lostResPhysProdsOnReservation.length >=
+      currentReservation.reservationPhysicalProducts.length / 2
+
+    if (atLeastHalfAreLost) {
+      await this.prisma.client.reservation.update({
+        where: {
+          id: currentReservation.id,
+        },
+        data: {
+          status: "Lost",
+        },
+      })
+    }
 
     return true
   }
