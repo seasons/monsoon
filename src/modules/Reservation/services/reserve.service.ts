@@ -407,6 +407,7 @@ export class ReserveService {
     physicalProductsBeingReserved,
     heldPhysicalProducts,
     lastReservation,
+    shippingCode,
   }: {
     lastReservation: Pick<Reservation, "status"> & {
       returnPackages: Array<
@@ -443,6 +444,12 @@ export class ReserveService {
 
     const uniqueReservationNumber = await this.utils.getUniqueReservationNumber()
 
+    const shippingMethod = await this.prisma.client.shippingMethod.findUnique({
+      where: {
+        code: shippingCode,
+      },
+    })
+
     const reservationId = cuid()
     const reservationPhysicalProductCreateDatas = allPhysicalProductsInReservation.map(
       physicalProduct =>
@@ -451,6 +458,7 @@ export class ReserveService {
         >()({
           id: cuid(),
           physicalProductId: physicalProduct.id,
+          shippingMethodId: shippingMethod.id,
           isNew: true,
         })
     )
@@ -479,15 +487,6 @@ export class ReserveService {
           slug: process.env.SEASONS_CLEANER_LOCATION_SLUG,
         },
       },
-      // ...(!!shippingOptionId
-      //   ? {
-      //       shippingOption: {
-      //         connect: {
-      //           id: shippingOptionId,
-      //         },
-      //       },
-      //     }
-      //   : {}),
       shipped: false,
       status: "Queued",
       // TODO: Update this for new world
