@@ -301,8 +301,8 @@ describe("Create Rental Invoice Line Items", () => {
         discountShippingRateMock.mockRestore()
       })
 
-      describe("Outbound Pacakges created and shipped this billing cycle", () => {
-        describe("Packages created in another billing cycle", () => {
+      describe("Function: Get Outbound Package Line Item Datas From This Billing Cycle", () => {
+        describe("Ignores packages created in other billing cycles", () => {
           it("If a package was created before this billing cycle, does not create a line item", () => {
             const lineItemDatas = rentalService.getOutboundPackageLineItemDatasFromThisBillingCycle(
               {
@@ -366,7 +366,7 @@ describe("Create Rental Invoice Line Items", () => {
           })
         })
 
-        describe("Packages created this billing cycle", () => {
+        describe("Properly processes packages created in this billing cycle", () => {
           describe("First shipped package of cycle", () => {
             it("If it's select, creates a line item with nonzero price", () => {
               const lineItemDatas = rentalService.getOutboundPackageLineItemDatasFromThisBillingCycle(
@@ -397,7 +397,7 @@ describe("Create Rental Invoice Line Items", () => {
               )
             })
 
-            it("If it's ground, creates a line with 0 price", () => {
+            it("If it's ground, creates a line item with 0 price", () => {
               const lineItemDatas = rentalService.getOutboundPackageLineItemDatasFromThisBillingCycle(
                 {
                   billingStartAt: new Date(2021, 1, 1),
@@ -428,8 +428,78 @@ describe("Create Rental Invoice Line Items", () => {
           })
 
           describe("2nd or later shipped packages of cycle", () => {
-            it("Creates a line item", () => {
-              expect(0).toBe(1)
+            it("If it's select, creates a line item with nonzero price", () => {
+              const lineItemDatas = rentalService.getOutboundPackageLineItemDatasFromThisBillingCycle(
+                {
+                  billingStartAt: new Date(2021, 1, 1),
+                  billingEndAt: new Date(2021, 2, 1),
+                  reservationPhysicalProducts: [
+                    {
+                      outboundPackage: {
+                        id: "1",
+                        createdAt: new Date(2021, 1, 15),
+                        enteredDeliverySystemAt: new Date(2021, 1, 16),
+                        amount: 2000,
+                        shippingMethod: { code: "UPSGround" },
+                      },
+                    },
+                    {
+                      outboundPackage: {
+                        id: "2",
+                        createdAt: new Date(2021, 1, 20),
+                        enteredDeliverySystemAt: new Date(2021, 1, 21),
+                        amount: 2000,
+                        shippingMethod: { code: "UPSSelect" },
+                      },
+                    },
+                  ],
+                }
+              )
+
+              expect(lineItemDatas.length).toBe(2)
+              const secondLineItem = lineItemDatas[1]
+              expect(secondLineItem.price).toBeGreaterThan(0)
+              expect(secondLineItem.name).toBe("Outbound package shipped 2.21")
+              expect(secondLineItem.comment).toBe(
+                "Shipped outbound package 2 of billing cycle. Charge."
+              )
+            })
+
+            it("If it's ground, creates a line item with nonzero price", () => {
+              const lineItemDatas = rentalService.getOutboundPackageLineItemDatasFromThisBillingCycle(
+                {
+                  billingStartAt: new Date(2021, 1, 1),
+                  billingEndAt: new Date(2021, 2, 1),
+                  reservationPhysicalProducts: [
+                    {
+                      outboundPackage: {
+                        id: "1",
+                        createdAt: new Date(2021, 1, 15),
+                        enteredDeliverySystemAt: new Date(2021, 1, 16),
+                        amount: 2000,
+                        shippingMethod: { code: "UPSGround" },
+                      },
+                    },
+                    {
+                      outboundPackage: {
+                        id: "2",
+                        createdAt: new Date(2021, 1, 20),
+                        enteredDeliverySystemAt: new Date(2021, 1, 21),
+                        amount: 2000,
+                        shippingMethod: { code: "UPSGround" },
+                      },
+                    },
+                  ],
+                }
+              )
+
+              expect(lineItemDatas.length).toBe(2)
+              const secondLineItem = lineItemDatas[1]
+              expect(secondLineItem.price).toBeGreaterThan(0)
+              expect(secondLineItem.name).toBe("Outbound package shipped 2.21")
+              expect(secondLineItem.comment).toBe(
+                "Shipped outbound package 2 of billing cycle. Charge."
+              )
             })
           })
         })
@@ -439,7 +509,7 @@ describe("Create Rental Invoice Line Items", () => {
         })
       })
 
-      describe("Outbound Package created in previous billing cycle but shipped this billing cycle", () => {
+      describe("Function: Get Outbound Package Line Item Datas From Previous Billing Cycle", () => {
         it("TODO", () => {
           expect(0).toBe(1)
         })
