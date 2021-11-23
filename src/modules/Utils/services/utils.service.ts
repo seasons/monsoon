@@ -146,6 +146,122 @@ export class UtilsService {
     return prismaLocation
   }
 
+  /*
+  Reservation:
+    Item 1: DeliveredToCustomer
+    Item 2: DeliveredToCustomer
+    Item 3: Completed
+
+    Item 1 got lost
+
+    initialState: {Lost: 1}
+
+    ...loop...
+        // Ignore any statuses which aren't DeliveredToCUstomer, Completed, or Lost. 
+        Item 1: DeliveredToCustomer
+        state: {lost: 1, deliverdToCustomer: 1}
+
+        Item 2: DeliveredToCustomer
+        state: {lost: 1, deliverdToCustomer: 2}
+
+        Item 3: ReturnProcessed
+        state: {lost: 1, deliverdToCustomer: 2, returnProcessed: 1}
+
+    // SEt state to DeliveredToCustomer
+
+    // SEt state to DeliveredToCustomer, Completed, Lost. Nothing else 
+  */
+  async updateReservationOnChange(
+    reservationIds,
+    initialState,
+    idsToBeUpdated
+  ) {
+    // const r = await this.prisma.client.reservation.findUnique({
+    //   where: { id: reservationId },
+    //   select: {
+    //     reservationPhysicalProducts: {
+    //       where: { id: { notIn: reservationPhysicalProductIdsChanging } },
+    //       // select: {
+    //       //   ...
+    //       // }
+    //     },
+    //   },
+    // })
+    const reservationsToUpdate = await this.prisma.client.reservation.findMany({
+      where: {
+        id: {
+          in: reservationIds,
+        },
+      },
+      select: {
+        id: true,
+        reservationPhysicalProducts: {
+          where: {
+            id: {
+              notIn: idsToBeUpdated,
+            },
+          },
+          select: {
+            id: true,
+            status: true,
+          },
+        },
+      },
+    })
+    for (let reservation of reservationsToUpdate) {
+      const reservationPhysicalProducts =
+        reservation.reservationPhysicalProducts
+      const resPhysProdsStatusCounts = {}
+      //set to the length of productStates because this shows the number of reservationPhysicalProducts to be returned
+      // let returnProcessedCount = 0
+
+      // for (const resPhysProd of reservationPhysicalProducts) {
+      //   const status = resPhysProd.status
+      //   if (status === "ReturnProcessed") {
+      //     returnProcessedCount += 1
+      //     continue
+      //   }
+      //   if (resPhysProdsStatusCounts[status]) {
+      //     resPhysProdsStatusCounts[status] += 1
+      //     continue
+      //   }
+      //   resPhysProdsStatusCounts[status] = 1
+      // }
+
+      // const hasMajorityReturnProcessed = Object.values(
+      //   resPhysProdsStatusCounts
+      // ).every(a => a <= returnProcessedCount)
+
+      // if (hasMajorityReturnProcessed) {
+      //   updateReservationPromises.push(
+      //     this.prisma.client.reservation.update({
+      //       where: {
+      //         id: reservation.id,
+      //       },
+      //       data: {
+      //         status: "Completed",
+      //       },
+      //     })
+      //   )
+      // }
+    }
+    /*
+      If used in return, would be:
+      {ReturnProessed: 2}
+  
+      If used in lost, would be:
+      {Lost: 1}
+      */
+    // const state = { ...initialState }
+    // Query reservation physical products
+    // Increment counts in the state object
+
+    // If majority lost or number lost = number completed, set lost
+    // If majority completed, set completed
+
+    // return promises
+  }
+
   getReservationReturnDate(
     reservation: Pick<Reservation, "receivedAt" | "createdAt">
   ) {

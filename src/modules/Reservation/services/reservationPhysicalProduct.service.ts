@@ -110,7 +110,7 @@ export class ReservationPhysicalProductService {
     const {
       promise: updateReservationPromise,
     } = await this.updateReservationsOnReturn(productStates, customerId)
-    promises.push(updateReservationPromise)
+    promises.push(...updateReservationPromise)
 
     const updateProductPromises = await this.updateProductsOnReturn(
       productStates,
@@ -192,6 +192,7 @@ export class ReservationPhysicalProductService {
         status: true,
         reservationPhysicalProducts: {
           select: {
+            status: true,
             physicalProductId: true,
           },
         },
@@ -200,18 +201,46 @@ export class ReservationPhysicalProductService {
 
     // Status Lost supercedes status Completed in importance
     const reservationsToUpdate = reservations.filter(a => a.status !== "Lost")
-    return this.utils.wrapPrismaPromise(
-      this.prisma.client.reservation.updateMany({
-        where: {
-          id: {
-            in: reservationsToUpdate.map(a => a.id),
-          },
-        },
-        data: {
-          status: "Completed",
-        },
-      })
-    )
+    const updateReservationPromises = []
+
+    for (let reservation of reservationsToUpdate) {
+      const reservationPhysicalProducts =
+        reservation.reservationPhysicalProducts
+      const resPhysProdsStatusCounts = {}
+      //set to the length of productStates because this shows the number of reservationPhysicalProducts to be returned
+      let returnProcessedCount = productStates.length
+
+      for (const resPhysProd of reservationPhysicalProducts) {
+        const status = resPhysProd.status
+        if (status === "ReturnProcessed") {
+          returnProcessedCount += 1
+          continue
+        }
+        if (resPhysProdsStatusCounts[status]) {
+          resPhysProdsStatusCounts[status] += 1
+          continue
+        }
+        resPhysProdsStatusCounts[status] = 1
+      }
+
+      const hasMajorityReturnProcessed = Object.values(
+        resPhysProdsStatusCounts
+      ).every(a => a <= returnProcessedCount)
+
+      if (hasMajorityReturnProcessed) {
+        updateReservationPromises.push(
+          this.prisma.client.reservation.update({
+            where: {
+              id: reservation.id,
+            },
+            data: {
+              status: "Completed",
+            },
+          })
+        )
+      }
+    }
+    return await this.utils.wrapPrismaPromise(updateReservationPromises)
   }
 
   private async updateProductsOnReturn(
