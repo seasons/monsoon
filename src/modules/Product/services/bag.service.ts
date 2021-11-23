@@ -42,6 +42,40 @@ export class BagService {
     private readonly productUtils: ProductUtilsService
   ) {}
 
+  async markAsPickedUp(bagItemIds) {
+    const bagItems = await this.prisma.client.bagItem.findMany({
+      where: {
+        id: {
+          in: bagItemIds,
+        },
+      },
+      select: {
+        id: true,
+        reservationPhysicalProduct: {
+          select: {
+            id: true,
+          },
+        },
+      },
+    })
+
+    const reservationPhysicalProductIds = bagItems.map(
+      item => item.reservationPhysicalProduct.id
+    )
+
+    await this.prisma.client.reservationPhysicalProduct.updateMany({
+      where: {
+        id: { in: reservationPhysicalProductIds },
+      },
+      data: {
+        hasBeenDeliveredToCustomer: true,
+        deliveredToCustomerAt: new Date().toISOString(),
+        status: "DeliveredToCustomer",
+      },
+    })
+    return true
+  }
+
   async bagSection(status: BagSectionStatus, customer, application) {
     const bagItems = await this.prisma.client.bagItem.findMany({
       where: {
@@ -63,7 +97,6 @@ export class BagService {
           select: {
             id: true,
             status: true,
-            hasCustomerReturnIntent: true,
           },
         },
       },
@@ -739,10 +772,7 @@ export class BagService {
           const delivered =
             item.reservationPhysicalProduct?.status === "DeliveredToCustomer"
 
-          const noReturnPending = !item.reservationPhysicalProduct
-            ?.hasCustomerReturnIntent
-
-          return updatedMoreThan24HoursAgo && noReturnPending && delivered
+          return updatedMoreThan24HoursAgo && delivered
         })
         title = "At home"
         break
@@ -807,10 +837,7 @@ export class BagService {
               item
             )
 
-            const noReturnPending = !item.reservationPhysicalProduct
-              ?.hasCustomerReturnIntent
-
-            return !updatedMoreThan24HoursAgo && noReturnPending
+            return !updatedMoreThan24HoursAgo
           })
         }
         title = isAdmin ? "At home" : "Order delivered"

@@ -11,6 +11,11 @@ export class BagMutationsResolver {
     return await this.bag.markAsLost(lostBagItemId)
   }
 
+  @Mutation()
+  async markAsPickedUp(@Args() { bagItemIds }) {
+    return await this.bag.markAsPickedUp(bagItemIds)
+  }
+
   //   @Mutation()
   //   async markAsFound(@Args() { lostBagItemId, status }) {
   //     return await this.bag.markAsFound(lostBagItemId, status)
