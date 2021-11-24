@@ -1,6 +1,4 @@
 import { APP_MODULE_DEF } from "@app/app.module"
-import { ReserveService } from "@app/modules/Reservation/services/reserve.service"
-import { ReservationTestUtilsService } from "@app/modules/Reservation/tests/reservation.test.utils"
 import { ShippingService } from "@app/modules/Shipping/services/shipping.service"
 import { TestUtilsService } from "@app/modules/Test/services/test.service"
 import { TimeUtilsService } from "@app/modules/Utils/services/time.service"
@@ -27,10 +25,6 @@ describe("Create Rental Invoice Line Items", () => {
     rentalService = moduleRef.get<RentalService>(RentalService)
     timeUtils = moduleRef.get<TimeUtilsService>(TimeUtilsService)
     shipping = moduleRef.get<ShippingService>(ShippingService)
-    // reserveService = moduleRef.get<ReserveService>(ReserveService)
-    // reservationTestUtils = moduleRef.get<ReservationTestUtilsService>(
-    //   ReservationTestUtilsService
-    // )
   })
   describe("Rental Usage Line Items", () => {
     let lineItemDatas
@@ -152,7 +146,7 @@ describe("Create Rental Invoice Line Items", () => {
     })
   })
 
-  describe("Package Line Items", () => {
+  describe("Package Line Item Creation", () => {
     describe("Inbound Packages", () => {
       let discountShippingRateMock
 
@@ -882,11 +876,26 @@ describe("Create Rental Invoice Line Items", () => {
         })
       })
     })
+  })
 
-    describe("Package discounts", () => {
-      // Discounts an outbound select package by 55%
-      // Discounts an inbound ground package by 38%
-      // Discounts an outbound ground package by 30%
+  describe("Package discounts", () => {
+    it("Discounts an outbound select package by 55%", () => {
+      const rate = shipping.discountShippingRate(100, "UPSSelect", "Outbound")
+      expect(rate).toBe(45)
+    })
+
+    it("Discounts an inbound select package by 55%", () => {
+      const rate = shipping.discountShippingRate(100, "UPSSelect", "Inbound")
+      expect(rate).toBe(45)
+    })
+
+    it("Discounts an inbound ground package by 38%", () => {
+      const rate = shipping.discountShippingRate(100, "UPSGround", "Inbound")
+      expect(rate).toBe(62)
+    })
+    it("Discounts an outbound ground package by 30%", () => {
+      const rate = shipping.discountShippingRate(100, "UPSGround", "Outbound")
+      expect(rate).toBe(70)
     })
   })
 })
