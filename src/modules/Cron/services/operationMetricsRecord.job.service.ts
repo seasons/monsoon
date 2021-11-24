@@ -19,15 +19,15 @@ export class OperationMetricsRecord {
 
   @Cron(CronExpression.EVERY_DAY_AT_8AM)
   async getOpsMetrics() {
-    const queuedResProds = await this.prisma.client.reservationPhysicalProduct.findMany(
+    const queuedResProds = await this.prisma.client.reservationPhysicalProduct.groupBy(
       {
+        by: ["reservationId"],
         where: {
           status: "Queued",
         },
-        select: {
-          id: true,
-          reservationId: true,
-        },
+        // select: {
+        //   // id: true,
+        // },
       }
     )
 
