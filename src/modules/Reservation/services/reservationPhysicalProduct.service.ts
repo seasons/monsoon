@@ -389,7 +389,7 @@ export class ReservationPhysicalProductService {
 
   async generateShippingLabels(
     customerID: string,
-    select: Prisma.PackageSelect
+    select?: Prisma.PackageSelect
   ) {
     const bagItems = await this.prisma.client.bagItem.findMany({
       where: {

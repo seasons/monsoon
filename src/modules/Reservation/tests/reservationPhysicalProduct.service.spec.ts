@@ -118,4 +118,81 @@ describe("Reservation Physical Product Service", () => {
       }
     })
   })
+
+  describe("Shipping labels", () => {
+    it("Creates shipping labels correctly", async () => {
+      const {
+        bagItems,
+      } = await reservationUtilsTestService.addToBagAndReserveForCustomer({
+        customer: testCustomer,
+        numProductsToAdd: 2,
+      })
+
+      const [
+        outboundPackage,
+        inboundPackage,
+      ] = await reservationPhysicalProductService.generateShippingLabels(
+        testCustomer.id,
+        {
+          id: true,
+          status: true,
+          shippingLabel: true,
+        }
+      )
+
+      const updatedBagItems = await prisma.client.bagItem.findMany({
+        where: {
+          id: {
+            in: bagItems.map(bagItem => bagItem.id),
+          },
+        },
+        select: {
+          id: true,
+          reservationPhysicalProduct: {
+            select: {
+              id: true,
+              outboundPackage: true,
+              inboundPackage: true,
+              physicalProduct: {
+                select: {
+                  packages: {
+                    select: {
+                      id: true,
+                    },
+                  },
+                },
+              },
+              reservation: {
+                select: {
+                  id: true,
+                  sentPackage: {
+                    select: {
+                      id: true,
+                    },
+                  },
+                  returnedPackage: {
+                    select: {
+                      id: true,
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      })
+
+      for (let bagItem of updatedBagItems) {
+        const rpp = bagItem.reservationPhysicalProduct
+
+        expect(rpp.outboundPackage.id).toEqual(outboundPackage.id)
+        expect(rpp.inboundPackage.id).toEqual(inboundPackage.id)
+        expect(rpp.reservation.sentPackage.id).toEqual(outboundPackage.id)
+        expect(rpp.reservation.returnedPackage.id).toEqual(inboundPackage.id)
+        expect(rpp.physicalProduct.packages.length).toEqual(2)
+      }
+
+      expect(inboundPackage.shippingLabel).toEqual("UPSGround")
+    })
+  })
 })
