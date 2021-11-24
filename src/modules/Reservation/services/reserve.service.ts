@@ -179,7 +179,6 @@ export class ReserveService {
       lastReservation: lastReservationWithData,
       customer: customerWithData,
       physicalProductsBeingReserved,
-      heldPhysicalProducts,
       shippingCode,
     })
 
@@ -405,7 +404,6 @@ export class ReserveService {
   private async createReservation({
     customer,
     physicalProductsBeingReserved,
-    heldPhysicalProducts,
     lastReservation,
   }: {
     lastReservation: Pick<Reservation, "status"> & {
@@ -419,7 +417,6 @@ export class ReserveService {
       }
     }
     physicalProductsBeingReserved: ReserveItemsPhysicalProduct[]
-    heldPhysicalProducts: ReserveItemsPhysicalProduct[]
     shippingCode: ShippingCode | null
   }): Promise<{
     promises: PrismaPromise<Reservation | ReservationPhysicalProduct[]>[]
@@ -433,18 +430,13 @@ export class ReserveService {
   }> {
     const promises = []
 
-    const allPhysicalProductsInReservation = [
-      ...physicalProductsBeingReserved,
-      ...heldPhysicalProducts,
-    ]
-
     const returnPackagesToCarryOver =
       lastReservation?.returnPackages?.filter(a => a.events.length === 0) || []
 
     const uniqueReservationNumber = await this.utils.getUniqueReservationNumber()
 
     const reservationId = cuid()
-    const reservationPhysicalProductCreateDatas = allPhysicalProductsInReservation.map(
+    const reservationPhysicalProductCreateDatas = physicalProductsBeingReserved.map(
       physicalProduct =>
         Prisma.validator<
           Prisma.ReservationPhysicalProductUncheckedCreateWithoutReservationInput

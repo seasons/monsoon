@@ -3,9 +3,24 @@ import { Select } from "@app/decorators/select.decorator"
 import { QueryUtilsService } from "@app/modules/Utils/services/queryUtils.service"
 import { Args, Query, Resolver } from "@nestjs/graphql"
 
+import { ReservationService } from "../services/reservation.service"
+
 @Resolver()
 export class ReservationQueriesResolver {
-  constructor(private readonly queryUtils: QueryUtilsService) {}
+  constructor(
+    private readonly queryUtils: QueryUtilsService,
+    private readonly reservationService: ReservationService
+  ) {}
+
+  @Query()
+  async inboundReservations(@Select() select) {
+    return await this.reservationService.inboundReservations(select)
+  }
+
+  @Query()
+  async outboundReservations(@Select() select) {
+    return await this.reservationService.outboundReservations(select)
+  }
 
   @Query()
   async package(@Args() { where }, @Select() select) {

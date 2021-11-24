@@ -72,6 +72,69 @@ export class ReservationService {
     private readonly customerUtils: CustomerUtilsService
   ) {}
 
+  async inboundReservations(select) {
+    const reservationPhysicalProducts = await this.prisma.client.reservationPhysicalProduct.findMany(
+      {
+        distinct: ["customerId"],
+        where: {
+          status: "ReturnPending",
+        },
+        orderBy: {
+          updatedAt: "asc",
+        },
+        select: merge(select, {
+          id: true,
+          customer: {
+            select: {
+              reservationPhysicalProducts: {
+                where: {
+                  status: "ReturnPending",
+                },
+                select: {
+                  id: true,
+                },
+              },
+            },
+          },
+        }),
+      }
+    )
+
+    return reservationPhysicalProducts
+  }
+
+  async outboundReservations(select) {
+    const reservationPhysicalProducts = await this.prisma.client.reservationPhysicalProduct.findMany(
+      {
+        distinct: ["customerId"],
+        where: {
+          status: "Queued",
+        },
+        orderBy: {
+          updatedAt: "asc",
+        },
+        select: merge(select, {
+          id: true,
+          customer: {
+            select: {
+              id: true,
+              reservationPhysicalProducts: {
+                where: {
+                  status: "Queued",
+                },
+                select: {
+                  id: true,
+                },
+              },
+            },
+          },
+        }),
+      }
+    )
+
+    return reservationPhysicalProducts
+  }
+
   async cancelReturn(customer: Customer, bagItemId: string) {
     if (bagItemId) {
       // If one bagItemId is passed just cancel the single return
@@ -331,10 +394,6 @@ export class ReservationService {
       let updatedShippingCode = shippingCode
 
       if (reservation) {
-        const key =
-          filterBy === ReservationLineItemsFilter.AllItems
-            ? "products"
-            : "newProducts"
         const reservationWithProducts = await this.prisma.client.reservation.findUnique(
           {
             where: {

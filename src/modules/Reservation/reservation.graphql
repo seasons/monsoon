@@ -25,6 +25,9 @@ type Query {
     @hasRole(roles: [Customer, Admin, Partner])
     @cacheControl(maxAge: 0)
   reservationFeedback: ReservationFeedback @cacheControl(maxAge: 0)
+
+  inboundReservations: [ReservationPhysicalProduct!]
+  outboundReservations: [ReservationPhysicalProduct!]
 }
 
 type Mutation {
