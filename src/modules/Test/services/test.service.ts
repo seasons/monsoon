@@ -2,7 +2,9 @@ import { Inject, forwardRef } from "@nestjs/common"
 import { InventoryStatus, PhysicalProductStatus } from "@prisma/client"
 import { Prisma } from "@prisma/client"
 import { PrismaService } from "@prisma1/prisma.service"
+import faker from "faker"
 import { merge } from "lodash"
+import slugify from "slugify"
 
 import { TimeUtilsService } from "../../Utils/services/time.service"
 import { UtilsService } from "../../Utils/services/utils.service"
@@ -230,20 +232,27 @@ export class TestUtilsService {
     select?: Prisma.CustomerSelect
   } = {}): Promise<{ cleanupFunc: () => void; customer: any }> {
     const chargebeeSubscriptionId = this.utils.randomString()
+    const firstName = faker.name.firstName()
+    const lastName = `${faker.name.lastName()} Tester`
+    const fullName = `${firstName} ${lastName}`
+    const slug = slugify(fullName)
+
     const defaultCreateData = {
       status: "Active",
       user: {
         create: {
           auth0Id: this.utils.randomString(),
-          email: this.utils.randomString() + "@seasons.nyc",
-          firstName: this.utils.randomString(),
-          lastName: this.utils.randomString(),
+          email: slug + "@seasons.nyc",
+          firstName,
+          lastName,
+          fullName,
         },
       },
       detail: {
         create: {
           shippingAddress: {
             create: {
+              slug,
               address1: "55 Washington St Ste 736",
               city: "Brooklyn",
               state: "NY",

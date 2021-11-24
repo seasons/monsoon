@@ -128,6 +128,16 @@ describe("Reservation Physical Product Service", () => {
         numProductsToAdd: 2,
       })
 
+      await reservationPhysicalProductService.pickItems(testCustomer.id, {
+        id: true,
+        status: true,
+      })
+
+      await reservationPhysicalProductService.packItems(testCustomer.id, {
+        id: true,
+        status: true,
+      })
+
       const [
         outboundPackage,
         inboundPackage,
