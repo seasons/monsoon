@@ -448,6 +448,11 @@ export class BagService {
               id: newPhysicalProductID,
             },
           },
+          customer: {
+            connect: {
+              id: customerID,
+            },
+          },
           reservation: {
             connect: {
               id: lastReservation.id,

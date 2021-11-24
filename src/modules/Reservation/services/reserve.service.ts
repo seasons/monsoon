@@ -452,6 +452,7 @@ export class ReserveService {
           id: cuid(),
           physicalProductId: physicalProduct.id,
           isNew: true,
+          customerId: customer.id,
         })
     )
 

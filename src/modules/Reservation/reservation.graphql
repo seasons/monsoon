@@ -338,6 +338,8 @@ type ReservationPhysicalProduct {
   hasCustomerReturnIntent: Boolean!
   customerReturnIntentAt: DateTime
 
+  customer: Customer!
+
   isLost: Boolean
   lostAt: DateTime
   lostInPhase: ReservationPhase
