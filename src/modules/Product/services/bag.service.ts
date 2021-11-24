@@ -374,8 +374,14 @@ export class BagService {
       customerID
     )) as any
 
-    if (!["Queued", "Picked"].includes(oldReservationPhysicalProduct.status)) {
-      throw Error("Only bag items with status Picked, or Queued can be swapped")
+    if (
+      !["Queued", "Picked", "Hold"].includes(
+        oldReservationPhysicalProduct.status
+      )
+    ) {
+      throw Error(
+        "Only bag items with status Hold, Picked, or Queued can be swapped"
+      )
     }
 
     if (oldBagItem.status !== "Reserved") {
