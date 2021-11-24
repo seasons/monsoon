@@ -1143,6 +1143,9 @@ export class RentalService {
     }
   }
 
+  // Test calcDaysRented with the upTo set to Today, billingEnd
+  // Mock return values for calcDaysRented, calculatePriceForDaysRented, findFirst, all the package funcs. This unit test just
+  // needs to test that this function a) passes the upTo properly and b) aggregates the prices properly
   async calculateCurrentBalance(
     customerId: string,
     options: { upTo?: "today" | "billingEnd" | null } = { upTo: null }

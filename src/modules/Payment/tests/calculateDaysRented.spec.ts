@@ -201,6 +201,38 @@ describe("Calculate Days Rented", () => {
         expect(rentalStartedAt).toBeUndefined()
         expect(rentalEndedAt).toBeUndefined()
         expect(comment).toBe("") // TODO:
+
+        const {
+          daysRented: daysRentedUpToToday,
+          comment: commentUpToToday,
+          rentalEndedAt: rentalEndedAtUpToToday,
+          rentalStartedAt: rentalStartedAtUpToToday,
+        } = await rentalService.calcDaysRented(
+          testCustomer.membership.rentalInvoices[0],
+          reservationPhysicalProductWithData,
+          { upTo: "today" }
+        )
+
+        expect(daysRentedUpToToday).toBe(0)
+        expect(rentalStartedAtUpToToday).toBeUndefined()
+        expect(rentalEndedAtUpToToday).toBeUndefined()
+        expect(commentUpToToday).toBe("") // TODO:
+
+        const {
+          daysRented: daysRentedUpToBillingEnd,
+          comment: commentUpToBillingEnd,
+          rentalEndedAt: rentalEndedAtUpToBillingEnd,
+          rentalStartedAt: rentalStartedAtUpToBillingEnd,
+        } = await rentalService.calcDaysRented(
+          testCustomer.membership.rentalInvoices[0],
+          reservationPhysicalProductWithData,
+          { upTo: "billingEnd" }
+        )
+
+        expect(daysRentedUpToBillingEnd).toBe(0)
+        expect(rentalStartedAtUpToBillingEnd).toBeUndefined()
+        expect(rentalEndedAtUpToBillingEnd).toBeUndefined()
+        expect(commentUpToBillingEnd).toBe("") // TODO:
       })
 
       it("Was lost on the way to us", async () => {
@@ -245,6 +277,39 @@ describe("Calculate Days Rented", () => {
         expectTimeToEqual(rentalStartedAt, timeUtils.xDaysAgoISOString(22))
         expectTimeToEqual(rentalEndedAt, timeUtils.xDaysAgoISOString(8))
         expect(comment).toBe("") // TODO:
+
+        const {
+          daysRented: daysRentedUpToToday,
+          comment: commentUpToToday,
+          rentalEndedAt: rentalEndedAtUpToToday,
+          rentalStartedAt: rentalStartedAtUpToToday,
+        } = await rentalService.calcDaysRented(
+          testCustomer.membership.rentalInvoices[0],
+          reservationPhysicalProductWithData,
+          { upTo: "today" }
+        )
+
+        expect(daysRentedUpToToday).toBe(14)
+        expect(rentalStartedAtUpToToday).toBeUndefined()
+        expect(rentalEndedAtUpToToday).toBeUndefined()
+        expect(commentUpToToday).toBe("") // TODO:
+
+        // upTo billingEnd
+        const {
+          daysRented: daysRentedUpToBillingEnd,
+          comment: commentUpToBillingEnd,
+          rentalEndedAt: rentalEndedAtUpToBillingEnd,
+          rentalStartedAt: rentalStartedAtUpToBillingEnd,
+        } = await rentalService.calcDaysRented(
+          testCustomer.membership.rentalInvoices[0],
+          reservationPhysicalProductWithData,
+          { upTo: "billingEnd" }
+        )
+
+        expect(daysRentedUpToBillingEnd).toBe(0)
+        expect(rentalStartedAtUpToBillingEnd).toBeUndefined()
+        expect(rentalEndedAtUpToBillingEnd).toBeUndefined()
+        expect(commentUpToBillingEnd).toBe("") // TODO:
       })
     })
     describe("Reached customer", () => {
