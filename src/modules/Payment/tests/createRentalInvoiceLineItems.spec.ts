@@ -424,7 +424,7 @@ describe("Create Rental Invoice Line Items", () => {
                 "Outbound package shipped 2.16"
               )
               expect(lineItemDatas[0].comment).toBe(
-                "First shipped outbound package of current billing cycle. Did not use premium shipping method. No charge"
+                "First shipped outbound package of current billing cycle. Did not use premium shipping method. No charge."
               )
             })
           })
@@ -615,15 +615,7 @@ describe("Create Rental Invoice Line Items", () => {
               id: cuid(),
               billingStartAt: timeUtils.xDaysAgo(60),
               billingEndAt: timeUtils.xDaysAgo(30),
-              reservationPhysicalProducts: [
-                {
-                  outboundPackage: {
-                    id: true,
-                    createdAt: timeUtils.xDaysAgo(36),
-                    enteredDeliverySystemAt: timeUtils.xDaysAgo(35),
-                  },
-                },
-              ],
+              reservationPhysicalProducts: [],
               lineItems: [],
             } as any)
           mocksToRestore.push(previousRentalInvoiceMock)
@@ -650,28 +642,240 @@ describe("Create Rental Invoice Line Items", () => {
         })
 
         describe("Properly proceses packages created in the previous billing cycle", () => {
-          it("Ignores packages created and shipped in the previous billing cycle", () => {
-            // Add two reservation physical products with outbound packages
-            expect(0).toBe(1)
+          it("Ignores packages created and shipped in the previous billing cycle", async () => {
+            const previousRentalInvoiceMock = jest
+              .spyOn(rentalService, "getPreviousRentalInvoiceWithPackageData")
+              .mockReturnValue({
+                id: cuid(),
+                billingStartAt: timeUtils.xDaysAgo(60),
+                billingEndAt: timeUtils.xDaysAgo(30),
+                reservationPhysicalProducts: [
+                  {
+                    outboundPackage: {
+                      id: true,
+                      createdAt: timeUtils.xDaysAgo(36),
+                      enteredDeliverySystemAt: timeUtils.xDaysAgo(35),
+                    },
+                  },
+                ],
+                lineItems: [],
+              } as any)
+            mocksToRestore.push(previousRentalInvoiceMock)
+            const lineItemDatas = await rentalService.getOutboundPackageLineItemDatasFromPreviousBillingCycle(
+              {
+                id: cuid(),
+                billingEndAt: new Date(),
+                billingStartAt: timeUtils.xDaysAgo(30),
+                reservationPhysicalProducts: [],
+              }
+            )
+
+            expect(lineItemDatas.length).toBe(0)
           })
 
           describe("Properly processes packages shipped in this billing cycle", () => {
             describe("First shipped package of previous cycle", () => {
-              it("If it's select, creates a line item with nonzero price", () => {
-                expect(0).toBe(1)
+              it("If it's select, creates a line item with nonzero price", async () => {
+                const previousRentalInvoiceMock = jest
+                  .spyOn(
+                    rentalService,
+                    "getPreviousRentalInvoiceWithPackageData"
+                  )
+                  .mockReturnValue({
+                    id: cuid(),
+                    billingStartAt: timeUtils.xDaysAgo(60),
+                    billingEndAt: timeUtils.xDaysAgo(30),
+                    reservationPhysicalProducts: [
+                      {
+                        outboundPackage: {
+                          id: true,
+                          amount: 2000,
+                          createdAt: timeUtils.xDaysAgo(31),
+                          enteredDeliverySystemAt: timeUtils.xDaysAgo(29),
+                          shippingMethod: { code: "UPSSelect" },
+                        },
+                      },
+                    ],
+                    lineItems: [],
+                  } as any)
+                mocksToRestore.push(previousRentalInvoiceMock)
+                const lineItemDatas = await rentalService.getOutboundPackageLineItemDatasFromPreviousBillingCycle(
+                  {
+                    id: cuid(),
+                    billingEndAt: new Date(),
+                    billingStartAt: timeUtils.xDaysAgo(30),
+                    reservationPhysicalProducts: [],
+                  }
+                )
+
+                const shipmentDate = rentalService.formatPackageShipmentDate(
+                  timeUtils.xDaysAgo(29)
+                )
+                expect(lineItemDatas.length).toBe(1)
+                expect(lineItemDatas[0].price).toBeGreaterThan(0)
+                expect(lineItemDatas[0].name).toBe(
+                  `Outbound package shipped ${shipmentDate}`
+                )
+                expect(lineItemDatas[0].comment).toBe(
+                  "First shipped outbound package of previous billing cycle. Used premium shipping method. Charge"
+                )
               })
 
-              it("if it's ground, creates a line item with zero price", () => {
-                expect(0).toBe(1)
+              it("if it's ground, creates a line item with zero price", async () => {
+                const previousRentalInvoiceMock = jest
+                  .spyOn(
+                    rentalService,
+                    "getPreviousRentalInvoiceWithPackageData"
+                  )
+                  .mockReturnValue({
+                    id: cuid(),
+                    billingStartAt: timeUtils.xDaysAgo(60),
+                    billingEndAt: timeUtils.xDaysAgo(30),
+                    reservationPhysicalProducts: [
+                      {
+                        outboundPackage: {
+                          id: true,
+                          amount: 2000,
+                          createdAt: timeUtils.xDaysAgo(31),
+                          enteredDeliverySystemAt: timeUtils.xDaysAgo(29),
+                          shippingMethod: { code: "UPSGround" },
+                        },
+                      },
+                    ],
+                    lineItems: [],
+                  } as any)
+                mocksToRestore.push(previousRentalInvoiceMock)
+                const lineItemDatas = await rentalService.getOutboundPackageLineItemDatasFromPreviousBillingCycle(
+                  {
+                    id: cuid(),
+                    billingEndAt: new Date(),
+                    billingStartAt: timeUtils.xDaysAgo(30),
+                    reservationPhysicalProducts: [],
+                  }
+                )
+
+                const shipmentDate = rentalService.formatPackageShipmentDate(
+                  timeUtils.xDaysAgo(29)
+                )
+
+                expect(lineItemDatas.length).toBe(1)
+                expect(lineItemDatas[0].price).toBe(0)
+                expect(lineItemDatas[0].name).toBe(
+                  `Outbound package shipped ${shipmentDate}`
+                )
+                expect(lineItemDatas[0].comment).toBe(
+                  "First shipped outbound package of previous billing cycle. Did not use premium shipping method. No charge."
+                )
               })
             })
 
             describe("2nd or later package of previous billing cycle", () => {
-              it("If it's select, creates a line item with nonzero price", () => {
-                expect(0).toBe(1)
+              it("If it's select, creates a line item with nonzero price", async () => {
+                const previousRentalInvoiceMock = jest
+                  .spyOn(
+                    rentalService,
+                    "getPreviousRentalInvoiceWithPackageData"
+                  )
+                  .mockReturnValue({
+                    id: cuid(),
+                    billingStartAt: timeUtils.xDaysAgo(60),
+                    billingEndAt: timeUtils.xDaysAgo(30),
+                    reservationPhysicalProducts: [
+                      {
+                        outboundPackage: {
+                          id: true,
+                          amount: 2000,
+                          createdAt: timeUtils.xDaysAgo(31),
+                          enteredDeliverySystemAt: timeUtils.xDaysAgo(29),
+                          shippingMethod: { code: "UPSSelect" },
+                        },
+                      },
+                    ],
+                    lineItems: [
+                      {
+                        name:
+                          "First shipped outbound package of billing cycle. Did not use premium shipping method. No charge.",
+                        price: 0,
+                      },
+                    ],
+                  } as any)
+                mocksToRestore.push(previousRentalInvoiceMock)
+                const lineItemDatas = await rentalService.getOutboundPackageLineItemDatasFromPreviousBillingCycle(
+                  {
+                    id: cuid(),
+                    billingEndAt: new Date(),
+                    billingStartAt: timeUtils.xDaysAgo(30),
+                    reservationPhysicalProducts: [],
+                  }
+                )
+
+                const shipmentDate = rentalService.formatPackageShipmentDate(
+                  timeUtils.xDaysAgo(29)
+                )
+                expect(lineItemDatas.length).toBe(1)
+                expect(lineItemDatas[0].price).toBeGreaterThan(0)
+                expect(lineItemDatas[0].name).toBe(
+                  `Outbound package shipped ${shipmentDate}`
+                )
+                expect(lineItemDatas[0].comment).toBe(
+                  "Shipped outbound package 2 of previous billing cycle. Charge."
+                )
               })
-              it("If it's ground, creates a line item with nonzero price", () => {
-                expect(0).toBe(1)
+              it("If it's ground, creates a line item with nonzero price", async () => {
+                const previousRentalInvoiceMock = jest
+                  .spyOn(
+                    rentalService,
+                    "getPreviousRentalInvoiceWithPackageData"
+                  )
+                  .mockReturnValue({
+                    id: cuid(),
+                    billingStartAt: timeUtils.xDaysAgo(60),
+                    billingEndAt: timeUtils.xDaysAgo(30),
+                    reservationPhysicalProducts: [
+                      {
+                        outboundPackage: {
+                          id: true,
+                          amount: 2000,
+                          createdAt: timeUtils.xDaysAgo(31),
+                          enteredDeliverySystemAt: timeUtils.xDaysAgo(29),
+                          shippingMethod: { code: "UPSGround" },
+                        },
+                      },
+                    ],
+                    lineItems: [
+                      {
+                        name:
+                          "First shipped outbound package of billing cycle. Did not use premium shipping method. No charge.",
+                        price: 0,
+                      },
+                      {
+                        name:
+                          "Shipped outbound package 2 of billing cycle. Charge.",
+                        price: 2000,
+                      },
+                    ],
+                  } as any)
+                mocksToRestore.push(previousRentalInvoiceMock)
+                const lineItemDatas = await rentalService.getOutboundPackageLineItemDatasFromPreviousBillingCycle(
+                  {
+                    id: cuid(),
+                    billingEndAt: new Date(),
+                    billingStartAt: timeUtils.xDaysAgo(30),
+                    reservationPhysicalProducts: [],
+                  }
+                )
+
+                const shipmentDate = rentalService.formatPackageShipmentDate(
+                  timeUtils.xDaysAgo(29)
+                )
+                expect(lineItemDatas.length).toBe(1)
+                expect(lineItemDatas[0].price).toBeGreaterThan(0)
+                expect(lineItemDatas[0].name).toBe(
+                  `Outbound package shipped ${shipmentDate}`
+                )
+                expect(lineItemDatas[0].comment).toBe(
+                  "Shipped outbound package 3 of previous billing cycle. Charge."
+                )
               })
             })
           })

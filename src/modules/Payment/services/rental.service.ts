@@ -886,11 +886,11 @@ export class RentalService {
       const commentStart = `First shipped outbound package of ${billingCycle} billing cycle.`
       const suffix = usedPremiumShipping
         ? "Used premium shipping method. Charge"
-        : "Did not use premium shipping method. No charge"
-      return commentStart + suffix
+        : "Did not use premium shipping method. No charge."
+      return commentStart + " " + suffix
     }
 
-    return `Shipped outbound package ${indexInCycle} of ${billingCycle} billing cycle. Charge`
+    return `Shipped outbound package ${indexInCycle} of ${billingCycle} billing cycle. Charge.`
   }
 
   private getOutboundPackageLineItemName = (
@@ -901,7 +901,7 @@ export class RentalService {
     )}`
   }
 
-  private formatPackageShipmentDate = (date: Date) => {
+  formatPackageShipmentDate = (date: Date) => {
     const luxDate = DateTime.fromJSDate(date)
     return luxDate
       .toLocaleString({ month: "numeric", day: "numeric" })
