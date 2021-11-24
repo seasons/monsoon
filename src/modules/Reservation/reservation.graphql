@@ -262,6 +262,7 @@ type Reservation @cacheControl(maxAge: 0) {
   products: [PhysicalProduct!]!
   newProducts: [PhysicalProduct!]!
   returnedProducts: [PhysicalProduct!]!
+  reservationPhysicalProducts: [ReservationPhysicalProduct!]!
   packageEvents(
     where: PackageTransitEventWhereInput
     orderBy: PackageTransitEventOrderByInput

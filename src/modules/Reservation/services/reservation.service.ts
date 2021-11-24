@@ -72,6 +72,64 @@ export class ReservationService {
     private readonly customerUtils: CustomerUtilsService
   ) {}
 
+  async inboundReservations(where, select) {
+    const reservationPhysicalProducts = await this.prisma.client.reservationPhysicalProduct.findMany(
+      {
+        distinct: ["customerId"],
+        where: {
+          status: "ReturnPending",
+        },
+        orderBy: {
+          updatedAt: "desc",
+        },
+        select: {
+          id: true,
+          customer: {
+            select: {
+              reservationPhysicalProducts: {
+                where: {
+                  status: "ReturnPending",
+                },
+                select,
+              },
+            },
+          },
+        },
+      }
+    )
+
+    return reservationPhysicalProducts
+  }
+
+  async outboundReservations(where, select) {
+    const reservationPhysicalProducts = await this.prisma.client.reservationPhysicalProduct.findMany(
+      {
+        distinct: ["customerId"],
+        where: {
+          status: "Queued",
+        },
+        orderBy: {
+          updatedAt: "desc",
+        },
+        select: {
+          id: true,
+          customer: {
+            select: {
+              reservationPhysicalProducts: {
+                where: {
+                  status: "Queued",
+                },
+                select,
+              },
+            },
+          },
+        },
+      }
+    )
+
+    return reservationPhysicalProducts
+  }
+
   async cancelReturn(customer: Customer, bagItemId: string) {
     if (bagItemId) {
       // If one bagItemId is passed just cancel the single return
@@ -335,7 +393,6 @@ export class ReservationService {
           filterBy === ReservationLineItemsFilter.AllItems
             ? "products"
             : "newProducts"
-
         const reservationWithProducts = await this.prisma.client.reservation.findUnique(
           {
             where: {
@@ -343,14 +400,18 @@ export class ReservationService {
             },
             select: {
               id: true,
-              [key]: {
+              reservationPhysicalProducts: {
                 select: {
-                  id: true,
-                  productVariant: {
+                  physicalProduct: {
                     select: {
                       id: true,
-                      product: {
-                        select: productSelect,
+                      productVariant: {
+                        select: {
+                          id: true,
+                          product: {
+                            select: productSelect,
+                          },
+                        },
                       },
                     },
                   },
@@ -360,19 +421,22 @@ export class ReservationService {
           }
         )
 
-        lines = reservationWithProducts[key].map(p => {
-          const product = p.productVariant.product
+        lines = reservationWithProducts.reservationPhysicalProducts.map(rpp => {
+          const variant = rpp.physicalProduct.productVariant
+          const product = variant.product
           const price = product.computedRentalPrice * 100
 
           return {
             name: product.name,
             recordType: "ProductVariant",
-            recordID: p.productVariant.id,
+            recordID: variant.id,
             price,
           }
         })
 
-        variantIDs = reservationWithProducts[key].map(p => p.productVariant.id)
+        variantIDs = reservationWithProducts.reservationPhysicalProducts.map(
+          rpp => rpp.physicalProduct.productVariant.id
+        )
         updatedShippingCode =
           (reservationWithProducts as any)?.shippingOption?.shippingMethod
             ?.code || shippingCode
