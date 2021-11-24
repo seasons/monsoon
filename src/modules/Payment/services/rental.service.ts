@@ -139,6 +139,7 @@ export class RentalService {
     returnPackages: {
       select: { items: true, enteredDeliverySystemAt: true },
     },
+    newProducts: { select: { seasonsUID: true } },
     returnedProducts: { select: { seasonsUID: true } },
     shippingMethod: { select: { id: true, code: true } },
     lostAt: true,
@@ -488,6 +489,7 @@ export class RentalService {
         billingEndAt: true,
         membership: { select: { customer: { select: { id: true } } } },
         reservations: {
+          orderBy: { createdAt: "asc" },
           select: this.rentalReservationSelect,
         },
       },
@@ -507,14 +509,26 @@ export class RentalService {
         },
       },
     })
-    const initialReservation = sentPackage.reservationOnSentPackage
+    let initialReservation = sentPackage?.reservationOnSentPackage
+    if (!initialReservation) {
+      initialReservation = invoiceWithData.reservations.find(reservation =>
+        reservation.newProducts
+          .map(a => a.seasonsUID)
+          .includes(physicalProduct.seasonsUID)
+      )
+    }
+    if (!initialReservation) {
+      throw new Error(
+        `Unable to find initial reservation for item: ${physicalProduct.seasonsUID}`
+      )
+    }
 
     let daysRented, rentalEndedAt, comment
     comment = `Initial reservation: ${initialReservation.reservationNumber}, status ${initialReservation.status}, phase ${initialReservation.phase}`
     const addComment = line => (comment += `\n${line}`)
 
     const itemDeliveredAt = this.getSafeSentPackageDeliveryDate(
-      sentPackage.deliveredAt,
+      sentPackage?.deliveredAt,
       initialReservation.createdAt
     )
 
@@ -1416,6 +1430,9 @@ export class RentalService {
       (acc, curval) => acc + curval.price,
       0
     )
+    if (totalInvoiceCharges === 0) {
+      return [promises, invoicesCreated]
+    }
     const prismaUserId =
       lineItemsWithData[0].rentalInvoice.membership.customer.user.id
     const subscriptionStatus =
