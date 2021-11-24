@@ -1,3 +1,4 @@
+import { ReservationUtilsService } from "@app/modules/Reservation"
 import { ProductUtilsService } from "@app/modules/Utils/services/product.utils.service"
 import { UtilsService } from "@app/modules/Utils/services/utils.service"
 import { Injectable } from "@nestjs/common"
@@ -39,7 +40,8 @@ export class BagService {
     private readonly prisma: PrismaService,
     private readonly productVariantService: ProductVariantService,
     private readonly utils: UtilsService,
-    private readonly productUtils: ProductUtilsService
+    private readonly productUtils: ProductUtilsService,
+    private readonly reservationUtils: ReservationUtilsService
   ) {}
 
   async markAsPickedUp(bagItemIds) {
@@ -596,12 +598,11 @@ export class BagService {
       },
     })
 
-    const updateReservationPromises = await this.utils.updateReservationOnChange(
+    return await this.reservationUtils.updateReservationOnChange(
       [currentReservation.id],
       { Lost: 1 },
       [lostResPhysProd.id]
     )
-    return await this.utils.wrapPrismaPromise(updateReservationPromises)
   }
 
   // async markAsFound(
@@ -662,9 +663,9 @@ export class BagService {
       })
     )
 
-    const {
-      promise: updateReservationPromise,
-    } = await this.updateReservationOnLost(lostResPhysProd)
+    const updateReservationPromise = await this.updateReservationOnLost(
+      lostResPhysProd
+    )
     promises.push(...updateReservationPromise)
 
     await this.prisma.client.$transaction(promises)

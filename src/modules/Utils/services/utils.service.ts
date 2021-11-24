@@ -48,12 +48,6 @@ enum ProductSize {
 
 type InfoStringPath = "user" | "customer"
 
-interface InitialState {
-  Lost?: number
-  ReturnProcessed?: number
-  DeliveredToCustomer?: number
-}
-
 @Injectable()
 export class UtilsService {
   constructor(private readonly prisma: PrismaService) {}
@@ -150,117 +144,6 @@ export class UtilsService {
     }
 
     return prismaLocation
-  }
-
-  async updateReservationOnChange(
-    reservationIds: string[],
-
-    initialState: InitialState,
-    resPhysProdsIds: string[]
-  ) {
-    const reservations = await this.prisma.client.reservation.findMany({
-      where: {
-        id: {
-          in: reservationIds,
-        },
-      },
-      select: {
-        id: true,
-        reservationPhysicalProducts: {
-          where: {
-            id: {
-              notIn: resPhysProdsIds,
-            },
-          },
-          select: {
-            id: true,
-            status: true,
-          },
-        },
-      },
-    })
-
-    const promises = []
-
-    for (const reservation of reservations) {
-      const reservationPhysProds = reservation.reservationPhysicalProducts
-      const resPhysProdStatusCounts = { ...initialState }
-
-      for (const resPhysProd of reservationPhysProds) {
-        const status = resPhysProd.status
-
-        if (
-          !["Lost", "ReturnProcessed", "DeliveredToBusiness"].includes(status)
-        ) {
-          continue
-        }
-
-        if (resPhysProdStatusCounts[status]) {
-          resPhysProdStatusCounts[status] += 1
-          continue
-        }
-
-        resPhysProdStatusCounts[status] = 1
-      }
-
-      const lostStatusCount = resPhysProdStatusCounts["Lost"]
-      const returnProcessedStatusCount =
-        resPhysProdStatusCounts["ReturnProcessed"]
-      const deliveredToBusinessStatusCount =
-        resPhysProdStatusCounts["DeliveredToBusiness"]
-
-      const hasMajorityLost =
-        lostStatusCount >= returnProcessedStatusCount &&
-        lostStatusCount >= deliveredToBusinessStatusCount
-      if (hasMajorityLost) {
-        promises.push(
-          this.prisma.client.reservation.update({
-            where: {
-              id: reservation.id,
-            },
-            data: {
-              status: "Lost",
-            },
-          })
-        )
-        continue
-      }
-
-      const hasMajorityReturnProcessed =
-        returnProcessedStatusCount >= lostStatusCount &&
-        returnProcessedStatusCount >= deliveredToBusinessStatusCount
-      if (hasMajorityReturnProcessed) {
-        promises.push(
-          this.prisma.client.reservation.update({
-            where: {
-              id: reservation.id,
-            },
-            data: {
-              status: "Completed",
-            },
-          })
-        )
-        continue
-      }
-
-      const hasMajorityDeliveredToBusiness =
-        deliveredToBusinessStatusCount >= lostStatusCount &&
-        deliveredToBusinessStatusCount >= returnProcessedStatusCount
-      if (hasMajorityDeliveredToBusiness) {
-        promises.push(
-          this.prisma.client.reservation.update({
-            where: {
-              id: reservation.id,
-            },
-            data: {
-              status: "Delivered",
-            },
-          })
-        )
-        continue
-      }
-    }
-    return promises
   }
 
   getReservationReturnDate(
