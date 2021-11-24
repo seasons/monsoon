@@ -582,7 +582,7 @@ export class BagService {
   }
 
   private async updateReservationOnLost(lostResPhysProd) {
-    const currentReservation = await this.prisma.client.reservation.findFirst({
+    const currentReservation = await this.prisma.client.reservation.findUnique({
       where: {
         id: lostResPhysProd.reservationId,
       },
@@ -595,42 +595,13 @@ export class BagService {
         },
       },
     })
-    const reservationPhysicalProducts =
-      currentReservation.reservationPhysicalProducts
-    const resPhysProdStatusCounts = {}
-    //set to one because the update to the reseravtionPhysicalProduct hasn't happened yet
-    let lostResPhysProdCount = 1
 
-    for (const resPhysProd of reservationPhysicalProducts) {
-      const status = resPhysProd.status
-      if (status === "Lost") {
-        lostResPhysProdCount += 1
-        continue
-      }
-      if (resPhysProdStatusCounts[status]) {
-        resPhysProdStatusCounts[status] += 1
-        continue
-      }
-      resPhysProdStatusCounts[status] = 1
-    }
-
-    const hasMajorityLost = Object.values(resPhysProdStatusCounts).every(
-      a => a <= lostResPhysProdCount
+    const updateReservationPromises = await this.utils.updateReservationOnChange(
+      [currentReservation.id],
+      { Lost: 1 },
+      [lostResPhysProd.id]
     )
-    const updateResvationPromise = []
-    if (hasMajorityLost) {
-      updateResvationPromise.push(
-        this.prisma.client.reservation.update({
-          where: {
-            id: currentReservation.id,
-          },
-          data: {
-            status: "Lost",
-          },
-        })
-      )
-    }
-    return await this.utils.wrapPrismaPromise(updateResvationPromise)
+    return await this.utils.wrapPrismaPromise(updateReservationPromises)
   }
 
   // async markAsFound(
@@ -690,10 +661,11 @@ export class BagService {
         },
       })
     )
+
     const {
       promise: updateReservationPromise,
     } = await this.updateReservationOnLost(lostResPhysProd)
-    promises.push(updateReservationPromise)
+    promises.push(...updateReservationPromise)
 
     await this.prisma.client.$transaction(promises)
 

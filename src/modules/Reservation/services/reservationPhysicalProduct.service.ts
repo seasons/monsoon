@@ -189,58 +189,34 @@ export class ReservationPhysicalProductService {
       },
       select: {
         id: true,
-        status: true,
-        reservationPhysicalProducts: {
-          select: {
-            status: true,
-            physicalProductId: true,
-          },
-        },
       },
     })
 
-    // Status Lost supercedes status Completed in importance
-    const reservationsToUpdate = reservations.filter(a => a.status !== "Lost")
-    const updateReservationPromises = []
-
-    for (let reservation of reservationsToUpdate) {
-      const reservationPhysicalProducts =
-        reservation.reservationPhysicalProducts
-      const resPhysProdsStatusCounts = {}
-      //set to the length of productStates because this shows the number of reservationPhysicalProducts to be returned
-      let returnProcessedCount = productStates.length
-
-      for (const resPhysProd of reservationPhysicalProducts) {
-        const status = resPhysProd.status
-        if (status === "ReturnProcessed") {
-          returnProcessedCount += 1
-          continue
-        }
-        if (resPhysProdsStatusCounts[status]) {
-          resPhysProdsStatusCounts[status] += 1
-          continue
-        }
-        resPhysProdsStatusCounts[status] = 1
-      }
-
-      const hasMajorityReturnProcessed = Object.values(
-        resPhysProdsStatusCounts
-      ).every(a => a <= returnProcessedCount)
-
-      if (hasMajorityReturnProcessed) {
-        updateReservationPromises.push(
-          this.prisma.client.reservation.update({
-            where: {
-              id: reservation.id,
+    const resPhysProds = await this.prisma.client.reservationPhysicalProduct.findMany(
+      {
+        where: {
+          physicalProduct: {
+            seasonsUID: {
+              in: productStates.map(a => a.productUID),
             },
-            data: {
-              status: "Completed",
-            },
-          })
-        )
+          },
+          bagItem: {
+            customerId,
+          },
+        },
+        select: {
+          id: true,
+        },
       }
-    }
-    return await this.utils.wrapPrismaPromise(updateReservationPromises)
+    )
+
+    const updateReservationPromises = await this.utils.updateReservationOnChange(
+      reservations.map(a => a.id),
+      { ReturnProcessed: productStates.length },
+      resPhysProds.map(a => a.id)
+    )
+    return this.utils.wrapPrismaPromise(updateReservationPromises)
+    // return await this.utils.wrapPrismaPromise(updateReservationPromises)
   }
 
   private async updateProductsOnReturn(
