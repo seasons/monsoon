@@ -54,6 +54,11 @@ export class TimeUtilsService {
     return dt.minus({ days: x }).toJSDate()
   }
 
+  xDaysFromNow(x: number): Date {
+    var dt = DateTime.local()
+    return dt.plus({ days: x }).toJSDate()
+  }
+
   xDaysFromNowISOString(x: number) {
     return moment().add(x, "days").format()
   }
