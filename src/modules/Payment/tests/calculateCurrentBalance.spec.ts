@@ -17,6 +17,8 @@ describe("Calculate Current Balance", () => {
   let reservationService: ReservationService
   let reservationTestUtils: ReservationTestUtilsService
 
+  let calcDaysRentedMock, currentBalance
+
   beforeAll(async () => {
     const moduleBuilder = await Test.createTestingModule(PAYMENT_MODULE_DEF)
     const moduleRef = await moduleBuilder.compile()
@@ -37,9 +39,10 @@ describe("Calculate Current Balance", () => {
       ],
     } as any)
 
-    jest
+    calcDaysRentedMock = jest
       .spyOn(rentalService, "calcDaysRented")
       .mockResolvedValue({ daysRented: 5 } as any)
+
     jest
       .spyOn(rentalService, "calculatePriceForDaysRented")
       .mockImplementation(async ({ product }) => {
@@ -70,12 +73,25 @@ describe("Calculate Current Balance", () => {
     jest
       .spyOn(rentalService, "getInboundPackageLineItemDatas")
       .mockReturnValue([{ price: 30 }])
+
+    currentBalance = await rentalService.calculateCurrentBalance("fakeId", {
+      upTo: "today",
+    })
   })
   it("Correctly aggregates rental usage and package prices", async () => {
-    const currentBalance = await rentalService.calculateCurrentBalance(
-      "fakeId",
+    expect(currentBalance).toBe(100)
+  })
+
+  it("Calls calcDaysRented with the proper upTo value", () => {
+    expect(calcDaysRentedMock).toBeCalledWith(
+      {
+        reservationPhysicalProducts: [
+          { physicalProduct: { id: "1" } },
+          { physicalProduct: { id: "2" } },
+        ],
+      },
+      { physicalProduct: { id: "1" } },
       { upTo: "today" }
     )
-    expect(currentBalance).toBe(100)
   })
 })
