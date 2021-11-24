@@ -50,7 +50,8 @@ export class ProductService {
   ) {}
 
   async getProducts(args, select, application) {
-    if (isEmpty(args.where) && application !== "spring") {
+    const { where, ...otherArgs } = args
+    if (isEmpty(args.where) && isEmpty(otherArgs) && application !== "spring") {
       return []
     }
 
