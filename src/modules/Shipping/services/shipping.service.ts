@@ -7,10 +7,11 @@ import {
   Package,
   PackageDirection,
   Prisma,
+  PrismaPromise,
   ShippingCode,
-  ShippingMethod,
 } from "@prisma/client"
 import { ApolloError } from "apollo-server"
+import cuid from "cuid"
 import { pick } from "lodash"
 import { merge } from "lodash"
 import shippo from "shippo"
@@ -191,10 +192,17 @@ export class ShippingService {
     }[]
     customer: Pick<Customer, "id">
     select?: Prisma.PackageSelect
-  }) {
+  }): Promise<{
+    promises: Promise<Partial<Package>>[]
+    inboundPackageId: string
+    outboundPackageId: string
+  }> {
     if (bagItems.length === 0) {
       throw new Error("No bag items provided, cannot create packages")
     }
+
+    const inboundPackageId = cuid()
+    const outboundPackageId = cuid()
 
     const productVariantIDs = bagItems.map(a => {
       return a.reservationPhysicalProduct.physicalProduct.productVariant.id
@@ -252,35 +260,43 @@ export class ShippingService {
     )
 
     // Create Label and Package records
-    const outboundPackage =
+    const outboundPackagePromise =
       outboundLabel &&
-      (await this.createPackage({
+      this.createPackage({
+        id: outboundPackageId,
         bagItems,
         label: outboundLabel,
         shippingCode,
         shipmentWeight,
         locationSlug: customerShippingAddressSlug,
         direction: PackageDirection.Outbound,
-        select,
-      }))
+        select: merge(select, {
+          id: true,
+        }),
+      })
 
-    const inboundPackage = await this.createPackage({
+    const inboundPackagePromise = this.createPackage({
+      id: inboundPackageId,
       bagItems,
       label: inboundLabel,
       shippingCode,
       shipmentWeight,
       locationSlug: customerShippingAddressSlug,
       direction: PackageDirection.Inbound,
-      select,
+      select: merge(select, {
+        id: true,
+      }),
     })
 
     return {
-      outboundPackage,
-      inboundPackage,
+      promises: [outboundPackagePromise, inboundPackagePromise],
+      inboundPackageId,
+      outboundPackageId,
     }
   }
 
   async createPackage({
+    id,
     bagItems,
     label,
     shippingCode,
@@ -289,6 +305,7 @@ export class ShippingService {
     direction,
     select,
   }: {
+    id?: string
     bagItems: {
       reservationPhysicalProduct: {
         physicalProduct: {
@@ -333,6 +350,7 @@ export class ShippingService {
 
     return this.prisma.client.package.create({
       data: {
+        id,
         ...createPartialPackageCreateInput(label),
         weight: shipmentWeight,
         items: {

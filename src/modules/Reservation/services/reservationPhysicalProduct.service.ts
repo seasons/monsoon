@@ -12,6 +12,7 @@ import {
   ShippingCode,
   ShippingMethod,
 } from "@prisma/client"
+import cuid from "cuid"
 import { DateTime } from "luxon"
 
 interface ProductState {
@@ -434,8 +435,9 @@ export class ReservationPhysicalProductService {
     })
 
     const {
-      outboundPackage,
-      inboundPackage,
+      promises: packagePromises,
+      inboundPackageId,
+      outboundPackageId,
     } = await this.shippingService.createPackages({
       bagItems,
       customer: { id: customerID },
@@ -453,34 +455,38 @@ export class ReservationPhysicalProductService {
           data: {
             inboundPackage: {
               connect: {
-                id: inboundPackage?.id,
+                id: inboundPackageId,
               },
             },
-            outboundPackage: {
-              connect: {
-                id: outboundPackage?.id,
+            ...(outboundPackageId && {
+              outboundPackage: {
+                connect: {
+                  id: outboundPackageId,
+                },
               },
-            },
+            }),
             physicalProduct: {
               update: {
                 packages: {
                   connect: [
-                    { id: inboundPackage?.id },
-                    { id: outboundPackage?.id },
+                    { id: inboundPackageId },
+                    { id: outboundPackageId },
                   ],
                 },
               },
             },
             reservation: {
               update: {
-                sentPackage: {
-                  connect: {
-                    id: outboundPackage?.id,
+                ...(outboundPackageId && {
+                  sentPackage: {
+                    connect: {
+                      id: outboundPackageId,
+                    },
                   },
-                },
+                }),
                 returnedPackage: {
                   connect: {
-                    id: inboundPackage?.id,
+                    id: inboundPackageId,
                   },
                 },
               },
@@ -490,7 +496,10 @@ export class ReservationPhysicalProductService {
       )
     }
 
-    await this.prisma.client.$transaction(promises)
+    const [
+      outboundPackage,
+      inboundPackage,
+    ] = await this.prisma.client.$transaction([...packagePromises, ...promises])
     return [outboundPackage, inboundPackage].filter(Boolean)
   }
 }
