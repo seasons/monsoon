@@ -70,7 +70,7 @@ describe("Reservation Physical Product Service", () => {
       }
 
       const result = await reservationPhysicalProductService.pickItems(
-        bagItemIDs,
+        testCustomer.id,
         {
           id: true,
           status: true,
@@ -106,7 +106,7 @@ describe("Reservation Physical Product Service", () => {
       }
 
       const result = await reservationPhysicalProductService.packItems(
-        pickedBagItemIDs,
+        testCustomer.id,
         {
           id: true,
           status: true,

@@ -355,6 +355,9 @@ type ReservationPhysicalProduct {
   hasBeenScannedOnOutbound: Boolean!
   scannedOnOutboundAt: DateTime
 
+  outboundPackage: Package
+  inboundPackage: Package
+
   status: ReservationPhysicalProductStatus!
 
   createdAt: DateTime

@@ -45,9 +45,9 @@ export class ReservationMutationsResolver {
   }
 
   @Mutation()
-  async generateShippingLabels(@Customer() customer, @Select() select) {
+  async generateShippingLabels(@Args() { customerID }, @Select() select) {
     return this.reservationPhysicalProduct.generateShippingLabels(
-      customer.id,
+      customerID,
       select
     )
   }

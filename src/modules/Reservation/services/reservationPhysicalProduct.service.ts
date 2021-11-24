@@ -395,7 +395,7 @@ export class ReservationPhysicalProductService {
         reservationPhysicalProduct: {
           status: "Packed",
           outboundPackage: {
-            is: undefined,
+            is: null,
           },
         },
         customerId: customerID,

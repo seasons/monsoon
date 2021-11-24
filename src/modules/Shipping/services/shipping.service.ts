@@ -205,7 +205,7 @@ export class ShippingService {
 
     const electShippingCode = () => {
       const shippingCodes = bagItems.map(
-        a => a.reservationPhysicalProduct.reservation.shippingMethod.code
+        a => a.reservationPhysicalProduct.reservation?.shippingMethod?.code
       )
 
       let shippingCode: ShippingCode = "UPSGround"
@@ -235,8 +235,8 @@ export class ShippingService {
       }
     )
 
-    const customerShippingAddressRecordID =
-      customerWithShippingAddress.detail.shippingAddress.id
+    const customerShippingAddressSlug =
+      customerWithShippingAddress.detail.shippingAddress.slug
 
     // Creates Outbound (if appropriate) and Inbound labels
     const [
@@ -255,7 +255,7 @@ export class ShippingService {
         bagItems,
         label: outboundLabel,
         shipmentWeight,
-        locationSlug: customerShippingAddressRecordID,
+        locationSlug: customerShippingAddressSlug,
         direction: PackageDirection.Outbound,
         select,
       }))
@@ -264,7 +264,7 @@ export class ShippingService {
       bagItems,
       label: inboundLabel,
       shipmentWeight,
-      locationSlug: customerShippingAddressRecordID,
+      locationSlug: customerShippingAddressSlug,
       direction: PackageDirection.Inbound,
       select,
     })
