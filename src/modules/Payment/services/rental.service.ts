@@ -592,7 +592,12 @@ export class RentalService {
           )
         throwErrorIfRentalEndedAtUndefined()
         break
-      case "DeliveredToCustomer":
+      case "WithCustomer":
+        // If an item is return pending, the customer either filled out the return flow
+        // before sending the item back OR after the sending the item back but before it reached us.
+        // In either case, if it *currently* has status ReturnPending, that means we haven't received
+        // a transit event for its inbound package yet. Once we receive such an event, it would move into
+        // one of the inbound statuses.
         rentalEndedAt = today
         break
       case "ResetEarly":
@@ -673,33 +678,31 @@ export class RentalService {
   }
 
   adjustRentalDatesForEstimation(
-    unadjustedRentalStartedAt: Date,
-    unadjustedRentalEndedAt: Date,
+    unadjustedRentalStartedAt: Date | undefined,
+    unadjustedRentalEndedAt: Date | undefined,
     resPhysProdStatus: ReservationPhysicalProductStatus,
     invoiceBillingEndAt: Date,
     upTo: "today" | "billingEnd" | null
   ) {
+    // If upTo is today, there's no change whatsoever in the dates,
+    // because the default rentalEndedAt is always (99.9% of the time) before today.
     let rentalStartedAt = unadjustedRentalStartedAt
     let rentalEndedAt = unadjustedRentalEndedAt
-    if (!upTo) {
+    if (!upTo || upTo === "today") {
       return { rentalStartedAt, rentalEndedAt }
     }
 
-    // If upTo is today, there's no change whatsoever in the dates,
-    // because the default rentalEndedAt is always (99.9% of the time) before today.
-
     // If upTo is billingEndAt, we only need to adjust if the item is Outbound or DeliveredToCustomer.
     // In the other cases, the item's journey is already over, so extrapolating out to billingEnd doesn't change anything.
-
     const logicCase = this.calcDaysRentedCaseFromStatus(resPhysProdStatus)
     switch (logicCase) {
       case "Outbound":
-        if (upTo === "billingEnd") {
-          rentalStartedAt = this.timeUtils.xDaysFromNow(2)
-          rentalEndedAt = invoiceBillingEndAt
-        }
+        rentalStartedAt = this.timeUtils.xDaysFromNow(2)
+        rentalEndedAt = invoiceBillingEndAt
         break
-      case "DeliveredToCustomer":
+      case "WithCustomer":
+        // If it's ReturnPending, we assume they're holding it until/unless we receive a package
+        // transit event for it
         rentalEndedAt = invoiceBillingEndAt
         break
       case "Inbound":
@@ -729,6 +732,8 @@ export class RentalService {
       case "DeliveredToBusiness":
         return "Inbound"
       case "DeliveredToCustomer":
+      case "ReturnPending":
+        return "WithCustomer"
       case "ResetEarly":
       case "ReturnProcessed":
       case "Lost":
