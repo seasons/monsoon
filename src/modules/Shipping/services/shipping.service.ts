@@ -193,16 +193,16 @@ export class ShippingService {
     customer: Pick<Customer, "id">
     select?: Prisma.PackageSelect
   }): Promise<{
-    promises: Promise<Partial<Package>>[]
+    promises: {
+      outboundPackagePromise: Promise<Partial<Package>>
+      inboundPackagePromise: Promise<Partial<Package>>
+    }
     inboundPackageId: string
     outboundPackageId: string
   }> {
     if (bagItems.length === 0) {
       throw new Error("No bag items provided, cannot create packages")
     }
-
-    const inboundPackageId = cuid()
-    const outboundPackageId = cuid()
 
     const productVariantIDs = bagItems.map(a => {
       return a.reservationPhysicalProduct.physicalProduct.productVariant.id
@@ -259,6 +259,9 @@ export class ShippingService {
       shippingCode
     )
 
+    const outboundPackageId = outboundLabel ? cuid() : null
+    const inboundPackageId = cuid()
+
     // Create Label and Package records
     const outboundPackagePromise =
       outboundLabel &&
@@ -289,13 +292,13 @@ export class ShippingService {
     })
 
     return {
-      promises: [outboundPackagePromise, inboundPackagePromise],
+      promises: { outboundPackagePromise, inboundPackagePromise },
       inboundPackageId,
       outboundPackageId,
     }
   }
 
-  async createPackage({
+  createPackage({
     id,
     bagItems,
     label,

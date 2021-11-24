@@ -496,10 +496,19 @@ export class ReservationPhysicalProductService {
       )
     }
 
-    const [
-      outboundPackage,
-      inboundPackage,
-    ] = await this.prisma.client.$transaction([...packagePromises, ...promises])
-    return [outboundPackage, inboundPackage].filter(Boolean)
+    const { outboundPackagePromise, inboundPackagePromise } = packagePromises
+
+    const result = await this.prisma.client.$transaction(
+      [inboundPackagePromise, outboundPackagePromise, ...promises].filter(
+        Boolean
+      )
+    )
+    const [inboundPackage, outboundPackage] = result
+
+    if (outboundPackageId === null) {
+      return [null, inboundPackage]
+    }
+
+    return [outboundPackage, inboundPackage]
   }
 }
