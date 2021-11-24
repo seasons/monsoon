@@ -25,6 +25,9 @@ type Query {
     @hasRole(roles: [Customer, Admin, Partner])
     @cacheControl(maxAge: 0)
   reservationFeedback: ReservationFeedback @cacheControl(maxAge: 0)
+
+  inboundReservations: [ReservationPhysicalProduct!]
+  outboundReservations: [ReservationPhysicalProduct!]
 }
 
 type Mutation {
@@ -263,6 +266,7 @@ type Reservation @cacheControl(maxAge: 0) {
   products: [PhysicalProduct!]!
   newProducts: [PhysicalProduct!]!
   returnedProducts: [PhysicalProduct!]!
+  reservationPhysicalProducts: [ReservationPhysicalProduct!]!
   packageEvents(
     where: PackageTransitEventWhereInput
     orderBy: PackageTransitEventOrderByInput
@@ -338,6 +342,8 @@ type ReservationPhysicalProduct {
 
   hasCustomerReturnIntent: Boolean!
   customerReturnIntentAt: DateTime
+
+  customer: Customer!
 
   isLost: Boolean
   lostAt: DateTime
