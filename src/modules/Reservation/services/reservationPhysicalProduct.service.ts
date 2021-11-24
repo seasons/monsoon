@@ -281,14 +281,15 @@ export class ReservationPhysicalProductService {
   }
 
   async pickItems(
-    bagItemIDs: string[],
+    customerID: string,
     select: Prisma.ReservationPhysicalProductSelect
   ) {
     const bagItems = await this.prisma.client.bagItem.findMany({
       where: {
-        id: {
-          in: bagItemIDs,
+        reservationPhysicalProduct: {
+          status: "Queued",
         },
+        customerId: customerID,
       },
       select: {
         id: true,
@@ -337,14 +338,15 @@ export class ReservationPhysicalProductService {
   }
 
   async packItems(
-    bagItemIDs: string[],
+    customerID: string,
     select: Prisma.ReservationPhysicalProductSelect
   ) {
     const bagItems = await this.prisma.client.bagItem.findMany({
       where: {
-        id: {
-          in: bagItemIDs,
+        reservationPhysicalProduct: {
+          status: "Picked",
         },
+        customerId: customerID,
       },
       select: {
         id: true,
@@ -384,13 +386,19 @@ export class ReservationPhysicalProductService {
     return results
   }
 
-  async printShippingLabel({ customer }: { customer: Pick<Customer, "id"> }) {
+  async generateShippingLabels(
+    customerID: string,
+    select: Prisma.PackageSelect
+  ) {
     const bagItems = await this.prisma.client.bagItem.findMany({
       where: {
         reservationPhysicalProduct: {
           status: "Packed",
+          outboundPackage: {
+            is: undefined,
+          },
         },
-        customerId: customer.id,
+        customerId: customerID,
       },
       select: {
         id: true,
@@ -428,7 +436,11 @@ export class ReservationPhysicalProductService {
     const {
       outboundPackage,
       inboundPackage,
-    } = await this.shippingService.createPackages({ bagItems, customer })
+    } = await this.shippingService.createPackages({
+      bagItems,
+      customer: { id: customerID },
+      select,
+    })
 
     const promises = []
 
@@ -478,6 +490,7 @@ export class ReservationPhysicalProductService {
       )
     }
 
-    return this.prisma.client.$transaction(promises)
+    await this.prisma.client.$transaction(promises)
+    return [outboundPackage, inboundPackage].filter(Boolean)
   }
 }

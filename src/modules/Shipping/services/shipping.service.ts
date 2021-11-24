@@ -3,14 +3,15 @@ import { PrismaService } from "@app/prisma/prisma.service"
 import { UtilsService } from "@modules/Utils/services/utils.service"
 import { Injectable } from "@nestjs/common"
 import {
-  BagItem,
   Customer,
   Package,
+  PackageDirection,
   Prisma,
   ShippingCode,
 } from "@prisma/client"
 import { ApolloError } from "apollo-server"
 import { pick } from "lodash"
+import { merge } from "lodash"
 import shippo from "shippo"
 
 import {
@@ -169,6 +170,7 @@ export class ShippingService {
   async createPackages({
     bagItems,
     customer,
+    select,
   }: {
     bagItems: {
       reservationPhysicalProduct: {
@@ -187,7 +189,12 @@ export class ShippingService {
       }
     }[]
     customer: Pick<Customer, "id">
+    select?: Prisma.PackageSelect
   }) {
+    if (bagItems.length === 0) {
+      throw new Error("No bag items provided, cannot create packages")
+    }
+
     const productVariantIDs = bagItems.map(a => {
       return a.reservationPhysicalProduct.physicalProduct.productVariant.id
     })
@@ -249,7 +256,8 @@ export class ShippingService {
         label: outboundLabel,
         shipmentWeight,
         locationSlug: customerShippingAddressRecordID,
-        direction: "Outbound",
+        direction: PackageDirection.Outbound,
+        select,
       }))
 
     const inboundPackage = await this.createPackage({
@@ -257,7 +265,8 @@ export class ShippingService {
       label: inboundLabel,
       shipmentWeight,
       locationSlug: customerShippingAddressRecordID,
-      direction: "Inbound",
+      direction: PackageDirection.Inbound,
+      select,
     })
 
     return {
@@ -272,6 +281,7 @@ export class ShippingService {
     shipmentWeight,
     locationSlug,
     direction,
+    select,
   }: {
     bagItems: {
       reservationPhysicalProduct: {
@@ -293,6 +303,7 @@ export class ShippingService {
     shipmentWeight: number
     locationSlug: string
     direction: "Outbound" | "Inbound"
+    select?: Prisma.PackageSelect
   }) {
     const createPartialPackageCreateInput = (
       shippoTransaction
@@ -334,7 +345,11 @@ export class ShippingService {
               direction === "Outbound" ? locationSlug : cleanersLocationSlug,
           },
         },
+        direction,
       },
+      select: merge(select, {
+        id: true,
+      }),
     })
   }
 

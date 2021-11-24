@@ -44,8 +44,12 @@ export class ReservationMutationsResolver {
     return this.reservationPhysicalProduct.packItems(bagItemIDs, select)
   }
 
-  async printShippingLabel(@Customer() customer) {
-    return this.reservationPhysicalProduct.printShippingLabel(customer)
+  @Mutation()
+  async generateShippingLabels(@Customer() customer, @Select() select) {
+    return this.reservationPhysicalProduct.generateShippingLabels(
+      customer.id,
+      select
+    )
   }
 
   @Mutation()
