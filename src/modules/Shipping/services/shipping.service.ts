@@ -8,6 +8,7 @@ import {
   PackageDirection,
   Prisma,
   ShippingCode,
+  ShippingMethod,
 } from "@prisma/client"
 import { ApolloError } from "apollo-server"
 import { pick } from "lodash"
@@ -238,6 +239,8 @@ export class ShippingService {
     const customerShippingAddressSlug =
       customerWithShippingAddress.detail.shippingAddress.slug
 
+    const shippingCode = electShippingCode()
+
     // Creates Outbound (if appropriate) and Inbound labels
     const [
       outboundLabel,
@@ -245,7 +248,7 @@ export class ShippingService {
     ] = await this.createReservationShippingLabels(
       productVariantIDs,
       customer,
-      electShippingCode()
+      shippingCode
     )
 
     // Create Label and Package records
@@ -254,6 +257,7 @@ export class ShippingService {
       (await this.createPackage({
         bagItems,
         label: outboundLabel,
+        shippingCode,
         shipmentWeight,
         locationSlug: customerShippingAddressSlug,
         direction: PackageDirection.Outbound,
@@ -263,6 +267,7 @@ export class ShippingService {
     const inboundPackage = await this.createPackage({
       bagItems,
       label: inboundLabel,
+      shippingCode,
       shipmentWeight,
       locationSlug: customerShippingAddressSlug,
       direction: PackageDirection.Inbound,
@@ -278,6 +283,7 @@ export class ShippingService {
   async createPackage({
     bagItems,
     label,
+    shippingCode,
     shipmentWeight,
     locationSlug,
     direction,
@@ -300,6 +306,7 @@ export class ShippingService {
       }
     }[]
     label: ShippoTransaction
+    shippingCode: ShippingCode
     shipmentWeight: number
     locationSlug: string
     direction: "Outbound" | "Inbound"
@@ -343,6 +350,11 @@ export class ShippingService {
           connect: {
             slug:
               direction === "Outbound" ? locationSlug : cleanersLocationSlug,
+          },
+        },
+        shippingMethod: {
+          connect: {
+            code: shippingCode,
           },
         },
         direction,
