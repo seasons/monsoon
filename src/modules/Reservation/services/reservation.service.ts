@@ -72,64 +72,6 @@ export class ReservationService {
     private readonly customerUtils: CustomerUtilsService
   ) {}
 
-  async inboundReservations(where, select) {
-    const reservationPhysicalProducts = await this.prisma.client.reservationPhysicalProduct.findMany(
-      {
-        distinct: ["customerId"],
-        where: {
-          status: "ReturnPending",
-        },
-        orderBy: {
-          updatedAt: "desc",
-        },
-        select: {
-          id: true,
-          customer: {
-            select: {
-              reservationPhysicalProducts: {
-                where: {
-                  status: "ReturnPending",
-                },
-                select,
-              },
-            },
-          },
-        },
-      }
-    )
-
-    return reservationPhysicalProducts
-  }
-
-  async outboundReservations(where, select) {
-    const reservationPhysicalProducts = await this.prisma.client.reservationPhysicalProduct.findMany(
-      {
-        distinct: ["customerId"],
-        where: {
-          status: "Queued",
-        },
-        orderBy: {
-          updatedAt: "desc",
-        },
-        select: {
-          id: true,
-          customer: {
-            select: {
-              reservationPhysicalProducts: {
-                where: {
-                  status: "Queued",
-                },
-                select,
-              },
-            },
-          },
-        },
-      }
-    )
-
-    return reservationPhysicalProducts
-  }
-
   async cancelReturn(customer: Customer, bagItemId: string) {
     if (bagItemId) {
       // If one bagItemId is passed just cancel the single return
