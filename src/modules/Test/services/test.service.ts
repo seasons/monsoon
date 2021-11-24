@@ -245,7 +245,6 @@ export class TestUtilsService {
           email: slug + "@seasons.nyc",
           firstName,
           lastName,
-          fullName,
         },
       },
       detail: {
