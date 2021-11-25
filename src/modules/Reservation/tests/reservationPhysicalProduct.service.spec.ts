@@ -218,33 +218,6 @@ describe("Reservation Physical Product Service", () => {
       expect(inboundPackage.shippingMethod.code).toEqual("UPSGround")
     })
 
-    it("Creates only an outbound label if the shipping method is Pickup", async () => {
-      const [bagItems, packages] = await getShippingLabelsForShippingCode(
-        "Pickup"
-      )
-      const [outboundPackage, inboundPackage] = packages
-
-      const updatedBagItems = await prisma.client.bagItem.findMany({
-        where: {
-          id: {
-            in: bagItems.map(bagItem => bagItem.id),
-          },
-        },
-        select: bagItemsSelect,
-      })
-
-      for (let bagItem of updatedBagItems) {
-        const rpp = bagItem.reservationPhysicalProduct
-
-        expect(rpp.inboundPackage.id).toEqual(inboundPackage.id)
-        expect(rpp.reservation.returnedPackage.id).toEqual(inboundPackage.id)
-        expect(rpp.physicalProduct.packages.length).toBeGreaterThanOrEqual(2)
-      }
-
-      expect(outboundPackage).toBeNull()
-      expect(inboundPackage.shippingMethod.code).toEqual("Pickup")
-    })
-
     it("Sets shipping method to UPS Select on packages if selected in reservation", async () => {
       const [bagItems, packages] = await getShippingLabelsForShippingCode(
         "UPSSelect"
@@ -272,6 +245,33 @@ describe("Reservation Physical Product Service", () => {
 
       expect(outboundPackage.shippingMethod.code).toEqual("UPSSelect")
       expect(inboundPackage.shippingMethod.code).toEqual("UPSSelect")
+    })
+
+    it("Creates only an outbound label if the shipping method is Pickup", async () => {
+      const [bagItems, packages] = await getShippingLabelsForShippingCode(
+        "Pickup"
+      )
+      const [outboundPackage, inboundPackage] = packages
+
+      const updatedBagItems = await prisma.client.bagItem.findMany({
+        where: {
+          id: {
+            in: bagItems.map(bagItem => bagItem.id),
+          },
+        },
+        select: bagItemsSelect,
+      })
+
+      for (let bagItem of updatedBagItems) {
+        const rpp = bagItem.reservationPhysicalProduct
+
+        expect(rpp.inboundPackage.id).toEqual(inboundPackage.id)
+        expect(rpp.reservation.returnedPackage.id).toEqual(inboundPackage.id)
+        expect(rpp.physicalProduct.packages.length).toBeGreaterThanOrEqual(2)
+      }
+
+      expect(outboundPackage).toBeNull()
+      expect(inboundPackage.shippingMethod.code).toEqual("Pickup")
     })
   })
 })
