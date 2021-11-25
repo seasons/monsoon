@@ -108,7 +108,7 @@
     "jsonexport": "3.0.1",
     "jwks-rsa": "1.6.0",
     "lodash": "4.17.15",
-    "luxon": "1.22.0",
+    "luxon": "2.1.1",
     "module-alias": "2.2.2",
     "moment": "2.26.0",
     "mustache": "4.0.1",

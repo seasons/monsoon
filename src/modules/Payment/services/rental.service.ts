@@ -1,4 +1,4 @@
-import { WinstonLogger } from "@app/lib/logger"
+import { WinstonLogger } from "@app/lib/logger/logger/winston.logger"
 import { ErrorService } from "@app/modules/Error/services/error.service"
 import { ShippingService } from "@app/modules/Shipping/services/shipping.service"
 import { GRANDFATHERED_PLAN_IDS } from "@app/modules/Utils/constants"
@@ -55,6 +55,27 @@ export const ProcessableReservationPhysicalProductSelect = Prisma.validator<
   lostInPhase: true,
   hasBeenLost: true,
   resetEarlyByAdminAt: true,
+  outboundPackage: {
+    select: {
+      id: true,
+      createdAt: true,
+      enteredDeliverySystemAt: true,
+      amount: true,
+      shippingMethod: {
+        select: {
+          code: true,
+        },
+      },
+    },
+  },
+  inboundPackage: {
+    select: {
+      id: true,
+      deliveredAt: true,
+      amount: true,
+      items: { select: { seasonsUID: true } },
+    },
+  },
   physicalProduct: {
     select: {
       id: true,
@@ -661,29 +682,44 @@ export class RentalService {
     }
   }
 
-  async createRentalInvoiceLineItems(
-    invoice: ProcessableRentalInvoice,
-    includeMinimumCharge: boolean = false
-  ) {
-    const custWithExtraData = await this.prisma.client.customer.findFirst({
-      where: { membership: { rentalInvoices: { some: { id: invoice.id } } } },
-      select: {
-        id: true,
-        user: { select: { createdAt: true } },
-        membership: {
-          select: {
-            rentalInvoices: { select: { id: true } },
-          },
-        },
-      },
-    })
-
+  async createRentalInvoiceLineItems(invoice: ProcessableRentalInvoice) {
     const addLineItemBasics = input => ({
       ...input,
       rentalInvoice: { connect: { id: invoice.id } },
       currencyCode: "USD",
     })
 
+    const rentalUsageLineItemDatas = await this.getRentalUsageLineItemDatas(
+      invoice
+    )
+    const outboundPackagesFromPreviousBillingCycleLineItemDatas = await this.getOutboundPackageLineItemDatasFromPreviousBillingCycle(
+      invoice
+    )
+    const newReservationOutboundPackageLineItemDatas = this.getOutboundPackageLineItemDatasFromThisBillingCycle(
+      invoice
+    )
+    const inboundPackagesLineItemDatas = this.getInboundPackageLineItemDatas(
+      invoice
+    )
+
+    const lineItemDatas = [
+      ...rentalUsageLineItemDatas,
+      ...newReservationOutboundPackageLineItemDatas,
+      ...outboundPackagesFromPreviousBillingCycleLineItemDatas,
+      ...inboundPackagesLineItemDatas,
+    ]
+    const formattedLineItemDatas = lineItemDatas.map(addLineItemBasics)
+    const lineItemPromises = formattedLineItemDatas.map(data =>
+      this.prisma.client.rentalInvoiceLineItem.create({
+        data,
+      })
+    )
+    const lineItems = await this.prisma.client.$transaction(lineItemPromises)
+
+    return lineItems
+  }
+
+  async getRentalUsageLineItemDatas(invoice: ProcessableRentalInvoice) {
     const lineItemsForPhysicalProductDatas = (await Promise.all(
       invoice.reservationPhysicalProducts.map(
         async reservationPhysicalProduct => {
@@ -698,7 +734,7 @@ export class RentalService {
             appliedMinimum,
           } = await this.calculatePriceForDaysRented({
             invoice,
-            customer: custWithExtraData,
+            customer: invoice.membership.customer,
             product: reservationPhysicalProduct.physicalProduct,
             daysRented,
           })
@@ -717,58 +753,38 @@ export class RentalService {
       )
     )) as any
 
-    const outboundPackagesFromPreviousBillingCycleLineItemDatas = await this.getOutboundPackageLineItemDatasFromPreviousBillingCycle(
-      invoice
-    )
-    const newReservationOutboundPackageLineItemDatas = this.getOutboundPackageLineItemDatasFromThisBillingCycle(
-      invoice
-    )
-    const inboundPackagesLineItemDatas = this.getInboundPackageLineItemDatas(
-      invoice
-    )
-
-    const lineItemDatas = [
-      ...lineItemsForPhysicalProductDatas,
-      ...newReservationOutboundPackageLineItemDatas,
-      ...outboundPackagesFromPreviousBillingCycleLineItemDatas,
-      ...inboundPackagesLineItemDatas,
-    ]
-    const formattedLineItemDatas = lineItemDatas.map(addLineItemBasics)
-    const lineItemPromises = formattedLineItemDatas.map(data =>
-      this.prisma.client.rentalInvoiceLineItem.create({
-        data,
-      })
-    )
-    const lineItems = await this.prisma.client.$transaction(lineItemPromises)
-
-    return lineItems
+    return lineItemsForPhysicalProductDatas
   }
 
-  private getInboundPackageLineItemDatas = (
-    invoice: Pick<RentalInvoice, "billingStartAt"> & {
-      reservations: Array<{
-        returnPackages: Array<
-          Pick<Package, "deliveredAt" | "id" | "amount"> & {
-            items: Array<Pick<PhysicalProduct, "seasonsUID">>
-          }
-        >
+  getInboundPackageLineItemDatas = (
+    invoice: Pick<RentalInvoice, "billingStartAt" | "billingEndAt"> & {
+      reservationPhysicalProducts: Array<{
+        inboundPackage: Pick<Package, "deliveredAt" | "id" | "amount"> & {
+          items: Array<Pick<PhysicalProduct, "seasonsUID">>
+        }
       }>
     }
   ) => {
-    const allReturnPackages = invoice.reservations.flatMap(
-      a => a.returnPackages
+    const allInboundPackages = invoice.reservationPhysicalProducts.map(
+      a => a.inboundPackage
     )
-    const packagesReturned = allReturnPackages.filter(
+    const uniqueInboundPackages = uniqBy(allInboundPackages, p => p.id)
+
+    const returnedUniqueInboundPackages = uniqueInboundPackages.filter(
       a =>
         !!a.deliveredAt &&
-        this.timeUtils.isLaterDate(a.deliveredAt, invoice.billingStartAt)
+        this.timeUtils.isBetweenDates(
+          a.deliveredAt,
+          invoice.billingStartAt,
+          invoice.billingEndAt
+        )
     )
-    const uniquePackagesReturnedAndSorted = orderBy(
-      uniqBy(packagesReturned, p => p.id),
+    const sortedReturnedUniqueInboundPackages = orderBy(
+      returnedUniqueInboundPackages,
       "deliveredAt",
       "asc"
     )
-    const inboundPackagesLineItemDatas = uniquePackagesReturnedAndSorted.map(
+    const inboundPackagesLineItemDatas = sortedReturnedUniqueInboundPackages.map(
       (p, idx) => {
         const undiscountedPrice = p.amount
         let price = this.shipping.discountShippingRate(
@@ -787,80 +803,109 @@ export class RentalService {
   }
 
   getOutboundPackageLineItemDatasFromThisBillingCycle = (
-    invoice: Pick<RentalInvoice, "billingStartAt"> & {
-      reservations: Array<
-        Pick<Reservation, "createdAt"> & {
-          shippingMethod: Pick<ShippingMethod, "code">
-        } & { sentPackage: Pick<Package, "enteredDeliverySystemAt" | "amount"> }
-      >
+    invoice: Pick<RentalInvoice, "billingStartAt" | "billingEndAt"> & {
+      reservationPhysicalProducts: Array<{
+        outboundPackage: Pick<
+          Package,
+          "enteredDeliverySystemAt" | "createdAt" | "amount" | "id"
+        > & { shippingMethod: Pick<ShippingMethod, "code"> }
+      }>
     }
   ) => {
-    const newReservations = invoice.reservations.filter(a =>
-      this.timeUtils.isLaterDate(a.createdAt, invoice.billingStartAt)
+    // Collect all the outbound packages on the reservation physical products on the invoice
+    // Filter for ones that entered the delivery system during the billing cycle
+    // Apply relevant logic to create line items
+    const packages = invoice.reservationPhysicalProducts.map(
+      a => a.outboundPackage
     )
-    const sortedNewReservations = orderBy(newReservations, "createdAt", "asc")
-    let haveProcessedOneActiveOutboundPackage = false
-    const newReservationOutboundPackageLineItemDatas = sortedNewReservations.map(
-      (r, idx) => {
-        const usedPremiumShipping =
-          !!r && r.shippingMethod?.code === "UPSSelect"
-        const usedPickup = !!r && r.shippingMethod?.code === "Pickup"
-        const packageDidShip = !!r.sentPackage?.enteredDeliverySystemAt
-
-        const undiscountedPrice = r.sentPackage.amount
-        let price = this.shipping.discountShippingRate(
-          undiscountedPrice,
-          usedPremiumShipping ? "UPSSelect" : "UPSGround",
-          "Outbound"
+    const packagesCreatedThisBillingCycle = packages.filter(a =>
+      this.timeUtils.isBetweenDates(
+        a.createdAt,
+        invoice.billingStartAt,
+        invoice.billingEndAt
+      )
+    )
+    const packagesShippedAndCreatedThisBillingCycle = packagesCreatedThisBillingCycle.filter(
+      a =>
+        !!a.enteredDeliverySystemAt &&
+        this.timeUtils.isBetweenDates(
+          a.enteredDeliverySystemAt,
+          invoice.billingStartAt,
+          invoice.billingEndAt
         )
-        let comment
-
-        const name =
-          "Reservation-" +
-          r.reservationNumber +
-          (usedPickup ? "-Pickup" : "-OutboundPackage")
-
-        const commentStart = `Reservation ${idx + 1} of billing cycle. `
-        if (usedPickup) {
-          comment = commentStart + "Customer picked up package. No charge."
-          price = 0
-        } else if (!packageDidShip) {
-          comment =
-            commentStart +
-            "Package did not ship before invoice billed. No charge."
-          price = 0
-        } else {
-          if (!haveProcessedOneActiveOutboundPackage) {
-            haveProcessedOneActiveOutboundPackage = true
-            if (usedPremiumShipping) {
-              comment =
-                commentStart +
-                `First active outbound package of billing cycle. Used premium shipping. Charge.`
-            } else {
-              comment =
-                commentStart +
-                "First active outbound package of billing cycle. Did not use premium shipping. Do not charge."
-              price = 0
-            }
-          } else {
-            comment =
-              commentStart +
-              "Active outbound package of billing cycle. One free package already given. Charge."
-          }
-        }
-
-        return {
-          name,
-          price,
-          comment,
-        }
-      }
     )
 
-    return newReservationOutboundPackageLineItemDatas
+    const uniqueSortedPackagesToProcess = orderBy(
+      uniqBy(packagesShippedAndCreatedThisBillingCycle, p => p.id),
+      "createdAt",
+      "asc"
+    )
+
+    const datas = uniqueSortedPackagesToProcess.map((p, idx) => {
+      const usedPremiumShipping = p.shippingMethod?.code === "UPSSelect"
+      const undiscountedPrice = p.amount
+
+      let price = this.shipping.discountShippingRate(
+        undiscountedPrice,
+        usedPremiumShipping ? "UPSSelect" : "UPSGround",
+        "Outbound"
+      )
+
+      const name = this.getOutboundPackageLineItemName(p)
+
+      let comment = this.getOutboundPackageLineItemComment(
+        "current",
+        usedPremiumShipping,
+        idx === 0,
+        idx + 1
+      )
+      if (idx === 0 && !usedPremiumShipping) {
+        price = 0
+      }
+
+      return {
+        name,
+        price,
+        comment,
+      }
+    })
+
+    return datas
   }
-  private getOutboundPackageLineItemDatasFromPreviousBillingCycle = async (
-    invoice: Pick<RentalInvoice, "id" | "billingStartAt" | "billingEndAt">
+
+  private getOutboundPackageLineItemComment = (
+    billingCycle: "current" | "previous",
+    usedPremiumShipping: boolean,
+    firstOfCycle: boolean,
+    indexInCycle: number
+  ) => {
+    if (firstOfCycle) {
+      const commentStart = `First shipped outbound package of ${billingCycle} billing cycle.`
+      const suffix = usedPremiumShipping
+        ? "Used premium shipping method. Charge"
+        : "Did not use premium shipping method. No charge."
+      return commentStart + " " + suffix
+    }
+
+    return `Shipped outbound package ${indexInCycle} of ${billingCycle} billing cycle. Charge.`
+  }
+
+  private getOutboundPackageLineItemName = (
+    p: Pick<Package, "enteredDeliverySystemAt">
+  ) => {
+    return `Outbound package shipped ${this.formatPackageShipmentDate(
+      p.enteredDeliverySystemAt
+    )}`
+  }
+
+  formatPackageShipmentDate = (date: Date) => {
+    const luxDate = DateTime.fromJSDate(date)
+    return luxDate
+      .toLocaleString({ month: "numeric", day: "numeric" })
+      .replace("/", ".")
+  }
+  getPreviousRentalInvoiceWithPackageData = async (
+    invoice: Pick<RentalInvoice, "id" | "billingStartAt">
   ) => {
     const previousRentalInvoice = await this.prisma.client.rentalInvoice.findFirst(
       {
@@ -877,97 +922,97 @@ export class RentalService {
           lineItems: {
             select: { name: true, price: true, comment: true },
           },
-          reservations: {
+          reservationPhysicalProducts: {
             select: {
-              sentPackage: {
-                select: {
-                  id: true,
-                  amount: true,
-                  createdAt: true,
-                  enteredDeliverySystemAt: true,
-                  reservationOnSentPackage: {
-                    select: {
-                      reservationNumber: true,
-                      shippingMethod: { select: { code: true } },
-                    },
-                  },
-                },
+              outboundPackage: {
+                select: { id: true, enteredDeliverySystemAt: true },
               },
             },
           },
         },
       }
     )
+    return previousRentalInvoice
+  }
+  getOutboundPackageLineItemDatasFromPreviousBillingCycle = async (
+    invoice: Pick<RentalInvoice, "billingStartAt" | "billingEndAt" | "id"> & {
+      reservationPhysicalProducts: Array<{
+        outboundPackage: Pick<
+          Package,
+          "enteredDeliverySystemAt" | "createdAt" | "amount" | "id"
+        > & { shippingMethod: Pick<ShippingMethod, "code"> }
+      }>
+    }
+  ) => {
+    const previousRentalInvoice = await this.getPreviousRentalInvoiceWithPackageData(
+      invoice
+    )
     if (!previousRentalInvoice) {
       return []
     }
 
-    const shippedOutboundPackagesOnPreviousInvoice = previousRentalInvoice.reservations
-      .flatMap(a => a.sentPackage)
-      .filter(a => !!a.enteredDeliverySystemAt)
-    const datas = shippedOutboundPackagesOnPreviousInvoice.map((p, idx) => {
-      const packageCreatedInLastBillingCycle = this.timeUtils.isBetweenDates(
-        p.createdAt,
-        previousRentalInvoice.billingStartAt,
-        invoice.billingStartAt
-      )
-      const packageEnteredDeliverySystemInThisBillingCycle = this.timeUtils.isBetweenDates(
-        p.enteredDeliverySystemAt,
-        invoice.billingStartAt,
-        invoice.billingEndAt
-      )
-      const lineItemFromPreviousInvoice = previousRentalInvoice.lineItems.find(
-        a =>
-          a.name?.includes(`${p.reservationOnSentPackage.reservationNumber}`) &&
-          a.name?.includes("OutboundPackage")
-      )
-      const packageBilledInLastBillingCycle =
-        lineItemFromPreviousInvoice?.price > 0
-      const wasPremiumPackage =
-        p.reservationOnSentPackage.shippingMethod?.code === "UPSSelect"
-      if (
-        packageCreatedInLastBillingCycle &&
-        packageEnteredDeliverySystemInThisBillingCycle &&
-        !packageBilledInLastBillingCycle
-      ) {
-        const undiscountedPrice = p.amount
-        let price = this.shipping.discountShippingRate(
-          undiscountedPrice,
-          wasPremiumPackage ? "UPSSelect" : "UPSGround",
-          "Outbound"
+    const shippedOutboundPackages = previousRentalInvoice.reservationPhysicalProducts
+      .map(a => a.outboundPackage)
+      .filter(b => !!b.enteredDeliverySystemAt)
+    const uniqueShippedOutboundPackages = uniqBy(
+      shippedOutboundPackages,
+      p => p.id
+    )
+    const uniqueShippedOutboundPackagesCreatedInLastBillingCycle = uniqueShippedOutboundPackages.filter(
+      a =>
+        this.timeUtils.isBetweenDates(
+          a.createdAt,
+          previousRentalInvoice.billingStartAt,
+          previousRentalInvoice.billingEndAt
         )
-        const name =
-          "Reservation-" +
-          p.reservationOnSentPackage.reservationNumber +
-          "-OutboundPackage"
-        const premiumComment = wasPremiumPackage
-          ? "Premium Package."
-          : "Not Premium Package."
-        const startComment = `Outbound package created in previous billing cycle but did not enter delivery system until this billing cycle. ${premiumComment}`
-        if (idx === 0) {
-          if (wasPremiumPackage) {
-            return {
-              name,
-              price,
-              comment: `${startComment} Charge.`,
-            }
-          } else {
-            return {
-              name,
-              price: 0,
-              comment: `${startComment} First package of previous billing cycle. Do not charge.`,
-            }
-          }
-        } else {
-          return {
-            name,
-            price,
-            comment: `${startComment} Charge.`,
-          }
-        }
+    )
+    const qualifiedPackages = uniqueShippedOutboundPackagesCreatedInLastBillingCycle.filter(
+      b =>
+        this.timeUtils.isBetweenDates(
+          b.enteredDeliverySystemAt,
+          invoice.billingStartAt,
+          invoice.billingEndAt
+        )
+    )
+
+    const outboundPackageLineItemsFromPreviousBillingCycle = previousRentalInvoice.lineItems.filter(
+      a => a.name?.toLowerCase().includes("outbound package")
+    )
+    let firstShippedOutboundPackageOfCycle =
+      outboundPackageLineItemsFromPreviousBillingCycle.length === 0
+    const datas = qualifiedPackages.map((p, idx) => {
+      const name = this.getOutboundPackageLineItemName(p)
+      const lineItemFromPreviousInvoice = previousRentalInvoice.lineItems.find(
+        a => a.name === name
+      )
+
+      if (!!lineItemFromPreviousInvoice) {
+        return null
       }
 
-      return null
+      const usedPremiumShipping = p.shippingMethod?.code === "UPSSelect"
+      let price = this.shipping.discountShippingRate(
+        p.amount,
+        usedPremiumShipping ? "UPSSelect" : "UPSGround",
+        "Outbound"
+      )
+      let comment = this.getOutboundPackageLineItemComment(
+        "previous",
+        usedPremiumShipping,
+        firstShippedOutboundPackageOfCycle,
+        outboundPackageLineItemsFromPreviousBillingCycle.length + idx + 1
+      )
+
+      if (
+        idx === 0 &&
+        !usedPremiumShipping &&
+        firstShippedOutboundPackageOfCycle
+      ) {
+        price = 0
+      }
+
+      firstShippedOutboundPackageOfCycle = false
+      return { name, price, comment }
     })
 
     return datas.filter(Boolean)
