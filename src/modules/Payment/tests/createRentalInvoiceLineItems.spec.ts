@@ -1,6 +1,4 @@
 import { APP_MODULE_DEF } from "@app/app.module"
-import { ReserveService } from "@app/modules/Reservation/services/reserve.service"
-import { ReservationTestUtilsService } from "@app/modules/Reservation/tests/reservation.test.utils"
 import { ShippingService } from "@app/modules/Shipping/services/shipping.service"
 import { TestUtilsService } from "@app/modules/Test/services/test.service"
 import { TimeUtilsService } from "@app/modules/Utils/services/time.service"
@@ -27,10 +25,6 @@ describe("Create Rental Invoice Line Items", () => {
     rentalService = moduleRef.get<RentalService>(RentalService)
     timeUtils = moduleRef.get<TimeUtilsService>(TimeUtilsService)
     shipping = moduleRef.get<ShippingService>(ShippingService)
-    // reserveService = moduleRef.get<ReserveService>(ReserveService)
-    // reservationTestUtils = moduleRef.get<ReservationTestUtilsService>(
-    //   ReservationTestUtilsService
-    // )
   })
   describe("Rental Usage Line Items", () => {
     let lineItemDatas

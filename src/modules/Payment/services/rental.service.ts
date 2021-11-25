@@ -682,10 +682,7 @@ export class RentalService {
     }
   }
 
-  async createRentalInvoiceLineItems(
-    invoice: ProcessableRentalInvoice,
-    includeMinimumCharge: boolean = false
-  ) {
+  async createRentalInvoiceLineItems(invoice: ProcessableRentalInvoice) {
     const addLineItemBasics = input => ({
       ...input,
       rentalInvoice: { connect: { id: invoice.id } },
