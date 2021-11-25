@@ -256,6 +256,8 @@ export class ReservationService {
       },
       data: {
         status: "ReturnPending",
+        hasCustomerReturnIntent: true,
+        customerReturnIntentAt: new Date(),
       },
     })
 
