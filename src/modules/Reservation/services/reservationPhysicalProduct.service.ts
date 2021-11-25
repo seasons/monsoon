@@ -468,10 +468,15 @@ export class ReservationPhysicalProductService {
             physicalProduct: {
               update: {
                 packages: {
-                  connect: [
-                    { id: inboundPackageId },
-                    { id: outboundPackageId },
-                  ],
+                  connect: (() => {
+                    if (outboundPackageId) {
+                      return [
+                        { id: inboundPackageId },
+                        { id: outboundPackageId },
+                      ]
+                    }
+                    return [{ id: inboundPackageId }]
+                  })(),
                 },
               },
             },
@@ -498,11 +503,13 @@ export class ReservationPhysicalProductService {
 
     const { outboundPackagePromise, inboundPackagePromise } = packagePromises
 
-    const result = await this.prisma.client.$transaction(
-      [inboundPackagePromise, outboundPackagePromise, ...promises].filter(
-        Boolean
-      )
-    )
+    const filteredPromises = [
+      inboundPackagePromise,
+      outboundPackagePromise,
+      ...promises,
+    ].filter(Boolean)
+
+    const result = await this.prisma.client.$transaction(filteredPromises)
     const [inboundPackage, outboundPackage] = result
 
     if (outboundPackageId === null) {

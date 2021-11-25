@@ -480,6 +480,11 @@ export class ReserveService {
           slug: process.env.SEASONS_CLEANER_LOCATION_SLUG,
         },
       },
+      shippingMethod: {
+        connect: {
+          id: shippingMethod.id,
+        },
+      },
       shipped: false,
       status: "Queued",
       // TODO: Update this for new world
