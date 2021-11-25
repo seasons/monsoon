@@ -146,7 +146,7 @@ describe("Create Rental Invoice Line Items", () => {
     })
   })
 
-  describe("Package Line Items", () => {
+  describe("Package Line Item Creation", () => {
     describe("Inbound Packages", () => {
       let discountShippingRateMock
 
@@ -876,11 +876,26 @@ describe("Create Rental Invoice Line Items", () => {
         })
       })
     })
+  })
 
-    describe("Package discounts", () => {
-      // Discounts an outbound select package by 55%
-      // Discounts an inbound ground package by 38%
-      // Discounts an outbound ground package by 30%
+  describe("Package discounts", () => {
+    it("Discounts an outbound select package by 55%", () => {
+      const rate = shipping.discountShippingRate(100, "UPSSelect", "Outbound")
+      expect(rate).toBe(45)
+    })
+
+    it("Discounts an inbound select package by 55%", () => {
+      const rate = shipping.discountShippingRate(100, "UPSSelect", "Inbound")
+      expect(rate).toBe(45)
+    })
+
+    it("Discounts an inbound ground package by 38%", () => {
+      const rate = shipping.discountShippingRate(100, "UPSGround", "Inbound")
+      expect(rate).toBe(62)
+    })
+    it("Discounts an outbound ground package by 30%", () => {
+      const rate = shipping.discountShippingRate(100, "UPSGround", "Outbound")
+      expect(rate).toBe(70)
     })
   })
 })

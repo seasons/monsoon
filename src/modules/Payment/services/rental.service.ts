@@ -15,6 +15,7 @@ import {
   RentalInvoiceStatus,
   Reservation,
   ReservationPhysicalProduct,
+  ReservationPhysicalProductStatus,
   ShippingMethod,
 } from "@prisma/client"
 import { Prisma } from "@prisma/client"
@@ -575,18 +576,14 @@ export class RentalService {
     const applyReturnPackageCushion = date =>
       this.timeUtils.xDaysBeforeDate(date, RETURN_PACKAGE_CUSHION, "date")
 
-    switch (reservationPhysicalProduct.status) {
-      case "Queued":
-      case "Picked":
-      case "Packed":
-      case "InTransitOutbound":
-      case "ScannedOnOutbound":
-        // TODO: If we're doing an estimation, let this be 2 days from now
+    const logicCase = this.calcDaysRentedCaseFromStatus(
+      reservationPhysicalProduct.status
+    )
+    switch (logicCase) {
+      case "Outbound":
         rentalStartedAt = undefined
         break
-      case "ScannedOnInbound":
-      case "InTransitInbound":
-      case "DeliveredToBusiness":
+      case "Inbound":
         rentalEndedAt =
           reservationPhysicalProduct.scannedOnInboundAt ||
           applyReturnPackageCushion(
@@ -595,7 +592,12 @@ export class RentalService {
           )
         throwErrorIfRentalEndedAtUndefined()
         break
-      case "DeliveredToCustomer":
+      case "WithCustomer":
+        // If an item is return pending, the customer either filled out the return flow
+        // before sending the item back OR after the sending the item back but before it reached us.
+        // In either case, if it *currently* has status ReturnPending, that means we haven't received
+        // a transit event for its inbound package yet. Once we receive such an event, it would move into
+        // one of the inbound statuses.
         rentalEndedAt = today
         break
       case "ResetEarly":
@@ -638,23 +640,16 @@ export class RentalService {
         }
         break
       default:
-        throw new Error(
-          `Unexpected reservation physical product status: ${reservationPhysicalProduct.status}`
-        )
+        throw new Error(`Unexpected case: ${logicCase}`)
     }
 
-    // Adjust rentalEndedAt if we're doing an estimation
-    if (!!rentalEndedAt && !!options.upTo) {
-      if (options.upTo === "today") {
-        rentalEndedAt = this.timeUtils.getEarlierDate(rentalEndedAt, today)
-      }
-      if (options.upTo === "billingEnd") {
-        rentalEndedAt = this.timeUtils.getEarlierDate(
-          rentalEndedAt,
-          invoiceWithData.billingEndAt
-        )
-      }
-    }
+    ;({ rentalEndedAt, rentalStartedAt } = this.adjustRentalDatesForEstimation(
+      rentalStartedAt,
+      rentalEndedAt,
+      reservationPhysicalProduct.status,
+      invoiceWithData.billingEndAt,
+      options.upTo
+    ))
 
     // If we end up in a nonsense situation, just don't charge them anything
     if (
@@ -679,6 +674,74 @@ export class RentalService {
       rentalStartedAt,
       rentalEndedAt,
       comment,
+    }
+  }
+
+  adjustRentalDatesForEstimation(
+    unadjustedRentalStartedAt: Date | undefined,
+    unadjustedRentalEndedAt: Date | undefined,
+    resPhysProdStatus: ReservationPhysicalProductStatus,
+    invoiceBillingEndAt: Date,
+    upTo: "today" | "billingEnd" | null
+  ) {
+    // If upTo is today, there's no change whatsoever in the dates,
+    // because the default rentalEndedAt is always (99.9% of the time) before today.
+    let rentalStartedAt = unadjustedRentalStartedAt
+    let rentalEndedAt = unadjustedRentalEndedAt
+    if (!upTo || upTo === "today") {
+      return { rentalStartedAt, rentalEndedAt }
+    }
+
+    // If upTo is billingEndAt, we only need to adjust if the item is Outbound or DeliveredToCustomer.
+    // In the other cases, the item's journey is already over, so extrapolating out to billingEnd doesn't change anything.
+    const logicCase = this.calcDaysRentedCaseFromStatus(resPhysProdStatus)
+    switch (logicCase) {
+      case "Outbound":
+        rentalStartedAt = this.timeUtils.xDaysFromNow(2)
+        rentalEndedAt = invoiceBillingEndAt
+        break
+      case "WithCustomer":
+        // If it's ReturnPending, we assume they're holding it until/unless we receive a package
+        // transit event for it
+        rentalEndedAt = invoiceBillingEndAt
+        break
+      case "Inbound":
+      case "ResetEarly":
+      case "ReturnProcessed":
+      case "Lost":
+        // noop
+        break
+      default:
+        throw new Error(`Unexpected case: ${logicCase}`)
+    }
+
+    return { rentalStartedAt, rentalEndedAt }
+  }
+
+  // TODO: Make sure this occupies all the states
+  calcDaysRentedCaseFromStatus(status: ReservationPhysicalProductStatus) {
+    switch (status) {
+      case "Queued":
+      case "Picked":
+      case "Packed":
+      case "InTransitOutbound":
+      case "ScannedOnOutbound":
+        return "Outbound"
+      case "ScannedOnInbound":
+      case "InTransitInbound":
+      case "DeliveredToBusiness":
+        return "Inbound"
+      case "DeliveredToCustomer":
+      case "ReturnPending":
+        return "WithCustomer"
+      case "ResetEarly":
+      case "ReturnProcessed":
+      case "Lost":
+        return status
+      default:
+        throw new Error(
+          `Unexpected reservation physical product status: ${status}`
+        )
     }
   }
 
@@ -1140,6 +1203,9 @@ export class RentalService {
     }
   }
 
+  // Test calcDaysRented with the upTo set to Today, billingEnd
+  // Mock return values for calcDaysRented, calculatePriceForDaysRented, findFirst, all the package funcs. This unit test just
+  // needs to test that this function a) passes the upTo properly and b) aggregates the prices properly
   async calculateCurrentBalance(
     customerId: string,
     options: { upTo?: "today" | "billingEnd" | null } = { upTo: null }
