@@ -214,6 +214,7 @@ describe("Reservation Physical Product Service", () => {
         expect(rpp.physicalProduct.packages.length).toBeGreaterThanOrEqual(2)
       }
 
+      expect(outboundPackage.shippingMethod.code).toEqual("UPSGround")
       expect(inboundPackage.shippingMethod.code).toEqual("UPSGround")
     })
 
@@ -242,6 +243,35 @@ describe("Reservation Physical Product Service", () => {
 
       expect(outboundPackage).toBeNull()
       expect(inboundPackage.shippingMethod.code).toEqual("Pickup")
+    })
+
+    it("Sets shipping method to UPS Select on packages if selected in reservation", async () => {
+      const [bagItems, packages] = await getShippingLabelsForShippingCode(
+        "UPSSelect"
+      )
+      const [outboundPackage, inboundPackage] = packages
+
+      const updatedBagItems = await prisma.client.bagItem.findMany({
+        where: {
+          id: {
+            in: bagItems.map(bagItem => bagItem.id),
+          },
+        },
+        select: bagItemsSelect,
+      })
+
+      for (let bagItem of updatedBagItems) {
+        const rpp = bagItem.reservationPhysicalProduct
+
+        expect(rpp.outboundPackage.id).toEqual(outboundPackage.id)
+        expect(rpp.inboundPackage.id).toEqual(inboundPackage.id)
+        expect(rpp.reservation.sentPackage.id).toEqual(outboundPackage.id)
+        expect(rpp.reservation.returnedPackage.id).toEqual(inboundPackage.id)
+        expect(rpp.physicalProduct.packages.length).toBeGreaterThanOrEqual(2)
+      }
+
+      expect(outboundPackage.shippingMethod.code).toEqual("UPSSelect")
+      expect(inboundPackage.shippingMethod.code).toEqual("UPSSelect")
     })
   })
 })
