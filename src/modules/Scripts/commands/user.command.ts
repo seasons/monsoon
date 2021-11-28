@@ -14,6 +14,7 @@ import faker from "faker"
 import { head } from "lodash"
 import { DateTime } from "luxon"
 import { Command, Option, Positional } from "nestjs-command"
+import slugify from "slugify"
 
 import {
   EmailOption,
@@ -226,6 +227,7 @@ export class UserCommands {
       shippingAddress: {
         create: {
           name: `${firstName} ${lastName}`,
+          slug: slugify(`${firstName} ${lastName}`),
           address1: address.line1,
           city: address.city,
           state: address.state,

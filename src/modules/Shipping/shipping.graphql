@@ -70,3 +70,40 @@ type ValidationPayload {
   code: String
   text: String
 }
+
+enum PackageDirection {
+  Inbound
+  Outbound
+}
+
+type Package {
+  id: ID!
+  items(
+    where: PhysicalProductWhereInput
+    orderBy: PhysicalProductOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): [PhysicalProduct!]
+  transactionID: String!
+  shippingLabel: Label!
+  fromAddress: Location!
+  toAddress: Location!
+  weight: Float
+  cost: Int
+  events(
+    where: PackageTransitEventWhereInput
+    orderBy: PackageTransitEventOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): [PackageTransitEvent!]
+  status: PackageStatus
+  direction: PackageDirection
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
