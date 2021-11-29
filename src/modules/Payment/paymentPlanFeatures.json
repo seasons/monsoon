@@ -1,19 +1,19 @@
 {
   "access-monthly": {
     "included": [
-      "Access — Rental access to over 1,000 styles",
-      "Perks — Free shipping*, dry cleaning & stylist access",
-      "Community — Discord, newsletter & event access",
-      "Discounts — Get $20 off any purchase once a month"
+      "Access — Paid rental access to over 1,000+ styles",
+      "Perks — Free delivery on your first order, dry cleaning, & stylist access",
+      "Rent to own — Any monthly rental fees goes towards purchase.",
+      "Discounts — Get $20 off any purchase each month"
     ],
     "excluded": ["Priority — Early bag resets, 24/7 customer service"]
   },
   "access-yearly": {
     "included": [
-      "Access — Rental access to over 1,000+ styles",
-      "Perks — Free shipping*, dry cleaning & stylist access",
-      "Community — Discord, newsletter & event access",
-      "Discounts — Get $30 off any purchase once a month",
+      "Access — Paid rental access to over 1,000+ styles",
+      "Perks — Free delivery on your first order, dry cleaning, & stylist access",
+      "Rent to own — Any monthly rental fees goes towards purchase.",
+      "Discounts — Get $30 off any purchase each month",
       "Priority — Early bag resets, 24/7 customer service"
     ],
     "excluded": []

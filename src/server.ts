@@ -1,7 +1,5 @@
 import "module-alias/register"
 
-import "./lib/tracer"
-
 import { NestFactory } from "@nestjs/core"
 import { ExpressAdapter } from "@nestjs/platform-express"
 import * as Sentry from "@sentry/node"
@@ -9,8 +7,10 @@ import bodyParser from "body-parser"
 import compression from "compression"
 import express from "express"
 import httpContext from "express-http-context"
+import numeral from "numeral"
 
 import { AppModule } from "./app.module"
+import { setupHeapProfiler } from "./heapProfiler"
 import {
   createExpressWinstonHandler,
   createNestWinstonLogger,
@@ -38,6 +38,23 @@ function handleErrors(logger) {
   }
 }
 
+export const printMemoryUsage = logger => {
+  setInterval(() => {
+    const { rss, heapUsed, heapTotal, external } = process.memoryUsage()
+    const dynoName = (process.env.DYNO || "unknown").replace(".", "")
+    const appName = process.env.HEROKU_APP_NAME || "monsoon-dev"
+
+    logger.info("Memory Usage", {
+      rss: numeral(rss).format("0.0 ib"),
+      heapTotal: numeral(heapTotal).format("0.0 ib"),
+      heapUsed: numeral(heapUsed).format("0.0 ib"),
+      external: numeral(external).format("0.0 ib"),
+      dynoName,
+      appName,
+    })
+  }, 10000)
+}
+
 export const addMiddlewares = async server => {
   const cors = await createCorsMiddleware(readClient)
 
@@ -45,6 +62,9 @@ export const addMiddlewares = async server => {
   const expressWinstonHandler = createExpressWinstonHandler(
     nestWinstonLogger.logger
   )
+
+  setupHeapProfiler(nestWinstonLogger.logger)
+  printMemoryUsage(nestWinstonLogger.logger)
 
   server.use(
     expressWinstonHandler,

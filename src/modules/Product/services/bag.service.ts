@@ -1,3 +1,4 @@
+import { ReservationUtilsService } from "@app/modules/Reservation"
 import { ProductUtilsService } from "@app/modules/Utils/services/product.utils.service"
 import { UtilsService } from "@app/modules/Utils/services/utils.service"
 import { Injectable } from "@nestjs/common"
@@ -39,7 +40,8 @@ export class BagService {
     private readonly prisma: PrismaService,
     private readonly productVariantService: ProductVariantService,
     private readonly utils: UtilsService,
-    private readonly productUtils: ProductUtilsService
+    private readonly productUtils: ProductUtilsService,
+    private readonly reservationUtils: ReservationUtilsService
   ) {}
 
   async markAsPickedUp(bagItemIds) {
@@ -586,6 +588,28 @@ export class BagService {
     return physicalProductPromises
   }
 
+  private async updateReservationOnLost(lostResPhysProd) {
+    const currentReservation = await this.prisma.client.reservation.findUnique({
+      where: {
+        id: lostResPhysProd.reservationId,
+      },
+      select: {
+        id: true,
+        reservationPhysicalProducts: {
+          select: {
+            status: true,
+          },
+        },
+      },
+    })
+
+    return await this.reservationUtils.updateReservationOnChange(
+      [currentReservation.id],
+      { Lost: 1 },
+      [lostResPhysProd.id]
+    )
+  }
+
   // async markAsFound(
   //   lostBagItemId,
   //   status: "DeliveredToCustomer" | "DeliveredToBusiness"
@@ -626,17 +650,6 @@ export class BagService {
 
     const promises = []
 
-    promises.push(
-      this.prisma.client.reservation.update({
-        where: {
-          id: lostResPhysProd.reservationId,
-        },
-        data: {
-          status: "Lost",
-        },
-      })
-    )
-
     const lostInPhase = this.getLostPhase(lostResPhysProd)
 
     promises.push(...this.updatePhysicalProductsOnLost(physicalProduct))
@@ -654,6 +667,11 @@ export class BagService {
         },
       })
     )
+
+    const updateReservationPromise = await this.updateReservationOnLost(
+      lostResPhysProd
+    )
+    promises.push(...updateReservationPromise)
 
     await this.prisma.client.$transaction(promises)
 

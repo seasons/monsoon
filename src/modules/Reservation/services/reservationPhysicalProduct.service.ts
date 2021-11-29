@@ -15,6 +15,8 @@ import {
 import cuid from "cuid"
 import { DateTime } from "luxon"
 
+import { ReservationUtilsService } from "./reservation.utils.service"
+
 interface ProductState {
   productUID: string
   returned: boolean
@@ -53,7 +55,8 @@ export class ReservationPhysicalProductService {
     private readonly prisma: PrismaService,
     private readonly productVariantService: ProductVariantService,
     private readonly shippingService: ShippingService,
-    private readonly utils: UtilsService
+    private readonly utils: UtilsService,
+    private readonly reservationUtils: ReservationUtilsService
   ) {}
 
   /*
@@ -112,10 +115,11 @@ export class ReservationPhysicalProductService {
       })
     )
 
-    const {
-      promise: updateReservationPromise,
-    } = await this.updateReservationsOnReturn(productStates, customerId)
-    promises.push(updateReservationPromise)
+    const updateReservationPromises = await this.updateReservationsOnReturn(
+      productStates,
+      customerId
+    )
+    promises.push(...updateReservationPromises)
 
     const updateProductPromises = await this.updateProductsOnReturn(
       productStates,
@@ -194,28 +198,31 @@ export class ReservationPhysicalProductService {
       },
       select: {
         id: true,
-        status: true,
-        reservationPhysicalProducts: {
-          select: {
-            physicalProductId: true,
-          },
-        },
       },
     })
 
-    // Status Lost supercedes status Completed in importance
-    const reservationsToUpdate = reservations.filter(a => a.status !== "Lost")
-    return this.utils.wrapPrismaPromise(
-      this.prisma.client.reservation.updateMany({
+    const resPhysProds = await this.prisma.client.reservationPhysicalProduct.findMany(
+      {
         where: {
-          id: {
-            in: reservationsToUpdate.map(a => a.id),
+          physicalProduct: {
+            seasonsUID: {
+              in: productStates.map(a => a.productUID),
+            },
+          },
+          bagItem: {
+            customerId,
           },
         },
-        data: {
-          status: "Completed",
+        select: {
+          id: true,
         },
-      })
+      }
+    )
+
+    return await this.reservationUtils.updateReservationOnChange(
+      reservations.map(a => a.id),
+      { ReturnProcessed: productStates.length },
+      resPhysProds.map(a => a.id)
     )
   }
 
