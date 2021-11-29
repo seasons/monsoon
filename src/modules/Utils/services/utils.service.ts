@@ -66,6 +66,59 @@ export class UtilsService {
     utm_term: utm?.term,
   })
 
+  async getCountsForOpsMetricRecord() {
+    const queuedResProds = await this.prisma.client.reservationPhysicalProduct.findMany(
+      {
+        where: {
+          status: "Queued",
+        },
+        select: {
+          id: true,
+          reservationId: true,
+        },
+      }
+    )
+
+    const queuedResProdsCount = queuedResProds.length
+
+    const queuedReservations = []
+    queuedResProds.forEach(a => {
+      if (!queuedReservations.includes(a.reservationId)) {
+        queuedReservations.push(a.reservationId)
+      }
+    })
+    const queuedReservationCount = queuedReservations.length
+    return { queuedResProdsCount, queuedReservationCount }
+  }
+
+  async updateOpsMetricRecord() {
+    const {
+      queuedResProdsCount,
+      queuedReservationCount,
+    } = await this.getCountsForOpsMetricRecord()
+
+    const currentOpsMetricRecord = await this.prisma.client.operationMetricsRecord.findFirst(
+      {
+        orderBy: {
+          day: "desc",
+        },
+        select: {
+          id: true,
+        },
+      }
+    )
+
+    return await this.prisma.client.operationMetricsRecord.update({
+      where: {
+        id: currentOpsMetricRecord.id,
+      },
+      data: {
+        numberOfQueuedItems: queuedResProdsCount,
+        numberOfQueuedReservations: queuedReservationCount,
+      },
+    })
+  }
+
   abbreviateState(state: string) {
     if (!state) {
       return ""
