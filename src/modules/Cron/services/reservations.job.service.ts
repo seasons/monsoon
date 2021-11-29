@@ -31,7 +31,7 @@ export class ReservationScheduledJobs {
       },
       select: {
         id: true,
-        updatedAt: true,
+        deliveredToCustomerAt: true,
       },
     })
 
@@ -41,7 +41,7 @@ export class ReservationScheduledJobs {
     }
 
     for (const rpp of rpps) {
-      const updatedMoreThan24HoursAgo = this.checkIfUpdatedMoreThan24HoursAgo(
+      const updatedMoreThan24HoursAgo = this.checkIfDeliveredMoreThan24HoursAgo(
         rpp
       )
       if (updatedMoreThan24HoursAgo) {
@@ -134,11 +134,11 @@ export class ReservationScheduledJobs {
     this.logger.log(report)
   }
 
-  private checkIfUpdatedMoreThan24HoursAgo = rpp => {
+  private checkIfDeliveredMoreThan24HoursAgo = rpp => {
+    const date = rpp?.deliveredToCustomerAt.toISOString()
     return (
       // @ts-ignore
-      DateTime.fromISO(rpp?.updatedAt.toISOString()).diffNow("days")?.values
-        ?.days <= -1
+      DateTime.fromISO(date).diffNow("days")?.values?.days <= -1
     )
   }
 
