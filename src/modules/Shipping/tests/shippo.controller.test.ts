@@ -26,6 +26,7 @@ describe("Shippo Controller", () => {
   let prismaService: PrismaService
   let testUtils: TestUtilsService
   let reservationTestUtils: ReservationTestUtilsService
+  let httpServer
 
   let cleanupFuncs = []
 
@@ -34,6 +35,7 @@ describe("Shippo Controller", () => {
 
     app = moduleRef.createNestApplication()
     await app.init()
+    httpServer = app.getHttpServer()
 
     prismaService = moduleRef.get<PrismaService>(PrismaService)
     testUtils = moduleRef.get<TestUtilsService>(TestUtilsService)
@@ -69,21 +71,6 @@ describe("Shippo Controller", () => {
         },
         data: { status: "Packed", packedAt: new Date() },
       })
-      console.log(TRANSACTION_ID_ONE)
-      console.dir(
-        {
-          data: {
-            transactionID: TRANSACTION_ID_ONE,
-            items: {
-              connect: reservation.reservationPhysicalProducts.map(a => ({
-                id: a.id,
-              })),
-            },
-            reservationOnSentPackage: { connect: { id: reservation.id } },
-          },
-        },
-        { depth: null }
-      )
       outboundPackage = await prismaService.client.package.create({
         data: {
           transactionID: TRANSACTION_ID_ONE,
@@ -106,7 +93,7 @@ describe("Shippo Controller", () => {
 
     it("Updates statuses, booleans and timestamps properly if all events are sent in order", async () => {
       // Send package accepted event. Expect status update, boolean, timestamp
-      const packageAcceptedResponse = await request(app.getHttpServer())
+      const packageAcceptedResponse = await request(httpServer)
         .post("/shippo_events")
         .send(PACKAGE_ACCEPTED_TXN_ID_ONE)
       expect(packageAcceptedResponse.status).toBe(201)
@@ -140,7 +127,7 @@ describe("Shippo Controller", () => {
       )
 
       // Send a post-acceptance transit event. Expect status update.
-      const packageDepartedResponse = await request(app.getHttpServer())
+      const packageDepartedResponse = await request(httpServer)
         .post("/shippo_events")
         .send(PACKAGE_DEPARTED_TXN_ID_ONE)
       expect(packageDepartedResponse.status).toBe(201)
@@ -160,7 +147,7 @@ describe("Shippo Controller", () => {
       }
 
       // Send a delivery event. Expect status update, boolean, timestamp. Expect reservation to move to Delivered as well
-      const packageDeliveredResponse = await request(app.getHttpServer())
+      const packageDeliveredResponse = await request(httpServer)
         .post("/shippo_events")
         .send(PACKAGE_DELIVERED_TXN_ID_ONE)
       expect(packageDeliveredResponse.status).toBe(201)
@@ -179,7 +166,7 @@ describe("Shippo Controller", () => {
         { where: { id: reservation.id }, select: { status: true } }
       )
       for (const rpp of resPhysProdsAfterDelivered) {
-        expect(rpp.status).toBe("Delivered")
+        expect(rpp.status).toBe("DeliveredToCustomer")
         expect(rpp.hasBeenDeliveredToCustomer).toBe(true)
         testUtils.expectTimeToEqual(rpp.deliveredToCustomerAt, new Date())
       }

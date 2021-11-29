@@ -2,11 +2,9 @@ import { ApplicationType } from "@app/decorators/application.decorator"
 import { WinstonLogger } from "@app/lib/logger"
 import { ErrorService } from "@app/modules/Error/services/error.service"
 import { ProductVariantService } from "@app/modules/Product/services/productVariant.service"
-import { PushNotificationService } from "@app/modules/PushNotification"
 import { CustomerUtilsService } from "@app/modules/User/services/customer.utils.service"
 import { UtilsService } from "@app/modules/Utils/services/utils.service"
-import { InventoryStatus, PhysicalProductStatus } from "@app/prisma"
-import { EmailService } from "@modules/Email/services/email.service"
+import { PhysicalProductStatus } from "@app/prisma"
 import {
   ShippingService,
   UPSServiceLevel,
@@ -26,10 +24,8 @@ import {
 import { PrismaService } from "@prisma1/prisma.service"
 import chargebee from "chargebee"
 import cuid from "cuid"
-import { intersection, merge } from "lodash"
+import { merge } from "lodash"
 import { DateTime } from "luxon"
-
-import { ReservationUtilsService } from "./reservation.utils.service"
 
 export enum ReservationLineItemsFilter {
   AllItems = "AllItems",
@@ -38,13 +34,6 @@ export enum ReservationLineItemsFilter {
 
 interface PhysicalProductWithProductVariant extends PhysicalProduct {
   productVariant: { id: string }
-}
-
-interface ProductState {
-  productUID: string
-  returned: boolean
-  productStatus: PhysicalProductStatus
-  notes: string
 }
 
 export interface ReservationWithProductVariantData {
@@ -64,9 +53,6 @@ export class ReservationService {
     private readonly prisma: PrismaService,
     private readonly productVariantService: ProductVariantService,
     private readonly shippingService: ShippingService,
-    private readonly emails: EmailService,
-    private readonly pushNotifs: PushNotificationService,
-    private readonly reservationUtils: ReservationUtilsService,
     private readonly error: ErrorService,
     private readonly utils: UtilsService,
     private readonly customerUtils: CustomerUtilsService
