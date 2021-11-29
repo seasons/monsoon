@@ -5,25 +5,12 @@ import { TestUtilsService } from "@app/modules/Test/services/test.service"
 import { PrismaService } from "@app/prisma/prisma.service"
 import { INestApplication } from "@nestjs/common"
 import { Test } from "@nestjs/testing"
-import { Reservation } from "@prisma/client"
-import e from "apollo-server-express/node_modules/@types/express"
+import cuid from "cuid"
 import request from "supertest"
 
-import {
-  TRANSACTION_ID_ONE,
-  TRANSACTION_ID_ONE_EVENTS,
-  TRANSACTION_ID_TWO,
-  TRANSACTION_ID_TWO_EVENTS,
-} from "./shippoEvents.stub"
+import { getEventsForTransactionId } from "./shippoEvents.stub"
 
-const PACKAGE_ACCEPTED_TXN_ID_ONE = TRANSACTION_ID_ONE_EVENTS["PackageAccepted"]
-const PACKAGE_DEPARTED_TXN_ID_ONE = TRANSACTION_ID_ONE_EVENTS["PackageDeparted"]
-const PACKAGE_DELIVERED_TXN_ID_ONE = TRANSACTION_ID_ONE_EVENTS["Delivered"]
-
-const PACKAGE_ACCEPTED_TXN_ID_TWO = TRANSACTION_ID_TWO_EVENTS["PackageAccepted"]
-const PACKAGE_DEPARTED_TXN_ID_TWO = TRANSACTION_ID_TWO_EVENTS["PackageDeparted"]
-const PACKAGE_DELIVERED_TXN_ID_TWO = TRANSACTION_ID_ONE_EVENTS["Delivered"]
-
+// TODO: Add test that events get connected to package
 describe("Shippo Controller", () => {
   let app: INestApplication
   let prismaService: PrismaService
@@ -57,6 +44,13 @@ describe("Shippo Controller", () => {
     let outboundPackage
     let reservation
 
+    let packageEvents
+    const txnId = cuid()
+
+    beforeAll(() => {
+      packageEvents = getEventsForTransactionId(txnId)
+    })
+
     beforeEach(async () => {
       const { customer } = await testUtils.createTestCustomer()
 
@@ -76,7 +70,7 @@ describe("Shippo Controller", () => {
       })
       outboundPackage = await prismaService.client.package.create({
         data: {
-          transactionID: TRANSACTION_ID_ONE,
+          transactionID: txnId,
           items: {
             connect: reservation.reservationPhysicalProducts.map(a => ({
               id: a.physicalProduct.id,
@@ -95,9 +89,10 @@ describe("Shippo Controller", () => {
     })
 
     test("Package Accepted event sets ScannedOnOutbound + associated boolean/timestamp, enteredDeliverySystemAt on package", async () => {
+      const event = packageEvents["PackageAccepted"]
       const packageAcceptedResponse = await request(httpServer)
         .post("/shippo_events")
-        .send(PACKAGE_ACCEPTED_TXN_ID_ONE)
+        .send(event)
       expect(packageAcceptedResponse.status).toBe(201)
 
       const resPhysProdsAfterPackageAccepted = await prismaService.client.reservationPhysicalProduct.findMany(
@@ -130,9 +125,10 @@ describe("Shippo Controller", () => {
     })
 
     test("Package Departed event sets InTransitOutbound", async () => {
+      const event = packageEvents["PackageDeparted"]
       const packageDepartedResponse = await request(httpServer)
         .post("/shippo_events")
-        .send(PACKAGE_DEPARTED_TXN_ID_ONE)
+        .send(event)
       expect(packageDepartedResponse.status).toBe(201)
 
       const resPhysProdsAfterPackageDeparted = await prismaService.client.reservationPhysicalProduct.findMany(
@@ -149,9 +145,10 @@ describe("Shippo Controller", () => {
     })
 
     test("Delivered event sets DeliveredToCustomer + associated boolean/timestamp, Delivered status on reservation, deliveredAt timestamp on package", async () => {
+      const event = packageEvents["Delivered"]
       const packageDeliveredResponse = await request(httpServer)
         .post("/shippo_events")
-        .send(PACKAGE_DELIVERED_TXN_ID_ONE)
+        .send(event)
       expect(packageDeliveredResponse.status).toBe(201)
 
       const resPhysProdsAfterDelivered = await prismaService.client.reservationPhysicalProduct.findMany(
@@ -183,6 +180,14 @@ describe("Shippo Controller", () => {
     let heldRPPId
     let rppIds
 
+    let packageEvents
+
+    const txnId = cuid()
+
+    beforeAll(() => {
+      packageEvents = getEventsForTransactionId(txnId)
+    })
+
     beforeEach(async () => {
       const { customer } = await testUtils.createTestCustomer()
 
@@ -210,9 +215,15 @@ describe("Shippo Controller", () => {
         data: { status: "ReturnPending" },
       })
 
+      await prismaService.client.package.create({
+        data: {
+          transactionID: cuid(),
+          reservationOnSentPackage: { connect: { id: reservation.id } },
+        },
+      })
       inboundPackage = await prismaService.client.package.create({
         data: {
-          transactionID: TRANSACTION_ID_TWO,
+          transactionID: txnId,
           reservationOnReturnPackages: { connect: { id: reservation.id } },
         },
       })
@@ -220,11 +231,12 @@ describe("Shippo Controller", () => {
 
     test(
       "Package Accepted event sets ScannedOnInbound + associated boolean/timestamp, enteredDeliverySystemAt on package." +
-        "Correctly ties ReturnPending items to package",
+        "Correctly ties ReturnPending items to package. Sets phase on reservation.",
       async () => {
+        const event = packageEvents["PackageAccepted"]
         const packageAcceptedResponse = await request(httpServer)
           .post("/shippo_events")
-          .send(PACKAGE_ACCEPTED_TXN_ID_TWO)
+          .send(event)
         expect(packageAcceptedResponse.status).toBe(201)
 
         const resPhysProdsAfterPackageAccepted = await prismaService.client.reservationPhysicalProduct.findMany(
@@ -252,6 +264,9 @@ describe("Shippo Controller", () => {
               },
             },
           }
+        )
+        const reservationAfterPackageAccepted = await prismaService.client.reservation.findUnique(
+          { where: { id: reservation.id }, select: { phase: true } }
         )
         const heldRpp = resPhysProdsAfterPackageAccepted.find(
           a => a.id === heldRPPId
@@ -290,13 +305,16 @@ describe("Shippo Controller", () => {
         inboundPackageAfterPackageAccepted.reservationPhysicalProductsOnInboundPackage.forEach(
           a => expect(returnedRPPIds.includes(a.id)).toBe(true)
         )
+
+        expect(reservationAfterPackageAccepted.phase).toBe("CustomerToBusiness")
       }
     )
 
     test("Package Departed event sets InTransitOutbound on returned items", async () => {
+      const event = packageEvents["PackageDeparted"]
       const packageDepartedResponse = await request(httpServer)
         .post("/shippo_events")
-        .send(PACKAGE_DEPARTED_TXN_ID_TWO)
+        .send(event)
       expect(packageDepartedResponse.status).toBe(201)
 
       const resPhysProdsAfterPackageDeparted = await prismaService.client.reservationPhysicalProduct.findMany(
@@ -317,9 +335,10 @@ describe("Shippo Controller", () => {
     })
 
     test("Delivered event sets DeliveredToBusiness + associated boolean/timestamp on returned items, deliveredAt timestamp on package", async () => {
+      const event = packageEvents["Delivered"]
       const packageDeliveredResponse = await request(httpServer)
         .post("/shippo_events")
-        .send(PACKAGE_DELIVERED_TXN_ID_TWO)
+        .send(event)
       expect(packageDeliveredResponse.status).toBe(201)
 
       const resPhysProdsAfterDelivered = await prismaService.client.reservationPhysicalProduct.findMany(

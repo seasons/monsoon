@@ -494,7 +494,7 @@ export class ReservationPhysicalProductService {
                     },
                   },
                 }),
-                returnedPackage: {
+                returnPackages: {
                   connect: {
                     id: inboundPackageId,
                   },
