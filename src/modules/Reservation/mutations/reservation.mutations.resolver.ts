@@ -35,29 +35,27 @@ export class ReservationMutationsResolver {
   }
 
   @Mutation()
-  async pickItems(@Args() { customerID, bagItemIDs }, @Select() select) {
+  async pickItems(@Args() { bagItemIDs }, @Select() select) {
     return this.reservationPhysicalProduct.pickItems({
-      customerID,
       bagItemIDs,
       select,
     })
   }
 
   @Mutation()
-  async packItems(@Args() { customerID, bagItemIDs }, @Select() select) {
+  async packItems(@Args() { bagItemIDs }, @Select() select) {
     return this.reservationPhysicalProduct.packItems({
-      customerID,
       bagItemIDs,
       select,
     })
   }
 
   @Mutation()
-  async generateShippingLabels(@Args() { customerID }, @Select() select) {
-    return this.reservationPhysicalProduct.generateShippingLabels(
-      customerID,
-      select
-    )
+  async generateShippingLabels(@Args() { bagItemIDs }, @Select() select) {
+    return this.reservationPhysicalProduct.generateShippingLabels({
+      bagItemIDs,
+      select,
+    })
   }
 
   @Mutation()
