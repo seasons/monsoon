@@ -55,7 +55,8 @@ export class ReservationPhysicalProductService {
     private readonly prisma: PrismaService,
     private readonly productVariantService: ProductVariantService,
     private readonly shippingService: ShippingService,
-    private readonly utils: UtilsService
+    private readonly utils: UtilsService,
+    private readonly reservationUtils: ReservationUtilsService
   ) {}
 
   /*
