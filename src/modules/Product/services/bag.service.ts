@@ -1,4 +1,7 @@
-import { ReservationUtilsService } from "@app/modules/Reservation"
+import {
+  ReservationPhysicalProductService,
+  ReservationUtilsService,
+} from "@app/modules/Reservation"
 import { ProductUtilsService } from "@app/modules/Utils/services/product.utils.service"
 import { UtilsService } from "@app/modules/Utils/services/utils.service"
 import { Injectable } from "@nestjs/common"
@@ -7,7 +10,6 @@ import { PrismaService } from "@prisma1/prisma.service"
 import { ApolloError } from "apollo-server"
 import cuid from "cuid"
 import { camelCase } from "lodash"
-import { DateTime } from "luxon"
 
 import { ProductVariantService } from "../services/productVariant.service"
 
@@ -41,14 +43,18 @@ export class BagService {
     private readonly productVariantService: ProductVariantService,
     private readonly utils: UtilsService,
     private readonly productUtils: ProductUtilsService,
-    private readonly reservationUtils: ReservationUtilsService
+    private readonly reservationUtils: ReservationUtilsService,
+    private readonly reservationPhysicalProduct: ReservationPhysicalProductService
   ) {}
 
-  async markAsPickedUp(bagItemIds) {
+  async markAsPickedUp(bagItemIDs) {
     const bagItems = await this.prisma.client.bagItem.findMany({
       where: {
         id: {
-          in: bagItemIds,
+          in: bagItemIDs,
+        },
+        reservationPhysicalProduct: {
+          status: "Packed",
         },
       },
       select: {
@@ -64,6 +70,8 @@ export class BagService {
     const reservationPhysicalProductIds = bagItems.map(
       item => item.reservationPhysicalProduct.id
     )
+
+    await this.reservationPhysicalProduct.generateShippingLabels({ bagItemIDs })
 
     await this.prisma.client.reservationPhysicalProduct.updateMany({
       where: {

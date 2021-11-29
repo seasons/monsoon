@@ -286,24 +286,17 @@ export class ReservationPhysicalProductService {
   }
 
   async pickItems({
-    customerID,
     bagItemIDs,
     select,
   }: {
-    customerID: string
     bagItemIDs: string[]
     select?: Prisma.ReservationPhysicalProductSelect
   }) {
     const bagItems = await this.prisma.client.bagItem.findMany({
       where: {
-        OR: [
-          { customerId: customerID },
-          {
-            id: {
-              in: bagItemIDs,
-            },
-          },
-        ],
+        id: {
+          in: bagItemIDs,
+        },
       },
       select: {
         id: true,
@@ -368,24 +361,17 @@ export class ReservationPhysicalProductService {
   }
 
   async packItems({
-    customerID,
     bagItemIDs,
     select,
   }: {
-    customerID: string
     bagItemIDs: string[]
     select?: Prisma.ReservationPhysicalProductSelect
   }) {
     const bagItems = await this.prisma.client.bagItem.findMany({
       where: {
-        OR: [
-          { customerId: customerID },
-          {
-            id: {
-              in: bagItemIDs,
-            },
-          },
-        ],
+        id: {
+          in: bagItemIDs,
+        },
       },
       select: {
         id: true,
@@ -441,22 +427,28 @@ export class ReservationPhysicalProductService {
     return results
   }
 
-  async generateShippingLabels(
-    customerID: string,
+  async generateShippingLabels({
+    bagItemIDs,
+    select,
+  }: {
+    bagItemIDs?: string[]
     select?: Prisma.PackageSelect
-  ) {
+  }) {
     const bagItems = await this.prisma.client.bagItem.findMany({
       where: {
+        id: {
+          in: bagItemIDs,
+        },
         reservationPhysicalProduct: {
           status: "Packed",
           outboundPackage: {
             is: null,
           },
         },
-        customerId: customerID,
       },
       select: {
         id: true,
+        customerId: true,
         reservationPhysicalProduct: {
           select: {
             id: true,
@@ -487,6 +479,12 @@ export class ReservationPhysicalProductService {
         },
       },
     })
+
+    if (bagItems.length === 0) {
+      throw new Error("No bag items need labels")
+    }
+
+    const customerID = bagItems?.[0].customerId
 
     const {
       promises: packagePromises,
