@@ -135,7 +135,7 @@ export class ReservationUtilsService {
           ? "Delivered"
           : null
       if (newReservationStatus === null) {
-        throw new Error("")
+        throw new Error("Unable to determine new reservation status")
       }
       promises.push(
         this.prisma.client.reservation.update({
