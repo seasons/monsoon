@@ -1,11 +1,11 @@
 import { PushNotificationID } from "@app/modules/PushNotification/pushNotification.types.d"
 import { PushNotificationService } from "@app/modules/PushNotification/services/pushNotification.service"
-import { TestUtilsService } from "@app/modules/Test/services/test.service"
 import { PrismaService } from "@app/prisma/prisma.service"
-import { Body, Controller, Get, Logger, Post } from "@nestjs/common"
+import { Body, Controller, Logger, Post } from "@nestjs/common"
 import {
   PackageTransitEventStatus,
   ReservationPhase,
+  ReservationPhysicalProductStatus,
   ReservationStatus,
 } from "@prisma/client"
 import { PackageTransitEventSubStatus, Prisma } from "@prisma/client"
@@ -79,128 +79,178 @@ export class ShippoController {
 
     let packageTransitEvent: any
 
-    switch (event) {
-      case ShippoEventType.TrackUpdated:
-        const reservation = await this.prisma.client.reservation.findFirst({
-          where: {
-            OR: [
-              { sentPackage: { transactionID } },
-              { returnPackages: { some: { transactionID } } },
-            ],
-          },
-          orderBy: { createdAt: "desc" },
+    // Return early if its not a transit event
+    if (event !== ShippoEventType.TrackUpdated) {
+      return
+    }
+
+    /*
+
+    */
+
+    // const reservation = await this.prisma.client.reservation.findFirst({
+    //   where: {
+    //     OR: [
+    //       { sentPackage: { transactionID } },
+    //       { returnPackages: { some: { transactionID } } },
+    //     ],
+    //   },
+    //   orderBy: { createdAt: "desc" },
+    //   select: {
+    //     id: true,
+    //     status: true,
+    //     receivedAt: true,
+    //     shippedAt: true,
+    //     sentPackage: true,
+    //   },
+    // })
+
+    // const phase = this.reservationPhase(reservation, transactionID)
+
+    // const reservationStatus = this.convertShippoToReservationStatus(
+    //   status,
+    //   subStatus,
+    //   phase
+    // )
+
+    // try {
+    //   await this.updateLastLocation(reservationStatus, reservation, phase)
+    //   await this.sendPushNotificationForReservationStatus(
+    //     reservationStatus,
+    //     reservation
+    //   )
+    // } catch (e) {
+    //   this.logger.error("Error while updating last location")
+    //   this.logger.error(e)
+    // }
+
+    const packageToUpdate = await this.prisma.client.package.findFirst({
+      where: {
+        transactionID,
+      },
+      orderBy: { createdAt: "desc" },
+      select: {
+        id: true,
+        enteredDeliverySystemAt: true,
+        deliveredAt: true,
+        reservationPhysicalProductsOnOutboundPackage: {
           select: {
             id: true,
+            scannedOnOutboundAt: true,
             status: true,
-            receivedAt: true,
-            shippedAt: true,
-            sentPackage: true,
+            hasBeenScannedOnOutbound: true,
+            hasBeenDeliveredToCustomer: true,
           },
-        })
+        },
+        reservationPhysicalProductsOnInboundPackage: { select: { id: true } },
+      },
+    })
 
-        const phase = this.reservationPhase(reservation, transactionID)
+    const outboundRPPsToUpdate =
+      packageToUpdate.reservationPhysicalProductsOnOutboundPackage
 
-        const reservationStatus = this.convertShippoToReservationStatus(
+    const newTransitEventID = cuid()
+    const promises = []
+    promises.push(
+      this.prisma.client.packageTransitEvent.create({
+        data: {
+          id: newTransitEventID,
           status,
           subStatus,
-          phase
-        )
+          data: payload,
+          package: { connect: { id: packageToUpdate.id } },
+        },
+      })
+    )
 
-        try {
-          await this.updateLastLocation(reservationStatus, reservation, phase)
-          await this.sendPushNotificationForReservationStatus(
-            reservationStatus,
-            reservation
-          )
-        } catch (e) {
-          this.logger.error("Error while updating last location")
-          this.logger.error(e)
-        }
-
-        const packageToUpdate = await this.prisma.client.package.findFirst({
+    if (packageToUpdate) {
+      const updatePackageData = Prisma.validator<Prisma.PackageUpdateInput>()({
+        events: {
+          connect: {
+            id: newTransitEventID,
+          },
+        },
+        ...(status === "Delivered" && !packageToUpdate.deliveredAt
+          ? { deliveredAt: new Date() }
+          : {}),
+        ...(["Transit", "PreTransit", "Delivered"].includes(status) &&
+        !packageToUpdate.enteredDeliverySystemAt
+          ? { enteredDeliverySystemAt: new Date() }
+          : {}),
+      })
+      promises.push(
+        this.prisma.client.package.update({
           where: {
-            transactionID,
+            id: packageToUpdate.id,
           },
-          orderBy: { createdAt: "desc" },
-          select: {
-            id: true,
-            enteredDeliverySystemAt: true,
-            deliveredAt: true,
-          },
+          data: updatePackageData,
         })
+      )
 
-        const newTransitEventID = cuid()
-        const promises = []
-        promises.push(
-          this.prisma.client.packageTransitEvent.create({
-            data: {
-              id: newTransitEventID,
-              status,
-              subStatus,
-              data: payload,
-              package: { connect: { id: packageToUpdate.id } },
-            },
-          })
-        )
-
-        if (packageToUpdate) {
-          const updatePackageData = Prisma.validator<
-            Prisma.PackageUpdateInput
-          >()({
-            events: {
-              connect: {
-                id: newTransitEventID,
-              },
-            },
-            ...(status === "Delivered" && !packageToUpdate.deliveredAt
-              ? { deliveredAt: new Date() }
-              : {}),
-            ...(["Transit", "PreTransit", "Delivered"].includes(status) &&
-            !packageToUpdate.enteredDeliverySystemAt
-              ? { enteredDeliverySystemAt: new Date() }
-              : {}),
-          })
+      if (outboundRPPsToUpdate) {
+        const validPreDeliveryStatuses = [
+          "ScannedOnInbound",
+          "InTransitInbound",
+          "Packed",
+        ] as ReservationPhysicalProductStatus[]
+        for (const rpp of outboundRPPsToUpdate) {
+          let updateData: Prisma.ReservationPhysicalProductUpdateInput = {}
+          if (!rpp.hasBeenScannedOnOutbound) {
+            updateData.hasBeenScannedOnOutbound = true
+            updateData.scannedOnOutboundAt = new Date()
+            if (rpp.status === "Packed") {
+              updateData.status = "ScannedOnOutbound"
+            }
+          }
+          if (
+            status === "Delivered" &&
+            validPreDeliveryStatuses.includes(rpp.status) &&
+            !rpp.hasBeenDeliveredToCustomer
+          ) {
+            updateData.status = "DeliveredToCustomer"
+            updateData.hasBeenDeliveredToCustomer = true
+            updateData.deliveredToCustomerAt = new Date()
+          } else if (status === "Transit" && subStatus !== "PackageAccepted") {
+            updateData.status = "InTransitOutbound"
+          }
           promises.push(
-            this.prisma.client.package.update({
-              where: {
-                id: packageToUpdate.id,
-              },
-              data: updatePackageData,
+            this.prisma.client.reservationPhysicalProduct.update({
+              data: updateData,
+              where: { id: rpp.id },
             })
           )
         }
-
-        const reservationUpdateData = Prisma.validator<
-          Prisma.ReservationUpdateInput
-        >()({
-          packageEvents: {
-            connect: {
-              id: newTransitEventID,
-            },
-          },
-          phase,
-          ...(!["Cancelled", "Completed"].includes(reservation.status)
-            ? { status: reservationStatus, statusUpdatedAt: new Date() }
-            : {}),
-          ...(reservationStatus === "Delivered" &&
-          reservation.receivedAt === null
-            ? { receivedAt: new Date() }
-            : {}),
-          ...(reservationStatus === "Shipped"
-            ? { shippedAt: new Date(), shipped: true }
-            : {}),
-        })
-        promises.push(
-          this.prisma.client.reservation.update({
-            where: { id: reservation.id },
-            data: reservationUpdateData,
-          })
-        )
-
-        const result = await this.prisma.client.$transaction(promises)
-        packageTransitEvent = result.shift()
-        break
+      }
     }
+
+    // const reservationUpdateData = Prisma.validator<
+    //   Prisma.ReservationUpdateInput
+    // >()({
+    //   packageEvents: {
+    //     connect: {
+    //       id: newTransitEventID,
+    //     },
+    //   },
+    //   phase,
+    //   ...(!["Cancelled", "Completed"].includes(reservation.status)
+    //     ? { status: reservationStatus, statusUpdatedAt: new Date() }
+    //     : {}),
+    //   ...(reservationStatus === "Delivered" && reservation.receivedAt === null
+    //     ? { receivedAt: new Date() }
+    //     : {}),
+    //   ...(reservationStatus === "Shipped"
+    //     ? { shippedAt: new Date(), shipped: true }
+    //     : {}),
+    // })
+    // promises.push(
+    //   this.prisma.client.reservation.update({
+    //     where: { id: reservation.id },
+    //     data: reservationUpdateData,
+    //   })
+    // )
+
+    const result = await this.prisma.client.$transaction(promises)
+    packageTransitEvent = result.shift()
 
     return packageTransitEvent
   }
