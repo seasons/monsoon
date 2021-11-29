@@ -25,6 +25,9 @@ type Query {
     @hasRole(roles: [Customer, Admin, Partner])
     @cacheControl(maxAge: 0)
   reservationFeedback: ReservationFeedback @cacheControl(maxAge: 0)
+
+  inboundReservations: [ReservationPhysicalProduct!]
+  outboundReservations: [ReservationPhysicalProduct!]
 }
 
 type Mutation {
@@ -71,6 +74,7 @@ type Mutation {
     @hasRole(roles: [Admin])
   packItems(bagItemIDs: [ID!]!): [ReservationPhysicalProduct!]
     @hasRole(roles: [Admin])
+  generateShippingLabels(customerID: ID!): [Package!] @hasRole(roles: [Admin])
 }
 
 type ReservationFeedback {
@@ -262,6 +266,7 @@ type Reservation @cacheControl(maxAge: 0) {
   products: [PhysicalProduct!]!
   newProducts: [PhysicalProduct!]!
   returnedProducts: [PhysicalProduct!]!
+  reservationPhysicalProducts: [ReservationPhysicalProduct!]!
   packageEvents(
     where: PackageTransitEventWhereInput
     orderBy: PackageTransitEventOrderByInput
@@ -301,6 +306,7 @@ enum ReservationPhysicalProductStatus {
   ShippedToCustomer
   ShippedToBusiness
   DeliveredToCustomer
+  AtHome
   DeliveredToBusiness
   ReturnProcessed
   ResetEarly
@@ -338,6 +344,8 @@ type ReservationPhysicalProduct {
   hasCustomerReturnIntent: Boolean!
   customerReturnIntentAt: DateTime
 
+  customer: Customer!
+
   isLost: Boolean
   lostAt: DateTime
   lostInPhase: ReservationPhase
@@ -353,6 +361,9 @@ type ReservationPhysicalProduct {
 
   hasBeenScannedOnOutbound: Boolean!
   scannedOnOutboundAt: DateTime
+
+  outboundPackage: Package
+  inboundPackage: Package
 
   status: ReservationPhysicalProductStatus!
 

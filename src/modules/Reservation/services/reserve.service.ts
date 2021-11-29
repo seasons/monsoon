@@ -179,7 +179,6 @@ export class ReserveService {
       lastReservation: lastReservationWithData,
       customer: customerWithData,
       physicalProductsBeingReserved,
-      heldPhysicalProducts,
       shippingCode,
     })
 
@@ -405,8 +404,8 @@ export class ReserveService {
   private async createReservation({
     customer,
     physicalProductsBeingReserved,
-    heldPhysicalProducts,
     lastReservation,
+    shippingCode,
   }: {
     lastReservation: Pick<Reservation, "status"> & {
       returnPackages: Array<
@@ -419,7 +418,6 @@ export class ReserveService {
       }
     }
     physicalProductsBeingReserved: ReserveItemsPhysicalProduct[]
-    heldPhysicalProducts: ReserveItemsPhysicalProduct[]
     shippingCode: ShippingCode | null
   }): Promise<{
     promises: PrismaPromise<Reservation | ReservationPhysicalProduct[]>[]
@@ -433,25 +431,28 @@ export class ReserveService {
   }> {
     const promises = []
 
-    const allPhysicalProductsInReservation = [
-      ...physicalProductsBeingReserved,
-      ...heldPhysicalProducts,
-    ]
-
     const returnPackagesToCarryOver =
       lastReservation?.returnPackages?.filter(a => a.events.length === 0) || []
 
     const uniqueReservationNumber = await this.utils.getUniqueReservationNumber()
 
+    const shippingMethod = await this.prisma.client.shippingMethod.findUnique({
+      where: {
+        code: shippingCode,
+      },
+    })
+
     const reservationId = cuid()
-    const reservationPhysicalProductCreateDatas = allPhysicalProductsInReservation.map(
+    const reservationPhysicalProductCreateDatas = physicalProductsBeingReserved.map(
       physicalProduct =>
         Prisma.validator<
           Prisma.ReservationPhysicalProductUncheckedCreateWithoutReservationInput
         >()({
           id: cuid(),
           physicalProductId: physicalProduct.id,
+          shippingMethodId: shippingMethod.id,
           isNew: true,
+          customerId: customer.id,
         })
     )
 
@@ -479,15 +480,11 @@ export class ReserveService {
           slug: process.env.SEASONS_CLEANER_LOCATION_SLUG,
         },
       },
-      // ...(!!shippingOptionId
-      //   ? {
-      //       shippingOption: {
-      //         connect: {
-      //           id: shippingOptionId,
-      //         },
-      //       },
-      //     }
-      //   : {}),
+      shippingMethod: {
+        connect: {
+          id: shippingMethod.id,
+        },
+      },
       shipped: false,
       status: "Queued",
       // TODO: Update this for new world

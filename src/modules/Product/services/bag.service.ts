@@ -450,6 +450,11 @@ export class BagService {
               id: newPhysicalProductID,
             },
           },
+          customer: {
+            connect: {
+              id: customerID,
+            },
+          },
           reservation: {
             connect: {
               id: lastReservation.id,
@@ -735,14 +740,6 @@ export class BagService {
     bagItems,
     application: "client" | "admin"
   ) {
-    const checkIfUpdatedMoreThan24HoursAgo = item => {
-      return (
-        item?.updatedAt &&
-        // @ts-ignore
-        DateTime.fromISO(item?.updatedAt.toISOString()).diffNow("days")?.values
-          ?.days <= -1
-      )
-    }
     const isAdmin = application === "admin"
 
     let filteredBagItems = bagItems.filter(
@@ -782,16 +779,6 @@ export class BagService {
         title = "Reserving"
         break
       case "AtHome":
-        filteredBagItems = bagItems.filter(item => {
-          const updatedMoreThan24HoursAgo = checkIfUpdatedMoreThan24HoursAgo(
-            item
-          )
-
-          const delivered =
-            item.reservationPhysicalProduct?.status === "DeliveredToCustomer"
-
-          return updatedMoreThan24HoursAgo && delivered
-        })
         title = "At home"
         break
       case "ScannedOnInbound":
@@ -810,15 +797,6 @@ export class BagService {
         break
       case "DeliveredToBusiness":
         // 3. Inbound step 3
-        if (!isAdmin) {
-          filteredBagItems = filteredBagItems.filter(item => {
-            const updatedMoreThan24HoursAgo = checkIfUpdatedMoreThan24HoursAgo(
-              item
-            )
-
-            return !updatedMoreThan24HoursAgo
-          })
-        }
         title = "Order returned"
         deliveryStep = 3
         deliveryStatusText = "Shipped"
@@ -849,13 +827,13 @@ export class BagService {
         break
       case "DeliveredToCustomer":
         // 3. Outbound step 3
-        if (!isAdmin) {
-          filteredBagItems = filteredBagItems.filter(item => {
-            const updatedMoreThan24HoursAgo = checkIfUpdatedMoreThan24HoursAgo(
-              item
-            )
+        if (isAdmin) {
+          filteredBagItems = bagItems.filter(item => {
+            const itemStatus = item.reservationPhysicalProduct?.status
 
-            return !updatedMoreThan24HoursAgo
+            return (
+              itemStatus === "DeliveredToCustomer" || itemStatus === "AtHome"
+            )
           })
         }
         title = isAdmin ? "At home" : "Order delivered"

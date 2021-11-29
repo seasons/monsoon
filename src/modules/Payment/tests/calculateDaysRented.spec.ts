@@ -1,10 +1,14 @@
+import { time } from "console"
+
 import { APP_MODULE_DEF } from "@app/app.module"
 import { ReserveService } from "@app/modules/Reservation/services/reserve.service"
 import { ReservationTestUtilsService } from "@app/modules/Reservation/tests/reservation.test.utils"
 import { TestUtilsService } from "@app/modules/Test/services/test.service"
 import { TimeUtilsService } from "@app/modules/Utils/services/time.service"
+import { UtilsModule } from "@app/modules/Utils/utils.module"
 import { PrismaService } from "@app/prisma/prisma.service"
 import { Test } from "@nestjs/testing"
+import { ReservationPhysicalProductStatus } from "@prisma/client"
 
 import { RentalService } from "../services/rental.service"
 import {
@@ -260,10 +264,35 @@ describe("Calculate Days Rented", () => {
         )
       })
 
-      it("Held", async () => {
+      it("DeliveredToCustomer", async () => {
         await setReservationPhysicalProductStatusWithParams(
           reservationPhysicalProductAfterReservation.id,
           "DeliveredToCustomer"
+        )
+
+        reservationPhysicalProductWithData = await getReservationPhysicalProductWithDataWithParams(
+          reservationPhysicalProductAfterReservation.id
+        )
+        const {
+          daysRented,
+          comment,
+          rentalEndedAt,
+          rentalStartedAt,
+        } = await rentalService.calcDaysRented(
+          testCustomer.membership.rentalInvoices[0],
+          reservationPhysicalProductWithData
+        )
+
+        expect(daysRented).toBe(23)
+        expectTimeToEqual(rentalStartedAt, twentyThreeDaysAgo)
+        expectTimeToEqual(rentalEndedAt, now)
+        expect(comment).toBe("") // TODO:
+      })
+
+      it("ReturnPending", async () => {
+        await setReservationPhysicalProductStatusWithParams(
+          reservationPhysicalProductAfterReservation.id,
+          "ReturnPending"
         )
 
         reservationPhysicalProductWithData = await getReservationPhysicalProductWithDataWithParams(
@@ -697,32 +726,7 @@ describe("Calculate Days Rented", () => {
       it("Packed at time of billing", async () => {
         await setReservationPhysicalProductStatusWithParams(
           reservationPhysicalProductAfterReservation.id,
-          "Hold"
-        )
-
-        reservationPhysicalProductWithData = await getReservationPhysicalProductWithDataWithParams(
-          reservationPhysicalProductAfterReservation.id
-        )
-        const {
-          daysRented,
-          comment,
-          rentalEndedAt,
-          rentalStartedAt,
-        } = await rentalService.calcDaysRented(
-          testCustomer.membership.rentalInvoices[0],
-          reservationPhysicalProductWithData
-        )
-
-        expect(daysRented).toBe(0)
-        expect(rentalStartedAt).toBe(undefined)
-        expect(rentalEndedAt).toBe(undefined)
-        expect(comment).toBe("") // TODO:
-      })
-
-      it("Hold at time of billing", async () => {
-        await setReservationPhysicalProductStatusWithParams(
-          reservationPhysicalProductAfterReservation.id,
-          "Hold"
+          "Packed"
         )
 
         reservationPhysicalProductWithData = await getReservationPhysicalProductWithDataWithParams(
@@ -800,6 +804,78 @@ describe("Calculate Days Rented", () => {
         expect(rentalEndedAt).toBe(undefined)
         expect(comment).toBe("") // TODO:
       })
+    })
+  })
+
+  describe("Adjust rental dates for estimation", () => {
+    test("Does no adjustment for upTo = today", () => {
+      Object.values(ReservationPhysicalProductStatus).forEach(status => {
+        const {
+          rentalStartedAt,
+          rentalEndedAt,
+        } = rentalService.adjustRentalDatesForEstimation(
+          timeUtils.xDaysAgo(10),
+          timeUtils.xDaysAgo(9),
+          status,
+          new Date(),
+          "today"
+        )
+        expectTimeToEqual(rentalStartedAt, timeUtils.xDaysAgo(10))
+        expectTimeToEqual(rentalEndedAt, timeUtils.xDaysAgo(9))
+      })
+    })
+
+    describe("UpTo billingEnd", () => {
+      test("For an outbound item, assumes the item is held 2 days from now until billing end", () => {
+        const allStatuses = Object.values(ReservationPhysicalProductStatus)
+        const allOutboundStatuses = allStatuses.filter(
+          a => rentalService.calcDaysRentedCaseFromStatus(a) === "Outbound"
+        )
+        allOutboundStatuses.forEach(status => {
+          const {
+            rentalStartedAt,
+            rentalEndedAt,
+          } = rentalService.adjustRentalDatesForEstimation(
+            undefined,
+            undefined,
+            status,
+            timeUtils.xDaysFromNow(15),
+            "billingEnd"
+          )
+
+          expectTimeToEqual(rentalStartedAt, timeUtils.xDaysFromNow(2))
+          expectTimeToEqual(rentalEndedAt, timeUtils.xDaysFromNow(15))
+        })
+      })
+
+      test("For an item with the customer, assumes it is held until billing end", () => {
+        const allStatuses = Object.values(ReservationPhysicalProductStatus)
+        const allWithcustomerStatus = allStatuses.filter(
+          a => rentalService.calcDaysRentedCaseFromStatus(a) === "WithCustomer"
+        )
+        allWithcustomerStatus.forEach(status => {
+          const {
+            rentalStartedAt,
+            rentalEndedAt,
+          } = rentalService.adjustRentalDatesForEstimation(
+            timeUtils.xDaysAgo(10),
+            new Date(),
+            status,
+            timeUtils.xDaysFromNow(15),
+            "billingEnd"
+          )
+
+          expectTimeToEqual(rentalStartedAt, timeUtils.xDaysAgo(10))
+          expectTimeToEqual(rentalEndedAt, timeUtils.xDaysFromNow(15))
+        })
+      })
+    })
+  })
+
+  test("Calc days rented supports every possible reservation physical product status", () => {
+    Object.values(ReservationPhysicalProductStatus).forEach(status => {
+      const logicCase = rentalService.calcDaysRentedCaseFromStatus(status)
+      expect(typeof logicCase).toBe("string")
     })
   })
 })
