@@ -1,5 +1,6 @@
 import { APP_MODULE_DEF } from "@app/app.module"
 import { PushNotificationService } from "@app/modules/PushNotification"
+import { ReservationTestUtilsService } from "@app/modules/Reservation/tests/reservation.test.utils"
 import { TestUtilsService } from "@app/modules/Test/services/test.service"
 import { PrismaService } from "@app/prisma/prisma.service"
 import { INestApplication } from "@nestjs/common"
@@ -22,7 +23,10 @@ describe("Shippo Controller", () => {
   let app: INestApplication
   let prismaService: PrismaService
   let testUtils: TestUtilsService
+  let reservationTestUtils: ReservationTestUtilsService
+
   let testReservation: Partial<Reservation>
+
   let cleanupFuncs = []
 
   beforeAll(async () => {
@@ -34,16 +38,9 @@ describe("Shippo Controller", () => {
 
     prismaService = moduleRef.get<PrismaService>(PrismaService)
     testUtils = moduleRef.get<TestUtilsService>(TestUtilsService)
-
-    const { reservation, cleanupFunc } = await testUtils.createTestReservation({
-      sentPackageTransactionID: TRANSACTION_ID_ONE,
-      returnPackageTransactionID: TRANSACTION_ID_TWO,
-      select: { packageEvents: { select: { id: true } } },
-    })
-    testReservation = reservation
-    cleanupFuncs.push(cleanupFunc)
-
-    expect((testReservation as any).packageEvents.length).toBe(0)
+    reservationTestUtils = moduleRef.get<ReservationTestUtilsService>(
+      ReservationTestUtilsService
+    )
 
     // Send an event that won't interfere with other tests, while allowing us to test
     // the connection between package transit events and reservations
@@ -56,6 +53,32 @@ describe("Shippo Controller", () => {
   afterAll(async () => {
     await Promise.all(cleanupFuncs.map(a => a()))
     app.close()
+  })
+
+  describe("Outbound Package", () => {
+    beforeAll(async () => {
+      const { customer } = await testUtils.createTestCustomer()
+      const {
+        reservation,
+      } = await reservationTestUtils.addToBagAndReserveForCustomer({
+        customer,
+        numProductsToAdd: 3,
+      })
+
+      // Mock Packed state
+      await prismaService.client.reservationPhysicalProduct.updateMany({
+        where: {
+          id: { in: reservation.reservationPhysicalProducts.map(a => a.id) },
+        },
+        data: { status: "Packed", outboundPackageId: "" },
+      })
+
+      /*
+    Mark all the items as Packed. Set their outbound package
+    */
+
+      expect((testReservation as any).packageEvents.length).toBe(0)
+    })
   })
 
   it("attaches package transit events to reservations", async () => {
@@ -113,7 +136,7 @@ describe("Shippo Controller", () => {
     })
   })
 
-  describe("PackageArrived event", () => {
+  describe("Delivered event", () => {
     beforeAll(async () => {
       // expect deliveredAt to be null on return package before sending event
       const testReservationWithData = await prismaService.client.reservation.findFirst(
