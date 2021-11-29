@@ -282,15 +282,14 @@ export class ReservationPhysicalProductService {
   }
 
   async pickItems(
-    customerID: string,
+    bagItemsIds: string[],
     select: Prisma.ReservationPhysicalProductSelect
   ) {
     const bagItems = await this.prisma.client.bagItem.findMany({
       where: {
-        reservationPhysicalProduct: {
-          status: "Queued",
+        id: {
+          in: bagItemsIds,
         },
-        customerId: customerID,
       },
       select: {
         id: true,
@@ -339,15 +338,14 @@ export class ReservationPhysicalProductService {
   }
 
   async packItems(
-    customerID: string,
+    bagItemsIds: string[],
     select: Prisma.ReservationPhysicalProductSelect
   ) {
     const bagItems = await this.prisma.client.bagItem.findMany({
       where: {
-        reservationPhysicalProduct: {
-          status: "Picked",
+        id: {
+          in: bagItemsIds,
         },
-        customerId: customerID,
       },
       select: {
         id: true,
