@@ -1440,6 +1440,7 @@ enum ReservationPhysicalProductStatus {
   InTransitInbound
   ScannedOnOutbound
   InTransitOutbound
+  AtHome
   DeliveredToCustomer
   DeliveredToBusiness
   ReturnPending
