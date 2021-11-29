@@ -74,6 +74,7 @@ type Mutation {
     @hasRole(roles: [Admin])
   packItems(bagItemIDs: [ID!]!): [ReservationPhysicalProduct!]
     @hasRole(roles: [Admin])
+  generateShippingLabels(customerID: ID!): [Package!] @hasRole(roles: [Admin])
 }
 
 type ReservationFeedback {
@@ -305,6 +306,7 @@ enum ReservationPhysicalProductStatus {
   ShippedToCustomer
   ShippedToBusiness
   DeliveredToCustomer
+  AtHome
   DeliveredToBusiness
   ReturnProcessed
   ResetEarly
@@ -359,6 +361,9 @@ type ReservationPhysicalProduct {
 
   hasBeenScannedOnOutbound: Boolean!
   scannedOnOutboundAt: DateTime
+
+  outboundPackage: Package
+  inboundPackage: Package
 
   status: ReservationPhysicalProductStatus!
 

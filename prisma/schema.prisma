@@ -232,6 +232,11 @@ enum EmailId {
   RestockNotification
 }
 
+enum PackageDirection {
+  Inbound
+  Outbound
+}
+
 enum PackageTransitEventStatus {
   Delivered
   Failure
@@ -1019,6 +1024,7 @@ model Package {
   transactionID                                String
   cost                                         Int?
   status                                       PackageStatus?
+  direction                                    PackageDirection?
   fromAddress                                  Location?                    @relation("LocationToPackage_fromAddress", fields: [fromAddressId], references: [id])
   shippingLabel                                Label?                       @relation(fields: [shippingLabelId], references: [id])
   toAddress                                    Location?                    @relation("LocationToPackage_toAddress", fields: [toAddressId], references: [id])
@@ -1427,6 +1433,7 @@ enum ReservationPhysicalProductStatus {
   InTransitInbound
   ScannedOnOutbound
   InTransitOutbound
+  AtHome
   DeliveredToCustomer
   DeliveredToBusiness
   ReturnPending

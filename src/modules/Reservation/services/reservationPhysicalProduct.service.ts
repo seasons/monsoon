@@ -1,4 +1,5 @@
 import { ProductVariantService } from "@app/modules/Product/services/productVariant.service"
+import { ShippingService } from "@app/modules/Shipping/services/shipping.service"
 import { UtilsService } from "@app/modules/Utils/services/utils.service"
 import { InventoryStatus, PhysicalProductStatus } from "@app/prisma"
 import { PrismaService } from "@app/prisma/prisma.service"
@@ -8,7 +9,10 @@ import {
   Prisma,
   ReservationDropOffAgent,
   ReservationPhysicalProductStatus,
+  ShippingCode,
+  ShippingMethod,
 } from "@prisma/client"
+import cuid from "cuid"
 import { DateTime } from "luxon"
 
 interface ProductState {
@@ -48,6 +52,7 @@ export class ReservationPhysicalProductService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly productVariantService: ProductVariantService,
+    private readonly shippingService: ShippingService,
     private readonly utils: UtilsService
   ) {}
 
@@ -277,13 +282,13 @@ export class ReservationPhysicalProductService {
   }
 
   async pickItems(
-    bagItemIDs: string[],
+    bagItemsIds: string[],
     select: Prisma.ReservationPhysicalProductSelect
   ) {
     const bagItems = await this.prisma.client.bagItem.findMany({
       where: {
         id: {
-          in: bagItemIDs,
+          in: bagItemsIds,
         },
       },
       select: {
@@ -333,13 +338,13 @@ export class ReservationPhysicalProductService {
   }
 
   async packItems(
-    bagItemIDs: string[],
+    bagItemsIds: string[],
     select: Prisma.ReservationPhysicalProductSelect
   ) {
     const bagItems = await this.prisma.client.bagItem.findMany({
       where: {
         id: {
-          in: bagItemIDs,
+          in: bagItemsIds,
         },
       },
       select: {
@@ -380,7 +385,135 @@ export class ReservationPhysicalProductService {
     return results
   }
 
-  async printShippingLabel(customer: Pick<Customer, "id">) {
-    // Todo: implement
+  async generateShippingLabels(
+    customerID: string,
+    select?: Prisma.PackageSelect
+  ) {
+    const bagItems = await this.prisma.client.bagItem.findMany({
+      where: {
+        reservationPhysicalProduct: {
+          status: "Packed",
+          outboundPackage: {
+            is: null,
+          },
+        },
+        customerId: customerID,
+      },
+      select: {
+        id: true,
+        reservationPhysicalProduct: {
+          select: {
+            id: true,
+            reservation: {
+              select: {
+                id: true,
+                shippingMethod: true,
+              },
+            },
+            physicalProduct: {
+              select: {
+                id: true,
+                productVariant: {
+                  select: {
+                    id: true,
+                    weight: true,
+                    product: {
+                      select: {
+                        id: true,
+                        wholesalePrice: true,
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    })
+
+    const {
+      promises: packagePromises,
+      inboundPackageId,
+      outboundPackageId,
+    } = await this.shippingService.createPackages({
+      bagItems,
+      customer: { id: customerID },
+      select,
+    })
+
+    const promises = []
+
+    for (let bagItem of bagItems) {
+      promises.push(
+        this.prisma.client.reservationPhysicalProduct.update({
+          where: {
+            id: bagItem.reservationPhysicalProduct.id,
+          },
+          data: {
+            inboundPackage: {
+              connect: {
+                id: inboundPackageId,
+              },
+            },
+            ...(outboundPackageId && {
+              outboundPackage: {
+                connect: {
+                  id: outboundPackageId,
+                },
+              },
+            }),
+            physicalProduct: {
+              update: {
+                packages: {
+                  connect: (() => {
+                    if (outboundPackageId) {
+                      return [
+                        { id: inboundPackageId },
+                        { id: outboundPackageId },
+                      ]
+                    }
+                    return [{ id: inboundPackageId }]
+                  })(),
+                },
+              },
+            },
+            reservation: {
+              update: {
+                ...(outboundPackageId && {
+                  sentPackage: {
+                    connect: {
+                      id: outboundPackageId,
+                    },
+                  },
+                }),
+                returnedPackage: {
+                  connect: {
+                    id: inboundPackageId,
+                  },
+                },
+              },
+            },
+          },
+        })
+      )
+    }
+
+    const { outboundPackagePromise, inboundPackagePromise } = packagePromises
+
+    const filteredPromises = [
+      inboundPackagePromise,
+      outboundPackagePromise,
+      ...promises,
+    ].filter(Boolean)
+
+    const result = await this.prisma.client.$transaction(filteredPromises)
+    const [inboundPackage, outboundPackage] = result
+
+    if (outboundPackageId === null) {
+      return [null, inboundPackage]
+    }
+
+    return [outboundPackage, inboundPackage]
   }
 }
