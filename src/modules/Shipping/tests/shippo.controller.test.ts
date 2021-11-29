@@ -374,4 +374,49 @@ describe("Shippo Controller", () => {
       )
     })
   })
+
+  it("Connects package transit events to the package", async () => {
+    const txnId = cuid()
+    const packageEvents = getEventsForTransactionId(txnId)
+
+    const { customer } = await testUtils.createTestCustomer()
+
+    const {
+      reservation,
+    } = await reservationTestUtils.addToBagAndReserveForCustomer({
+      customer,
+      numProductsToAdd: 3,
+    })
+
+    const outboundPackage = await prismaService.client.package.create({
+      data: {
+        transactionID: txnId,
+        items: {
+          connect: reservation.reservationPhysicalProducts.map(a => ({
+            id: a.physicalProduct.id,
+          })),
+        },
+        reservationPhysicalProductsOnOutboundPackage: {
+          connect: reservation.reservationPhysicalProducts.map(b => ({
+            id: b.id,
+          })),
+        },
+        reservationOnSentPackage: { connect: { id: reservation.id } },
+      },
+      select: { id: true, events: { select: { id: true } } },
+    })
+    expect(outboundPackage.events.length).toBe(0)
+
+    const event = packageEvents["PackageAccepted"]
+    const packageAcceptedResponse = await request(httpServer)
+      .post("/shippo_events")
+      .send(event)
+    expect(packageAcceptedResponse.status).toBe(201)
+
+    const packageAfterEvent = await prismaService.client.package.findUnique({
+      where: { id: outboundPackage.id },
+      select: { events: { select: { id: true } } },
+    })
+    expect(packageAfterEvent.events.length).toBe(1)
+  })
 })
