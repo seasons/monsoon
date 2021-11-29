@@ -306,6 +306,7 @@ enum ReservationPhysicalProductStatus {
   ShippedToCustomer
   ShippedToBusiness
   DeliveredToCustomer
+  AtHome
   DeliveredToBusiness
   ReturnProcessed
   ResetEarly

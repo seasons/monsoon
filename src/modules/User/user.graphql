@@ -88,7 +88,6 @@ enum ReservationLineItemsFilter {
 enum BagSectionStatus {
   # Custom BagSectionStatus
   Added
-  AtHome
   Inbound
   Outbound
   Processing
@@ -97,6 +96,7 @@ enum BagSectionStatus {
   Queued
   Picked
   Packed
+  AtHome
   ScannedOnInbound
   InTransitInbound
   ScannedOnOutbound
