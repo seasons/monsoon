@@ -918,11 +918,14 @@ export class ReservationService {
     hasFreeSwap: boolean
     shippingCode: ShippingCode
   }) {
-    const includeSentPackage = hasFreeSwap
-      ? false
-      : shippingCode === ShippingCode.Pickup
-      ? false
-      : true
+    const includeSentPackage =
+      hasFreeSwap &&
+      (shippingCode === ShippingCode.Pickup ||
+        shippingCode === ShippingCode.UPSGround)
+        ? false
+        : shippingCode === ShippingCode.Pickup
+        ? false
+        : true
 
     const {
       sentRate,

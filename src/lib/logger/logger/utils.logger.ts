@@ -135,6 +135,7 @@ export function createExpressWinstonHandler(logger: Logger) {
           url_details: {
             path: req.url,
           },
+          body: req.body,
         },
 
         // @ts-ignore:
