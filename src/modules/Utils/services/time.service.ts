@@ -73,6 +73,16 @@ export class TimeUtilsService {
     return this.formatDate(returnDate, returnType)
   }
 
+  xHoursAfterDate(
+    date: Date,
+    x: number,
+    returnType: "isoString" | "date" | "timestamp" = "isoString"
+  ) {
+    const returnDate = moment(date.toISOString()).add(x, "hours")
+
+    return this.formatDate(returnDate, returnType)
+  }
+
   private formatDate(
     date: moment.Moment,
     returnType: "isoString" | "timestamp" | "date"

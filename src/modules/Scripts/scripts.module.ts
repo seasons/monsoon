@@ -8,6 +8,7 @@ import { UtilsModule } from "../Utils/utils.module"
 import { DataCommands } from "./commands/data.command"
 import { HerokuCommands } from "./commands/heroku.command"
 import { ProductCommands } from "./commands/product.command"
+import { ReplayCommands } from "./commands/replay.command"
 import { SyncCommands } from "./commands/sync.command"
 import { UserCommands } from "./commands/user.command"
 import { ScriptsService } from "./services/scripts.service"
@@ -32,6 +33,7 @@ import { CronModule, PaymentModule, SyncModule, UserModule } from ".."
     SyncCommands,
     DataCommands,
     HerokuCommands,
+    ReplayCommands,
   ],
 })
 export class ScriptsModule {}
