@@ -70,9 +70,9 @@ type Mutation {
     droppedOffBy: ReservationDropOffAgent!
     customerId: String
   ): Boolean @hasRole(roles: [Admin])
-  pickItems(customerID: ID!, bagItemIDs: [ID!]): [ReservationPhysicalProduct!]
+  pickItems(customerID: ID, bagItemIDs: [ID!]): [ReservationPhysicalProduct!]
     @hasRole(roles: [Admin])
-  packItems(customerID: ID!, bagItemIDs: [ID!]): [ReservationPhysicalProduct!]
+  packItems(customerID: ID, bagItemIDs: [ID!]): [ReservationPhysicalProduct!]
     @hasRole(roles: [Admin])
   generateShippingLabels(customerID: ID!): [Package!] @hasRole(roles: [Admin])
 }
@@ -306,6 +306,7 @@ enum ReservationPhysicalProductStatus {
   ShippedToCustomer
   ShippedToBusiness
   DeliveredToCustomer
+  AtHome
   DeliveredToBusiness
   ReturnProcessed
   ResetEarly

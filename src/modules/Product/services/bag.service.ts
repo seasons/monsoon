@@ -1,3 +1,4 @@
+import { ReservationUtilsService } from "@app/modules/Reservation"
 import { ProductUtilsService } from "@app/modules/Utils/services/product.utils.service"
 import { UtilsService } from "@app/modules/Utils/services/utils.service"
 import { Injectable } from "@nestjs/common"
@@ -39,7 +40,8 @@ export class BagService {
     private readonly prisma: PrismaService,
     private readonly productVariantService: ProductVariantService,
     private readonly utils: UtilsService,
-    private readonly productUtils: ProductUtilsService
+    private readonly productUtils: ProductUtilsService,
+    private readonly reservationUtils: ReservationUtilsService
   ) {}
 
   async markAsPickedUp(bagItemIds) {
@@ -586,6 +588,28 @@ export class BagService {
     return physicalProductPromises
   }
 
+  private async updateReservationOnLost(lostResPhysProd) {
+    const currentReservation = await this.prisma.client.reservation.findUnique({
+      where: {
+        id: lostResPhysProd.reservationId,
+      },
+      select: {
+        id: true,
+        reservationPhysicalProducts: {
+          select: {
+            status: true,
+          },
+        },
+      },
+    })
+
+    return await this.reservationUtils.updateReservationOnChange(
+      [currentReservation.id],
+      { Lost: 1 },
+      [lostResPhysProd.id]
+    )
+  }
+
   // async markAsFound(
   //   lostBagItemId,
   //   status: "DeliveredToCustomer" | "DeliveredToBusiness"
@@ -626,17 +650,6 @@ export class BagService {
 
     const promises = []
 
-    promises.push(
-      this.prisma.client.reservation.update({
-        where: {
-          id: lostResPhysProd.reservationId,
-        },
-        data: {
-          status: "Lost",
-        },
-      })
-    )
-
     const lostInPhase = this.getLostPhase(lostResPhysProd)
 
     promises.push(...this.updatePhysicalProductsOnLost(physicalProduct))
@@ -654,6 +667,11 @@ export class BagService {
         },
       })
     )
+
+    const updateReservationPromise = await this.updateReservationOnLost(
+      lostResPhysProd
+    )
+    promises.push(...updateReservationPromise)
 
     await this.prisma.client.$transaction(promises)
 
@@ -722,14 +740,6 @@ export class BagService {
     bagItems,
     application: "client" | "admin"
   ) {
-    const checkIfUpdatedMoreThan24HoursAgo = item => {
-      return (
-        item?.updatedAt &&
-        // @ts-ignore
-        DateTime.fromISO(item?.updatedAt.toISOString()).diffNow("days")?.values
-          ?.days <= -1
-      )
-    }
     const isAdmin = application === "admin"
 
     let filteredBagItems = bagItems.filter(
@@ -769,16 +779,6 @@ export class BagService {
         title = "Reserving"
         break
       case "AtHome":
-        filteredBagItems = bagItems.filter(item => {
-          const updatedMoreThan24HoursAgo = checkIfUpdatedMoreThan24HoursAgo(
-            item
-          )
-
-          const delivered =
-            item.reservationPhysicalProduct?.status === "DeliveredToCustomer"
-
-          return updatedMoreThan24HoursAgo && delivered
-        })
         title = "At home"
         break
       case "ScannedOnInbound":
@@ -797,15 +797,6 @@ export class BagService {
         break
       case "DeliveredToBusiness":
         // 3. Inbound step 3
-        if (!isAdmin) {
-          filteredBagItems = filteredBagItems.filter(item => {
-            const updatedMoreThan24HoursAgo = checkIfUpdatedMoreThan24HoursAgo(
-              item
-            )
-
-            return !updatedMoreThan24HoursAgo
-          })
-        }
         title = "Order returned"
         deliveryStep = 3
         deliveryStatusText = "Shipped"
@@ -836,13 +827,13 @@ export class BagService {
         break
       case "DeliveredToCustomer":
         // 3. Outbound step 3
-        if (!isAdmin) {
-          filteredBagItems = filteredBagItems.filter(item => {
-            const updatedMoreThan24HoursAgo = checkIfUpdatedMoreThan24HoursAgo(
-              item
-            )
+        if (isAdmin) {
+          filteredBagItems = bagItems.filter(item => {
+            const itemStatus = item.reservationPhysicalProduct?.status
 
-            return !updatedMoreThan24HoursAgo
+            return (
+              itemStatus === "DeliveredToCustomer" || itemStatus === "AtHome"
+            )
           })
         }
         title = isAdmin ? "At home" : "Order delivered"
