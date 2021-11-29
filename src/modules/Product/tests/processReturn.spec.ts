@@ -252,10 +252,6 @@ describe("Process Return", () => {
       )
     })
 
-    it("updates reservations status to Completed if status isn't set to Lost", async () => {
-      expect(reservationAfterReturn.status).toBe("Completed")
-    })
-
     it("deletes bagItems from customer's bag", () => {
       expect(bagItemsAfterReturn.length).toBe(0)
     })
@@ -458,10 +454,6 @@ describe("Process Return", () => {
       resPhysProdsAfterReturn.forEach(a =>
         expectTimeToEqual(a.droppedOffAt, new Date())
       )
-    })
-
-    it("updates reservations status to Completed if status isn't set to Lost", async () => {
-      expect(reservationAfterReturn.status).toBe("Completed")
     })
 
     it("deletes bagItems from customer's bag", () => {

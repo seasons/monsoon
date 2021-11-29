@@ -6,6 +6,12 @@ import { head } from "lodash"
 
 import { ReservationWithProductVariantData } from "./reservation.service"
 
+interface InitialState {
+  Lost?: number
+  ReturnProcessed?: number
+  DeliveredToCustomer?: number
+}
+
 @Injectable()
 export class ReservationUtilsService {
   constructor(
@@ -55,5 +61,93 @@ export class ReservationUtilsService {
         where: { id: packageToUpdate.id },
       }),
     ]
+  }
+
+  async updateReservationOnChange(
+    reservationIds: string[],
+    initialState: InitialState,
+    resPhysProdsIds: string[]
+  ) {
+    const reservations = await this.prisma.client.reservation.findMany({
+      where: {
+        id: {
+          in: reservationIds,
+        },
+      },
+      select: {
+        id: true,
+        reservationPhysicalProducts: {
+          where: {
+            id: {
+              notIn: resPhysProdsIds,
+            },
+          },
+          select: {
+            id: true,
+            status: true,
+          },
+        },
+      },
+    })
+
+    const promises = []
+
+    for (const reservation of reservations) {
+      const reservationPhysProds = reservation.reservationPhysicalProducts
+      const resPhysProdStatusCounts = { ...initialState }
+
+      for (const resPhysProd of reservationPhysProds) {
+        const status = resPhysProd.status
+
+        if (
+          !["Lost", "ReturnProcessed", "DeliveredToCustomer"].includes(status)
+        ) {
+          continue
+        }
+
+        if (resPhysProdStatusCounts[status]) {
+          resPhysProdStatusCounts[status] += 1
+          continue
+        }
+
+        resPhysProdStatusCounts[status] = 1
+      }
+
+      let statusWithMaxCount = {
+        status: "Lost",
+        count: resPhysProdStatusCounts["Lost"],
+      }
+      delete resPhysProdStatusCounts["Lost"]
+      for (const [status, count] of Object.entries(resPhysProdStatusCounts)) {
+        if (count > statusWithMaxCount["count"]) {
+          statusWithMaxCount.status = status
+          statusWithMaxCount.count = count
+        }
+      }
+
+      const maxStatus = statusWithMaxCount.status
+      const newReservationStatus =
+        maxStatus === "Lost"
+          ? "Lost"
+          : maxStatus === "ReturnProcessed"
+          ? "Completed"
+          : maxStatus === "DeliveredToCustomer"
+          ? "Delivered"
+          : null
+      if (newReservationStatus === null) {
+        throw new Error("Unable to determine new reservation status")
+      }
+      promises.push(
+        this.prisma.client.reservation.update({
+          where: {
+            id: reservation.id,
+          },
+          data: {
+            status: newReservationStatus,
+          },
+        })
+      )
+    }
+    return promises
   }
 }
