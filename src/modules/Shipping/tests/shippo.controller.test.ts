@@ -10,7 +10,6 @@ import request from "supertest"
 
 import { getEventsForTransactionId } from "./shippoEvents.stub"
 
-// TODO: Add test that events get connected to package
 describe("Shippo Controller", () => {
   let app: INestApplication
   let prismaService: PrismaService
