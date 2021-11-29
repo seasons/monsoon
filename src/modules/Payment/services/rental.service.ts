@@ -586,9 +586,63 @@ export class RentalService {
         rentalStartedAt = undefined
         break
       case "Inbound":
-      case "Lost":
+        rentalEndedAt =
+          reservationPhysicalProduct.scannedOnInboundAt ||
+          applyReturnPackageCushion(
+            reservationPhysicalProduct.deliveredToBusinessAt ||
+              invoiceWithData.billingEndAt
+          )
+        throwErrorIfRentalEndedAtUndefined()
+        break
+      case "WithCustomer":
+        // If an item is return pending, the customer either filled out the return flow
+        // before sending the item back OR after the sending the item back but before it reached us.
+        // In either case, if it *currently* has status ReturnPending, that means we haven't received
+        // a transit event for its inbound package yet. Once we receive such an event, it would move into
+        // one of the inbound statuses.
+        rentalEndedAt = today
+        break
+      case "ResetEarly":
+        if (reservationPhysicalProduct.hasBeenScannedOnInbound) {
+          rentalEndedAt = reservationPhysicalProduct.scannedOnInboundAt
+        } else {
           rentalEndedAt = applyReturnPackageCushion(
+            reservationPhysicalProduct.resetEarlyByAdminAt
+          )
+        }
+        throwErrorIfRentalEndedAtUndefined()
+        break
+      case "ReturnProcessed":
+        if (reservationPhysicalProduct.droppedOffBy === "Customer") {
+          rentalEndedAt = reservationPhysicalProduct.droppedOffAt
+        } else if (reservationPhysicalProduct.hasBeenScannedOnInbound) {
+          rentalEndedAt = reservationPhysicalProduct.scannedOnInboundAt
+        } else {
+          rentalEndedAt = applyReturnPackageCushion(
+            reservationPhysicalProduct.deliveredToBusinessAt ||
+              reservationPhysicalProduct.returnProcessedAt
+          )
+        }
+        throwErrorIfRentalEndedAtUndefined()
+        break
+      case "Lost":
+        if (reservationPhysicalProduct.lostInPhase === "BusinessToCustomer") {
+          rentalStartedAt = undefined
+        } else if (
+          reservationPhysicalProduct.lostInPhase === "CustomerToBusiness"
+        ) {
+          rentalEndedAt = applyReturnPackageCushion(
+            reservationPhysicalProduct.lostAt
+          )
+          throwErrorIfRentalEndedAtUndefined()
+        } else {
+          throw new Error(
             `Unexpected lostInPhase: ${reservationPhysicalProduct.lostInPhase}`
+          )
+        }
+        break
+      default:
+        throw new Error(`Unexpected case: ${logicCase}`)
     }
 
     ;({ rentalEndedAt, rentalStartedAt } = this.adjustRentalDatesForEstimation(
