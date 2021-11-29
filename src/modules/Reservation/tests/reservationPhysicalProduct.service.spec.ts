@@ -33,89 +33,249 @@ describe("Reservation Physical Product Service", () => {
     testCustomer = customer
   })
 
-  describe("Pick and Pack Items", () => {
-    let pickedBagItemIDs: string[] = null
-
+  describe("Pick Items", () => {
     it("Changes items from status Queued to Picked", async () => {
       const {
         bagItems,
       } = await reservationUtilsTestService.addToBagAndReserveForCustomer({
         customer: testCustomer,
         numProductsToAdd: 2,
-      })
-
-      const bagItemIDs = bagItems.map(bagItem => bagItem.id)
-      pickedBagItemIDs = bagItemIDs
-
-      const bagItemsWithReservationPhysicalProducts = await prisma.client.bagItem.findMany(
-        {
-          where: {
-            id: {
-              in: bagItemIDs,
-            },
-          },
-          select: {
+        options: {
+          bagItemSelect: {
             id: true,
+            status: true,
+
             reservationPhysicalProduct: {
               select: {
+                id: true,
                 status: true,
               },
             },
           },
-        }
-      )
+        },
+      })
 
-      for (let bagItem of bagItemsWithReservationPhysicalProducts) {
+      for (let bagItem of bagItems) {
         expect(bagItem.reservationPhysicalProduct.status).toBe("Queued")
       }
 
-      const result = await reservationPhysicalProductService.pickItems(
-        testCustomer.id,
-        {
+      const bagItemIDs = bagItems.map(bagItem => bagItem.id)
+      const result = await reservationPhysicalProductService.pickItems({
+        customerID: testCustomer.id,
+        bagItemIDs,
+        select: {
           id: true,
           status: true,
-        }
-      )
+        },
+      })
 
       for (let reservationPhysicalProduct of result) {
         expect(reservationPhysicalProduct.status).toBe("Picked")
       }
     })
 
-    it("Changes items from status Picked to Packed", async () => {
-      const bagItemsWithReservationPhysicalProducts = await prisma.client.bagItem.findMany(
-        {
-          where: {
-            id: {
-              in: pickedBagItemIDs,
-            },
-          },
-          select: {
+    it("Throws an error if one of the items is not set to Queued status", async () => {
+      const {
+        bagItems,
+      } = await reservationUtilsTestService.addToBagAndReserveForCustomer({
+        customer: testCustomer,
+        numProductsToAdd: 2,
+        options: {
+          bagItemSelect: {
             id: true,
+            status: true,
             reservationPhysicalProduct: {
               select: {
+                id: true,
+                status: true,
+                isOnHold: true,
+              },
+            },
+          },
+        },
+      })
+
+      await prisma.client.reservationPhysicalProduct.update({
+        where: {
+          id: bagItems[0].reservationPhysicalProduct.id,
+        },
+        data: {
+          status: "Picked",
+        },
+      })
+
+      expect(
+        await reservationPhysicalProductService.pickItems({
+          customerID: testCustomer.id,
+          bagItemIDs: bagItems.map(b => b.id),
+        })
+      ).toThrowError(
+        "All reservation physical product statuses should be set to Queued"
+      )
+    })
+
+    it("Throws an error if one item is on hold", async () => {
+      const {
+        bagItems,
+      } = await reservationUtilsTestService.addToBagAndReserveForCustomer({
+        customer: testCustomer,
+        numProductsToAdd: 1,
+        options: {
+          bagItemSelect: {
+            id: true,
+            status: true,
+            reservationPhysicalProduct: {
+              select: {
+                id: true,
+                status: true,
+                isOnHold: true,
+              },
+            },
+          },
+        },
+      })
+
+      const rpp = bagItems?.[0].reservationPhysicalProduct
+      await prisma.client.reservationPhysicalProduct.update({
+        where: {
+          id: rpp.id,
+        },
+        data: {
+          isOnHold: true,
+        },
+      })
+
+      expect(
+        await reservationPhysicalProductService.pickItems({
+          customerID: testCustomer.id,
+          bagItemIDs: bagItems.map(b => b.id),
+        })
+      ).toThrowError(`The following bagItems are on hold: ${rpp.id}`)
+    })
+  })
+
+  describe("Pack Items", () => {
+    it("Changes items from status Picked to Packed", async () => {
+      const {
+        bagItems,
+      } = await reservationUtilsTestService.addToBagAndReserveForCustomer({
+        customer: testCustomer,
+        numProductsToAdd: 2,
+        options: {
+          bagItemSelect: {
+            id: true,
+            status: true,
+
+            reservationPhysicalProduct: {
+              select: {
+                id: true,
                 status: true,
               },
             },
           },
-        }
-      )
+        },
+      })
 
-      for (let bagItem of bagItemsWithReservationPhysicalProducts) {
-        expect(bagItem.reservationPhysicalProduct.status).toBe("Picked")
-      }
+      await prisma.client.reservationPhysicalProduct.updateMany({
+        where: {
+          id: { in: bagItems.map(b => b.reservationPhysicalProduct.id) },
+        },
+        data: {
+          status: "Picked",
+        },
+      })
 
-      const result = await reservationPhysicalProductService.packItems(
-        testCustomer.id,
-        {
+      const result = await reservationPhysicalProductService.packItems({
+        customerID: testCustomer.id,
+        bagItemIDs: bagItems.map(b => b.id),
+        select: {
           id: true,
           status: true,
-        }
-      )
+        },
+      })
 
       for (let reservationPhysicalProduct of result) {
         expect(reservationPhysicalProduct.status).toBe("Packed")
       }
+    })
+
+    it("Throws an error if one of the items is not set to Picked status", async () => {
+      const {
+        bagItems,
+      } = await reservationUtilsTestService.addToBagAndReserveForCustomer({
+        customer: testCustomer,
+        numProductsToAdd: 2,
+        options: {
+          bagItemSelect: {
+            id: true,
+            status: true,
+            reservationPhysicalProduct: {
+              select: {
+                id: true,
+                status: true,
+                isOnHold: true,
+              },
+            },
+          },
+        },
+      })
+
+      await prisma.client.reservationPhysicalProduct.update({
+        where: {
+          id: bagItems[0].reservationPhysicalProduct.id,
+        },
+        data: {
+          status: "Packed",
+        },
+      })
+
+      expect(
+        await reservationPhysicalProductService.packItems({
+          customerID: testCustomer.id,
+          bagItemIDs: bagItems.map(b => b.id),
+        })
+      ).toThrowError(
+        "All reservation physical product statuses should be set to Picked"
+      )
+    })
+
+    it("Throws an error if one item is on hold", async () => {
+      const {
+        bagItems,
+      } = await reservationUtilsTestService.addToBagAndReserveForCustomer({
+        customer: testCustomer,
+        numProductsToAdd: 1,
+        options: {
+          bagItemSelect: {
+            id: true,
+            status: true,
+            reservationPhysicalProduct: {
+              select: {
+                id: true,
+                status: true,
+                isOnHold: true,
+              },
+            },
+          },
+        },
+      })
+
+      const rpp = bagItems?.[0].reservationPhysicalProduct
+      await prisma.client.reservationPhysicalProduct.update({
+        where: {
+          id: rpp.id,
+        },
+        data: {
+          isOnHold: true,
+        },
+      })
+
+      expect(
+        await reservationPhysicalProductService.packItems({
+          customerID: testCustomer.id,
+          bagItemIDs: bagItems.map(b => b.id),
+        })
+      ).toThrowError(`The following bagItems are on hold: ${rpp.id}`)
     })
   })
 
@@ -166,14 +326,24 @@ describe("Reservation Physical Product Service", () => {
         },
       })
 
-      await reservationPhysicalProductService.pickItems(testCustomer.id, {
-        id: true,
-        status: true,
+      const bagItemIDs = bagItems.map(b => b.id)
+
+      await reservationPhysicalProductService.pickItems({
+        customerID: testCustomer.id,
+        bagItemIDs,
+        select: {
+          id: true,
+          status: true,
+        },
       })
 
-      await reservationPhysicalProductService.packItems(testCustomer.id, {
-        id: true,
-        status: true,
+      await reservationPhysicalProductService.packItems({
+        customerID: testCustomer.id,
+        bagItemIDs,
+        select: {
+          id: true,
+          status: true,
+        },
       })
 
       return [

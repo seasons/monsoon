@@ -1,21 +1,11 @@
 import { ProcessableReservationPhysicalProductSelect } from "@app/modules/Payment/services/rental.service"
-import { UPS_SELECT_FEE } from "@app/modules/Payment/tests/utils/utils"
-import { TestUtilsService } from "@app/modules/Test/services/test.service"
 import { TimeUtilsService } from "@app/modules/Utils/services/time.service"
-import { UtilsService } from "@app/modules/Utils/services/utils.service"
 import { PrismaService } from "@app/prisma/prisma.service"
 import { Injectable } from "@nestjs/common"
-import cuid from "cuid"
+import { merge } from "lodash"
 
 import { ReserveService } from "../services/reserve.service"
-import { ReservationService } from ".."
-import {
-  BagItem,
-  Customer,
-  Prisma,
-  Reservation,
-  ShippingCode,
-} from ".prisma/client"
+import { BagItem, Customer, Prisma, ShippingCode } from ".prisma/client"
 
 export const UPS_GROUND_FEE = 1000
 
@@ -47,10 +37,15 @@ export class ReservationTestUtilsService {
   }: {
     customer: Customer
     numProductsToAdd: number
-    options?: { shippingCode?: ShippingCode; numDaysAgo?: number }
+    options?: {
+      shippingCode?: ShippingCode
+      numDaysAgo?: number
+      bagItemCreateData?: Prisma.BagItemCreateInput
+      bagItemSelect?: Prisma.BagItemSelect
+    }
   }): Promise<{
     reservation: TestReservation
-    bagItems: BagItem[]
+    bagItems: (BagItem & { [key: string]: any })[]
   }> {
     const { shippingCode = "UPSGround", numDaysAgo = 0 } = options
     const reservedBagItems = await this.prisma.client.bagItem.findMany({
@@ -98,12 +93,16 @@ export class ReservationTestUtilsService {
     for (const prodVar of reservableProdVars) {
       createdBagItems.push(
         await this.prisma.client.bagItem.create({
-          data: {
-            customer: { connect: { id: customer.id } },
-            productVariant: { connect: { id: prodVar.id } },
-            status: "Added",
-            saved: false,
-          },
+          data: merge(
+            {
+              customer: { connect: { id: customer.id } },
+              productVariant: { connect: { id: prodVar.id } },
+              status: "Added",
+              saved: false,
+            },
+            options?.bagItemCreateData
+          ),
+          ...(options?.bagItemSelect ? { select: options?.bagItemSelect } : {}),
         })
       )
     }

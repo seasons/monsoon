@@ -35,13 +35,21 @@ export class ReservationMutationsResolver {
   }
 
   @Mutation()
-  async pickItems(@Args() { bagItemIDs }, @Select() select) {
-    return this.reservationPhysicalProduct.pickItems(bagItemIDs, select)
+  async pickItems(@Args() { customerID, bagItemIDs }, @Select() select) {
+    return this.reservationPhysicalProduct.pickItems({
+      customerID,
+      bagItemIDs,
+      select,
+    })
   }
 
   @Mutation()
-  async packItems(@Args() { bagItemIDs }, @Select() select) {
-    return this.reservationPhysicalProduct.packItems(bagItemIDs, select)
+  async packItems(@Args() { customerID, bagItemIDs }, @Select() select) {
+    return this.reservationPhysicalProduct.packItems({
+      customerID,
+      bagItemIDs,
+      select,
+    })
   }
 
   @Mutation()

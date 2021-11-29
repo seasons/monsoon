@@ -5,14 +5,11 @@ import { InventoryStatus, PhysicalProductStatus } from "@app/prisma"
 import { PrismaService } from "@app/prisma/prisma.service"
 import { Injectable } from "@nestjs/common"
 import {
-  Customer,
   Prisma,
   ReservationDropOffAgent,
   ReservationPhysicalProductStatus,
-  ShippingCode,
-  ShippingMethod,
 } from "@prisma/client"
-import cuid from "cuid"
+import { every, some } from "lodash"
 import { DateTime } from "luxon"
 
 interface ProductState {
@@ -281,16 +278,28 @@ export class ReservationPhysicalProductService {
     return promises
   }
 
-  async pickItems(
-    customerID: string,
-    select: Prisma.ReservationPhysicalProductSelect
-  ) {
+  async pickItems({
+    customerID,
+    bagItemIDs,
+    select,
+  }: {
+    customerID: string
+    bagItemIDs: string[]
+    select?: Prisma.ReservationPhysicalProductSelect
+  }) {
     const bagItems = await this.prisma.client.bagItem.findMany({
       where: {
         reservationPhysicalProduct: {
           status: "Queued",
         },
-        customerId: customerID,
+        OR: [
+          { customerId: customerID },
+          {
+            id: {
+              in: bagItemIDs,
+            },
+          },
+        ],
       },
       select: {
         id: true,
@@ -299,19 +308,35 @@ export class ReservationPhysicalProductService {
             id: true,
             physicalProductId: true,
             status: true,
+            isOnHold: true,
           },
         },
       },
     })
 
+    if (
+      !every(bagItems, b => b.reservationPhysicalProduct?.status === "Queued")
+    ) {
+      throw new Error(
+        "All reservation physical product statuses should be set to Queued"
+      )
+    }
+
+    if (some(bagItems, b => b.reservationPhysicalProduct?.isOnHold)) {
+      const bagItemsWithOnHoldStatus = bagItems.filter(
+        b => b.reservationPhysicalProduct.isOnHold
+      )
+      throw new Error(
+        `The following bagItems are on hold: ${bagItemsWithOnHoldStatus.join(
+          ", "
+        )}`
+      )
+    }
+
     const promises = []
 
     for (let bagItem of bagItems) {
       const reservationPhysicalProduct = bagItem.reservationPhysicalProduct
-
-      if (reservationPhysicalProduct.status !== "Queued") {
-        throw new Error("Reservation physical product status should be Queued")
-      }
 
       promises.push(
         this.prisma.client.reservationPhysicalProduct.update({
@@ -338,16 +363,28 @@ export class ReservationPhysicalProductService {
     return results
   }
 
-  async packItems(
-    customerID: string,
-    select: Prisma.ReservationPhysicalProductSelect
-  ) {
+  async packItems({
+    customerID,
+    bagItemIDs,
+    select,
+  }: {
+    customerID: string
+    bagItemIDs: string[]
+    select?: Prisma.ReservationPhysicalProductSelect
+  }) {
     const bagItems = await this.prisma.client.bagItem.findMany({
       where: {
         reservationPhysicalProduct: {
           status: "Picked",
         },
-        customerId: customerID,
+        OR: [
+          { customerId: customerID },
+          {
+            id: {
+              in: bagItemIDs,
+            },
+          },
+        ],
       },
       select: {
         id: true,
@@ -355,19 +392,35 @@ export class ReservationPhysicalProductService {
           select: {
             id: true,
             status: true,
+            isOnHold: true,
           },
         },
       },
     })
 
+    if (
+      !every(bagItems, b => b.reservationPhysicalProduct?.status === "Picked")
+    ) {
+      throw new Error(
+        "All reservation physical product statuses should be set to Picked"
+      )
+    }
+
+    if (some(bagItems, b => b.reservationPhysicalProduct?.isOnHold)) {
+      const bagItemsWithOnHoldStatus = bagItems.filter(
+        b => b.reservationPhysicalProduct.isOnHold
+      )
+      throw new Error(
+        `The following bagItems are on hold: ${bagItemsWithOnHoldStatus.join(
+          ", "
+        )}`
+      )
+    }
+
     const promises = []
 
     for (let bagItem of bagItems) {
       const reservationPhysicalProduct = bagItem.reservationPhysicalProduct
-
-      if (reservationPhysicalProduct.status !== "Picked") {
-        throw new Error("Reservation physical product status should be Picked")
-      }
 
       promises.push(
         this.prisma.client.reservationPhysicalProduct.update({
