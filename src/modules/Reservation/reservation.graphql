@@ -70,11 +70,12 @@ type Mutation {
     droppedOffBy: ReservationDropOffAgent!
     customerId: String
   ): Boolean @hasRole(roles: [Admin])
-  pickItems(bagItemIDs: [ID!]): [ReservationPhysicalProduct!]
+  pickItems(bagItemIDs: [ID!]!): [ReservationPhysicalProduct!]
     @hasRole(roles: [Admin])
-  packItems(bagItemIDs: [ID!]): [ReservationPhysicalProduct!]
+  packItems(bagItemIDs: [ID!]!): [ReservationPhysicalProduct!]
     @hasRole(roles: [Admin])
-  generateShippingLabels(bagItemIDs: [ID!]): [Package!] @hasRole(roles: [Admin])
+  generateShippingLabels(bagItemIDs: [ID!]!): [Package!]
+    @hasRole(roles: [Admin])
 }
 
 type ReservationFeedback {
