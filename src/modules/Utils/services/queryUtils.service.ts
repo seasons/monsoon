@@ -79,7 +79,7 @@ export class QueryUtilsService {
 
     // We run select on "Me" only to cache the fields object for selects calculated
     // further down the selection set hierarchy. So exit early.
-    if (["Me", "Homepage", "BagSection"].includes(modelName)) {
+    if (["Me", "Homepage"].includes(modelName)) {
       return null
     }
 
