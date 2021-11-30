@@ -6,7 +6,6 @@
 # import Query, Mutation, UserLinks from "./modules/User/user.graphql"
 # import Reservation, Query, Mutation from "./modules/Reservation/reservation.graphql"
 # import Query, Mutation from "./modules/Product/product.graphql"
-# import Mutation from "./modules/Product/bag.graphql"
 # import Category from "./modules/Product/category.graphql"
 # import Image, Mutation from "./modules/Image/image.graphql"
 # import Query from "./modules/Homepage/homepage.graphql"

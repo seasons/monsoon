@@ -1,5 +1,5 @@
-import { ReservationUtilsService } from "@app/modules/Reservation"
 import { ProductUtilsService } from "@app/modules/Utils/services/product.utils.service"
+import { ReservationUtilsService } from "@app/modules/Utils/services/reservation.utils.service"
 import { UtilsService } from "@app/modules/Utils/services/utils.service"
 import { Injectable } from "@nestjs/common"
 import { BagItem, InventoryStatus, Prisma } from "@prisma/client"
@@ -7,7 +7,6 @@ import { PrismaService } from "@prisma1/prisma.service"
 import { ApolloError } from "apollo-server"
 import cuid from "cuid"
 import { camelCase } from "lodash"
-import { DateTime } from "luxon"
 
 import { ProductVariantService } from "../services/productVariant.service"
 
@@ -43,40 +42,6 @@ export class BagService {
     private readonly productUtils: ProductUtilsService,
     private readonly reservationUtils: ReservationUtilsService
   ) {}
-
-  async markAsPickedUp(bagItemIds) {
-    const bagItems = await this.prisma.client.bagItem.findMany({
-      where: {
-        id: {
-          in: bagItemIds,
-        },
-      },
-      select: {
-        id: true,
-        reservationPhysicalProduct: {
-          select: {
-            id: true,
-          },
-        },
-      },
-    })
-
-    const reservationPhysicalProductIds = bagItems.map(
-      item => item.reservationPhysicalProduct.id
-    )
-
-    await this.prisma.client.reservationPhysicalProduct.updateMany({
-      where: {
-        id: { in: reservationPhysicalProductIds },
-      },
-      data: {
-        hasBeenDeliveredToCustomer: true,
-        deliveredToCustomerAt: new Date().toISOString(),
-        status: "DeliveredToCustomer",
-      },
-    })
-    return true
-  }
 
   async bagSection(status: BagSectionStatus, customer, application) {
     const bagItems = await this.prisma.client.bagItem.findMany({
@@ -155,8 +120,6 @@ export class BagService {
       },
     })
 
-    let sections = []
-
     if (application === "spring") {
       const sections = [
         BagSectionStatus.Queued,
@@ -195,8 +158,6 @@ export class BagService {
         return this.getSection(status, bagItems, "client")
       })
     }
-
-    return sections
   }
 
   async addToBag(

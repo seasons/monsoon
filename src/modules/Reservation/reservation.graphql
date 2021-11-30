@@ -26,8 +26,14 @@ type Query {
     @cacheControl(maxAge: 0)
   reservationFeedback: ReservationFeedback @cacheControl(maxAge: 0)
 
-  inboundReservations: [ReservationPhysicalProduct!]
-  outboundReservations: [ReservationPhysicalProduct!]
+  inboundReservations(
+    skip: Int!
+    take: Int!
+  ): ReservationPhysicalProductConnection! @hasRole(roles: [Admin])
+  outboundReservations(
+    skip: Int!
+    take: Int!
+  ): ReservationPhysicalProductConnection! @hasRole(roles: [Admin])
   reservationProcessingStats: ReservationProcessingStats!
     @cacheControl(maxAge: 0)
 }
@@ -76,7 +82,10 @@ type Mutation {
     @hasRole(roles: [Admin])
   packItems(bagItemIDs: [ID!]!): [ReservationPhysicalProduct!]
     @hasRole(roles: [Admin])
-  generateShippingLabels(customerID: ID!): [Package!] @hasRole(roles: [Admin])
+  generateShippingLabels(bagItemIDs: [ID!]!): [Package!]
+    @hasRole(roles: [Admin])
+  markAsLost(lostBagItemId: ID!): Boolean @hasRole(roles: [Admin])
+  markAsPickedUp(bagItemIDs: [ID]!): Boolean @hasRole(roles: [Admin])
 }
 
 type ReservationFeedback {
@@ -319,6 +328,21 @@ enum ReservationPhysicalProductStatus {
 enum ReservationDropOffAgent {
   Customer
   UPS
+}
+
+type ReservationPhysicalProductEdge {
+  node: ReservationPhysicalProduct!
+  cursor: String!
+}
+
+type AggregateReservationPhysicalProduct {
+  count: Int!
+}
+
+type ReservationPhysicalProductConnection {
+  pageInfo: PageInfo!
+  edges: [ReservationPhysicalProductEdge]!
+  totalCount: Int!
 }
 
 type ReservationPhysicalProduct {
