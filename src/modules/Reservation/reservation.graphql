@@ -26,8 +26,14 @@ type Query {
     @cacheControl(maxAge: 0)
   reservationFeedback: ReservationFeedback @cacheControl(maxAge: 0)
 
-  inboundReservations: [ReservationPhysicalProduct!]
-  outboundReservations: [ReservationPhysicalProduct!]
+  inboundReservations(
+    skip: Int!
+    take: Int!
+  ): ReservationPhysicalProductConnection! @hasRole(roles: [Admin])
+  outboundReservations(
+    skip: Int!
+    take: Int!
+  ): ReservationPhysicalProductConnection! @hasRole(roles: [Admin])
 }
 
 type Mutation {
@@ -320,6 +326,21 @@ enum ReservationPhysicalProductStatus {
 enum ReservationDropOffAgent {
   Customer
   UPS
+}
+
+type ReservationPhysicalProductEdge {
+  node: ReservationPhysicalProduct!
+  cursor: String!
+}
+
+type AggregateReservationPhysicalProduct {
+  count: Int!
+}
+
+type ReservationPhysicalProductConnection {
+  pageInfo: PageInfo!
+  edges: [ReservationPhysicalProductEdge]!
+  totalCount: Int!
 }
 
 type ReservationPhysicalProduct {

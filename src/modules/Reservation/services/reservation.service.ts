@@ -6,6 +6,7 @@ import { PushNotificationService } from "@app/modules/PushNotification"
 import { CustomerUtilsService } from "@app/modules/User/services/customer.utils.service"
 import { UtilsService } from "@app/modules/Utils/services/utils.service"
 import { InventoryStatus, PhysicalProductStatus } from "@app/prisma"
+import { findManyCursorConnection } from "@devoxa/prisma-relay-cursor-connection"
 import { EmailService } from "@modules/Email/services/email.service"
 import {
   ShippingService,
@@ -26,7 +27,7 @@ import {
 import { PrismaService } from "@prisma1/prisma.service"
 import chargebee from "chargebee"
 import cuid from "cuid"
-import { intersection, merge } from "lodash"
+import { merge, pick } from "lodash"
 import { DateTime } from "luxon"
 
 import { ReservationUtilsService } from "./reservation.utils.service"
@@ -72,67 +73,19 @@ export class ReservationService {
     private readonly customerUtils: CustomerUtilsService
   ) {}
 
-  async inboundReservations(select) {
-    const reservationPhysicalProducts = await this.prisma.client.reservationPhysicalProduct.findMany(
-      {
-        distinct: ["customerId"],
-        where: {
-          status: "ReturnPending",
-        },
-        orderBy: {
-          updatedAt: "asc",
-        },
-        select: merge(select, {
-          id: true,
-          customer: {
-            select: {
-              reservationPhysicalProducts: {
-                where: {
-                  status: "ReturnPending",
-                },
-                select: {
-                  id: true,
-                },
-              },
-            },
-          },
-        }),
-      }
+  async reservationPhysicalProductConnection({ args, where, countFnc }) {
+    const result = await findManyCursorConnection(
+      async () => {
+        return await this.prisma.client.reservationPhysicalProduct.findMany({
+          where,
+          ...args,
+        })
+      },
+      countFnc,
+      pick(args, ["first", "last", "after", "before"])
     )
 
-    return reservationPhysicalProducts
-  }
-
-  async outboundReservations(select) {
-    const reservationPhysicalProducts = await this.prisma.client.reservationPhysicalProduct.findMany(
-      {
-        distinct: ["customerId"],
-        where: {
-          status: "Queued",
-        },
-        orderBy: {
-          updatedAt: "asc",
-        },
-        select: merge(select, {
-          id: true,
-          customer: {
-            select: {
-              id: true,
-              reservationPhysicalProducts: {
-                where: {
-                  status: "Queued",
-                },
-                select: {
-                  id: true,
-                },
-              },
-            },
-          },
-        }),
-      }
-    )
-
-    return reservationPhysicalProducts
+    return result
   }
 
   async cancelReturn(customer: Customer, bagItemId: string) {
@@ -918,11 +871,14 @@ export class ReservationService {
     hasFreeSwap: boolean
     shippingCode: ShippingCode
   }) {
-    const includeSentPackage = hasFreeSwap
-      ? false
-      : shippingCode === ShippingCode.Pickup
-      ? false
-      : true
+    const includeSentPackage =
+      hasFreeSwap &&
+      (shippingCode === ShippingCode.Pickup ||
+        shippingCode === ShippingCode.UPSGround)
+        ? false
+        : shippingCode === ShippingCode.Pickup
+        ? false
+        : true
 
     const {
       sentRate,

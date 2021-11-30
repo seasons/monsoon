@@ -120,8 +120,6 @@ export class BagService {
       },
     })
 
-    let sections = []
-
     if (application === "spring") {
       const sections = [
         BagSectionStatus.Queued,
@@ -160,8 +158,6 @@ export class BagService {
         return this.getSection(status, bagItems, "client")
       })
     }
-
-    return sections
   }
 
   async addToBag(
