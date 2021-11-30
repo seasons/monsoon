@@ -1,32 +1,105 @@
 import { FindManyArgs } from "@app/decorators/findManyArgs.decorator"
 import { Select } from "@app/decorators/select.decorator"
 import { QueryUtilsService } from "@app/modules/Utils/services/queryUtils.service"
+import { PrismaService } from "@app/prisma/prisma.service"
 import { Args, Query, Resolver } from "@nestjs/graphql"
+import { merge, pick } from "lodash"
 
 import { ReservationService } from "../services/reservation.service"
 
 @Resolver()
 export class ReservationQueriesResolver {
   constructor(
+    private readonly prisma: PrismaService,
     private readonly queryUtils: QueryUtilsService,
     private readonly reservationService: ReservationService
   ) {}
 
   @Query()
   async inboundReservations(@Args() { skip, take }, @Select() select) {
-    return await this.reservationService.inboundReservations({
+    const where = {
+      status: "ReturnPending",
+    } as any
+    const args = {
+      orderBy: {
+        updatedAt: "asc",
+      },
       skip,
       take,
-      select,
+      distinct: ["customerId"],
+      select: merge(select, {
+        id: true,
+        customer: {
+          select: {
+            reservationPhysicalProducts: {
+              where: {
+                status: "ReturnPending",
+              },
+              select: {
+                id: true,
+              },
+            },
+          },
+        },
+      }),
+    } as any
+
+    return this.reservationService.reservationPhysicalProductConnection({
+      args,
+      where,
+      countFnc: () =>
+        this.prisma.client.customer.count({
+          where: {
+            reservationPhysicalProducts: {
+              some: where,
+            },
+          },
+        }),
     })
   }
 
   @Query()
   async outboundReservations(@Args() { skip, take }, @Select() select) {
-    return await this.reservationService.outboundReservations({
+    const where = {
+      status: "Queued",
+    } as any
+
+    const args = {
+      distinct: ["customerId"],
+      orderBy: {
+        updatedAt: "asc",
+      },
       skip,
       take,
-      select,
+      select: merge(select, {
+        id: true,
+        customer: {
+          select: {
+            id: true,
+            reservationPhysicalProducts: {
+              where: {
+                status: "Queued",
+              },
+              select: {
+                id: true,
+              },
+            },
+          },
+        },
+      }),
+    } as any
+
+    return this.reservationService.reservationPhysicalProductConnection({
+      args,
+      where,
+      countFnc: () =>
+        this.prisma.client.customer.count({
+          where: {
+            reservationPhysicalProducts: {
+              some: where,
+            },
+          },
+        }),
     })
   }
 

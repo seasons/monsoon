@@ -73,99 +73,17 @@ export class ReservationService {
     private readonly customerUtils: CustomerUtilsService
   ) {}
 
-  async inboundReservations({ skip, take, select }) {
-    const where = {
-      status: "ReturnPending",
-    } as any
-    const queryArgs = {
-      orderBy: {
-        updatedAt: "asc",
-      },
-      skip,
-      take,
-      distinct: ["customerId"],
-      select: merge(select, {
-        id: true,
-        customer: {
-          select: {
-            reservationPhysicalProducts: {
-              where: {
-                status: "ReturnPending",
-              },
-              select: {
-                id: true,
-              },
-            },
-          },
-        },
-      }),
-    } as any
+  async reservationPhysicalProductConnection({ args, where, countFnc }) {
     const result = await findManyCursorConnection(
       async () => {
         return await this.prisma.client.reservationPhysicalProduct.findMany({
           where,
-          ...queryArgs,
+          ...args,
         })
       },
-      () =>
-        this.prisma.client.reservationPhysicalProduct.count({
-          where,
-        }),
-      pick(queryArgs, ["first", "last", "after", "before"])
+      countFnc,
+      pick(args, ["first", "last", "after", "before"])
     )
-
-    return result
-  }
-
-  async outboundReservations({ skip, take, select }) {
-    const where = {
-      status: "Queued",
-    } as any
-    const queryArgs = {
-      distinct: ["customerId"],
-      orderBy: {
-        updatedAt: "asc",
-      },
-      skip,
-      take,
-      select: merge(select, {
-        id: true,
-        customer: {
-          select: {
-            id: true,
-            reservationPhysicalProducts: {
-              where: {
-                status: "Queued",
-              },
-              select: {
-                id: true,
-              },
-            },
-          },
-        },
-      }),
-    } as any
-    const result = await findManyCursorConnection(
-      async () => {
-        return await this.prisma.client.reservationPhysicalProduct.findMany({
-          where,
-          ...queryArgs,
-        })
-      },
-      () =>
-        this.prisma.client.customer.count({
-          where: {
-            reservationPhysicalProducts: {
-              some: {
-                status: "Queued",
-              },
-            },
-          },
-        }),
-      pick(queryArgs, ["first", "last", "after", "before"])
-    )
-
-    console.log("result", result)
 
     return result
   }
