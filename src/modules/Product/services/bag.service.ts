@@ -7,7 +7,6 @@ import { PrismaService } from "@prisma1/prisma.service"
 import { ApolloError } from "apollo-server"
 import cuid from "cuid"
 import { camelCase } from "lodash"
-import { DateTime } from "luxon"
 
 import { ProductVariantService } from "../services/productVariant.service"
 
@@ -155,8 +154,6 @@ export class BagService {
       },
     })
 
-    let sections = []
-
     if (application === "spring") {
       const sections = [
         BagSectionStatus.Queued,
@@ -195,8 +192,6 @@ export class BagService {
         return this.getSection(status, bagItems, "client")
       })
     }
-
-    return sections
   }
 
   async addToBag(
