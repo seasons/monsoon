@@ -4,7 +4,7 @@ import { ErrorService } from "@app/modules/Error/services/error.service"
 import { ProductVariantService } from "@app/modules/Product/services/productVariant.service"
 import { CustomerUtilsService } from "@app/modules/User/services/customer.utils.service"
 import { UtilsService } from "@app/modules/Utils/services/utils.service"
-import { PhysicalProductStatus } from "@app/prisma"
+import { findManyCursorConnection } from "@devoxa/prisma-relay-cursor-connection"
 import {
   ShippingService,
   UPSServiceLevel,
@@ -24,7 +24,7 @@ import {
 import { PrismaService } from "@prisma1/prisma.service"
 import chargebee from "chargebee"
 import cuid from "cuid"
-import { merge } from "lodash"
+import { merge, pick } from "lodash"
 import { DateTime } from "luxon"
 
 export enum ReservationLineItemsFilter {
@@ -58,67 +58,19 @@ export class ReservationService {
     private readonly customerUtils: CustomerUtilsService
   ) {}
 
-  async inboundReservations(select) {
-    const reservationPhysicalProducts = await this.prisma.client.reservationPhysicalProduct.findMany(
-      {
-        distinct: ["customerId"],
-        where: {
-          status: "ReturnPending",
-        },
-        orderBy: {
-          updatedAt: "asc",
-        },
-        select: merge(select, {
-          id: true,
-          customer: {
-            select: {
-              reservationPhysicalProducts: {
-                where: {
-                  status: "ReturnPending",
-                },
-                select: {
-                  id: true,
-                },
-              },
-            },
-          },
-        }),
-      }
+  async reservationPhysicalProductConnection({ args, where, countFnc }) {
+    const result = await findManyCursorConnection(
+      async () => {
+        return await this.prisma.client.reservationPhysicalProduct.findMany({
+          where,
+          ...args,
+        })
+      },
+      countFnc,
+      pick(args, ["first", "last", "after", "before"])
     )
 
-    return reservationPhysicalProducts
-  }
-
-  async outboundReservations(select) {
-    const reservationPhysicalProducts = await this.prisma.client.reservationPhysicalProduct.findMany(
-      {
-        distinct: ["customerId"],
-        where: {
-          status: "Queued",
-        },
-        orderBy: {
-          updatedAt: "asc",
-        },
-        select: merge(select, {
-          id: true,
-          customer: {
-            select: {
-              id: true,
-              reservationPhysicalProducts: {
-                where: {
-                  status: "Queued",
-                },
-                select: {
-                  id: true,
-                },
-              },
-            },
-          },
-        }),
-      }
-    )
-
-    return reservationPhysicalProducts
+    return result
   }
 
   async cancelReturn(customer: Customer, bagItemId: string) {
