@@ -70,7 +70,7 @@ describe("Reservation Physical Product Service", () => {
       }
 
       const result = await reservationPhysicalProductService.pickItems(
-        testCustomer.id,
+        bagItemsWithReservationPhysicalProducts.map(b => b.id),
         {
           id: true,
           status: true,
@@ -106,7 +106,7 @@ describe("Reservation Physical Product Service", () => {
       }
 
       const result = await reservationPhysicalProductService.packItems(
-        testCustomer.id,
+        bagItemsWithReservationPhysicalProducts.map(b => b.id),
         {
           id: true,
           status: true,
@@ -166,15 +166,21 @@ describe("Reservation Physical Product Service", () => {
         },
       })
 
-      await reservationPhysicalProductService.pickItems(testCustomer.id, {
-        id: true,
-        status: true,
-      })
+      await reservationPhysicalProductService.pickItems(
+        bagItems.map(b => b.id),
+        {
+          id: true,
+          status: true,
+        }
+      )
 
-      await reservationPhysicalProductService.packItems(testCustomer.id, {
-        id: true,
-        status: true,
-      })
+      await reservationPhysicalProductService.packItems(
+        bagItems.map(b => b.id),
+        {
+          id: true,
+          status: true,
+        }
+      )
 
       return [
         bagItems,
