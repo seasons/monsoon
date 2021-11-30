@@ -1,7 +1,4 @@
-import {
-  ReservationPhysicalProductService,
-  ReservationUtilsService,
-} from "@app/modules/Reservation"
+import { ReservationUtilsService } from "@app/modules/Reservation"
 import { ProductUtilsService } from "@app/modules/Utils/services/product.utils.service"
 import { UtilsService } from "@app/modules/Utils/services/utils.service"
 import { Injectable } from "@nestjs/common"
@@ -43,48 +40,8 @@ export class BagService {
     private readonly productVariantService: ProductVariantService,
     private readonly utils: UtilsService,
     private readonly productUtils: ProductUtilsService,
-    private readonly reservationUtils: ReservationUtilsService,
-    private readonly reservationPhysicalProduct: ReservationPhysicalProductService
+    private readonly reservationUtils: ReservationUtilsService
   ) {}
-
-  async markAsPickedUp(bagItemIDs) {
-    const bagItems = await this.prisma.client.bagItem.findMany({
-      where: {
-        id: {
-          in: bagItemIDs,
-        },
-        reservationPhysicalProduct: {
-          status: "Packed",
-        },
-      },
-      select: {
-        id: true,
-        reservationPhysicalProduct: {
-          select: {
-            id: true,
-          },
-        },
-      },
-    })
-
-    const reservationPhysicalProductIds = bagItems.map(
-      item => item.reservationPhysicalProduct.id
-    )
-
-    await this.reservationPhysicalProduct.generateShippingLabels({ bagItemIDs })
-
-    await this.prisma.client.reservationPhysicalProduct.updateMany({
-      where: {
-        id: { in: reservationPhysicalProductIds },
-      },
-      data: {
-        hasBeenDeliveredToCustomer: true,
-        deliveredToCustomerAt: new Date().toISOString(),
-        status: "DeliveredToCustomer",
-      },
-    })
-    return true
-  }
 
   async bagSection(status: BagSectionStatus, customer, application) {
     const bagItems = await this.prisma.client.bagItem.findMany({

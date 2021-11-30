@@ -1,4 +1,3 @@
 type Mutation {
-  markAsLost(lostBagItemId: ID!): Boolean @hasRole(roles: [Admin])
-  markAsPickedUp(bagItemIDs: [ID]!): Boolean @hasRole(roles: [Admin])
+
 }

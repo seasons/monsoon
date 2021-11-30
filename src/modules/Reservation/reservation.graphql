@@ -76,6 +76,8 @@ type Mutation {
     @hasRole(roles: [Admin])
   generateShippingLabels(bagItemIDs: [ID!]!): [Package!]
     @hasRole(roles: [Admin])
+  markAsLost(lostBagItemId: ID!): Boolean @hasRole(roles: [Admin])
+  markAsPickedUp(bagItemIDs: [ID]!): Boolean @hasRole(roles: [Admin])
 }
 
 type ReservationFeedback {
