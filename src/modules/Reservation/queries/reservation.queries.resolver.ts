@@ -13,13 +13,21 @@ export class ReservationQueriesResolver {
   ) {}
 
   @Query()
-  async inboundReservations(@Select() select) {
-    return await this.reservationService.inboundReservations(select)
+  async inboundReservations(@Args() { skip, take }, @Select() select) {
+    return await this.reservationService.inboundReservations({
+      skip,
+      take,
+      select,
+    })
   }
 
   @Query()
-  async outboundReservations(@Select() select) {
-    return await this.reservationService.outboundReservations(select)
+  async outboundReservations(@Args() { skip, take }, @Select() select) {
+    return await this.reservationService.outboundReservations({
+      skip,
+      take,
+      select,
+    })
   }
 
   @Query()
