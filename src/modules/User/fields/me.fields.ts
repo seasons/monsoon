@@ -116,20 +116,30 @@ export class MeFieldsResolver {
   async bagSection(
     @Args() { status },
     @Customer() customer,
-    @Application() application
+    @Application() application,
+    @Select() select
   ) {
     if (!customer) {
       return null
     }
-    return await this.bagService.bagSection(status, customer, application)
+    return await this.bagService.bagSection({
+      status,
+      customer,
+      application,
+      select,
+    })
   }
 
   @ResolveField()
-  async bagSections(@Customer() customer, @Application() application) {
+  async bagSections(
+    @Customer() customer,
+    @Application() application,
+    @Select() select
+  ) {
     if (!customer) {
       return null
     }
-    return await this.bagService.bagSections(customer, application)
+    return await this.bagService.bagSections({ customer, application, select })
   }
 
   @ResolveField()
