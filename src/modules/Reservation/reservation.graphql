@@ -28,6 +28,8 @@ type Query {
 
   inboundReservations: [ReservationPhysicalProduct!]
   outboundReservations: [ReservationPhysicalProduct!]
+  reservationProcessingStats: ReservationProcessingStats!
+    @cacheControl(maxAge: 0)
 }
 
 type Mutation {
@@ -368,6 +370,18 @@ type ReservationPhysicalProduct {
   status: ReservationPhysicalProductStatus!
 
   createdAt: DateTime
+  updatedAt: DateTime
+}
+
+type ReservationProcessingStats @cacheControl(maxAge: 0) {
+  id: ID!
+  initialNumQueuedItems: Int
+  initialNumQueuedReservations: Int
+  currentNumQueuedItems: Int
+  currentNumQueuedReservations: Int
+  initialNumDeliveredToBusinessItems: Int
+  currentNumDeliveredToBusinessItems: Int
+  day: DateTime
   updatedAt: DateTime
 }
 

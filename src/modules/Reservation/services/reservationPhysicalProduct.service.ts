@@ -341,7 +341,7 @@ export class ReservationPhysicalProductService {
     }
 
     const results = await this.prisma.client.$transaction(promises)
-    await this.utils.updateOpsMetricRecord()
+    await this.utils.updateOutboundResProcessingStats()
 
     return results
   }

@@ -216,7 +216,7 @@ export class ReserveService {
       }),
     })) as any
 
-    await this.utils.updateOpsMetricRecord()
+    await this.utils.updateOutboundResProcessingStats()
 
     // Send confirmation email
     // await this.emails.sendReservationConfirmationEmail(

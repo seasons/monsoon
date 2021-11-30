@@ -23,6 +23,11 @@ export class ReservationQueriesResolver {
   }
 
   @Query()
+  async reservationProcessingStats() {
+    return await this.reservationService.reservationProcessingStats()
+  }
+
+  @Query()
   async package(@Args() { where }, @Select() select) {
     return await this.queryUtils.resolveFindUnique({ where, select }, "Package")
   }
