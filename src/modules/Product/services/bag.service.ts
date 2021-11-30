@@ -49,12 +49,10 @@ export class BagService {
     application,
     customer,
     status,
-    select,
   }: {
     customer: { id: string }
     status: BagSectionStatus
     application: ApplicationType
-    select?: Prisma.BagItemSelect
   }) {
     const bagItems = await this.prisma.client.bagItem.findMany({
       where: {
@@ -63,25 +61,22 @@ export class BagService {
         },
         saved: false,
       },
-      select: merge(
-        {
-          id: true,
-          status: true,
-          updatedAt: true,
-          physicalProduct: {
-            select: {
-              id: true,
-            },
-          },
-          reservationPhysicalProduct: {
-            select: {
-              id: true,
-              status: true,
-            },
+      select: {
+        id: true,
+        status: true,
+        updatedAt: true,
+        physicalProduct: {
+          select: {
+            id: true,
           },
         },
-        select
-      ),
+        reservationPhysicalProduct: {
+          select: {
+            id: true,
+            status: true,
+          },
+        },
+      },
     })
 
     return this.getSection({
@@ -94,11 +89,9 @@ export class BagService {
   async bagSections({
     application,
     customer,
-    select,
   }: {
     customer: { id: string }
     application: ApplicationType
-    select?: Prisma.BagItemSelect
   }) {
     const bagItems = await this.prisma.client.bagItem.findMany({
       where: {
@@ -107,43 +100,22 @@ export class BagService {
         },
         saved: false,
       },
-      select: merge(
-        {
-          id: true,
-          status: true,
-          updatedAt: true,
-          reservationPhysicalProduct: {
-            select: {
-              id: true,
-              status: true,
-              outboundPackage: {
-                select: {
-                  shippingLabel: {
-                    select: {
-                      trackingURL: true,
-                    },
-                  },
-                },
-              },
-              inboundPackage: {
-                select: {
-                  shippingLabel: {
-                    select: {
-                      trackingURL: true,
-                    },
-                  },
-                },
-              },
-            },
-          },
-          physicalProduct: {
-            select: {
-              id: true,
-            },
+      select: {
+        id: true,
+        status: true,
+        updatedAt: true,
+        reservationPhysicalProduct: {
+          select: {
+            id: true,
+            status: true,
           },
         },
-        select
-      ),
+        physicalProduct: {
+          select: {
+            id: true,
+          },
+        },
+      },
     })
 
     let sections: BagSectionStatus[] = []
