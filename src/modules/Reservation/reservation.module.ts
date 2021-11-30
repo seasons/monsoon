@@ -19,7 +19,6 @@ import { ReservationMutationsResolver } from "./mutations/reservation.mutations.
 import { ReservationPhysicalProductMutationsResolver } from "./mutations/reservationPhysicalProduct.mutations.resolver"
 import { ReservationQueriesResolver } from "./queries/reservation.queries.resolver"
 import { ReservationService } from "./services/reservation.service"
-import { ReservationUtilsService } from "./services/reservation.utils.service"
 import { ReservationFeedbackService } from "./services/reservationFeedback.service"
 import { ReservationPhysicalProductService } from "./services/reservationPhysicalProduct.service"
 import { ReserveService } from "./services/reserve.service"
@@ -47,19 +46,13 @@ export const ReservationModuleRef = {
     ReservationFeedbackService,
     ReservationFieldsResolver,
     ReservationQueriesResolver,
-    ReservationUtilsService,
     ReservationService,
     ReserveService,
     ReservationMutationsResolver,
     ReservationPhysicalProductService,
     ReservationTestUtilsService,
   ],
-  exports: [
-    ReservationService,
-    ReservationUtilsService,
-    ReserveService,
-    ReservationTestUtilsService,
-  ],
+  exports: [ReservationService, ReserveService, ReservationTestUtilsService],
 }
 
 @Module(ReservationModuleRef)

@@ -15,7 +15,7 @@ import {
 import cuid from "cuid"
 import { DateTime } from "luxon"
 
-import { ReservationUtilsService } from "./reservation.utils.service"
+import { ReservationUtilsService } from "../../Utils/services/reservation.utils.service"
 
 interface ProductState {
   productUID: string
@@ -494,7 +494,7 @@ export class ReservationPhysicalProductService {
                     },
                   },
                 }),
-                returnedPackage: {
+                returnPackages: {
                   connect: {
                     id: inboundPackageId,
                   },

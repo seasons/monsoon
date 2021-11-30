@@ -1,8 +1,5 @@
 import { cloneDeep, update } from "lodash"
 
-export const TRANSACTION_ID_ONE = "cab8f46684034257ba8d72c58347fc26"
-export const TRANSACTION_ID_TWO = "cab8f46684034257ba8d72c58347098u"
-
 const DeliveredEvent = {
   test: false,
   data: {
@@ -591,38 +588,14 @@ const PackageAcceptedEvent = {
   event: "track_updated",
 }
 
-const withTxnId = (event, txn_id) =>
-  update(event, "data.transaction", () => txn_id)
+export const getEventsForTransactionId = txn_id => {
+  const withTxnId = event => update(event, "data.transaction", () => txn_id)
 
-export const TRANSACTION_ID_ONE_EVENTS = {
-  DeliveryScheduled: withTxnId(
-    cloneDeep(DeliveryScheduledEvent),
-    TRANSACTION_ID_ONE
-  ),
-  PackageDeparted: withTxnId(
-    cloneDeep(PackageDepartedEvent),
-    TRANSACTION_ID_ONE
-  ),
-  PackageArrived: withTxnId(cloneDeep(PackageArrivedEvent), TRANSACTION_ID_ONE),
-  PackageAccepted: withTxnId(
-    cloneDeep(PackageAcceptedEvent),
-    TRANSACTION_ID_ONE
-  ),
-  Delivered: withTxnId(cloneDeep(DeliveredEvent), TRANSACTION_ID_ONE),
-}
-export const TRANSACTION_ID_TWO_EVENTS = {
-  DeliveryScheduled: withTxnId(
-    cloneDeep(DeliveryScheduledEvent),
-    TRANSACTION_ID_TWO
-  ),
-  PackageDeparted: withTxnId(
-    cloneDeep(PackageDepartedEvent),
-    TRANSACTION_ID_TWO
-  ),
-  PackageArrived: withTxnId(cloneDeep(PackageArrivedEvent), TRANSACTION_ID_TWO),
-  PackageAccepted: withTxnId(
-    cloneDeep(PackageAcceptedEvent),
-    TRANSACTION_ID_TWO
-  ),
-  Delivered: withTxnId(cloneDeep(DeliveredEvent), TRANSACTION_ID_TWO),
+  return {
+    DeliveryScheduled: withTxnId(cloneDeep(DeliveryScheduledEvent)),
+    PackageDeparted: withTxnId(cloneDeep(PackageDepartedEvent)),
+    PackageArrived: withTxnId(cloneDeep(PackageArrivedEvent)),
+    PackageAccepted: withTxnId(cloneDeep(PackageAcceptedEvent)),
+    Delivered: withTxnId(cloneDeep(DeliveredEvent)),
+  }
 }
