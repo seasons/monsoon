@@ -5,7 +5,7 @@ import { Injectable } from "@nestjs/common"
 import { merge } from "lodash"
 
 import { ReserveService } from "../services/reserve.service"
-import { BagItem, Customer, Prisma, ShippingCode } from ".prisma/client"
+import { BagItem, Customer, Prisma, ShippingCode, prisma } from ".prisma/client"
 
 export const UPS_GROUND_FEE = 1000
 
@@ -40,7 +40,6 @@ export class ReservationTestUtilsService {
     options?: {
       shippingCode?: ShippingCode
       numDaysAgo?: number
-      bagItemCreateData?: Prisma.BagItemCreateInput
       bagItemSelect?: Prisma.BagItemSelect
     }
   }): Promise<{
@@ -93,16 +92,12 @@ export class ReservationTestUtilsService {
     for (const prodVar of reservableProdVars) {
       createdBagItems.push(
         await this.prisma.client.bagItem.create({
-          data: merge(
-            {
-              customer: { connect: { id: customer.id } },
-              productVariant: { connect: { id: prodVar.id } },
-              status: "Added",
-              saved: false,
-            },
-            options?.bagItemCreateData
-          ),
-          ...(options?.bagItemSelect ? { select: options?.bagItemSelect } : {}),
+          data: {
+            customer: { connect: { id: customer.id } },
+            productVariant: { connect: { id: prodVar.id } },
+            status: "Added",
+            saved: false,
+          },
         })
       )
     }
@@ -132,9 +127,30 @@ export class ReservationTestUtilsService {
         },
       })
     }
+
+    const updatedBagItems = ((await this.prisma.client.bagItem.findMany({
+      where: {
+        id: {
+          in: createdBagItems.map(b => b.id),
+        },
+      },
+      select: merge(
+        {
+          id: true,
+          reservationPhysicalProduct: {
+            select: {
+              id: true,
+              status: true,
+            },
+          },
+        },
+        options?.bagItemSelect
+      ),
+    })) as unknown) as (BagItem & { [key: string]: any })[]
+
     return {
       reservation: r,
-      bagItems: createdBagItems,
+      bagItems: updatedBagItems,
     }
   }
 }

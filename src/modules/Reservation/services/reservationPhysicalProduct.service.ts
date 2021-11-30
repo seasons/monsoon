@@ -324,9 +324,9 @@ export class ReservationPhysicalProductService {
         b => b.reservationPhysicalProduct.isOnHold
       )
       throw new Error(
-        `The following bagItems are on hold: ${bagItemsWithOnHoldStatus.join(
-          ", "
-        )}`
+        `The following bagItems are on hold: ${bagItemsWithOnHoldStatus
+          .map(b => b.id)
+          .join(", ")}`
       )
     }
 
@@ -398,9 +398,9 @@ export class ReservationPhysicalProductService {
         b => b.reservationPhysicalProduct.isOnHold
       )
       throw new Error(
-        `The following bagItems are on hold: ${bagItemsWithOnHoldStatus.join(
-          ", "
-        )}`
+        `The following bagItems are on hold: ${bagItemsWithOnHoldStatus
+          .map(b => b.id)
+          .join(", ")}`
       )
     }
 
@@ -569,5 +569,44 @@ export class ReservationPhysicalProductService {
     }
 
     return [outboundPackage, inboundPackage]
+  }
+
+  async markAsPickedUp(bagItemIDs) {
+    const bagItems = await this.prisma.client.bagItem.findMany({
+      where: {
+        id: {
+          in: bagItemIDs,
+        },
+        reservationPhysicalProduct: {
+          status: "Packed",
+        },
+      },
+      select: {
+        id: true,
+        reservationPhysicalProduct: {
+          select: {
+            id: true,
+          },
+        },
+      },
+    })
+
+    const reservationPhysicalProductIds = bagItems.map(
+      item => item.reservationPhysicalProduct.id
+    )
+
+    await this.generateShippingLabels({ bagItemIDs })
+
+    await this.prisma.client.reservationPhysicalProduct.updateMany({
+      where: {
+        id: { in: reservationPhysicalProductIds },
+      },
+      data: {
+        hasBeenDeliveredToCustomer: true,
+        deliveredToCustomerAt: new Date().toISOString(),
+        status: "DeliveredToCustomer",
+      },
+    })
+    return true
   }
 }

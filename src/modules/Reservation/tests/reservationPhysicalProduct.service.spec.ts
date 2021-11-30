@@ -61,7 +61,6 @@ describe("Reservation Physical Product Service", () => {
 
       const bagItemIDs = bagItems.map(bagItem => bagItem.id)
       const result = await reservationPhysicalProductService.pickItems({
-        customerID: testCustomer.id,
         bagItemIDs,
         select: {
           id: true,
@@ -104,12 +103,11 @@ describe("Reservation Physical Product Service", () => {
         },
       })
 
-      expect(
+      expect(async () => {
         await reservationPhysicalProductService.pickItems({
-          customerID: testCustomer.id,
           bagItemIDs: bagItems.map(b => b.id),
         })
-      ).toThrowError(
+      }).rejects.toThrowError(
         "All reservation physical product statuses should be set to Queued"
       )
     })
@@ -135,7 +133,8 @@ describe("Reservation Physical Product Service", () => {
         },
       })
 
-      const rpp = bagItems?.[0].reservationPhysicalProduct
+      const firstBagItem = bagItems?.[0]
+      const rpp = firstBagItem.reservationPhysicalProduct
       await prisma.client.reservationPhysicalProduct.update({
         where: {
           id: rpp.id,
@@ -145,12 +144,13 @@ describe("Reservation Physical Product Service", () => {
         },
       })
 
-      expect(
+      expect(async () => {
         await reservationPhysicalProductService.pickItems({
-          customerID: testCustomer.id,
           bagItemIDs: bagItems.map(b => b.id),
         })
-      ).toThrowError(`The following bagItems are on hold: ${rpp.id}`)
+      }).rejects.toThrowError(
+        `The following bagItems are on hold: ${firstBagItem.id}`
+      )
     })
   })
 
@@ -186,7 +186,6 @@ describe("Reservation Physical Product Service", () => {
       })
 
       const result = await reservationPhysicalProductService.packItems({
-        customerID: testCustomer.id,
         bagItemIDs: bagItems.map(b => b.id),
         select: {
           id: true,
@@ -229,12 +228,11 @@ describe("Reservation Physical Product Service", () => {
         },
       })
 
-      expect(
+      expect(async () => {
         await reservationPhysicalProductService.packItems({
-          customerID: testCustomer.id,
           bagItemIDs: bagItems.map(b => b.id),
         })
-      ).toThrowError(
+      }).rejects.toThrowError(
         "All reservation physical product statuses should be set to Picked"
       )
     })
@@ -260,7 +258,8 @@ describe("Reservation Physical Product Service", () => {
         },
       })
 
-      const rpp = bagItems?.[0].reservationPhysicalProduct
+      const firstBagItem = bagItems?.[0]
+      const rpp = firstBagItem.reservationPhysicalProduct
       await prisma.client.reservationPhysicalProduct.update({
         where: {
           id: rpp.id,
@@ -270,12 +269,22 @@ describe("Reservation Physical Product Service", () => {
         },
       })
 
-      expect(
+      await prisma.client.reservationPhysicalProduct.update({
+        where: {
+          id: bagItems[0].reservationPhysicalProduct.id,
+        },
+        data: {
+          status: "Picked",
+        },
+      })
+
+      expect(async () => {
         await reservationPhysicalProductService.packItems({
-          customerID: testCustomer.id,
           bagItemIDs: bagItems.map(b => b.id),
         })
-      ).toThrowError(`The following bagItems are on hold: ${rpp.id}`)
+      }).rejects.toThrowError(
+        `The following bagItems are on hold: ${firstBagItem.id}`
+      )
     })
   })
 
@@ -329,7 +338,6 @@ describe("Reservation Physical Product Service", () => {
       const bagItemIDs = bagItems.map(b => b.id)
 
       await reservationPhysicalProductService.pickItems({
-        customerID: testCustomer.id,
         bagItemIDs,
         select: {
           id: true,
@@ -338,7 +346,6 @@ describe("Reservation Physical Product Service", () => {
       })
 
       await reservationPhysicalProductService.packItems({
-        customerID: testCustomer.id,
         bagItemIDs,
         select: {
           id: true,
@@ -348,14 +355,14 @@ describe("Reservation Physical Product Service", () => {
 
       return [
         bagItems,
-        await reservationPhysicalProductService.generateShippingLabels(
-          testCustomer.id,
-          {
+        await reservationPhysicalProductService.generateShippingLabels({
+          bagItemIDs,
+          select: {
             id: true,
             status: true,
             shippingMethod: true,
-          }
-        ),
+          },
+        }),
       ]
     }
 
@@ -381,7 +388,7 @@ describe("Reservation Physical Product Service", () => {
         expect(rpp.inboundPackage.id).toEqual(inboundPackage.id)
         expect(rpp.reservation.sentPackage.id).toEqual(outboundPackage.id)
         expect(rpp.reservation.returnedPackage.id).toEqual(inboundPackage.id)
-        expect(rpp.physicalProduct.packages.length).toBeGreaterThanOrEqual(2)
+        expect(rpp.physicalProduct.packages.length).toBeGreaterThanOrEqual(1)
       }
 
       expect(outboundPackage.shippingMethod.code).toEqual("UPSGround")
