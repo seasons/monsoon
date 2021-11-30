@@ -1,21 +1,11 @@
 import { ProcessableReservationPhysicalProductSelect } from "@app/modules/Payment/services/rental.service"
-import { UPS_SELECT_FEE } from "@app/modules/Payment/tests/utils/utils"
-import { TestUtilsService } from "@app/modules/Test/services/test.service"
 import { TimeUtilsService } from "@app/modules/Utils/services/time.service"
-import { UtilsService } from "@app/modules/Utils/services/utils.service"
 import { PrismaService } from "@app/prisma/prisma.service"
 import { Injectable } from "@nestjs/common"
-import cuid from "cuid"
+import { merge } from "lodash"
 
 import { ReserveService } from "../services/reserve.service"
-import { ReservationService } from ".."
-import {
-  BagItem,
-  Customer,
-  Prisma,
-  Reservation,
-  ShippingCode,
-} from ".prisma/client"
+import { BagItem, Customer, Prisma, ShippingCode, prisma } from ".prisma/client"
 
 export const UPS_GROUND_FEE = 1000
 
@@ -47,10 +37,14 @@ export class ReservationTestUtilsService {
   }: {
     customer: Customer
     numProductsToAdd: number
-    options?: { shippingCode?: ShippingCode; numDaysAgo?: number }
+    options?: {
+      shippingCode?: ShippingCode
+      numDaysAgo?: number
+      bagItemSelect?: Prisma.BagItemSelect
+    }
   }): Promise<{
     reservation: TestReservation
-    bagItems: BagItem[]
+    bagItems: (BagItem & { [key: string]: any })[]
   }> {
     const { shippingCode = "UPSGround", numDaysAgo = 0 } = options
     const reservedBagItems = await this.prisma.client.bagItem.findMany({
@@ -133,9 +127,30 @@ export class ReservationTestUtilsService {
         },
       })
     }
+
+    const updatedBagItems = ((await this.prisma.client.bagItem.findMany({
+      where: {
+        id: {
+          in: createdBagItems.map(b => b.id),
+        },
+      },
+      select: merge(
+        {
+          id: true,
+          reservationPhysicalProduct: {
+            select: {
+              id: true,
+              status: true,
+            },
+          },
+        },
+        options?.bagItemSelect
+      ),
+    })) as unknown) as (BagItem & { [key: string]: any })[]
+
     return {
       reservation: r,
-      bagItems: createdBagItems,
+      bagItems: updatedBagItems,
     }
   }
 }

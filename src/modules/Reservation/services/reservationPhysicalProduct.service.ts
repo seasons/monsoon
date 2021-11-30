@@ -5,14 +5,11 @@ import { InventoryStatus, PhysicalProductStatus } from "@app/prisma"
 import { PrismaService } from "@app/prisma/prisma.service"
 import { Injectable } from "@nestjs/common"
 import {
-  Customer,
   Prisma,
   ReservationDropOffAgent,
   ReservationPhysicalProductStatus,
-  ShippingCode,
-  ShippingMethod,
 } from "@prisma/client"
-import cuid from "cuid"
+import { every, some } from "lodash"
 import { DateTime } from "luxon"
 
 import { ReservationUtilsService } from "../../Utils/services/reservation.utils.service"
@@ -288,14 +285,17 @@ export class ReservationPhysicalProductService {
     return promises
   }
 
-  async pickItems(
-    bagItemsIds: string[],
-    select: Prisma.ReservationPhysicalProductSelect
-  ) {
+  async pickItems({
+    bagItemIDs,
+    select,
+  }: {
+    bagItemIDs: string[]
+    select?: Prisma.ReservationPhysicalProductSelect
+  }) {
     const bagItems = await this.prisma.client.bagItem.findMany({
       where: {
         id: {
-          in: bagItemsIds,
+          in: bagItemIDs,
         },
       },
       select: {
@@ -305,19 +305,35 @@ export class ReservationPhysicalProductService {
             id: true,
             physicalProductId: true,
             status: true,
+            isOnHold: true,
           },
         },
       },
     })
 
+    if (
+      !every(bagItems, b => b.reservationPhysicalProduct?.status === "Queued")
+    ) {
+      throw new Error(
+        "All reservation physical product statuses should be set to Queued"
+      )
+    }
+
+    if (some(bagItems, b => b.reservationPhysicalProduct?.isOnHold)) {
+      const bagItemsWithOnHoldStatus = bagItems.filter(
+        b => b.reservationPhysicalProduct.isOnHold
+      )
+      throw new Error(
+        `The following bagItems are on hold: ${bagItemsWithOnHoldStatus
+          .map(b => b.id)
+          .join(", ")}`
+      )
+    }
+
     const promises = []
 
     for (let bagItem of bagItems) {
       const reservationPhysicalProduct = bagItem.reservationPhysicalProduct
-
-      if (reservationPhysicalProduct.status !== "Queued") {
-        throw new Error("Reservation physical product status should be Queued")
-      }
 
       promises.push(
         this.prisma.client.reservationPhysicalProduct.update({
@@ -344,14 +360,17 @@ export class ReservationPhysicalProductService {
     return results
   }
 
-  async packItems(
-    bagItemsIds: string[],
-    select: Prisma.ReservationPhysicalProductSelect
-  ) {
+  async packItems({
+    bagItemIDs,
+    select,
+  }: {
+    bagItemIDs: string[]
+    select?: Prisma.ReservationPhysicalProductSelect
+  }) {
     const bagItems = await this.prisma.client.bagItem.findMany({
       where: {
         id: {
-          in: bagItemsIds,
+          in: bagItemIDs,
         },
       },
       select: {
@@ -360,19 +379,35 @@ export class ReservationPhysicalProductService {
           select: {
             id: true,
             status: true,
+            isOnHold: true,
           },
         },
       },
     })
 
+    if (
+      !every(bagItems, b => b.reservationPhysicalProduct?.status === "Picked")
+    ) {
+      throw new Error(
+        "All reservation physical product statuses should be set to Picked"
+      )
+    }
+
+    if (some(bagItems, b => b.reservationPhysicalProduct?.isOnHold)) {
+      const bagItemsWithOnHoldStatus = bagItems.filter(
+        b => b.reservationPhysicalProduct.isOnHold
+      )
+      throw new Error(
+        `The following bagItems are on hold: ${bagItemsWithOnHoldStatus
+          .map(b => b.id)
+          .join(", ")}`
+      )
+    }
+
     const promises = []
 
     for (let bagItem of bagItems) {
       const reservationPhysicalProduct = bagItem.reservationPhysicalProduct
-
-      if (reservationPhysicalProduct.status !== "Picked") {
-        throw new Error("Reservation physical product status should be Picked")
-      }
 
       promises.push(
         this.prisma.client.reservationPhysicalProduct.update({
@@ -392,22 +427,28 @@ export class ReservationPhysicalProductService {
     return results
   }
 
-  async generateShippingLabels(
-    customerID: string,
+  async generateShippingLabels({
+    bagItemIDs,
+    select,
+  }: {
+    bagItemIDs?: string[]
     select?: Prisma.PackageSelect
-  ) {
+  }) {
     const bagItems = await this.prisma.client.bagItem.findMany({
       where: {
+        id: {
+          in: bagItemIDs,
+        },
         reservationPhysicalProduct: {
           status: "Packed",
           outboundPackage: {
             is: null,
           },
         },
-        customerId: customerID,
       },
       select: {
         id: true,
+        customerId: true,
         reservationPhysicalProduct: {
           select: {
             id: true,
@@ -438,6 +479,12 @@ export class ReservationPhysicalProductService {
         },
       },
     })
+
+    if (bagItems.length === 0) {
+      throw new Error("No bag items need labels")
+    }
+
+    const customerID = bagItems?.[0].customerId
 
     const {
       promises: packagePromises,
@@ -522,5 +569,50 @@ export class ReservationPhysicalProductService {
     }
 
     return [outboundPackage, inboundPackage]
+  }
+
+  async markAsPickedUp(bagItemIDs) {
+    const bagItems = await this.prisma.client.bagItem.findMany({
+      where: {
+        id: {
+          in: bagItemIDs,
+        },
+      },
+      select: {
+        id: true,
+        reservationPhysicalProduct: {
+          select: {
+            id: true,
+            status: true,
+          },
+        },
+      },
+    })
+
+    if (
+      !every(bagItems, b => b.reservationPhysicalProduct?.status === "Packed")
+    ) {
+      throw new Error(
+        "All reservation physical product statuses should be set to Packed"
+      )
+    }
+
+    const reservationPhysicalProductIds = bagItems.map(
+      item => item.reservationPhysicalProduct.id
+    )
+
+    await this.generateShippingLabels({ bagItemIDs })
+
+    await this.prisma.client.reservationPhysicalProduct.updateMany({
+      where: {
+        id: { in: reservationPhysicalProductIds },
+      },
+      data: {
+        hasBeenDeliveredToCustomer: true,
+        deliveredToCustomerAt: new Date().toISOString(),
+        status: "DeliveredToCustomer",
+      },
+    })
+    return true
   }
 }
