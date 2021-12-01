@@ -201,6 +201,7 @@ export class RentalService {
     returnPackages: {
       select: { items: true, enteredDeliverySystemAt: true },
     },
+    newProducts: { select: { seasonsUID: true } },
     returnedProducts: { select: { seasonsUID: true } },
     shippingMethod: { select: { id: true, code: true } },
     lostAt: true,
@@ -504,7 +505,7 @@ export class RentalService {
       )
       if (planID === "access-monthly") {
         billingEndAt = this.timeUtils.xDaysBeforeDate(
-          thirtyDaysFromBillingStartAt,
+          thirtyDaysFromNextBillingAt,
           1,
           "date"
         )
@@ -512,7 +513,7 @@ export class RentalService {
         billingEndAt = thirtyDaysFromNextBillingAt
       } else {
         billingEndAt = this.timeUtils.xDaysAfterDate(
-          thirtyDaysFromBillingStartAt,
+          thirtyDaysFromNextBillingAt,
           1,
           "date"
         )
@@ -550,6 +551,7 @@ export class RentalService {
         billingEndAt: true,
         membership: { select: { customer: { select: { id: true } } } },
         reservations: {
+          orderBy: { createdAt: "asc" },
           select: this.rentalReservationSelect,
         },
       },
@@ -1355,7 +1357,16 @@ export class RentalService {
       )
     }
 
-    return billingEndAtDate
+    const billingEndAtWithTime = new Date(
+      billingEndAtDate.getFullYear(),
+      billingEndAtDate.getMonth(),
+      billingEndAtDate.getDate(),
+      billingStartAt.getHours(),
+      billingStartAt.getMinutes(),
+      billingStartAt.getSeconds()
+    )
+
+    return billingEndAtWithTime
   }
 
   calculateUnadjustedPriceForDaysRented = (product, daysRented) => {
@@ -1453,6 +1464,9 @@ export class RentalService {
       (acc, curval) => acc + curval.price,
       0
     )
+    if (totalInvoiceCharges === 0) {
+      return [promises, invoicesCreated]
+    }
     const prismaUserId =
       lineItemsWithData[0].rentalInvoice.membership.customer.user.id
     const subscriptionStatus =

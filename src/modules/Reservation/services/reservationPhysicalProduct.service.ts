@@ -12,7 +12,7 @@ import {
 import { every, some } from "lodash"
 import { DateTime } from "luxon"
 
-import { ReservationUtilsService } from "./reservation.utils.service"
+import { ReservationUtilsService } from "../../Utils/services/reservation.utils.service"
 
 interface ProductState {
   productUID: string
@@ -541,7 +541,7 @@ export class ReservationPhysicalProductService {
                     },
                   },
                 }),
-                returnedPackage: {
+                returnPackages: {
                   connect: {
                     id: inboundPackageId,
                   },
@@ -577,19 +577,25 @@ export class ReservationPhysicalProductService {
         id: {
           in: bagItemIDs,
         },
-        reservationPhysicalProduct: {
-          status: "Packed",
-        },
       },
       select: {
         id: true,
         reservationPhysicalProduct: {
           select: {
             id: true,
+            status: true,
           },
         },
       },
     })
+
+    if (
+      !every(bagItems, b => b.reservationPhysicalProduct?.status === "Packed")
+    ) {
+      throw new Error(
+        "All reservation physical product statuses should be set to Packed"
+      )
+    }
 
     const reservationPhysicalProductIds = bagItems.map(
       item => item.reservationPhysicalProduct.id
