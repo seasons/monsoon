@@ -39,20 +39,22 @@ function handleErrors(logger) {
 }
 
 export const printMemoryUsage = logger => {
-  setInterval(() => {
-    const { rss, heapUsed, heapTotal, external } = process.memoryUsage()
-    const dynoName = (process.env.DYNO || "unknown").replace(".", "")
-    const appName = process.env.HEROKU_APP_NAME || "monsoon-dev"
+  if (process.env.NODE_ENV === "production") {
+    setInterval(() => {
+      const { rss, heapUsed, heapTotal, external } = process.memoryUsage()
+      const dynoName = (process.env.DYNO || "unknown").replace(".", "")
+      const appName = process.env.HEROKU_APP_NAME || "monsoon-dev"
 
-    logger.info("Memory Usage", {
-      rss: numeral(rss).format("0.0 ib"),
-      heapTotal: numeral(heapTotal).format("0.0 ib"),
-      heapUsed: numeral(heapUsed).format("0.0 ib"),
-      external: numeral(external).format("0.0 ib"),
-      dynoName,
-      appName,
-    })
-  }, 10000)
+      logger.info("Memory Usage", {
+        rss: numeral(rss).format("0.0 ib"),
+        heapTotal: numeral(heapTotal).format("0.0 ib"),
+        heapUsed: numeral(heapUsed).format("0.0 ib"),
+        external: numeral(external).format("0.0 ib"),
+        dynoName,
+        appName,
+      })
+    }, 10000)
+  }
 }
 
 export const addMiddlewares = async server => {
@@ -63,7 +65,6 @@ export const addMiddlewares = async server => {
     nestWinstonLogger.logger
   )
 
-  setupHeapProfiler(nestWinstonLogger.logger)
   printMemoryUsage(nestWinstonLogger.logger)
 
   server.use(

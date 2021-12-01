@@ -8,7 +8,6 @@ import { PrismaService } from "@prisma1/prisma.service"
 import { ApolloError } from "apollo-server"
 import cuid from "cuid"
 import { camelCase } from "lodash"
-import { merge } from "lodash"
 
 import { ProductVariantService } from "../services/productVariant.service"
 
