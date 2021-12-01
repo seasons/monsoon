@@ -23,14 +23,6 @@ const ReservationSelect = Prisma.validator<Prisma.ReservationSelect>()({
       enteredDeliverySystemAt: true,
     },
   },
-  receipt: {
-    select: {
-      createdAt: true,
-      items: {
-        select: { product: { select: { seasonsUID: true } } },
-      },
-    },
-  },
   cancelledAt: true,
 })
 const createReservationPhysicalProduct = async (
@@ -73,8 +65,32 @@ const createReservationPhysicalProduct = async (
       throw new Error(`No initial resy found for product ${prod.seasonsUID}`)
     }
   }
-  //   console.log(pick(prod, ["seasonsUID", "warehouseLocation"]))
-  //   console.log(firstResy)
+
+  const outboundPackage = await ps.client.package.findFirst({
+    where: {
+      items: { some: { seasonsUID: prod.seasonsUID } },
+      reservationOnSentPackage: { customer: { id: ri.membership.customer.id } },
+    },
+    orderBy: { createdAt: "desc" },
+    select: {
+      id: true,
+      enteredDeliverySystemAt: true,
+      deliveredAt: true,
+      items: { select: { seasonsUID: true } },
+      reservationOnSentPackage: { select: ReservationSelect },
+    },
+  })
+  if (!outboundPackage) {
+    throw new Error(`No outbound package found for product ${prod.seasonsUID}`)
+  }
+
+  // firstResy and shipmentResy may sometimes be the same. They would differ if
+  // customers placed multiple reservations in a short timespan, an item was reserved
+  // on one of the earlier reservations, but got shipped on a package from a later reservation.
+  const shipmentResy = outboundPackage.reservationOnSentPackage
+  if (!shipmentResy) {
+    throw new Error(`No shipment resy found for product ${prod.seasonsUID}`)
+  }
 
   // TODO: Check the logic here.
   const returnReceiptForItem = await ps.client.reservationReceipt.findFirst({
@@ -85,7 +101,7 @@ const createReservationPhysicalProduct = async (
     },
   })
   const hasReturnProcessed = !!returnReceiptForItem
-  const returnProcessedAt = firstResy.receipt?.createdAt
+  const returnProcessedAt = returnReceiptForItem?.createdAt
 
   const hasBeenLost = prod.productStatus === "Lost"
 
@@ -98,21 +114,6 @@ const createReservationPhysicalProduct = async (
     )
   }
 
-  const outboundPackage = await ps.client.package.findFirst({
-    where: {
-      items: { some: { seasonsUID: prod.seasonsUID } },
-    },
-    orderBy: { createdAt: "desc" },
-    select: {
-      id: true,
-      enteredDeliverySystemAt: true,
-      deliveredAt: true,
-      items: { select: { seasonsUID: true } },
-    },
-  })
-  if (!outboundPackage) {
-    throw new Error(`No outbound package found for product ${prod.seasonsUID}`)
-  }
   // Either we have clear signal it's been delivered,
   // OR  it's been "a long time" (5 days) since it entered the delivery system and we haven't yet marked it as lost.
   // OR it's still reserved and the reservation was a long long (10 days) time ago
@@ -128,7 +129,7 @@ const createReservationPhysicalProduct = async (
   const outboundPackageDeliveredWithNoTimestampsSet =
     prod.productStatus !== "Lost" &&
     !!reservedBagItemForProd &&
-    timeUtils.numDaysBetween(firstResy.createdAt, new Date()) > 10
+    timeUtils.numDaysBetween(shipmentResy.createdAt, new Date()) > 10
   const hasBeenDeliveredToCustomer =
     outboundPackageDeliveredCleanly ||
     outboundPackageDeliveredWithoutDeliveredAtSet ||
@@ -152,19 +153,21 @@ const createReservationPhysicalProduct = async (
 
   let status: ReservationPhysicalProductStatus
   let cancelledAt
-  if (["Queued", "Picked", "Packed", "Cancelled"].includes(firstResy.status)) {
-    status = firstResy.status as ReservationPhysicalProductStatus
-    if (firstResy.status === "Cancelled") {
-      cancelledAt = firstResy.cancelledAt
+  if (
+    ["Queued", "Picked", "Packed", "Cancelled"].includes(shipmentResy.status)
+  ) {
+    status = shipmentResy.status as ReservationPhysicalProductStatus
+    if (shipmentResy.status === "Cancelled") {
+      cancelledAt = shipmentResy.cancelledAt
     }
-  } else if (firstResy.status === "Hold") {
+  } else if (shipmentResy.status === "Hold") {
     if (!!prod.warehouseLocation) {
       status = "Queued"
     } else {
       status = "Picked"
     }
   } else if (
-    firstResy.status === "Shipped" &&
+    shipmentResy.status === "Shipped" &&
     !!outboundPackage.enteredDeliverySystemAt &&
     !outboundPackage.deliveredAt
   ) {
@@ -178,7 +181,7 @@ const createReservationPhysicalProduct = async (
           outboundPackage.enteredDeliverySystemAt,
           new Date()
         ) > 6) ||
-      timeUtils.numDaysBetween(firstResy.createdAt, new Date()) > 11
+      timeUtils.numDaysBetween(shipmentResy.createdAt, new Date()) > 11
     if (moreThan24H) {
       status = "AtHome"
     } else {
@@ -189,7 +192,7 @@ const createReservationPhysicalProduct = async (
   } else if (
     hasBeenDeliveredToCustomer &&
     !hasBeenDeliveredToBusiness &&
-    firstResy.returnedProducts.some(a => a.seasonsUID === prod.seasonsUID)
+    shipmentResy.returnedProducts.some(a => a.seasonsUID === prod.seasonsUID)
   ) {
     status = "ReturnPending"
   } else if (hasReturnProcessed) {
@@ -218,7 +221,7 @@ const createReservationPhysicalProduct = async (
     reservation: { connect: { id: firstResy.id } },
 
     // Optional fields
-    isOnHold: firstResy.status === "Hold",
+    isOnHold: shipmentResy.status === "Hold",
     hasReturnProcessed,
     returnProcessedAt,
     hasBeenLost,
@@ -236,7 +239,7 @@ const createReservationPhysicalProduct = async (
     outboundPackage: { connect: { id: outboundPackage.id } },
     rentalInvoices: { connect: { id: ri.id } },
     ...(!!firstResy.shippingMethod
-      ? { shippingMethod: { connect: { id: firstResy.shippingMethod.id } } }
+      ? { shippingMethod: { connect: { id: shipmentResy.shippingMethod.id } } }
       : {}),
     ...(reservedBagItemForProd
       ? { bagItem: { connect: { id: reservedBagItemForProd.id } } }
@@ -306,13 +309,14 @@ const migrateToRpp = async () => {
         successCount++
       } catch (err) {
         failureCount++
-        console.error(err)
+        console.log(err)
       }
     }
   }
 
   console.log(`Successes: ${successCount}`)
   console.log(`Failures: ${failureCount}`)
+  console.log(`Failure rate: ${(failureCount / total) * 100}%`)
 }
 
 migrateToRpp()
