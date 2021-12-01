@@ -585,6 +585,7 @@ export class RentalService {
       case "Outbound":
         rentalStartedAt = undefined
         break
+      // TODO: Update logic here for "found" items
       case "Inbound":
         rentalEndedAt =
           reservationPhysicalProduct.scannedOnInboundAt ||
