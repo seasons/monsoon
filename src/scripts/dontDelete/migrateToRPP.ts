@@ -6,7 +6,11 @@ import { first } from "rxjs"
 
 import { TimeUtilsService } from "../../modules/Utils/services/time.service"
 import { PrismaService } from "../../prisma/prisma.service"
-import { Prisma, ReservationPhysicalProductStatus } from ".prisma/client"
+import {
+  Prisma,
+  ReservationPhysicalProductStatus,
+  ReservationStatus,
+} from ".prisma/client"
 
 const ReservationSelect = Prisma.validator<Prisma.ReservationSelect>()({
   id: true,
@@ -55,7 +59,7 @@ const RentalInvoiceSelect = Prisma.validator<Prisma.RentalInvoiceSelect>()({
       customer: {
         select: {
           id: true,
-          user: { select: { email: true } },
+          user: { select: { email: true, lastName: true } },
           bagItems: {
             where: { status: "Reserved" },
             select: {
@@ -150,12 +154,17 @@ const createReservationPhysicalProduct = async (
         timeUtils.numDaysBetween(firstResy.createdAt, a.createdAt) <= 4
       const outboundPackageShipped =
         !!a.sentPackage.enteredDeliverySystemAt || !!a.sentPackage.deliveredAt
-      const isOnHold = a.status === "Hold"
-      const isCancelled = a.status === "Cancelled"
+      const validUnshippedState = ([
+        "Hold",
+        "Cancelled",
+        "Queued",
+        "Picked",
+        "Packed",
+      ] as ReservationStatus[]).includes(a.status)
       const hasItem = a.products.some(b => b.seasonsUID === prod.seasonsUID)
       return (
         withinFourDays &&
-        (outboundPackageShipped || isOnHold || isCancelled) &&
+        (outboundPackageShipped || validUnshippedState) &&
         hasItem &&
         a.id !== firstResy.id
       )
@@ -228,9 +237,10 @@ const createReservationPhysicalProduct = async (
     )
     const isPickup = shipmentResy.shippingMethod?.code === "Pickup"
     const deliveryState = shipmentResy.sentPackage.toAddress.state.toLowerCase()
-    const couldHaveBeenPickup = ["nj", "ny", "new york", "new jersey"].includes(
-      deliveryState
-    )
+    const family = ["perlera"]
+    const couldHaveBeenPickup =
+      ["nj", "ny", "new york", "new jersey"].includes(deliveryState) ||
+      family.includes(ri.membership.customer.user.lastName.toLowerCase())
 
     if (!!markedAsDeliveredLog && (isPickup || couldHaveBeenPickup)) {
       hasBeenDeliveredToCustomer = true
