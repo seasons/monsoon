@@ -14,6 +14,7 @@ const ReservationSelect = Prisma.validator<Prisma.ReservationSelect>()({
   shippingMethod: { select: { id: true, code: true } },
   newProducts: { select: { seasonsUID: true } },
   status: true,
+  products: { select: { seasonsUID: true } },
   returnedProducts: { select: { seasonsUID: true } },
   reservationNumber: true,
   returnPackages: {
@@ -133,13 +134,20 @@ const createReservationPhysicalProduct = async (
     !firstResy.sentPackage.deliveredAt &&
     ["Completed", "ReturnPending"].includes(firstResy.status)
   ) {
-    shipmentResy = reservations.find(a => {
+    const otherResy = reservations.find(a => {
       const withinFourDays =
         timeUtils.numDaysBetween(firstResy.createdAt, a.createdAt) <= 4
       const outboundPackageShipped =
         !!a.sentPackage.enteredDeliverySystemAt || !!a.sentPackage.deliveredAt
-      return withinFourDays && outboundPackageShipped
+      const hasItem = a.products.some(b => b.seasonsUID === prod.seasonsUID)
+      return (
+        withinFourDays &&
+        outboundPackageShipped &&
+        hasItem &&
+        a.id !== firstResy.id
+      )
     })
+    shipmentResy = otherResy || firstResy
   }
 
   if (!shipmentResy) {
