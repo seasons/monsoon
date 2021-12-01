@@ -228,8 +228,9 @@ const createReservationPhysicalProduct = async (
     )
     const isPickup = shipmentResy.shippingMethod?.code === "Pickup"
     const deliveryState = shipmentResy.sentPackage.toAddress.state.toLowerCase()
-    const couldHaveBeenPickup =
-      deliveryState === "ny" || deliveryState === "new york"
+    const couldHaveBeenPickup = ["nj", "ny", "new york", "new jersey"].includes(
+      deliveryState
+    )
 
     if (!!markedAsDeliveredLog && (isPickup || couldHaveBeenPickup)) {
       hasBeenDeliveredToCustomer = true
