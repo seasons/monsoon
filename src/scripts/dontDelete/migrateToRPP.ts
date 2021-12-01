@@ -46,6 +46,8 @@ const ProductArgs = Prisma.validator<Prisma.PhysicalProductArgs>()({
     id: true,
     seasonsUID: true,
     productStatus: true,
+    offloadNotes: true,
+    offloadMethod: true,
     warehouseLocation: { select: { id: true } },
   },
 })
@@ -60,6 +62,15 @@ const RentalInvoiceSelect = Prisma.validator<Prisma.RentalInvoiceSelect>()({
         select: {
           id: true,
           user: { select: { email: true, lastName: true } },
+          orders: {
+            select: {
+              createdAt: true,
+              status: true,
+              lineItems: {
+                select: { recordID: true, recordType: true },
+              },
+            },
+          },
           bagItems: {
             where: { status: "Reserved" },
             select: {
@@ -263,9 +274,22 @@ const createReservationPhysicalProduct = async (
     inboundPackageWithItem?.enteredDeliverySystemAt !== null
   const scannedOnInboundAt = inboundPackageWithItem?.enteredDeliverySystemAt
 
+  const itemSold = prod.offloadMethod === "SoldToUser"
+  let purchasedAt
+  if (itemSold) {
+    const orderForCust = ri.membership.customer.orders?.find(
+      a =>
+        a.lineItems.some(b => b.recordID === prod.id) &&
+        ["Fulfilled", "Submitted"].includes(a.status)
+    )
+    purchasedAt = orderForCust.createdAt
+  }
+
   let status: ReservationPhysicalProductStatus
   let cancelledAt
-  if (
+  if (purchasedAt) {
+    status = "Purchased"
+  } else if (
     ["Queued", "Picked", "Packed", "Cancelled"].includes(shipmentResy.status)
   ) {
     status = shipmentResy.status as ReservationPhysicalProductStatus
@@ -369,6 +393,7 @@ const createReservationPhysicalProduct = async (
     createdAt: firstResy.createdAt,
     status,
     cancelledAt,
+    purchasedAt,
   }
 
   await ps.client.reservationPhysicalProduct.create({ data: createData })
