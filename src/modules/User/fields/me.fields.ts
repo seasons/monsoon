@@ -121,7 +121,11 @@ export class MeFieldsResolver {
     if (!customer) {
       return null
     }
-    return await this.bagService.bagSection(status, customer, application)
+    return await this.bagService.bagSection({
+      status,
+      customer,
+      application,
+    })
   }
 
   @ResolveField()
@@ -129,7 +133,7 @@ export class MeFieldsResolver {
     if (!customer) {
       return null
     }
-    return await this.bagService.bagSections(customer, application)
+    return await this.bagService.bagSections({ customer, application })
   }
 
   @ResolveField()
