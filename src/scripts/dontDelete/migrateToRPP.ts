@@ -41,6 +41,7 @@ const ReservationArgs = Prisma.validator<Prisma.ReservationFindManyArgs>()({
       },
     },
     cancelledAt: true,
+    phase: true,
   },
 })
 
@@ -373,6 +374,11 @@ const createReservationPhysicalProduct = async (
       shipmentResy.sentPackage.enteredDeliverySystemAt,
       new Date()
     ) < 3
+  ) {
+    status = "InTransitOutbound"
+  } else if (
+    shipmentResy.status === "Shipped" &&
+    shipmentResy.phase === "BusinessToCustomer"
   ) {
     status = "InTransitOutbound"
   } else {
