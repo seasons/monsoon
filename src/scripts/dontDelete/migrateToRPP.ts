@@ -12,34 +12,39 @@ import {
   ReservationStatus,
 } from ".prisma/client"
 
-const ReservationSelect = Prisma.validator<Prisma.ReservationSelect>()({
-  id: true,
-  createdAt: true,
-  shippingMethod: { select: { id: true, code: true } },
-  newProducts: { select: { seasonsUID: true } },
-  status: true,
-  products: { select: { seasonsUID: true } },
-  returnedProducts: { select: { seasonsUID: true } },
-  reservationNumber: true,
-  returnPackages: {
-    select: {
-      id: true,
-      items: { select: { seasonsUID: true } },
-      deliveredAt: true,
-      enteredDeliverySystemAt: true,
+const ReservationArgs = Prisma.validator<Prisma.ReservationFindManyArgs>()({
+  orderBy: { createdAt: "asc" },
+  select: {
+    id: true,
+    createdAt: true,
+    shippingMethod: { select: { id: true, code: true } },
+    newProducts: { select: { seasonsUID: true } },
+    status: true,
+    products: { select: { seasonsUID: true } },
+    returnedProducts: { select: { seasonsUID: true } },
+    reservationNumber: true,
+    returnPackages: {
+      select: {
+        id: true,
+        items: { select: { seasonsUID: true } },
+        deliveredAt: true,
+        enteredDeliverySystemAt: true,
+      },
     },
-  },
-  sentPackage: {
-    select: {
-      id: true,
-      items: { select: { seasonsUID: true } },
-      enteredDeliverySystemAt: true,
-      deliveredAt: true,
-      toAddress: { select: { id: true, name: true, state: true } },
+    sentPackage: {
+      select: {
+        id: true,
+        items: { select: { seasonsUID: true } },
+        enteredDeliverySystemAt: true,
+        deliveredAt: true,
+        toAddress: { select: { id: true, name: true, state: true } },
+      },
     },
+    cancelledAt: true,
   },
-  cancelledAt: true,
 })
+
+type MigrateReservation = Prisma.ReservationGetPayload<typeof ReservationArgs>
 
 const ProductArgs = Prisma.validator<Prisma.PhysicalProductArgs>()({
   select: {
@@ -84,10 +89,7 @@ const RentalInvoiceSelect = Prisma.validator<Prisma.RentalInvoiceSelect>()({
       },
     },
   },
-  reservations: {
-    orderBy: { createdAt: "asc" },
-    select: ReservationSelect,
-  },
+  reservations: ReservationArgs,
   products: ProductArgs,
 })
 
@@ -98,6 +100,34 @@ const RentalInvoiceArgs = Prisma.validator<Prisma.RentalInvoiceArgs>()({
 type MigrateRentalInvoice = Prisma.RentalInvoiceGetPayload<
   typeof RentalInvoiceArgs
 >
+
+const resyIsPickup = async (
+  resy: MigrateReservation,
+  ri: MigrateRentalInvoice,
+  ps: PrismaService
+) => {
+  const resyAdminLogs = await ps.client.adminActionLog.findMany({
+    where: { entityId: resy.id, tableName: "Reservation" },
+    select: {
+      triggeredAt: true,
+      changedFields: true,
+    },
+  })
+  const markedAsDeliveredLog = resyAdminLogs.find(
+    a => a.changedFields["status"] === "Delivered"
+  )
+  const isPickup = resy.shippingMethod?.code === "Pickup"
+  const deliveryState = resy.sentPackage.toAddress.state.toLowerCase()
+  const family = ["perlera"]
+  const couldHaveBeenPickup =
+    ["nj", "ny", "new york", "new jersey"].includes(deliveryState) ||
+    family.includes(ri.membership.customer.user.lastName.toLowerCase())
+
+  return {
+    isPickup: !!markedAsDeliveredLog && (isPickup || couldHaveBeenPickup),
+    pickedUpAt: markedAsDeliveredLog?.triggeredAt,
+  }
+}
 
 const createReservationPhysicalProduct = async (
   ri: MigrateRentalInvoice,
@@ -133,7 +163,7 @@ const createReservationPhysicalProduct = async (
         customer: { id: ri.membership.customer.id },
       },
       orderBy: { createdAt: "asc" },
-      select: ReservationSelect,
+      select: ReservationArgs.select,
     })
     if (!firstResy) {
       firstResy = await ps.client.reservation.findFirst({
@@ -142,7 +172,7 @@ const createReservationPhysicalProduct = async (
           customer: { id: ri.membership.customer.id },
         },
         orderBy: { createdAt: "asc" },
-        select: ReservationSelect,
+        select: ReservationArgs.select,
       })
     }
     if (!firstResy) {
@@ -160,9 +190,19 @@ const createReservationPhysicalProduct = async (
     !firstResy.sentPackage.deliveredAt &&
     ["Completed", "ReturnPending"].includes(firstResy.status)
   ) {
-    const otherResy = reservations.find(a => {
-      const withinFourDays =
+    let candidateResy
+    for (const a of reservations) {
+      if (a.id === firstResy.id) {
+        continue
+      }
+
+      const lessThanFourDaysLater =
+        timeUtils.isLaterDate(a.createdAt, firstResy.createdAt) &&
         timeUtils.numDaysBetween(firstResy.createdAt, a.createdAt) <= 4
+      const hasItem = a.products.some(b => b.seasonsUID === prod.seasonsUID)
+      if (!lessThanFourDaysLater || !hasItem) {
+        continue
+      }
       const outboundPackageShipped =
         !!a.sentPackage.enteredDeliverySystemAt || !!a.sentPackage.deliveredAt
       const validUnshippedState = ([
@@ -172,15 +212,20 @@ const createReservationPhysicalProduct = async (
         "Picked",
         "Packed",
       ] as ReservationStatus[]).includes(a.status)
-      const hasItem = a.products.some(b => b.seasonsUID === prod.seasonsUID)
-      return (
-        withinFourDays &&
-        (outboundPackageShipped || validUnshippedState) &&
-        hasItem &&
-        a.id !== firstResy.id
-      )
-    })
-    shipmentResy = otherResy || firstResy
+
+      if (outboundPackageShipped || validUnshippedState) {
+        candidateResy = a
+        break
+      }
+
+      const { isPickup } = await resyIsPickup(a, ri, ps)
+      if (isPickup) {
+        candidateResy = a
+        break
+      }
+    }
+
+    shipmentResy = candidateResy || firstResy
   }
 
   if (!shipmentResy) {
@@ -236,26 +281,11 @@ const createReservationPhysicalProduct = async (
     outboundPackageDeliveredWithNoTimestampsSet
   let deliveredToCustomerAt = outboundPackage.deliveredAt
   if (!hasBeenDeliveredToCustomer) {
-    const shipmentResyAdminLogs = await ps.client.adminActionLog.findMany({
-      where: { entityId: shipmentResy.id, tableName: "Reservation" },
-      select: {
-        triggeredAt: true,
-        changedFields: true,
-      },
-    })
-    const markedAsDeliveredLog = shipmentResyAdminLogs.find(
-      a => a.changedFields["status"] === "Delivered"
-    )
-    const isPickup = shipmentResy.shippingMethod?.code === "Pickup"
-    const deliveryState = shipmentResy.sentPackage.toAddress.state.toLowerCase()
-    const family = ["perlera"]
-    const couldHaveBeenPickup =
-      ["nj", "ny", "new york", "new jersey"].includes(deliveryState) ||
-      family.includes(ri.membership.customer.user.lastName.toLowerCase())
+    const { isPickup, pickedUpAt } = await resyIsPickup(shipmentResy, ri, ps)
 
-    if (!!markedAsDeliveredLog && (isPickup || couldHaveBeenPickup)) {
+    if (isPickup) {
       hasBeenDeliveredToCustomer = true
-      deliveredToCustomerAt = markedAsDeliveredLog.triggeredAt
+      deliveredToCustomerAt = pickedUpAt
     }
   }
 
