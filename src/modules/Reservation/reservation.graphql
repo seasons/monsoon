@@ -76,14 +76,14 @@ type Mutation {
     droppedOffBy: ReservationDropOffAgent!
     customerId: String
   ): Boolean @hasRole(roles: [Admin])
-  pickItems(bagItemIDs: [ID!]!): [ReservationPhysicalProduct!]
+  pickItems(bagItemIds: [ID!]!): [ReservationPhysicalProduct!]
     @hasRole(roles: [Admin])
-  packItems(bagItemIDs: [ID!]!): [ReservationPhysicalProduct!]
+  packItems(bagItemIds: [ID!]!): [ReservationPhysicalProduct!]
     @hasRole(roles: [Admin])
-  generateShippingLabels(bagItemIDs: [ID!]!): [Package!]
+  generateShippingLabels(bagItemIds: [ID!]!): [Package!]
     @hasRole(roles: [Admin])
   markAsLost(lostBagItemId: ID!): Boolean @hasRole(roles: [Admin])
-  markAsPickedUp(bagItemIDs: [ID]!): Boolean @hasRole(roles: [Admin])
+  markAsPickedUp(bagItemIds: [ID]!): Boolean @hasRole(roles: [Admin])
 }
 
 type ReservationFeedback {
