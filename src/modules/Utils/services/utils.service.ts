@@ -123,7 +123,14 @@ export class UtilsService {
     const deliveredToBusinessRPPs = await this.prisma.client.reservationPhysicalProduct.findMany(
       {
         where: {
-          status: "DeliveredToBusiness",
+          status: {
+            in: [
+              "ScannedOnInbound",
+              "InTransitInbound",
+              "ReturnPending",
+              "DeliveredToBusiness",
+            ],
+          },
         },
         select: {
           id: true,
