@@ -11,10 +11,11 @@ import { Prisma, ReservationPhysicalProductStatus } from ".prisma/client"
 const ReservationSelect = Prisma.validator<Prisma.ReservationSelect>()({
   id: true,
   createdAt: true,
-  shippingMethod: { select: { id: true } },
+  shippingMethod: { select: { id: true, code: true } },
   newProducts: { select: { seasonsUID: true } },
   status: true,
   returnedProducts: { select: { seasonsUID: true } },
+  reservationNumber: true,
   returnPackages: {
     select: {
       id: true,
@@ -23,11 +24,67 @@ const ReservationSelect = Prisma.validator<Prisma.ReservationSelect>()({
       enteredDeliverySystemAt: true,
     },
   },
+  sentPackage: {
+    select: {
+      id: true,
+      items: { select: { seasonsUID: true } },
+      enteredDeliverySystemAt: true,
+      deliveredAt: true,
+    },
+  },
   cancelledAt: true,
 })
+
+const ProductArgs = Prisma.validator<Prisma.PhysicalProductArgs>()({
+  select: {
+    id: true,
+    seasonsUID: true,
+    productStatus: true,
+    warehouseLocation: { select: { id: true } },
+  },
+})
+
+type MigrateProduct = Prisma.PhysicalProductGetPayload<typeof ProductArgs>
+const RentalInvoiceSelect = Prisma.validator<Prisma.RentalInvoiceSelect>()({
+  id: true,
+  status: true,
+  membership: {
+    select: {
+      customer: {
+        select: {
+          id: true,
+          user: { select: { email: true } },
+          bagItems: {
+            where: { status: "Reserved" },
+            select: {
+              id: true,
+              physicalProduct: {
+                select: { seasonsUID: true },
+              },
+            },
+          },
+        },
+      },
+    },
+  },
+  reservations: {
+    orderBy: { createdAt: "asc" },
+    select: ReservationSelect,
+  },
+  products: ProductArgs,
+})
+
+const RentalInvoiceArgs = Prisma.validator<Prisma.RentalInvoiceArgs>()({
+  select: RentalInvoiceSelect,
+})
+
+type MigrateRentalInvoice = Prisma.RentalInvoiceGetPayload<
+  typeof RentalInvoiceArgs
+>
+
 const createReservationPhysicalProduct = async (
-  ri,
-  prod,
+  ri: MigrateRentalInvoice,
+  prod: MigrateProduct,
   ps: PrismaService,
   timeUtils: TimeUtilsService
 ) => {
@@ -66,30 +123,32 @@ const createReservationPhysicalProduct = async (
     }
   }
 
-  const outboundPackage = await ps.client.package.findFirst({
-    where: {
-      items: { some: { seasonsUID: prod.seasonsUID } },
-      reservationOnSentPackage: { customer: { id: ri.membership.customer.id } },
-    },
-    orderBy: { createdAt: "desc" },
-    select: {
-      id: true,
-      enteredDeliverySystemAt: true,
-      deliveredAt: true,
-      items: { select: { seasonsUID: true } },
-      reservationOnSentPackage: { select: ReservationSelect },
-    },
-  })
-  if (!outboundPackage) {
-    throw new Error(`No outbound package found for product ${prod.seasonsUID}`)
+  /*
+  If the first resy's outbound package never got shipped, the item may have been shipped on the sent package for 
+  a later resy. Try to find that one. 
+  */
+  let shipmentResy = firstResy
+  if (
+    !firstResy.sentPackage.enteredDeliverySystemAt &&
+    !firstResy.sentPackage.deliveredAt &&
+    ["Completed", "ReturnPending"].includes(firstResy.status)
+  ) {
+    shipmentResy = reservations.find(a => {
+      const withinFourDays =
+        timeUtils.numDaysBetween(firstResy.createdAt, a.createdAt) <= 4
+      const outboundPackageShipped =
+        !!a.sentPackage.enteredDeliverySystemAt || !!a.sentPackage.deliveredAt
+      return withinFourDays && outboundPackageShipped
+    })
   }
 
-  // firstResy and shipmentResy may sometimes be the same. They would differ if
-  // customers placed multiple reservations in a short timespan, an item was reserved
-  // on one of the earlier reservations, but got shipped on a package from a later reservation.
-  const shipmentResy = outboundPackage.reservationOnSentPackage
   if (!shipmentResy) {
     throw new Error(`No shipment resy found for product ${prod.seasonsUID}`)
+  }
+
+  const outboundPackage = shipmentResy.sentPackage
+  if (!outboundPackage) {
+    throw new Error(`No outbound package found for product ${prod.seasonsUID}`)
   }
 
   // TODO: Check the logic here.
@@ -130,12 +189,29 @@ const createReservationPhysicalProduct = async (
     prod.productStatus !== "Lost" &&
     !!reservedBagItemForProd &&
     timeUtils.numDaysBetween(shipmentResy.createdAt, new Date()) > 10
-  const hasBeenDeliveredToCustomer =
+  let hasBeenDeliveredToCustomer =
     outboundPackageDeliveredCleanly ||
     outboundPackageDeliveredWithoutDeliveredAtSet ||
     outboundPackageDeliveredWithNoTimestampsSet
+  let deliveredToCustomerAt = outboundPackage.deliveredAt
+  if (!hasBeenDeliveredToCustomer) {
+    const shipmentResyAdminLogs = await ps.client.adminActionLog.findMany({
+      where: { entityId: shipmentResy.id, tableName: "Reservation" },
+      select: {
+        triggeredAt: true,
+        changedFields: true,
+      },
+    })
+    const markedAsDeliveredLog = shipmentResyAdminLogs.find(
+      a => a.changedFields["status"] === "Delivered"
+    )
+    const isPickup = shipmentResy.shippingMethod.code === "Pickup"
+    if (!!markedAsDeliveredLog && isPickup) {
+      hasBeenDeliveredToCustomer = true
+      deliveredToCustomerAt = markedAsDeliveredLog.triggeredAt
+    }
+  }
 
-  const deliveredToCustomerAt = outboundPackage.deliveredAt
   const hasBeenScannedOnOutbound =
     outboundPackage.enteredDeliverySystemAt !== null
   const scannedOnOutboundAt = outboundPackage.enteredDeliverySystemAt
@@ -258,41 +334,7 @@ const migrateToRpp = async () => {
 
   const allBillableRentalInvoices = await ps.client.rentalInvoice.findMany({
     where: { status: { in: ["Draft", "ChargeFailed"] } },
-    select: {
-      id: true,
-      status: true,
-      membership: {
-        select: {
-          customer: {
-            select: {
-              id: true,
-              user: { select: { email: true } },
-              bagItems: {
-                where: { status: "Reserved" },
-                select: {
-                  id: true,
-                  physicalProduct: {
-                    select: { seasonsUID: true },
-                  },
-                },
-              },
-            },
-          },
-        },
-      },
-      reservations: {
-        orderBy: { createdAt: "asc" },
-        select: ReservationSelect,
-      },
-      products: {
-        select: {
-          id: true,
-          seasonsUID: true,
-          productStatus: true,
-          warehouseLocation: { select: { id: true } },
-        },
-      },
-    },
+    select: RentalInvoiceSelect,
   })
 
   let successCount = 0
