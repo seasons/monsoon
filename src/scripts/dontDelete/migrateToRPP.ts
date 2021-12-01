@@ -213,7 +213,7 @@ const createReservationPhysicalProduct = async (
     const markedAsDeliveredLog = shipmentResyAdminLogs.find(
       a => a.changedFields["status"] === "Delivered"
     )
-    const isPickup = shipmentResy.shippingMethod.code === "Pickup"
+    const isPickup = shipmentResy.shippingMethod?.code === "Pickup"
     if (!!markedAsDeliveredLog && isPickup) {
       hasBeenDeliveredToCustomer = true
       deliveredToCustomerAt = markedAsDeliveredLog.triggeredAt
