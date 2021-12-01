@@ -33,6 +33,85 @@ describe("Reservation Physical Product Service", () => {
     testCustomer = customer
   })
 
+  describe("Mark as not returned", () => {
+    it("Correctly updates the status and revelant fields", async () => {
+      const {
+        bagItems,
+      } = await reservationUtilsTestService.addToBagAndReserveForCustomer({
+        customer: testCustomer,
+        numProductsToAdd: 1,
+        options: {
+          bagItemSelect: {
+            id: true,
+            status: true,
+
+            reservationPhysicalProduct: {
+              select: {
+                id: true,
+                status: true,
+              },
+            },
+          },
+        },
+      })
+
+      const rppId = bagItems[0].reservationPhysicalProduct.id
+      const now = new Date().toISOString()
+
+      const inboundPackage = await prisma.client.package.create({
+        data: {
+          transactionID: "test",
+        },
+      })
+
+      await prisma.client.reservationPhysicalProduct.update({
+        where: {
+          id: rppId,
+        },
+        data: {
+          status: "DeliveredToBusiness",
+          hasBeenScannedOnInbound: true,
+          scannedOnInboundAt: now,
+          hasBeenDeliveredToBusiness: true,
+          deliveredToBusinessAt: now,
+          inboundPackage: { connect: { id: inboundPackage.id } },
+          physicalProduct: {
+            update: { packages: { connect: { id: inboundPackage.id } } },
+          },
+        },
+      })
+
+      await reservationPhysicalProductService.markNotReturned({ rppId })
+
+      const markedNotReturnedRpp = await prisma.client.reservationPhysicalProduct.findUnique(
+        {
+          where: {
+            id: rppId,
+          },
+          select: {
+            status: true,
+            hasBeenScannedOnInbound: true,
+            scannedOnInboundAt: true,
+            hasBeenDeliveredToBusiness: true,
+            deliveredToBusinessAt: true,
+            inboundPackage: { select: { id: true } },
+            physicalProduct: {
+              select: { packages: { select: { id: true } } },
+            },
+          },
+        }
+      )
+
+      expect(markedNotReturnedRpp.status).toBe("AtHome")
+      expect(markedNotReturnedRpp.hasBeenScannedOnInbound).toBe(false)
+      expect(markedNotReturnedRpp.scannedOnInboundAt).toBeNull()
+      expect(markedNotReturnedRpp.hasBeenDeliveredToBusiness).toBe(false)
+      expect(markedNotReturnedRpp.deliveredToBusinessAt).toBeNull()
+      expect(markedNotReturnedRpp.inboundPackage).toBeNull()
+      expect(markedNotReturnedRpp.physicalProduct.packages.length).toBe(0)
+    })
+  })
+
   describe("Pick Items", () => {
     it("Changes items from status Queued to Picked", async () => {
       const {

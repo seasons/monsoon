@@ -59,11 +59,21 @@ export class ReservationPhysicalProductMutationsResolver {
 
   @Mutation()
   async markAsLost(@Args() { lostBagItemId }) {
-    return await this.bag.markAsLost(lostBagItemId)
+    return await this.bag.markAsLost({ lostBagItemId })
   }
 
   @Mutation()
   async markAsPickedUp(@Args() { bagItemIds }) {
-    return await this.reservationPhysicalProduct.markAsPickedUp(bagItemIds)
+    return await this.reservationPhysicalProduct.markAsPickedUp({ bagItemIds })
+  }
+
+  @Mutation()
+  async markNotReturned(@Args() { rppId }) {
+    return await this.reservationPhysicalProduct.markNotReturned({ rppId })
+  }
+
+  @Mutation()
+  async markAsFound(@Args() { rppId, status }) {
+    return await this.bag.markAsFound({ rppId, status })
   }
 }

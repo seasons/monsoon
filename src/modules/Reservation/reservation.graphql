@@ -84,6 +84,9 @@ type Mutation {
     @hasRole(roles: [Admin])
   markAsLost(lostBagItemId: ID!): Boolean @hasRole(roles: [Admin])
   markAsPickedUp(bagItemIDs: [ID]!): Boolean @hasRole(roles: [Admin])
+  markNotReturned(rppId: ID!): ReservationPhysicalProduct!
+    @hasRole(roles: [Admin])
+  markAsFound(rppId: ID!): ReservationPhysicalProduct! @hasRole(roles: [Admin])
 }
 
 type ReservationFeedback {
@@ -318,6 +321,7 @@ enum ReservationPhysicalProductStatus {
   AtHome
   DeliveredToBusiness
   ReturnProcessed
+  ReturnPending
   ResetEarly
   Returned
   Lost

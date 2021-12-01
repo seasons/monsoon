@@ -9,7 +9,7 @@ import {
   ReservationDropOffAgent,
   ReservationPhysicalProductStatus,
 } from "@prisma/client"
-import { every, some } from "lodash"
+import { every, set, some } from "lodash"
 import { DateTime } from "luxon"
 
 import { ReservationUtilsService } from "../../Utils/services/reservation.utils.service"
@@ -571,11 +571,51 @@ export class ReservationPhysicalProductService {
     return [outboundPackage, inboundPackage]
   }
 
-  async markAsPickedUp(bagItemIDs) {
+  async markNotReturned({ rppId }) {
+    const rppWithData = await this.prisma.client.reservationPhysicalProduct.findUnique(
+      {
+        where: {
+          id: rppId,
+        },
+        select: {
+          inboundPackage: true,
+        },
+      }
+    )
+
+    const existingPackage = rppWithData.inboundPackage
+
+    const updateData: Prisma.ReservationPhysicalProductUpdateInput = {
+      status: "AtHome",
+      hasBeenScannedOnInbound: false,
+      scannedOnInboundAt: null,
+      hasBeenDeliveredToBusiness: false,
+      deliveredToBusinessAt: null,
+    }
+
+    if (existingPackage) {
+      set(updateData, "inboundPackage.disconnect", true)
+      set(updateData, "physicalProduct.update.packages.disconnect", {
+        id: existingPackage.id,
+      })
+    }
+
+    return await this.prisma.client.reservationPhysicalProduct.update({
+      where: {
+        id: rppId,
+      },
+      data: updateData,
+      select: {
+        id: true,
+      },
+    })
+  }
+
+  async markAsPickedUp({ bagItemIds }) {
     const bagItems = await this.prisma.client.bagItem.findMany({
       where: {
         id: {
-          in: bagItemIDs,
+          in: bagItemIds,
         },
       },
       select: {
@@ -601,7 +641,7 @@ export class ReservationPhysicalProductService {
       item => item.reservationPhysicalProduct.id
     )
 
-    await this.generateShippingLabels({ bagItemIDs })
+    await this.generateShippingLabels({ bagItemIDs: bagItemIds })
 
     await this.prisma.client.reservationPhysicalProduct.updateMany({
       where: {

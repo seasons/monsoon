@@ -1,6 +1,4 @@
-
 import { ApplicationType } from "@app/decorators/application.decorator"
-import { ReservationUtilsService } from "@app/modules/Reservation"
 import { ProductUtilsService } from "@app/modules/Utils/services/product.utils.service"
 import { ReservationUtilsService } from "@app/modules/Utils/services/reservation.utils.service"
 import { UtilsService } from "@app/modules/Utils/services/utils.service"
@@ -10,7 +8,6 @@ import { PrismaService } from "@prisma1/prisma.service"
 import { ApolloError } from "apollo-server"
 import cuid from "cuid"
 import { camelCase } from "lodash"
-import { merge } from "lodash"
 
 import { ProductVariantService } from "../services/productVariant.service"
 
@@ -573,12 +570,15 @@ export class BagService {
     )
   }
 
-  async markAsFound(
-    lostBagItemId,
+  async markAsFound({
+    rppId,
+    status,
+  }: {
+    rppId: string
     status: "DeliveredToCustomer" | "DeliveredToBusiness"
-  ) {}
+  }) {}
 
-  async markAsLost(lostBagItemId) {
+  async markAsLost({ lostBagItemId }) {
     const bagItemWithData = await this.prisma.client.bagItem.findUnique({
       where: {
         id: lostBagItemId,
