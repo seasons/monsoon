@@ -1441,13 +1441,13 @@ enum ReservationPhysicalProductStatus {
   ResetEarly
   Lost
   Cancelled
+  Purchased
 }
 
 model ReservationPhysicalProduct {
   id    String  @id @default(cuid()) @db.VarChar(30)
   isNew Boolean @default(false)
 
-  hasBeenPurchased Boolean   @default(false)
   purchasedAt      DateTime?
 
   status ReservationPhysicalProductStatus @default(value: Queued)
