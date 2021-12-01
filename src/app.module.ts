@@ -155,6 +155,10 @@ export const APP_MODULE_DEF = {
                 const token = request.http.headers.get("authorization")
                 return token || null
               },
+              shouldReadFromCache: ({ request }) => {
+                const application = request.http.headers.get("application")
+                return application !== "spring"
+              },
             }),
             ApolloServerPluginInlineTrace(),
             apolloServerSentryPlugin,
