@@ -121,6 +121,16 @@ const createReservationPhysicalProduct = async (
       select: ReservationSelect,
     })
     if (!firstResy) {
+      firstResy = await ps.client.reservation.findFirst({
+        where: {
+          products: { some: { seasonsUID: prod.seasonsUID } },
+          customer: { id: ri.membership.customer.id },
+        },
+        orderBy: { createdAt: "asc" },
+        select: ReservationSelect,
+      })
+    }
+    if (!firstResy) {
       throw new Error(`No initial resy found for product ${prod.seasonsUID}`)
     }
   }
@@ -140,10 +150,11 @@ const createReservationPhysicalProduct = async (
         timeUtils.numDaysBetween(firstResy.createdAt, a.createdAt) <= 4
       const outboundPackageShipped =
         !!a.sentPackage.enteredDeliverySystemAt || !!a.sentPackage.deliveredAt
+      const isOnHold = a.status === "Hold"
       const hasItem = a.products.some(b => b.seasonsUID === prod.seasonsUID)
       return (
         withinFourDays &&
-        outboundPackageShipped &&
+        (outboundPackageShipped || isOnHold) &&
         hasItem &&
         a.id !== firstResy.id
       )
