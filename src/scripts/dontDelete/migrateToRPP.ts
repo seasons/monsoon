@@ -15,14 +15,6 @@ const ReservationSelect = Prisma.validator<Prisma.ReservationSelect>()({
   newProducts: { select: { seasonsUID: true } },
   status: true,
   returnedProducts: { select: { seasonsUID: true } },
-  sentPackage: {
-    select: {
-      id: true,
-      enteredDeliverySystemAt: true,
-      deliveredAt: true,
-      items: { select: { seasonsUID: true } },
-    },
-  },
   returnPackages: {
     select: {
       id: true,
@@ -39,6 +31,7 @@ const ReservationSelect = Prisma.validator<Prisma.ReservationSelect>()({
       },
     },
   },
+  cancelledAt: true,
 })
 const createReservationPhysicalProduct = async (
   ri,
@@ -83,10 +76,15 @@ const createReservationPhysicalProduct = async (
   //   console.log(pick(prod, ["seasonsUID", "warehouseLocation"]))
   //   console.log(firstResy)
 
-  const hasReturnProcessed =
-    firstResy.receipt?.items.some(
-      a => a.product.seasonsUID === prod.seasonsUID
-    ) || false
+  // TODO: Check the logic here.
+  const returnReceiptForItem = await ps.client.reservationReceipt.findFirst({
+    where: {
+      items: { some: { product: { seasonsUID: prod.seasonsUID } } },
+      reservation: { customer: { id: ri.membership.customer.id } },
+      createdAt: { gt: firstResy.createdAt },
+    },
+  })
+  const hasReturnProcessed = !!returnReceiptForItem
   const returnProcessedAt = firstResy.receipt?.createdAt
 
   const hasBeenLost = prod.productStatus === "Lost"
@@ -94,12 +92,26 @@ const createReservationPhysicalProduct = async (
   const reservedBagItemForProd = ri.membership.customer.bagItems.find(
     a => a.physicalProduct.seasonsUID === prod.seasonsUID
   )
-
-  const outboundPackage = firstResy.sentPackage
-  if (!outboundPackage.items.some(a => a.seasonsUID === prod.seasonsUID)) {
+  if (!!reservedBagItemForProd && hasReturnProcessed) {
     throw new Error(
-      `No outbound package item found for product ${prod.seasonsUID}`
+      `Product ${prod.seasonsUID} has already been returned but has a reserved bag item`
     )
+  }
+
+  const outboundPackage = await ps.client.package.findFirst({
+    where: {
+      items: { some: { seasonsUID: prod.seasonsUID } },
+    },
+    orderBy: { createdAt: "desc" },
+    select: {
+      id: true,
+      enteredDeliverySystemAt: true,
+      deliveredAt: true,
+      items: { select: { seasonsUID: true } },
+    },
+  })
+  if (!outboundPackage) {
+    throw new Error(`No outbound package found for product ${prod.seasonsUID}`)
   }
   // Either we have clear signal it's been delivered,
   // OR  it's been "a long time" (5 days) since it entered the delivery system and we haven't yet marked it as lost.
@@ -138,15 +150,13 @@ const createReservationPhysicalProduct = async (
     inboundPackageWithItem?.enteredDeliverySystemAt !== null
   const scannedOnInboundAt = inboundPackageWithItem?.enteredDeliverySystemAt
 
-  if (!!reservedBagItemForProd && hasReturnProcessed) {
-    throw new Error(
-      `Product ${prod.seasonsUID} has already been returned but has a reserved bag item`
-    )
-  }
-
   let status: ReservationPhysicalProductStatus
-  if (["Queued", "Picked", "Packed"].includes(firstResy.status)) {
+  let cancelledAt
+  if (["Queued", "Picked", "Packed", "Cancelled"].includes(firstResy.status)) {
     status = firstResy.status as ReservationPhysicalProductStatus
+    if (firstResy.status === "Cancelled") {
+      cancelledAt = firstResy.cancelledAt
+    }
   } else if (firstResy.status === "Hold") {
     if (!!prod.warehouseLocation) {
       status = "Queued"
@@ -233,6 +243,7 @@ const createReservationPhysicalProduct = async (
       : {}),
     createdAt: firstResy.createdAt,
     status,
+    cancelledAt,
   }
 
   await ps.client.reservationPhysicalProduct.create({ data: createData })
@@ -283,7 +294,10 @@ const migrateToRpp = async () => {
 
   let successCount = 0
   let failureCount = 0
+  const total = allBillableRentalInvoices.flatMap(a => a.products).length
+  let i = 0
   for (const ri of allBillableRentalInvoices) {
+    console.log(`${i++} of ${total}`)
     const products = ri.products
 
     for (const prod of products) {
