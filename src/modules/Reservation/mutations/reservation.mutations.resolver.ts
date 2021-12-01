@@ -6,7 +6,6 @@ import { PrismaService } from "@app/prisma/prisma.service"
 import { Args, Mutation, Resolver } from "@nestjs/graphql"
 import { pick } from "lodash"
 
-import { ReservationPhysicalProductService } from "../services/reservationPhysicalProduct.service"
 import { ReserveService } from "../services/reserve.service"
 import { ReservationService } from ".."
 
@@ -18,39 +17,8 @@ export class ReservationMutationsResolver {
     private readonly reservation: ReservationService,
     private readonly reserve: ReserveService,
     private readonly segment: SegmentService,
-    private readonly prisma: PrismaService,
-    private readonly reservationPhysicalProduct: ReservationPhysicalProductService
+    private readonly prisma: PrismaService
   ) {}
-
-  @Mutation()
-  async processReturn(
-    @Args() { trackingNumber, productStates, droppedOffBy, customerId }
-  ) {
-    return this.reservationPhysicalProduct.processReturn({
-      productStates,
-      droppedOffBy,
-      trackingNumber,
-      customerId,
-    })
-  }
-
-  @Mutation()
-  async pickItems(@Args() { bagItemIDs }, @Select() select) {
-    return this.reservationPhysicalProduct.pickItems(bagItemIDs, select)
-  }
-
-  @Mutation()
-  async packItems(@Args() { bagItemIDs }, @Select() select) {
-    return this.reservationPhysicalProduct.packItems(bagItemIDs, select)
-  }
-
-  @Mutation()
-  async generateShippingLabels(@Args() { customerID }, @Select() select) {
-    return this.reservationPhysicalProduct.generateShippingLabels(
-      customerID,
-      select
-    )
-  }
 
   @Mutation()
   async updateReservation(@Args() { data, where }, @Select() select) {

@@ -43,40 +43,6 @@ export class BagService {
     private readonly reservationUtils: ReservationUtilsService
   ) {}
 
-  async markAsPickedUp(bagItemIds) {
-    const bagItems = await this.prisma.client.bagItem.findMany({
-      where: {
-        id: {
-          in: bagItemIds,
-        },
-      },
-      select: {
-        id: true,
-        reservationPhysicalProduct: {
-          select: {
-            id: true,
-          },
-        },
-      },
-    })
-
-    const reservationPhysicalProductIds = bagItems.map(
-      item => item.reservationPhysicalProduct.id
-    )
-
-    await this.prisma.client.reservationPhysicalProduct.updateMany({
-      where: {
-        id: { in: reservationPhysicalProductIds },
-      },
-      data: {
-        hasBeenDeliveredToCustomer: true,
-        deliveredToCustomerAt: new Date().toISOString(),
-        status: "DeliveredToCustomer",
-      },
-    })
-    return true
-  }
-
   async bagSection(status: BagSectionStatus, customer, application) {
     const bagItems = await this.prisma.client.bagItem.findMany({
       where: {
