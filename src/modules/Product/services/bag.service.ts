@@ -1,3 +1,6 @@
+
+import { ApplicationType } from "@app/decorators/application.decorator"
+import { ReservationUtilsService } from "@app/modules/Reservation"
 import { ProductUtilsService } from "@app/modules/Utils/services/product.utils.service"
 import { ReservationUtilsService } from "@app/modules/Utils/services/reservation.utils.service"
 import { UtilsService } from "@app/modules/Utils/services/utils.service"
@@ -7,6 +10,7 @@ import { PrismaService } from "@prisma1/prisma.service"
 import { ApolloError } from "apollo-server"
 import cuid from "cuid"
 import { camelCase } from "lodash"
+import { merge } from "lodash"
 
 import { ProductVariantService } from "../services/productVariant.service"
 
@@ -43,7 +47,15 @@ export class BagService {
     private readonly reservationUtils: ReservationUtilsService
   ) {}
 
-  async bagSection(status: BagSectionStatus, customer, application) {
+  async bagSection({
+    application,
+    customer,
+    status,
+  }: {
+    customer: { id: string }
+    status: BagSectionStatus
+    application: ApplicationType
+  }) {
     const bagItems = await this.prisma.client.bagItem.findMany({
       where: {
         customer: {
@@ -69,14 +81,20 @@ export class BagService {
       },
     })
 
-    return this.getSection(
+    return this.getSection({
       status,
       bagItems,
-      application === "spring" ? "admin" : "client"
-    )
+      application: application === "spring" ? "admin" : "client",
+    })
   }
 
-  async bagSections(customer, application) {
+  async bagSections({
+    application,
+    customer,
+  }: {
+    customer: { id: string }
+    application: ApplicationType
+  }) {
     const bagItems = await this.prisma.client.bagItem.findMany({
       where: {
         customer: {
@@ -92,24 +110,6 @@ export class BagService {
           select: {
             id: true,
             status: true,
-            outboundPackage: {
-              select: {
-                shippingLabel: {
-                  select: {
-                    trackingURL: true,
-                  },
-                },
-              },
-            },
-            inboundPackage: {
-              select: {
-                shippingLabel: {
-                  select: {
-                    trackingURL: true,
-                  },
-                },
-              },
-            },
           },
         },
         physicalProduct: {
@@ -120,8 +120,10 @@ export class BagService {
       },
     })
 
+    let sections: BagSectionStatus[] = []
+
     if (application === "spring") {
-      const sections = [
+      sections = [
         BagSectionStatus.Queued,
         BagSectionStatus.Picked,
         BagSectionStatus.Packed,
@@ -132,12 +134,8 @@ export class BagService {
         BagSectionStatus.DeliveredToBusiness,
         BagSectionStatus.Lost,
       ]
-
-      return sections.map(status => {
-        return this.getSection(status, bagItems, "admin")
-      })
     } else {
-      const sections: BagSectionStatus[] = [
+      sections = [
         BagSectionStatus.Added,
         BagSectionStatus.ReturnPending,
 
@@ -153,11 +151,15 @@ export class BagService {
 
         BagSectionStatus.AtHome,
       ]
-
-      return sections.map(status => {
-        return this.getSection(status, bagItems, "client")
-      })
     }
+
+    return sections.map(status =>
+      this.getSection({
+        status,
+        bagItems,
+        application: application === "spring" ? "admin" : "client",
+      })
+    )
   }
 
   async addToBag(
@@ -571,11 +573,10 @@ export class BagService {
     )
   }
 
-  // async markAsFound(
-  //   lostBagItemId,
-  //   status: "DeliveredToCustomer" | "DeliveredToBusiness"
-  // ) {
-  // }
+  async markAsFound(
+    lostBagItemId,
+    status: "DeliveredToCustomer" | "DeliveredToBusiness"
+  ) {}
 
   async markAsLost(lostBagItemId) {
     const bagItemWithData = await this.prisma.client.bagItem.findUnique({
@@ -625,6 +626,14 @@ export class BagService {
           lostInPhase,
           lostAt: new Date().toISOString(),
           hasBeenLost: true,
+        },
+      })
+    )
+
+    promises.push(
+      this.prisma.client.bagItem.delete({
+        where: {
+          id: lostBagItemId,
         },
       })
     )
@@ -696,11 +705,15 @@ export class BagService {
     }
   }
 
-  private getSection(
-    status: BagSectionStatus,
+  private async getSection({
     bagItems,
+    status,
+    application,
+  }: {
+    status: BagSectionStatus
+    bagItems
     application: "client" | "admin"
-  ) {
+  }) {
     const isAdmin = application === "admin"
 
     let filteredBagItems = bagItems.filter(

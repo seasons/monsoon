@@ -1,5 +1,6 @@
 import { Customer, User } from "@app/decorators"
 import { Application } from "@app/decorators/application.decorator"
+import { Select } from "@app/decorators/select.decorator"
 import { PrismaGenerateParams } from "@app/modules/DataLoader/dataloader.types.d"
 import { TransactionsForCustomersLoader } from "@app/modules/Payment/loaders/transactionsForCustomers.loader"
 import { BagService } from "@app/modules/Product/services/bag.service"
@@ -41,7 +42,7 @@ export class CustomerFieldsResolver {
     if (!customer) {
       return null
     }
-    return this.bagService.bagSections(customer, application)
+    return this.bagService.bagSections({ customer, application })
   }
 
   @ResolveField()

@@ -661,38 +661,38 @@ model Color {
 }
 
 model Customer {
-  id                             String                           @id @default(cuid()) @db.VarChar(30)
-  status                         CustomerStatus?
-  detailId                       String?                          @map("detail") @db.VarChar(30)
-  userId                         String?                          @map("user") @db.VarChar(30)
-  plan                           Plan?
-  billingInfoId                  String?                          @map("billingInfo") @db.VarChar(30)
-  createdAt                      DateTime                         @default(now())
-  updatedAt                      DateTime                         @updatedAt
-  authorizedAt                   DateTime?
-  admissionsId                   String?                          @map("admissions") @db.VarChar(30)
-  referralLink                   String?                          @unique
-  referrerId                     String?                          @map("referrer") @db.VarChar(30)
-  referrer                       Customer?                        @relation("CustomerToCustomer_referrer", fields: [referrerId], references: [id])
-  utmId                          String?                          @map("utm") @db.VarChar(30)
-  admissions                     CustomerAdmissionsData?          @relation(fields: [admissionsId], references: [id])
-  billingInfo                    BillingInfo?                     @relation(fields: [billingInfoId], references: [id])
-  detail                         CustomerDetail?                  @relation(fields: [detailId], references: [id])
-  user                           User?                            @relation(fields: [userId], references: [id])
-  utm                            UTMData?                         @relation(fields: [utmId], references: [id])
-  bagItems                       BagItem[]
-  referrees                      Customer[]                       @relation("CustomerToCustomer_referrer")
-  membership                     CustomerMembership?
-  notificationBarReceipts        CustomerNotificationBarReceipt[]
-  orders                         Order[]
-  productNotifications           ProductNotification[]
-  recentlyViewedProducts         RecentlyViewedProduct[]
-  reservations                   Reservation[]
-  reservationPhysicalProducts    ReservationPhysicalProduct[]     
-  impactSyncTimings              SyncTiming[]
-  emailedProducts                Product[]                        @relation("CustomerToEmailedProducts")
-  hasBeenMigrated                Boolean                          @default(false)
-}       
+  id                          String                           @id @default(cuid()) @db.VarChar(30)
+  status                      CustomerStatus?
+  detailId                    String?                          @map("detail") @db.VarChar(30)
+  userId                      String?                          @map("user") @db.VarChar(30)
+  plan                        Plan?
+  billingInfoId               String?                          @map("billingInfo") @db.VarChar(30)
+  createdAt                   DateTime                         @default(now())
+  updatedAt                   DateTime                         @updatedAt
+  authorizedAt                DateTime?
+  admissionsId                String?                          @map("admissions") @db.VarChar(30)
+  referralLink                String?                          @unique
+  referrerId                  String?                          @map("referrer") @db.VarChar(30)
+  referrer                    Customer?                        @relation("CustomerToCustomer_referrer", fields: [referrerId], references: [id])
+  utmId                       String?                          @map("utm") @db.VarChar(30)
+  admissions                  CustomerAdmissionsData?          @relation(fields: [admissionsId], references: [id])
+  billingInfo                 BillingInfo?                     @relation(fields: [billingInfoId], references: [id])
+  detail                      CustomerDetail?                  @relation(fields: [detailId], references: [id])
+  user                        User?                            @relation(fields: [userId], references: [id])
+  utm                         UTMData?                         @relation(fields: [utmId], references: [id])
+  bagItems                    BagItem[]
+  referrees                   Customer[]                       @relation("CustomerToCustomer_referrer")
+  membership                  CustomerMembership?
+  notificationBarReceipts     CustomerNotificationBarReceipt[]
+  orders                      Order[]
+  productNotifications        ProductNotification[]
+  recentlyViewedProducts      RecentlyViewedProduct[]
+  reservations                Reservation[]
+  reservationPhysicalProducts ReservationPhysicalProduct[]
+  impactSyncTimings           SyncTiming[]
+  emailedProducts             Product[]                        @relation("CustomerToEmailedProducts")
+  hasBeenMigrated             Boolean                          @default(false)
+}
 
 model CustomerAdmissionsData {
   id                          String              @id @default(cuid()) @db.VarChar(30)
@@ -1452,84 +1452,87 @@ enum ReservationPhysicalProductStatus {
   ReturnProcessed
   ResetEarly
   Lost
+  Cancelled
 }
 
 model ReservationPhysicalProduct {
-  id                                String  @id @default(cuid()) @db.VarChar(30)
-  isNew                             Boolean @default(false)
+  id    String  @id @default(cuid()) @db.VarChar(30)
+  isNew Boolean @default(false)
 
-  hasBeenPurchased                  Boolean   @default(false)
-  purchasedAt                       DateTime?
+  hasBeenPurchased Boolean   @default(false)
+  purchasedAt      DateTime?
 
-  status                            ReservationPhysicalProductStatus @default(value: Queued)
+  status ReservationPhysicalProductStatus @default(value: Queued)
 
-  pickedAt                          DateTime?
-  packedAt                          DateTime?
+  pickedAt DateTime?
+  packedAt DateTime?
 
-  isOnHold                          Boolean   @default(false)
+  isOnHold Boolean @default(false)
 
   // customer or UPS
-  droppedOffBy                      ReservationDropOffAgent?
-  droppedOffAt                      DateTime?
+  droppedOffBy ReservationDropOffAgent?
+  droppedOffAt DateTime?
 
   // item has been returned and processed by associate
-  hasReturnProcessed                Boolean   @default(false)
-  returnProcessedAt                 DateTime?
+  hasReturnProcessed Boolean   @default(false)
+  returnProcessedAt  DateTime?
 
   // admin marked item as returned early, it's still on its way
-  hasBeenResetEarlyByAdmin          Boolean   @default(false)
-  resetEarlyByAdminAt               DateTime?
+  hasBeenResetEarlyByAdmin Boolean   @default(false)
+  resetEarlyByAdminAt      DateTime?
 
   // denotes customer filling out the return flow
-  hasCustomerReturnIntent           Boolean   @default(false)
-  customerReturnIntentAt            DateTime?
+  hasCustomerReturnIntent Boolean   @default(false)
+  customerReturnIntentAt  DateTime?
 
-  hasBeenLost                       Boolean           @default(false)
-  lostAt                            DateTime?
-  lostInPhase                       ReservationPhase?
+  hasBeenLost Boolean           @default(false)
+  lostAt      DateTime?
+  lostInPhase ReservationPhase?
 
-  hasBeenDeliveredToCustomer        Boolean   @default(false)
-  deliveredToCustomerAt             DateTime?
+  cancelledAt DateTime?
 
-  hasBeenDeliveredToBusiness        Boolean   @default(false)
-  deliveredToBusinessAt             DateTime?
+  hasBeenDeliveredToCustomer Boolean   @default(false)
+  deliveredToCustomerAt      DateTime?
+
+  hasBeenDeliveredToBusiness Boolean   @default(false)
+  deliveredToBusinessAt      DateTime?
 
   // when UPS first gets the package into
-  scannedOnInboundAt                DateTime?
-  hasBeenScannedOnInbound           Boolean   @default(false)
+  scannedOnInboundAt      DateTime?
+  hasBeenScannedOnInbound Boolean   @default(false)
 
-  scannedOnOutboundAt               DateTime?
-  hasBeenScannedOnOutbound          Boolean   @default(false)
+  scannedOnOutboundAt      DateTime?
+  hasBeenScannedOnOutbound Boolean   @default(false)
 
-  lineItemId                        String?                @db.VarChar(30)
-  lineItem                          OrderLineItem?         @relation(fields: [lineItemId], references: [id])
+  lineItemId String?        @db.VarChar(30)
+  lineItem   OrderLineItem? @relation(fields: [lineItemId], references: [id])
 
-  outboundPackageId                 String?         @db.VarChar(30)
-  outboundPackage                   Package?        @relation("ReservationPhysicalProductToOutboundPackage", fields: [outboundPackageId], references: [id])
-                 
-  inboundPackageId                  String?          @db.VarChar(30)
-  inboundPackage                    Package?         @relation("ReservationPhysicalProductToInboundPackage", fields: [inboundPackageId], references: [id])
+  outboundPackageId String?  @db.VarChar(30)
+  outboundPackage   Package? @relation("ReservationPhysicalProductToOutboundPackage", fields: [outboundPackageId], references: [id])
 
-  physicalProductId                 String          @db.VarChar(30)
-  physicalProduct                   PhysicalProduct @relation(fields: [physicalProductId], references: [id])
+  inboundPackageId String?  @db.VarChar(30)
+  inboundPackage   Package? @relation("ReservationPhysicalProductToInboundPackage", fields: [inboundPackageId], references: [id])
 
-  customerId                        String               @db.VarChar(30)
-  customer                          Customer             @relation(fields: [customerId], references: [id])
+  physicalProductId String          @db.VarChar(30)
+  physicalProduct   PhysicalProduct @relation(fields: [physicalProductId], references: [id])
 
-  reservationId                     String              @db.VarChar(30)
-  reservation                       Reservation         @relation(fields: [reservationId], references: [id])
+  customerId String   @db.VarChar(30)
+  customer   Customer @relation(fields: [customerId], references: [id])
 
-  bagItem                           BagItem?
+  reservationId String      @db.VarChar(30)
+  reservation   Reservation @relation(fields: [reservationId], references: [id])
 
-  rentalInvoices                    RentalInvoice[]    @relation("RentalInvoiceToReservationPhysicalProducts")
+  bagItem BagItem?
 
-  shippingMethodId                  String?          @db.VarChar(30)
-  shippingMethod                    ShippingMethod?  @relation(fields: [shippingMethodId], references: [id])
+  rentalInvoices RentalInvoice[] @relation("RentalInvoiceToReservationPhysicalProducts")
 
-  pickupWindowId                    String?
+  shippingMethodId String?         @db.VarChar(30)
+  shippingMethod   ShippingMethod? @relation(fields: [shippingMethodId], references: [id])
 
-  createdAt                         DateTime                @default(now())
-  updatedAt                         DateTime                @updatedAt
+  pickupWindowId String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
 }
 
