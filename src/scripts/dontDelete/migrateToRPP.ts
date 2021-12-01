@@ -31,6 +31,7 @@ const ReservationSelect = Prisma.validator<Prisma.ReservationSelect>()({
       items: { select: { seasonsUID: true } },
       enteredDeliverySystemAt: true,
       deliveredAt: true,
+      toAddress: { select: { id: true, name: true, state: true } },
     },
   },
   cancelledAt: true,
@@ -214,7 +215,11 @@ const createReservationPhysicalProduct = async (
       a => a.changedFields["status"] === "Delivered"
     )
     const isPickup = shipmentResy.shippingMethod?.code === "Pickup"
-    if (!!markedAsDeliveredLog && isPickup) {
+    const deliveryState = shipmentResy.sentPackage.toAddress.state.toLowerCase()
+    const couldHaveBeenPickup =
+      deliveryState === "ny" || deliveryState === "new york"
+
+    if (!!markedAsDeliveredLog && (isPickup || couldHaveBeenPickup)) {
       hasBeenDeliveredToCustomer = true
       deliveredToCustomerAt = markedAsDeliveredLog.triggeredAt
     }
