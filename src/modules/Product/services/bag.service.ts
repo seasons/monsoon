@@ -503,6 +503,7 @@ export class BagService {
     ].includes(lostResPhysProd.status)
 
     const lostInboundItemsResPhysProds = [
+      "ReturnPending",
       "ScannedOnInbound",
       "InTransitInbound",
       "DeliveredToBusiness",
