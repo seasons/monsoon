@@ -299,6 +299,16 @@ const createReservationPhysicalProduct = async (
     status = "ReturnProcessed"
   } else if (hasBeenLost) {
     status = "Lost"
+  } else if (
+    shipmentResy.status === "Completed" &&
+    !!shipmentResy.sentPackage.enteredDeliverySystemAt &&
+    !shipmentResy.sentPackage.deliveredAt &&
+    timeUtils.numDaysBetween(
+      shipmentResy.sentPackage.enteredDeliverySystemAt,
+      new Date()
+    ) < 3
+  ) {
+    status = "InTransitOutbound"
   } else {
     throw new Error(`Unable to determine status for product ${prod.seasonsUID}`)
   }
