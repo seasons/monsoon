@@ -86,7 +86,7 @@ type Mutation {
   markAsPickedUp(bagItemIDs: [ID]!): Boolean @hasRole(roles: [Admin])
   markNotReturned(rppId: ID!): ReservationPhysicalProduct!
     @hasRole(roles: [Admin])
-  markAsFound(rppId: ID!): ReservationPhysicalProduct! @hasRole(roles: [Admin])
+  markAsFound(rppId: ID!, status: String!): Boolean @hasRole(roles: [Admin])
 }
 
 type ReservationFeedback {
