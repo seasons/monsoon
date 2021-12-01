@@ -59,9 +59,9 @@ describe("Reservation Physical Product Service", () => {
         expect(bagItem.reservationPhysicalProduct.status).toBe("Queued")
       }
 
-      const bagItemIDs = bagItems.map(bagItem => bagItem.id)
+      const bagItemIds = bagItems.map(bagItem => bagItem.id)
       const result = await reservationPhysicalProductService.pickItems({
-        bagItemIDs,
+        bagItemIds,
         select: {
           id: true,
           status: true,
@@ -105,7 +105,7 @@ describe("Reservation Physical Product Service", () => {
 
       expect(async () => {
         await reservationPhysicalProductService.pickItems({
-          bagItemIDs: bagItems.map(b => b.id),
+          bagItemIds: bagItems.map(b => b.id),
         })
       }).rejects.toThrowError(
         "All reservation physical product statuses should be set to Queued"
@@ -146,7 +146,7 @@ describe("Reservation Physical Product Service", () => {
 
       expect(async () => {
         await reservationPhysicalProductService.pickItems({
-          bagItemIDs: bagItems.map(b => b.id),
+          bagItemIds: bagItems.map(b => b.id),
         })
       }).rejects.toThrowError(
         `The following bagItems are on hold: ${firstBagItem.id}`
@@ -186,7 +186,7 @@ describe("Reservation Physical Product Service", () => {
       })
 
       const result = await reservationPhysicalProductService.packItems({
-        bagItemIDs: bagItems.map(b => b.id),
+        bagItemIds: bagItems.map(b => b.id),
         select: {
           id: true,
           status: true,
@@ -230,7 +230,7 @@ describe("Reservation Physical Product Service", () => {
 
       expect(async () => {
         await reservationPhysicalProductService.packItems({
-          bagItemIDs: bagItems.map(b => b.id),
+          bagItemIds: bagItems.map(b => b.id),
         })
       }).rejects.toThrowError(
         "All reservation physical product statuses should be set to Picked"
@@ -280,7 +280,7 @@ describe("Reservation Physical Product Service", () => {
 
       expect(async () => {
         await reservationPhysicalProductService.packItems({
-          bagItemIDs: bagItems.map(b => b.id),
+          bagItemIds: bagItems.map(b => b.id),
         })
       }).rejects.toThrowError(
         `The following bagItems are on hold: ${firstBagItem.id}`
@@ -335,10 +335,10 @@ describe("Reservation Physical Product Service", () => {
         },
       })
 
-      const bagItemIDs = bagItems.map(b => b.id)
+      const bagItemIds = bagItems.map(b => b.id)
 
       await reservationPhysicalProductService.pickItems({
-        bagItemIDs,
+        bagItemIds,
         select: {
           id: true,
           status: true,
@@ -346,7 +346,7 @@ describe("Reservation Physical Product Service", () => {
       })
 
       await reservationPhysicalProductService.packItems({
-        bagItemIDs,
+        bagItemIds,
         select: {
           id: true,
           status: true,
@@ -356,7 +356,7 @@ describe("Reservation Physical Product Service", () => {
       return [
         bagItems,
         await reservationPhysicalProductService.generateShippingLabels({
-          bagItemIDs,
+          bagItemIds,
           select: {
             id: true,
             status: true,
