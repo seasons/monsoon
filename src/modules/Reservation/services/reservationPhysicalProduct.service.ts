@@ -172,6 +172,101 @@ export class ReservationPhysicalProductService {
     return this.utils.wrapPrismaPromise(promise)
   }
 
+  async markAsFound({
+    rppId,
+    status,
+  }: {
+    rppId: string
+    status: "DeliveredToCustomer" | "DeliveredToBusiness"
+  }) {
+    const promises = []
+
+    const rppWithData = await this.prisma.client.reservationPhysicalProduct.findUnique(
+      {
+        where: {
+          id: rppId,
+        },
+        select: {
+          physicalProduct: {
+            select: {
+              id: true,
+              productVariant: {
+                select: {
+                  id: true,
+                },
+              },
+            },
+          },
+          customer: {
+            select: {
+              id: true,
+            },
+          },
+          reservation: {
+            select: {
+              id: true,
+              reservationPhysicalProducts: {
+                select: {
+                  status: true,
+                },
+              },
+            },
+          },
+        },
+      }
+    )
+
+    promises.push(
+      this.prisma.client.bagItem.create({
+        data: {
+          saved: false,
+          status: "Reserved",
+          reservationPhysicalProduct: {
+            connect: {
+              id: rppId,
+            },
+          },
+          physicalProduct: {
+            connect: {
+              id: rppWithData.physicalProduct.id,
+            },
+          },
+          productVariant: {
+            connect: {
+              id: rppWithData.physicalProduct.productVariant.id,
+            },
+          },
+          customer: {
+            connect: {
+              id: rppWithData.customer.id,
+            },
+          },
+        },
+      })
+    )
+
+    promises.push(
+      this.prisma.client.reservationPhysicalProduct.update({
+        where: {
+          id: rppId,
+        },
+        data: {
+          status,
+        },
+      })
+    )
+
+    await this.reservationUtils.updateReservationOnChange(
+      [rppWithData.reservation.id],
+      { DeliveredToCustomer: 1 },
+      [rppWithData.physicalProduct.id]
+    )
+
+    await this.prisma.client.$transaction(promises)
+
+    return true
+  }
+
   private async updateReservationsOnReturn(
     productStates: ProductState[],
     customerId: string

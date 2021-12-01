@@ -570,14 +570,6 @@ export class BagService {
     )
   }
 
-  async markAsFound({
-    rppId,
-    status,
-  }: {
-    rppId: string
-    status: "DeliveredToCustomer" | "DeliveredToBusiness"
-  }) {}
-
   async markAsLost({ lostBagItemId }) {
     const bagItemWithData = await this.prisma.client.bagItem.findUnique({
       where: {

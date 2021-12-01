@@ -1,3 +1,4 @@
+import { BagService } from "@app/modules/Product/services/bag.service"
 import { TestUtilsService } from "@app/modules/Test/services/test.service"
 import { PrismaService } from "@app/prisma/prisma.service"
 import { Test } from "@nestjs/testing"
@@ -9,6 +10,7 @@ import { ReservationTestUtilsService } from "./reservation.test.utils"
 
 describe("Reservation Physical Product Service", () => {
   let reservationPhysicalProductService: ReservationPhysicalProductService
+  let bagService: BagService
   let reservationUtilsTestService: ReservationTestUtilsService
   let testService: TestUtilsService
   let prisma: PrismaService
@@ -27,10 +29,105 @@ describe("Reservation Physical Product Service", () => {
     )
     testService = moduleRef.get<TestUtilsService>(TestUtilsService)
     prisma = moduleRef.get<PrismaService>(PrismaService)
+    bagService = moduleRef.get<BagService>(BagService)
 
     const { customer } = await testService.createTestCustomer()
 
     testCustomer = customer
+  })
+
+  describe("Mark as found", () => {
+    it("sets the bag item back to the correct status", async () => {
+      const {
+        bagItems,
+      } = await reservationUtilsTestService.addToBagAndReserveForCustomer({
+        customer: testCustomer,
+        numProductsToAdd: 1,
+        options: {
+          bagItemSelect: {
+            id: true,
+            status: true,
+
+            reservationPhysicalProduct: {
+              select: {
+                id: true,
+                status: true,
+                physicalProduct: {
+                  select: {
+                    id: true,
+                  },
+                },
+              },
+            },
+          },
+        },
+      })
+
+      const bagItem = bagItems[0]
+      const rppId = bagItem.reservationPhysicalProduct.id
+
+      await prisma.client.reservationPhysicalProduct.update({
+        where: {
+          id: rppId,
+        },
+        data: {
+          status: "InTransitInbound",
+        },
+      })
+
+      await bagService.markAsLost({ lostBagItemId: bagItem.id })
+
+      const lostRpp = await prisma.client.reservationPhysicalProduct.findUnique(
+        {
+          where: {
+            id: rppId,
+          },
+          select: {
+            status: true,
+            bagItem: {
+              select: {
+                id: true,
+              },
+            },
+          },
+        }
+      )
+
+      expect(lostRpp.status).toBe("Lost")
+      expect(lostRpp.bagItem).toBeNull()
+
+      await reservationPhysicalProductService.markAsFound({
+        rppId,
+        status: "DeliveredToCustomer",
+      })
+
+      const foundRpp = await prisma.client.reservationPhysicalProduct.findUnique(
+        {
+          where: {
+            id: rppId,
+          },
+          select: {
+            status: true,
+            bagItem: {
+              select: {
+                id: true,
+                physicalProduct: {
+                  select: {
+                    id: true,
+                  },
+                },
+              },
+            },
+          },
+        }
+      )
+
+      expect(foundRpp.status).toBe("DeliveredToCustomer")
+      expect(foundRpp.bagItem.id).toBeDefined()
+      expect(foundRpp.bagItem.physicalProduct.id).toBe(
+        bagItem.reservationPhysicalProduct.physicalProduct.id
+      )
+    })
   })
 
   describe("Mark as not returned", () => {

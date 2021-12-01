@@ -74,6 +74,6 @@ export class ReservationPhysicalProductMutationsResolver {
 
   @Mutation()
   async markAsFound(@Args() { rppId, status }) {
-    return await this.bag.markAsFound({ rppId, status })
+    return await this.reservationPhysicalProduct.markAsFound({ rppId, status })
   }
 }
