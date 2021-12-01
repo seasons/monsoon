@@ -312,15 +312,18 @@ enum ReservationPhysicalProductStatus {
   Queued
   Picked
   Packed
-  ShippedToCustomer
-  ShippedToBusiness
-  DeliveredToCustomer
+  ScannedOnInbound
+  InTransitInbound
+  ScannedOnOutbound
+  InTransitOutbound
   AtHome
+  DeliveredToCustomer
   DeliveredToBusiness
+  ReturnPending
   ReturnProcessed
   ResetEarly
-  Returned
   Lost
+  Cancelled
 }
 
 enum ReservationDropOffAgent {

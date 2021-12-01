@@ -1,3 +1,7 @@
+import {
+  Application,
+  ApplicationType,
+} from "@app/decorators/application.decorator"
 import { Select } from "@app/decorators/select.decorator"
 import { PrismaService } from "@app/prisma/prisma.service"
 import {
@@ -8,7 +12,7 @@ import {
   Resolver,
   Root,
 } from "@nestjs/graphql"
-import { Prisma } from "@prisma/client"
+import { Prisma, ReservationPhysicalProductStatus } from "@prisma/client"
 import { merge } from "lodash"
 
 @Resolver("BagSection")
@@ -16,19 +20,38 @@ export class BagSectionFieldsResolver {
   constructor(private readonly prisma: PrismaService) {}
 
   @ResolveField()
-  async bagItems(@Context() context, @Parent() parent, @Select() select) {
+  async bagItems(
+    @Context() context,
+    @Parent() parent,
+    @Select() select,
+    @Application() application
+  ) {
     if (!parent) {
       return null
     }
 
-    if (parent.status === "Lost") {
+    if (parent.status === ReservationPhysicalProductStatus.Lost) {
       const customer = context.req.body.variables.where
 
       if (!customer) {
         return null
       }
 
-      return this.getLostItems(customer, select)
+      return await this.getLostItems(customer, select)
+    } else if (
+      parent.status === ReservationPhysicalProductStatus.DeliveredToBusiness &&
+      application === "spring"
+    ) {
+      const customer = context.req.body.variables.where
+
+      return await this.getSyntheticBagItemsFor({
+        statuses: [
+          ReservationPhysicalProductStatus.DeliveredToBusiness,
+          ReservationPhysicalProductStatus.ReturnProcessed,
+        ],
+        customer,
+        select,
+      })
     }
 
     return await this.prisma.client.bagItem.findMany({
@@ -50,10 +73,15 @@ export class BagSectionFieldsResolver {
     })
   }
 
-  private async getLostItems(
-    customer: { id: string },
+  private async getSyntheticBagItemsFor({
+    customer,
+    statuses,
+    select,
+  }: {
+    customer: { id: string }
+    statuses: ReservationPhysicalProductStatus[]
     select?: Prisma.BagItemSelect
-  ) {
+  }) {
     const rppArgs = select?.reservationPhysicalProduct as Prisma.ReservationPhysicalProductArgs
     const rppSelect = merge(
       Prisma.validator<Prisma.ReservationPhysicalProductSelect>()({
@@ -80,15 +108,15 @@ export class BagSectionFieldsResolver {
       rppArgs?.select
     )
 
-    const lostItems = await this.prisma.client.reservationPhysicalProduct.findMany(
-      {
-        where: {
-          customerId: customer.id,
-          status: "Lost",
+    const items = await this.prisma.client.reservationPhysicalProduct.findMany({
+      where: {
+        customerId: customer.id,
+        status: {
+          in: statuses,
         },
-        select: rppSelect,
-      }
-    )
+      },
+      select: rppSelect,
+    })
 
     const wrapperBagItem = rpp => {
       return {
@@ -105,6 +133,17 @@ export class BagSectionFieldsResolver {
       }
     }
 
-    return lostItems.map(wrapperBagItem)
+    return items.map(wrapperBagItem)
+  }
+
+  private async getLostItems(
+    customer: { id: string },
+    select?: Prisma.BagItemSelect
+  ) {
+    return this.getSyntheticBagItemsFor({
+      statuses: ["Lost"],
+      customer,
+      select,
+    })
   }
 }
