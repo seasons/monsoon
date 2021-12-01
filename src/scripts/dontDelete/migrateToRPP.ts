@@ -151,10 +151,11 @@ const createReservationPhysicalProduct = async (
       const outboundPackageShipped =
         !!a.sentPackage.enteredDeliverySystemAt || !!a.sentPackage.deliveredAt
       const isOnHold = a.status === "Hold"
+      const isCancelled = a.status === "Cancelled"
       const hasItem = a.products.some(b => b.seasonsUID === prod.seasonsUID)
       return (
         withinFourDays &&
-        (outboundPackageShipped || isOnHold) &&
+        (outboundPackageShipped || isOnHold || isCancelled) &&
         hasItem &&
         a.id !== firstResy.id
       )
