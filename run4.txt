@@ -1,0 +1,4949 @@
+RPP already exists for: CSBA-GRN-2829-037-01, fporterr1@gmail.com
+RPP already exists for: CSBA-GRN-SS-036-01, fporterr1@gmail.com
+{ seasonsUID: 'CRGR-BLK-SS-002-02', warehouseLocation: null }
+{
+  id: 'cktudsbed000p0vwj8vepagnl',
+  createdAt: 2021-09-21T17:58:31.097Z,
+  shippingMethod: null,
+  newProducts: [
+    { seasonsUID: 'OURL-WTE-SS-016-01' },
+    { seasonsUID: 'DVNN-BLU-MM-006-01' },
+    { seasonsUID: 'CRGR-BLK-SS-002-02' }
+  ],
+  status: 'Completed',
+  returnedProducts: [],
+  sentPackage: {
+    id: 'cktudsbei1051622fwj8mp9a1ii',
+    enteredDeliverySystemAt: 2021-09-24T02:15:34.482Z,
+    deliveredAt: 2021-09-24T17:15:58.960Z,
+    items: [ [Object], [Object], [Object] ]
+  },
+  returnPackages: [
+    {
+      id: 'cktudsbei1051662fwjc7u827pr',
+      items: [Array],
+      deliveredAt: null,
+      enteredDeliverySystemAt: null
+    }
+  ],
+  receipt: null
+}
+RPP already exists for: AURA-GRN-SS-019-01, jexy84@gmail.com
+RPP already exists for: ACNE-BLK-3228-032-01, jexy84@gmail.com
+RPP already exists for: JQMU-BLK-SS-037-01, jexy84@gmail.com
+RPP already exists for: STRY-PRP-MM-005-01, info@studiobauman.com
+RPP already exists for: CSBA-BLU-MM-010-01, drewmgosselin@gmail.com
+RPP already exists for: KNKE-BLU-MM-005-01, drewmgosselin@gmail.com
+RPP already exists for: JQMU-WTE-MM-017-02, drewmgosselin@gmail.com
+RPP already exists for: MONC-BLU-MM-001-01, ken7leon@hotmail.com
+RPP already exists for: CRGR-BLK-MM-019-02, ken7leon@hotmail.com
+RPP already exists for: LANY-BWN-LL-013-01, lorosselli@gmail.com
+RPP already exists for: NANU-BLU-MM-031-01, lorosselli@gmail.com
+RPP already exists for: NANU-BLU-3226-032-02, lorosselli@gmail.com
+RPP already exists for: CDGS-GRN-LL-008-01, gitorybartell@gmail.com
+RPP already exists for: OURL-BLU-LL-020-01, gitorybartell@gmail.com
+{ seasonsUID: 'DEVA-GRN-347-018-01', warehouseLocation: null }
+{
+  id: 'ckshubkk62143252frmvdfgzhe4',
+  createdAt: 2021-08-18T18:40:40.662Z,
+  shippingMethod: null,
+  newProducts: [ { seasonsUID: 'DEVA-GRN-347-018-01' } ],
+  status: 'Completed',
+  returnedProducts: [
+    { seasonsUID: 'HPIM-GRN-3529-002-01' },
+    { seasonsUID: 'PHIP-BLU-345-013-01' }
+  ],
+  sentPackage: {
+    id: 'ckshubkk62143262frm14639ehw',
+    enteredDeliverySystemAt: null,
+    deliveredAt: null,
+    items: [ [Object] ]
+  },
+  returnPackages: [
+    {
+      id: 'ckshubkk62143302frmdyu1tzu2',
+      items: [Array],
+      deliveredAt: null,
+      enteredDeliverySystemAt: null
+    }
+  ],
+  receipt: {
+    createdAt: 2021-10-05T17:43:11.218Z,
+    items: [ [Object], [Object] ]
+  }
+}
+RPP already exists for: RHUD-RED-3432-020-02, gitorybartell@gmail.com
+RPP already exists for: PAAN-RED-MM-001-01, jasemani63@gmail.com
+RPP already exists for: FOGD-BWN-MM-003-01, jasemani63@gmail.com
+RPP already exists for: PRDA-BLU-MM-020-01, jasemani63@gmail.com
+RPP already exists for: NOAH-BLK-XXL-001-01, rocky@rockygarza.com
+RPP already exists for: DVNN-PRP-3227-028-01, aptokar11@gmail.com
+RPP already exists for: OASC-BLK-MM-015-02, aptokar11@gmail.com
+RPP already exists for: ERL1-PRP-MM-011-01, aptokar11@gmail.com
+RPP already exists for: MRNI-BLK-SS-025-01, sohroden@gmail.com
+RPP already exists for: CSBA-BLK-MM-040-02, imjeffreyskinner@gmail.com
+RPP already exists for: STIS-BLK-MM-003-01, whrbsghd@gmail.com
+RPP already exists for: RHUD-BWN-SS-023-01, whrbsghd@gmail.com
+RPP already exists for: ACNE-YLW-XL-011-01, bryanjosephperry@gmail.com
+RPP already exists for: MTAL-GRY-UNI-004-08, bryanjosephperry@gmail.com
+RPP already exists for: OURL-BLK-XL-050-01, bryanjosephperry@gmail.com
+RPP already exists for: CSBA-RED-MM-021-01, lucacago@hotmail.com
+RPP already exists for: ERL1-ORG-MM-010-01, lucacago@hotmail.com
+RPP already exists for: RHUD-GRN-LL-003-01, raymondngo2@hotmail.com
+RPP already exists for: PRDA-GRY-3429-025-01, raymondngo2@hotmail.com
+RPP already exists for: STIS-ORG-MM-009-01, sumeet724@gmail.com
+RPP already exists for: AMBU-BLK-MM-004-01, sumeet724@gmail.com
+RPP already exists for: NOAH-BLK-MM-004-01, sumeet724@gmail.com
+RPP already exists for: STIS-RED-MM-016-01, sumeet724@gmail.com
+RPP already exists for: OASC-GRN-MM-010-05, sumeet724@gmail.com
+RPP already exists for: ACNE-BLK-MM-026-02, sumeet724@gmail.com
+RPP already exists for: CSBA-BLK-SS-042-01, colewphillips1997@gmail.com
+{
+  seasonsUID: 'DEVA-BWN-MM-007-01',
+  warehouseLocation: { id: 'ckt4onfll2700wum9a6dy7ndj' }
+}
+{
+  id: 'ckwlda7dz00jy1juqbhul3iak',
+  createdAt: 2021-11-30T00:33:37.516Z,
+  shippingMethod: { id: 'ckhdnkufy07150733vtyimiw3' },
+  newProducts: [
+    { seasonsUID: 'DEVA-BWN-MM-007-01' },
+    { seasonsUID: 'MRNI-WTE-XL-009-01' },
+    { seasonsUID: 'DEVA-GRN-MM-017-01' }
+  ],
+  status: 'Completed',
+  returnedProducts: [],
+  sentPackage: {
+    id: 'ckwlda7e41406914vuqlbxh269l',
+    enteredDeliverySystemAt: null,
+    deliveredAt: null,
+    items: [ [Object], [Object], [Object] ]
+  },
+  returnPackages: [
+    {
+      id: 'ckwlda7e51406954vuqal03biat',
+      items: [],
+      deliveredAt: null,
+      enteredDeliverySystemAt: null
+    }
+  ],
+  receipt: null
+}
+{
+  seasonsUID: 'MRNI-WTE-XL-009-01',
+  warehouseLocation: { id: 'ckt4oo6v05085wum96ftj0gi5' }
+}
+{
+  id: 'ckwlda7dz00jy1juqbhul3iak',
+  createdAt: 2021-11-30T00:33:37.516Z,
+  shippingMethod: { id: 'ckhdnkufy07150733vtyimiw3' },
+  newProducts: [
+    { seasonsUID: 'DEVA-BWN-MM-007-01' },
+    { seasonsUID: 'MRNI-WTE-XL-009-01' },
+    { seasonsUID: 'DEVA-GRN-MM-017-01' }
+  ],
+  status: 'Completed',
+  returnedProducts: [],
+  sentPackage: {
+    id: 'ckwlda7e41406914vuqlbxh269l',
+    enteredDeliverySystemAt: null,
+    deliveredAt: null,
+    items: [ [Object], [Object], [Object] ]
+  },
+  returnPackages: [
+    {
+      id: 'ckwlda7e51406954vuqal03biat',
+      items: [],
+      deliveredAt: null,
+      enteredDeliverySystemAt: null
+    }
+  ],
+  receipt: null
+}
+{
+  seasonsUID: 'DEVA-GRN-MM-017-01',
+  warehouseLocation: { id: 'ckt4ond8b2439wum9lhcx2ldy' }
+}
+{
+  id: 'ckwlda7dz00jy1juqbhul3iak',
+  createdAt: 2021-11-30T00:33:37.516Z,
+  shippingMethod: { id: 'ckhdnkufy07150733vtyimiw3' },
+  newProducts: [
+    { seasonsUID: 'DEVA-BWN-MM-007-01' },
+    { seasonsUID: 'MRNI-WTE-XL-009-01' },
+    { seasonsUID: 'DEVA-GRN-MM-017-01' }
+  ],
+  status: 'Completed',
+  returnedProducts: [],
+  sentPackage: {
+    id: 'ckwlda7e41406914vuqlbxh269l',
+    enteredDeliverySystemAt: null,
+    deliveredAt: null,
+    items: [ [Object], [Object], [Object] ]
+  },
+  returnPackages: [
+    {
+      id: 'ckwlda7e51406954vuqal03biat',
+      items: [],
+      deliveredAt: null,
+      enteredDeliverySystemAt: null
+    }
+  ],
+  receipt: null
+}
+RPP already exists for: CRGR-BLK-3230-029-02, williamarmstrong@outlook.com
+RPP already exists for: NANU-BWN-MM-008-03, tgray12889@gmail.com
+RPP already exists for: BODE-PRP-326-030-04, tgray12889@gmail.com
+RPP already exists for: BODE-RED-MM-038-03, tgray12889@gmail.com
+RPP already exists for: JOEL-BLK-LL-012-01, whrandall@gmail.com
+RPP already exists for: CSBA-GRN-LL-008-01, whrandall@gmail.com
+RPP already exists for: VNTG-WTE-LL-089-01, whrandall@gmail.com
+RPP already exists for: STIS-GRN-3032-019-01, n.zenere@gmail.com
+RPP already exists for: YSL-BLU-MM-001-01, aldouskelly@gmail.com
+RPP already exists for: MRNI-GRN-MM-013-01, aldouskelly@gmail.com
+RPP already exists for: MTRO-GRY-3232-020-01, aldouskelly@gmail.com
+RPP already exists for: CSBA-GRN-SS-035-01, aldouskelly@gmail.com
+{ seasonsUID: 'PRDA-BLU-LL-002-01', warehouseLocation: null }
+{
+  id: 'ckwb3vpc100ad1jzoepjaf56s',
+  createdAt: 2021-11-22T20:12:42.631Z,
+  shippingMethod: { id: 'ckhdnkufy07150733vtyimiw3' },
+  newProducts: [ { seasonsUID: 'PRDA-BLU-LL-002-01' } ],
+  status: 'Completed',
+  returnedProducts: [
+    { seasonsUID: 'PRDA-BLU-LL-002-01' },
+    { seasonsUID: 'MRNI-GRN-MM-022-02' },
+    { seasonsUID: 'RHUD-BLU-MM-021-02' }
+  ],
+  sentPackage: {
+    id: 'ckwb3vpc74259564wzoj27dsark',
+    enteredDeliverySystemAt: 2021-11-23T03:43:05.899Z,
+    deliveredAt: 2021-11-23T18:43:36.627Z,
+    items: [ [Object] ]
+  },
+  returnPackages: [
+    {
+      id: 'cksgia9a71746072gxk641pivxs',
+      items: [Array],
+      deliveredAt: null,
+      enteredDeliverySystemAt: null
+    },
+    {
+      id: 'ckve3od621073412fyftv53ogrs',
+      items: [Array],
+      deliveredAt: null,
+      enteredDeliverySystemAt: null
+    },
+    {
+      id: 'ckvjum4352673212eymplojev6s',
+      items: [Array],
+      deliveredAt: 2021-11-30T20:51:28.202Z,
+      enteredDeliverySystemAt: 2021-11-29T22:05:18.269Z
+    },
+    {
+      id: 'ckwb3vpc84259604wzo38me2mwf',
+      items: [Array],
+      deliveredAt: 2021-11-30T20:48:08.781Z,
+      enteredDeliverySystemAt: 2021-11-29T22:02:48.050Z
+    }
+  ],
+  receipt: { createdAt: 2021-11-30T18:20:04.759Z, items: [ [Object] ] }
+}
+{ seasonsUID: 'MRNI-GRN-MM-022-02', warehouseLocation: null }
+{
+  id: 'ckve3od5y00ns0vyfao1a5kh2',
+  createdAt: 2021-10-30T17:50:36.457Z,
+  shippingMethod: { id: 'ckhdnkufy07150733vtyimiw3' },
+  newProducts: [ { seasonsUID: 'MRNI-GRN-MM-022-02' } ],
+  status: 'Completed',
+  returnedProducts: [
+    { seasonsUID: 'MRNI-WTE-XL-009-01' },
+    { seasonsUID: 'MRNI-BLU-3432-015-01' }
+  ],
+  sentPackage: {
+    id: 'ckve3od611073372fyfxidgrrdw',
+    enteredDeliverySystemAt: 2021-11-02T02:08:33.349Z,
+    deliveredAt: 2021-11-02T22:34:41.991Z,
+    items: [ [Object] ]
+  },
+  returnPackages: [
+    {
+      id: 'cksgia9a71746072gxk641pivxs',
+      items: [Array],
+      deliveredAt: null,
+      enteredDeliverySystemAt: null
+    },
+    {
+      id: 'ckupzaycv114342es80q56mc60',
+      items: [Array],
+      deliveredAt: 2021-11-03T16:27:41.243Z,
+      enteredDeliverySystemAt: 2021-11-03T01:27:11.250Z
+    },
+    {
+      id: 'ckve3od621073412fyftv53ogrs',
+      items: [Array],
+      deliveredAt: null,
+      enteredDeliverySystemAt: null
+    }
+  ],
+  receipt: {
+    createdAt: 2021-11-03T18:19:32.658Z,
+    items: [ [Object], [Object] ]
+  }
+}
+{ seasonsUID: 'RHUD-BLU-MM-021-02', warehouseLocation: null }
+{
+  id: 'ckvjum432001s0vyma989bwt1',
+  createdAt: 2021-11-03T18:23:31.889Z,
+  shippingMethod: { id: 'ckhdnkufy07150733vtyimiw3' },
+  newProducts: [ { seasonsUID: 'RHUD-BLU-MM-021-02' } ],
+  status: 'Completed',
+  returnedProducts: [
+    { seasonsUID: 'MRNI-BLU-LL-019-01' },
+    { seasonsUID: 'CRGR-ORG-XL-032-01' }
+  ],
+  sentPackage: {
+    id: 'ckvjum4352673172eymf6y3vv6m',
+    enteredDeliverySystemAt: 2021-11-04T01:53:55.352Z,
+    deliveredAt: 2021-11-04T16:54:26.990Z,
+    items: [ [Object] ]
+  },
+  returnPackages: [
+    {
+      id: 'cksgia9a71746072gxk641pivxs',
+      items: [Array],
+      deliveredAt: null,
+      enteredDeliverySystemAt: null
+    },
+    {
+      id: 'ckve3od621073412fyftv53ogrs',
+      items: [Array],
+      deliveredAt: null,
+      enteredDeliverySystemAt: null
+    },
+    {
+      id: 'ckvjum4352673212eymplojev6s',
+      items: [Array],
+      deliveredAt: 2021-11-30T20:51:28.202Z,
+      enteredDeliverySystemAt: 2021-11-29T22:05:18.269Z
+    }
+  ],
+  receipt: {
+    createdAt: 2021-11-18T18:00:40.301Z,
+    items: [ [Object], [Object] ]
+  }
+}
+{ seasonsUID: 'PHIP-WTE-MM-007-02', warehouseLocation: null }
+{
+  id: 'ckwm71gm300gr1j0m8p767fln',
+  createdAt: 2021-11-30T14:26:38.047Z,
+  shippingMethod: { id: 'ckhdnkxjp071h07334tf5dze4' },
+  newProducts: [
+    { seasonsUID: 'PHIP-WTE-MM-007-02' },
+    { seasonsUID: 'OASC-GRN-SS-005-02' }
+  ],
+  status: 'Delivered',
+  returnedProducts: [],
+  sentPackage: {
+    id: 'ckwm71gm712877074w0m9xrmkjlf',
+    enteredDeliverySystemAt: null,
+    deliveredAt: null,
+    items: [ [Object], [Object] ]
+  },
+  returnPackages: [
+    {
+      id: 'ckwm71gm712877114w0mrqdarelt',
+      items: [],
+      deliveredAt: null,
+      enteredDeliverySystemAt: null
+    }
+  ],
+  receipt: null
+}
+{ seasonsUID: 'OASC-GRN-SS-005-02', warehouseLocation: null }
+{
+  id: 'ckwm71gm300gr1j0m8p767fln',
+  createdAt: 2021-11-30T14:26:38.047Z,
+  shippingMethod: { id: 'ckhdnkxjp071h07334tf5dze4' },
+  newProducts: [
+    { seasonsUID: 'PHIP-WTE-MM-007-02' },
+    { seasonsUID: 'OASC-GRN-SS-005-02' }
+  ],
+  status: 'Delivered',
+  returnedProducts: [],
+  sentPackage: {
+    id: 'ckwm71gm712877074w0m9xrmkjlf',
+    enteredDeliverySystemAt: null,
+    deliveredAt: null,
+    items: [ [Object], [Object] ]
+  },
+  returnPackages: [
+    {
+      id: 'ckwm71gm712877114w0mrqdarelt',
+      items: [],
+      deliveredAt: null,
+      enteredDeliverySystemAt: null
+    }
+  ],
+  receipt: null
+}
+RPP already exists for: MTRO-GRN-MM-001-01, quanmyrik@gmail.com
+RPP already exists for: JQMU-BLU-MM-031-01, quanmyrik@gmail.com
+RPP already exists for: RHUD-RED-MM-022-01, quanmyrik@gmail.com
+{ seasonsUID: 'MRNI-BLK-MM-025-01', warehouseLocation: null }
+{
+  id: 'ckwb4xdcz001j1j0j4ovr1hzb',
+  createdAt: 2021-11-22T20:42:00.104Z,
+  shippingMethod: { id: 'ckhdnkxjp071h07334tf5dzo7' },
+  newProducts: [
+    { seasonsUID: 'RHUD-RED-MM-022-01' },
+    { seasonsUID: 'MRNI-BLK-MM-025-01' }
+  ],
+  status: 'Delivered',
+  returnedProducts: [],
+  sentPackage: {
+    id: 'ckwb4xdew1123544w0jkiilpd5h',
+    enteredDeliverySystemAt: 2021-11-23T04:12:39.477Z,
+    deliveredAt: 2021-11-23T19:13:10.451Z,
+    items: [ [Object] ]
+  },
+  returnPackages: [
+    {
+      id: 'cktm6vapz9044302f1w2v39d8u3',
+      items: [],
+      deliveredAt: null,
+      enteredDeliverySystemAt: null
+    },
+    {
+      id: 'ckwb4uwsi1039994xy8y9e3lucg',
+      items: [],
+      deliveredAt: null,
+      enteredDeliverySystemAt: null
+    },
+    {
+      id: 'ckwb4xdex1123584w0jo634z3si',
+      items: [],
+      deliveredAt: null,
+      enteredDeliverySystemAt: null
+    }
+  ],
+  receipt: null
+}
+RPP already exists for: KPTL-BWN-SS-010-01, micahclarkx@gmail.com
+RPP already exists for: VNTG-BLK-XL-007-01, mjfvisuals@gmail.com
+{ seasonsUID: 'VNTG-GRN-XL-011-01', warehouseLocation: null }
+{
+  id: 'ckwkq47dw00ax1jumh8ip45tc',
+  createdAt: 2021-11-29T13:45:06.408Z,
+  shippingMethod: { id: 'ckhdnkufy07150733vtyimiw3' },
+  newProducts: [
+    { seasonsUID: 'VNTG-BLK-XL-007-01' },
+    { seasonsUID: 'VNTG-GRN-XL-011-01' },
+    { seasonsUID: 'RHUD-BLK-368-018-01' }
+  ],
+  status: 'Packed',
+  returnedProducts: [],
+  sentPackage: {
+    id: 'ckwkq47e18417574vum1lx58di4',
+    enteredDeliverySystemAt: null,
+    deliveredAt: null,
+    items: [ [Object], [Object], [Object] ]
+  },
+  returnPackages: [
+    {
+      id: 'ckwkq47e18417614vumxt3m485w',
+      items: [],
+      deliveredAt: null,
+      enteredDeliverySystemAt: null
+    }
+  ],
+  receipt: null
+}
+{ seasonsUID: 'VNTG-WTE-LL-021-01', warehouseLocation: null }
+{
+  id: 'ckwkv23j700bf1juqcgl08bb1',
+  createdAt: 2021-11-29T16:03:26.184Z,
+  shippingMethod: { id: 'ckhdnkufy07150733vtyimiw3' },
+  newProducts: [ { seasonsUID: 'VNTG-WTE-LL-021-01' } ],
+  status: 'Packed',
+  returnedProducts: [],
+  sentPackage: {
+    id: 'ckwkv23jc10829934vuquxd0ap1t',
+    enteredDeliverySystemAt: null,
+    deliveredAt: null,
+    items: [ [Object] ]
+  },
+  returnPackages: [
+    {
+      id: 'ckwkq47e18417614vumxt3m485w',
+      items: [],
+      deliveredAt: null,
+      enteredDeliverySystemAt: null
+    },
+    {
+      id: 'ckwkv23jc10829974vuqntnxjc5g',
+      items: [],
+      deliveredAt: null,
+      enteredDeliverySystemAt: null
+    }
+  ],
+  receipt: null
+}
+{ seasonsUID: 'RHUD-BLK-368-018-01', warehouseLocation: null }
+{
+  id: 'ckwkq47dw00ax1jumh8ip45tc',
+  createdAt: 2021-11-29T13:45:06.408Z,
+  shippingMethod: { id: 'ckhdnkufy07150733vtyimiw3' },
+  newProducts: [
+    { seasonsUID: 'VNTG-BLK-XL-007-01' },
+    { seasonsUID: 'VNTG-GRN-XL-011-01' },
+    { seasonsUID: 'RHUD-BLK-368-018-01' }
+  ],
+  status: 'Packed',
+  returnedProducts: [],
+  sentPackage: {
+    id: 'ckwkq47e18417574vum1lx58di4',
+    enteredDeliverySystemAt: null,
+    deliveredAt: null,
+    items: [ [Object], [Object], [Object] ]
+  },
+  returnPackages: [
+    {
+      id: 'ckwkq47e18417614vumxt3m485w',
+      items: [],
+      deliveredAt: null,
+      enteredDeliverySystemAt: null
+    }
+  ],
+  receipt: null
+}
+{ seasonsUID: 'ACNE-RED-SS-012-01', warehouseLocation: null }
+{
+  id: 'ckw1hgj7x001646zx31cn3ci4',
+  createdAt: 2021-11-16T02:35:07.729Z,
+  shippingMethod: { id: 'ckhdnkxjp071h07334tf5dze4' },
+  newProducts: [
+    { seasonsUID: 'ACNE-RED-SS-012-01' },
+    { seasonsUID: 'AURA-GRY-SS-007-01' }
+  ],
+  status: 'Delivered',
+  returnedProducts: [],
+  sentPackage: {
+    id: 'ckw1hgj82907748qzxujkcrxia',
+    enteredDeliverySystemAt: null,
+    deliveredAt: null,
+    items: [ [Object], [Object] ]
+  },
+  returnPackages: [
+    {
+      id: 'ckvhri7j31043882eusqfergy6x',
+      items: [Array],
+      deliveredAt: null,
+      enteredDeliverySystemAt: null
+    },
+    {
+      id: 'ckw1hgj82907788qzxpaq3d9y0',
+      items: [],
+      deliveredAt: null,
+      enteredDeliverySystemAt: null
+    }
+  ],
+  receipt: null
+}
+{ seasonsUID: 'AURA-GRY-SS-007-01', warehouseLocation: null }
+{
+  id: 'ckw1hgj7x001646zx31cn3ci4',
+  createdAt: 2021-11-16T02:35:07.729Z,
+  shippingMethod: { id: 'ckhdnkxjp071h07334tf5dze4' },
+  newProducts: [
+    { seasonsUID: 'ACNE-RED-SS-012-01' },
+    { seasonsUID: 'AURA-GRY-SS-007-01' }
+  ],
+  status: 'Delivered',
+  returnedProducts: [],
+  sentPackage: {
+    id: 'ckw1hgj82907748qzxujkcrxia',
+    enteredDeliverySystemAt: null,
+    deliveredAt: null,
+    items: [ [Object], [Object] ]
+  },
+  returnPackages: [
+    {
+      id: 'ckvhri7j31043882eusqfergy6x',
+      items: [Array],
+      deliveredAt: null,
+      enteredDeliverySystemAt: null
+    },
+    {
+      id: 'ckw1hgj82907788qzxpaq3d9y0',
+      items: [],
+      deliveredAt: null,
+      enteredDeliverySystemAt: null
+    }
+  ],
+  receipt: null
+}
+{ seasonsUID: 'HPIM-GRY-3227-007-01', warehouseLocation: null }
+{
+  id: 'ckvhri7iw011n0vus3t1y54sq',
+  createdAt: 2021-11-02T07:20:58.526Z,
+  shippingMethod: { id: 'ckhdnkufy07150733vtyimiw3' },
+  newProducts: [
+    { seasonsUID: 'OURL-BLK-SS-034-01' },
+    { seasonsUID: 'ALDE-GRN-SS-002-01' },
+    { seasonsUID: 'HPIM-GRY-3227-007-01' },
+    { seasonsUID: 'SDAY-BLK-SS-005-01' },
+    { seasonsUID: 'HEPR-ORG-SS-003-01' },
+    { seasonsUID: 'KNKE-GRN-SS-003-01' }
+  ],
+  status: 'Completed',
+  returnedProducts: [
+    { seasonsUID: 'ALDE-GRN-SS-002-01' },
+    { seasonsUID: 'SDAY-BLK-SS-005-01' },
+    { seasonsUID: 'HEPR-ORG-SS-003-01' },
+    { seasonsUID: 'KNKE-GRN-SS-003-01' }
+  ],
+  sentPackage: {
+    id: 'ckvhri7j21043842eus1dt06zr6',
+    enteredDeliverySystemAt: 2021-11-03T00:07:07.545Z,
+    deliveredAt: 2021-11-03T18:52:48.071Z,
+    items: [ [Object], [Object], [Object], [Object], [Object], [Object] ]
+  },
+  returnPackages: [
+    {
+      id: 'ckvhri7j31043882eusqfergy6x',
+      items: [Array],
+      deliveredAt: null,
+      enteredDeliverySystemAt: null
+    }
+  ],
+  receipt: {
+    createdAt: 2021-11-16T21:10:20.261Z,
+    items: [ [Object], [Object] ]
+  }
+}
+{ seasonsUID: 'OURL-BLK-SS-034-01', warehouseLocation: null }
+{
+  id: 'ckvhri7iw011n0vus3t1y54sq',
+  createdAt: 2021-11-02T07:20:58.526Z,
+  shippingMethod: { id: 'ckhdnkufy07150733vtyimiw3' },
+  newProducts: [
+    { seasonsUID: 'OURL-BLK-SS-034-01' },
+    { seasonsUID: 'ALDE-GRN-SS-002-01' },
+    { seasonsUID: 'HPIM-GRY-3227-007-01' },
+    { seasonsUID: 'SDAY-BLK-SS-005-01' },
+    { seasonsUID: 'HEPR-ORG-SS-003-01' },
+    { seasonsUID: 'KNKE-GRN-SS-003-01' }
+  ],
+  status: 'Completed',
+  returnedProducts: [
+    { seasonsUID: 'ALDE-GRN-SS-002-01' },
+    { seasonsUID: 'SDAY-BLK-SS-005-01' },
+    { seasonsUID: 'HEPR-ORG-SS-003-01' },
+    { seasonsUID: 'KNKE-GRN-SS-003-01' }
+  ],
+  sentPackage: {
+    id: 'ckvhri7j21043842eus1dt06zr6',
+    enteredDeliverySystemAt: 2021-11-03T00:07:07.545Z,
+    deliveredAt: 2021-11-03T18:52:48.071Z,
+    items: [ [Object], [Object], [Object], [Object], [Object], [Object] ]
+  },
+  returnPackages: [
+    {
+      id: 'ckvhri7j31043882eusqfergy6x',
+      items: [Array],
+      deliveredAt: null,
+      enteredDeliverySystemAt: null
+    }
+  ],
+  receipt: {
+    createdAt: 2021-11-16T21:10:20.261Z,
+    items: [ [Object], [Object] ]
+  }
+}
+{ seasonsUID: 'AMIR-BLU-LL-005-01', warehouseLocation: null }
+{
+  id: 'ckuk5sbtq00j20vsl14tg5gdc',
+  createdAt: 2021-10-09T18:56:35.298Z,
+  shippingMethod: null,
+  newProducts: [
+    { seasonsUID: 'AMIR-BLU-LL-005-01' },
+    { seasonsUID: 'MRNI-WTE-MM-009-01' }
+  ],
+  status: 'Completed',
+  returnedProducts: [
+    { seasonsUID: 'DEVA-GRN-MM-017-01' },
+    { seasonsUID: 'ERL1-WTE-MM-002-01' },
+    { seasonsUID: 'MTAL-GRY-UNI-001-02' }
+  ],
+  sentPackage: {
+    id: 'ckuk5sbtv16297142eslpxpwf42q',
+    enteredDeliverySystemAt: 2021-10-12T03:13:40.735Z,
+    deliveredAt: 2021-10-15T17:31:58.274Z,
+    items: [ [Object], [Object] ]
+  },
+  returnPackages: [
+    {
+      id: 'cksjz6z4y2918772gwna9u54sa0',
+      items: [Array],
+      deliveredAt: null,
+      enteredDeliverySystemAt: null
+    },
+    {
+      id: 'ckt28irvp1641072e2xlzl0xeqa',
+      items: [],
+      deliveredAt: null,
+      enteredDeliverySystemAt: null
+    },
+    {
+      id: 'ckuk5sbtv16297182eslly6gcqw9',
+      items: [],
+      deliveredAt: null,
+      enteredDeliverySystemAt: null
+    }
+  ],
+  receipt: {
+    createdAt: 2021-10-12T16:42:27.186Z,
+    items: [ [Object], [Object], [Object] ]
+  }
+}
+{ seasonsUID: 'MRNI-WTE-MM-009-01', warehouseLocation: null }
+{
+  id: 'ckuk5sbtq00j20vsl14tg5gdc',
+  createdAt: 2021-10-09T18:56:35.298Z,
+  shippingMethod: null,
+  newProducts: [
+    { seasonsUID: 'AMIR-BLU-LL-005-01' },
+    { seasonsUID: 'MRNI-WTE-MM-009-01' }
+  ],
+  status: 'Completed',
+  returnedProducts: [
+    { seasonsUID: 'DEVA-GRN-MM-017-01' },
+    { seasonsUID: 'ERL1-WTE-MM-002-01' },
+    { seasonsUID: 'MTAL-GRY-UNI-001-02' }
+  ],
+  sentPackage: {
+    id: 'ckuk5sbtv16297142eslpxpwf42q',
+    enteredDeliverySystemAt: 2021-10-12T03:13:40.735Z,
+    deliveredAt: 2021-10-15T17:31:58.274Z,
+    items: [ [Object], [Object] ]
+  },
+  returnPackages: [
+    {
+      id: 'cksjz6z4y2918772gwna9u54sa0',
+      items: [Array],
+      deliveredAt: null,
+      enteredDeliverySystemAt: null
+    },
+    {
+      id: 'ckt28irvp1641072e2xlzl0xeqa',
+      items: [],
+      deliveredAt: null,
+      enteredDeliverySystemAt: null
+    },
+    {
+      id: 'ckuk5sbtv16297182eslly6gcqw9',
+      items: [],
+      deliveredAt: null,
+      enteredDeliverySystemAt: null
+    }
+  ],
+  receipt: {
+    createdAt: 2021-10-12T16:42:27.186Z,
+    items: [ [Object], [Object], [Object] ]
+  }
+}
+{ seasonsUID: 'CSBA-BLK-LL-027-01', warehouseLocation: null }
+{
+  id: 'cku4vt17a00890vtjhmul7265',
+  createdAt: 2021-09-29T02:20:39.388Z,
+  shippingMethod: null,
+  newProducts: [
+    { seasonsUID: 'CSBA-BLK-LL-027-01' },
+    { seasonsUID: 'AURA-BLU-MM-031-01' },
+    { seasonsUID: 'OURL-BLK-3432-030-01' }
+  ],
+  status: 'Completed',
+  returnedProducts: [
+    { seasonsUID: 'CSBA-GRN-347-032-01' },
+    { seasonsUID: 'OURL-WTE-LL-016-01' },
+    { seasonsUID: 'AURA-BLU-MM-031-01' }
+  ],
+  sentPackage: {
+    id: 'cku4vt17g15389932etjt82lq37a',
+    enteredDeliverySystemAt: 2021-09-30T00:51:35.643Z,
+    deliveredAt: 2021-09-30T19:37:17.571Z,
+    items: [ [Object], [Object], [Object] ]
+  },
+  returnPackages: [
+    {
+      id: 'cku4vt17g15389972etjngtky0m9',
+      items: [Array],
+      deliveredAt: null,
+      enteredDeliverySystemAt: null
+    }
+  ],
+  receipt: {
+    createdAt: 2021-10-11T23:47:58.646Z,
+    items: [ [Object], [Object], [Object] ]
+  }
+}
+{ seasonsUID: 'OURL-BLK-3432-030-01', warehouseLocation: null }
+{
+  id: 'cku4vt17a00890vtjhmul7265',
+  createdAt: 2021-09-29T02:20:39.388Z,
+  shippingMethod: null,
+  newProducts: [
+    { seasonsUID: 'CSBA-BLK-LL-027-01' },
+    { seasonsUID: 'AURA-BLU-MM-031-01' },
+    { seasonsUID: 'OURL-BLK-3432-030-01' }
+  ],
+  status: 'Completed',
+  returnedProducts: [
+    { seasonsUID: 'CSBA-GRN-347-032-01' },
+    { seasonsUID: 'OURL-WTE-LL-016-01' },
+    { seasonsUID: 'AURA-BLU-MM-031-01' }
+  ],
+  sentPackage: {
+    id: 'cku4vt17g15389932etjt82lq37a',
+    enteredDeliverySystemAt: 2021-09-30T00:51:35.643Z,
+    deliveredAt: 2021-09-30T19:37:17.571Z,
+    items: [ [Object], [Object], [Object] ]
+  },
+  returnPackages: [
+    {
+      id: 'cku4vt17g15389972etjngtky0m9',
+      items: [Array],
+      deliveredAt: null,
+      enteredDeliverySystemAt: null
+    }
+  ],
+  receipt: {
+    createdAt: 2021-10-11T23:47:58.646Z,
+    items: [ [Object], [Object], [Object] ]
+  }
+}
+{ seasonsUID: 'NANU-BLK-LL-030-01', warehouseLocation: null }
+{
+  id: 'ckunbamla00cp0v1rh3igamu3',
+  createdAt: 2021-10-11T23:54:05.665Z,
+  shippingMethod: null,
+  newProducts: [ { seasonsUID: 'NANU-BLK-LL-030-01' } ],
+  status: 'Delivered',
+  returnedProducts: [],
+  sentPackage: {
+    id: 'ckunbamld13742832f1rumc1o9e5',
+    enteredDeliverySystemAt: null,
+    deliveredAt: null,
+    items: [ [Object] ]
+  },
+  returnPackages: [
+    {
+      id: 'cku4vt17g15389972etjngtky0m9',
+      items: [Array],
+      deliveredAt: null,
+      enteredDeliverySystemAt: null
+    },
+    {
+      id: 'ckunbamld13742872f1rx22yrshn',
+      items: [],
+      deliveredAt: null,
+      enteredDeliverySystemAt: null
+    }
+  ],
+  receipt: null
+}
+{ seasonsUID: 'ACNE-BLK-MM-044-02', warehouseLocation: null }
+{
+  id: 'ckwk6dx31003z1jxd379q0our',
+  createdAt: 2021-11-29T04:32:47.297Z,
+  shippingMethod: { id: 'ckhdnkxjp071h07334tf5dzo7' },
+  newProducts: [ { seasonsUID: 'ACNE-BLK-MM-044-02' } ],
+  status: 'ReturnPending',
+  returnedProducts: [],
+  sentPackage: {
+    id: 'ckwk6dx355345334xxdtqts3jjn',
+    enteredDeliverySystemAt: 2021-11-30T09:08:05.437Z,
+    deliveredAt: 2021-11-30T18:46:13.541Z,
+    items: [ [Object] ]
+  },
+  returnPackages: [
+    {
+      id: 'ckwk6dx365345374xxd6gi4jozf',
+      items: [],
+      deliveredAt: null,
+      enteredDeliverySystemAt: null
+    }
+  ],
+  receipt: null
+}
+{ seasonsUID: 'JDYT-GRN-LL-027-01', warehouseLocation: null }
+{
+  id: 'ckwmic76p00p61j0tc6njeg6s',
+  createdAt: 2021-11-30T19:42:54.821Z,
+  shippingMethod: { id: 'ckhdnkufy07150733vtyimiw3' },
+  newProducts: [ { seasonsUID: 'JDYT-GRN-LL-027-01' } ],
+  status: 'Packed',
+  returnedProducts: [],
+  sentPackage: {
+    id: 'ckwmic76t2069884v0tg0e7plqo',
+    enteredDeliverySystemAt: null,
+    deliveredAt: null,
+    items: [ [Object] ]
+  },
+  returnPackages: [
+    {
+      id: 'ckwk6dx365345374xxd6gi4jozf',
+      items: [],
+      deliveredAt: null,
+      enteredDeliverySystemAt: null
+    },
+    {
+      id: 'ckwmic76u2069924v0t0c9at3n3',
+      items: [],
+      deliveredAt: null,
+      enteredDeliverySystemAt: null
+    }
+  ],
+  receipt: null
+}
+{ seasonsUID: 'CRGR-GRN-XL-033-01', warehouseLocation: null }
+{
+  id: 'ckwk4vdwx003e1jxd06m82j1p',
+  createdAt: 2021-11-29T03:50:23.030Z,
+  shippingMethod: { id: 'ckhdnkufy07150733vtyimiw3' },
+  newProducts: [
+    { seasonsUID: 'CRGR-GRN-XL-033-01' },
+    { seasonsUID: 'JDYT-BLK-XL-022-01' }
+  ],
+  status: 'Shipped',
+  returnedProducts: [],
+  sentPackage: {
+    id: 'ckwk4vdx24405194xxdvt9mvdp5',
+    enteredDeliverySystemAt: 2021-11-30T04:08:19.352Z,
+    deliveredAt: null,
+    items: [ [Object], [Object] ]
+  },
+  returnPackages: [
+    {
+      id: 'ckwk4vdx24405234xxdexsb14j4',
+      items: [],
+      deliveredAt: null,
+      enteredDeliverySystemAt: null
+    }
+  ],
+  receipt: null
+}
+{ seasonsUID: 'JDYT-BLK-XL-022-01', warehouseLocation: null }
+{
+  id: 'ckwk4vdwx003e1jxd06m82j1p',
+  createdAt: 2021-11-29T03:50:23.030Z,
+  shippingMethod: { id: 'ckhdnkufy07150733vtyimiw3' },
+  newProducts: [
+    { seasonsUID: 'CRGR-GRN-XL-033-01' },
+    { seasonsUID: 'JDYT-BLK-XL-022-01' }
+  ],
+  status: 'Shipped',
+  returnedProducts: [],
+  sentPackage: {
+    id: 'ckwk4vdx24405194xxdvt9mvdp5',
+    enteredDeliverySystemAt: 2021-11-30T04:08:19.352Z,
+    deliveredAt: null,
+    items: [ [Object], [Object] ]
+  },
+  returnPackages: [
+    {
+      id: 'ckwk4vdx24405234xxdexsb14j4',
+      items: [],
+      deliveredAt: null,
+      enteredDeliverySystemAt: null
+    }
+  ],
+  receipt: null
+}
+{ seasonsUID: 'MTRO-BLK-3032-007-01', warehouseLocation: null }
+{
+  id: 'ckwl6buj100cm1jv385zq7pca',
+  createdAt: 2021-11-29T21:18:56.850Z,
+  shippingMethod: { id: 'ckhdnkufy07150733vtyimiw3' },
+  newProducts: [
+    { seasonsUID: 'MTRO-BLK-3032-007-01' },
+    { seasonsUID: 'KNKE-BLU-SS-018-01' }
+  ],
+  status: 'Delivered',
+  returnedProducts: [],
+  sentPackage: {
+    id: 'ckwl6buj615976214wv3l6w20qdv',
+    enteredDeliverySystemAt: null,
+    deliveredAt: null,
+    items: [ [Object], [Object] ]
+  },
+  returnPackages: [
+    {
+      id: 'ckwl6buj615976254wv34gmdilvl',
+      items: [],
+      deliveredAt: null,
+      enteredDeliverySystemAt: null
+    }
+  ],
+  receipt: null
+}
+{ seasonsUID: 'KNKE-BLU-SS-018-01', warehouseLocation: null }
+{
+  id: 'ckwl6buj100cm1jv385zq7pca',
+  createdAt: 2021-11-29T21:18:56.850Z,
+  shippingMethod: { id: 'ckhdnkufy07150733vtyimiw3' },
+  newProducts: [
+    { seasonsUID: 'MTRO-BLK-3032-007-01' },
+    { seasonsUID: 'KNKE-BLU-SS-018-01' }
+  ],
+  status: 'Delivered',
+  returnedProducts: [],
+  sentPackage: {
+    id: 'ckwl6buj615976214wv3l6w20qdv',
+    enteredDeliverySystemAt: null,
+    deliveredAt: null,
+    items: [ [Object], [Object] ]
+  },
+  returnPackages: [
+    {
+      id: 'ckwl6buj615976254wv34gmdilvl',
+      items: [],
+      deliveredAt: null,
+      enteredDeliverySystemAt: null
+    }
+  ],
+  receipt: null
+}
+{ seasonsUID: 'DEVA-WTE-XL-014-01', warehouseLocation: null }
+{
+  id: 'ckwjzpsgk00001juc2tv6gvv4',
+  createdAt: 2021-11-29T01:26:03.866Z,
+  shippingMethod: { id: 'ckhdnkufy07150733vtyimiw3' },
+  newProducts: [
+    { seasonsUID: 'DEVA-WTE-XL-014-01' },
+    { seasonsUID: 'BODE-WTE-LL-033-03' }
+  ],
+  status: 'Delivered',
+  returnedProducts: [],
+  sentPackage: {
+    id: 'ckwjzpsgq89444vucf15tw9ew',
+    enteredDeliverySystemAt: 2021-11-30T05:38:20.918Z,
+    deliveredAt: 2021-11-30T19:36:32.433Z,
+    items: [ [Object], [Object] ]
+  },
+  returnPackages: [
+    {
+      id: 'ckwjzpsgr89484vucvf00knqt',
+      items: [],
+      deliveredAt: null,
+      enteredDeliverySystemAt: null
+    }
+  ],
+  receipt: null
+}
+{ seasonsUID: 'BODE-WTE-LL-033-03', warehouseLocation: null }
+{
+  id: 'ckwjzpsgk00001juc2tv6gvv4',
+  createdAt: 2021-11-29T01:26:03.866Z,
+  shippingMethod: { id: 'ckhdnkufy07150733vtyimiw3' },
+  newProducts: [
+    { seasonsUID: 'DEVA-WTE-XL-014-01' },
+    { seasonsUID: 'BODE-WTE-LL-033-03' }
+  ],
+  status: 'Delivered',
+  returnedProducts: [],
+  sentPackage: {
+    id: 'ckwjzpsgq89444vucf15tw9ew',
+    enteredDeliverySystemAt: 2021-11-30T05:38:20.918Z,
+    deliveredAt: 2021-11-30T19:36:32.433Z,
+    items: [ [Object], [Object] ]
+  },
+  returnPackages: [
+    {
+      id: 'ckwjzpsgr89484vucvf00knqt',
+      items: [],
+      deliveredAt: null,
+      enteredDeliverySystemAt: null
+    }
+  ],
+  receipt: null
+}
+{ seasonsUID: 'DVNN-GRN-3431-007-01', warehouseLocation: null }
+{
+  id: 'ckv75m1bh00000vw44ybhdtcc',
+  createdAt: 2021-10-25T21:10:23.794Z,
+  shippingMethod: { id: 'ckhdnkxjp071h07334tf5dzo7' },
+  newProducts: [
+    { seasonsUID: 'DVNN-GRN-3431-007-01' },
+    { seasonsUID: 'JQMU-WTE-LL-003-01' },
+    { seasonsUID: 'DVNN-BLK-LL-010-01' }
+  ],
+  status: 'Delivered',
+  returnedProducts: [],
+  sentPackage: {
+    id: 'ckv75m1bm858172fw4r1m1f8xg',
+    enteredDeliverySystemAt: 2021-10-26T00:55:37.988Z,
+    deliveredAt: 2021-10-28T16:54:59.363Z,
+    items: [ [Object], [Object], [Object] ]
+  },
+  returnPackages: [
+    {
+      id: 'ckqvrgtf1924520qqbcrxrsmu',
+      items: [Array],
+      deliveredAt: null,
+      enteredDeliverySystemAt: null
+    },
+    {
+      id: 'ckv75m1bm858212fw4il3inouu',
+      items: [],
+      deliveredAt: null,
+      enteredDeliverySystemAt: null
+    }
+  ],
+  receipt: null
+}
+{ seasonsUID: 'JQMU-WTE-LL-003-01', warehouseLocation: null }
+{
+  id: 'ckv75m1bh00000vw44ybhdtcc',
+  createdAt: 2021-10-25T21:10:23.794Z,
+  shippingMethod: { id: 'ckhdnkxjp071h07334tf5dzo7' },
+  newProducts: [
+    { seasonsUID: 'DVNN-GRN-3431-007-01' },
+    { seasonsUID: 'JQMU-WTE-LL-003-01' },
+    { seasonsUID: 'DVNN-BLK-LL-010-01' }
+  ],
+  status: 'Delivered',
+  returnedProducts: [],
+  sentPackage: {
+    id: 'ckv75m1bm858172fw4r1m1f8xg',
+    enteredDeliverySystemAt: 2021-10-26T00:55:37.988Z,
+    deliveredAt: 2021-10-28T16:54:59.363Z,
+    items: [ [Object], [Object], [Object] ]
+  },
+  returnPackages: [
+    {
+      id: 'ckqvrgtf1924520qqbcrxrsmu',
+      items: [Array],
+      deliveredAt: null,
+      enteredDeliverySystemAt: null
+    },
+    {
+      id: 'ckv75m1bm858212fw4il3inouu',
+      items: [],
+      deliveredAt: null,
+      enteredDeliverySystemAt: null
+    }
+  ],
+  receipt: null
+}
+{ seasonsUID: 'DVNN-BLK-LL-010-01', warehouseLocation: null }
+{
+  id: 'ckv75m1bh00000vw44ybhdtcc',
+  createdAt: 2021-10-25T21:10:23.794Z,
+  shippingMethod: { id: 'ckhdnkxjp071h07334tf5dzo7' },
+  newProducts: [
+    { seasonsUID: 'DVNN-GRN-3431-007-01' },
+    { seasonsUID: 'JQMU-WTE-LL-003-01' },
+    { seasonsUID: 'DVNN-BLK-LL-010-01' }
+  ],
+  status: 'Delivered',
+  returnedProducts: [],
+  sentPackage: {
+    id: 'ckv75m1bm858172fw4r1m1f8xg',
+    enteredDeliverySystemAt: 2021-10-26T00:55:37.988Z,
+    deliveredAt: 2021-10-28T16:54:59.363Z,
+    items: [ [Object], [Object], [Object] ]
+  },
+  returnPackages: [
+    {
+      id: 'ckqvrgtf1924520qqbcrxrsmu',
+      items: [Array],
+      deliveredAt: null,
+      enteredDeliverySystemAt: null
+    },
+    {
+      id: 'ckv75m1bm858212fw4il3inouu',
+      items: [],
+      deliveredAt: null,
+      enteredDeliverySystemAt: null
+    }
+  ],
+  receipt: null
+}
+{ seasonsUID: 'SNBD-BLU-UNI-003-04', warehouseLocation: null }
+{
+  id: 'ckwl9wi7g00ga1jumexcbgbiw',
+  createdAt: 2021-11-29T22:58:59.573Z,
+  shippingMethod: { id: 'ckhdnkufy07150733vtyimiw3' },
+  newProducts: [ { seasonsUID: 'SNBD-BLU-UNI-003-04' } ],
+  status: 'Packed',
+  returnedProducts: [],
+  sentPackage: {
+    id: 'ckwl9wi9i15602804vum4s56qofm',
+    enteredDeliverySystemAt: null,
+    deliveredAt: null,
+    items: [ [Object] ]
+  },
+  returnPackages: [
+    {
+      id: 'ckwl5cytr449124vucyao7l8dg',
+      items: [],
+      deliveredAt: null,
+      enteredDeliverySystemAt: null
+    },
+    {
+      id: 'ckwl9wi9i15602844vum9apunibu',
+      items: [],
+      deliveredAt: null,
+      enteredDeliverySystemAt: null
+    }
+  ],
+  receipt: null
+}
+{ seasonsUID: 'RHUD-BLK-328-018-01', warehouseLocation: null }
+{
+  id: 'ckwl5cytk00gd1juc1ruhawrb',
+  createdAt: 2021-11-29T20:51:49.454Z,
+  shippingMethod: { id: 'ckhdnkufy07150733vtyimiw3' },
+  newProducts: [
+    { seasonsUID: 'RHUD-BLK-328-018-01' },
+    { seasonsUID: 'OURL-GRY-LL-041-02' }
+  ],
+  status: 'Completed',
+  returnedProducts: [],
+  sentPackage: {
+    id: 'ckwl5cytq449084vuc6xdmznow',
+    enteredDeliverySystemAt: 2021-11-30T09:49:00.311Z,
+    deliveredAt: null,
+    items: [ [Object], [Object] ]
+  },
+  returnPackages: [
+    {
+      id: 'ckwl5cytr449124vucyao7l8dg',
+      items: [],
+      deliveredAt: null,
+      enteredDeliverySystemAt: null
+    }
+  ],
+  receipt: null
+}
+{ seasonsUID: 'OURL-GRY-LL-041-02', warehouseLocation: null }
+{
+  id: 'ckwl5cytk00gd1juc1ruhawrb',
+  createdAt: 2021-11-29T20:51:49.454Z,
+  shippingMethod: { id: 'ckhdnkufy07150733vtyimiw3' },
+  newProducts: [
+    { seasonsUID: 'RHUD-BLK-328-018-01' },
+    { seasonsUID: 'OURL-GRY-LL-041-02' }
+  ],
+  status: 'Completed',
+  returnedProducts: [],
+  sentPackage: {
+    id: 'ckwl5cytq449084vuc6xdmznow',
+    enteredDeliverySystemAt: 2021-11-30T09:49:00.311Z,
+    deliveredAt: null,
+    items: [ [Object], [Object] ]
+  },
+  returnPackages: [
+    {
+      id: 'ckwl5cytr449124vucyao7l8dg',
+      items: [],
+      deliveredAt: null,
+      enteredDeliverySystemAt: null
+    }
+  ],
+  receipt: null
+}
+{ seasonsUID: 'KPTL-PNK-SS-012-01', warehouseLocation: null }
+{
+  id: 'ckpgb2j5y21ig0789sp7bf8f5',
+  createdAt: 2021-06-03T02:54:53.062Z,
+  shippingMethod: null,
+  newProducts: [
+    { seasonsUID: 'KPTL-PNK-SS-012-01' },
+    { seasonsUID: 'ELST-RED-285-009-01' }
+  ],
+  status: 'Completed',
+  returnedProducts: [ { seasonsUID: 'ELST-RED-285-009-01' } ],
+  sentPackage: {
+    id: 'ckpgb2j6121ih0789xikr30pb',
+    enteredDeliverySystemAt: null,
+    deliveredAt: null,
+    items: [ [Object], [Object] ]
+  },
+  returnPackages: [
+    {
+      id: 'ckpgb2j6k21ij0789lqb36twz',
+      items: [Array],
+      deliveredAt: null,
+      enteredDeliverySystemAt: null
+    }
+  ],
+  receipt: { createdAt: 2021-07-21T18:21:50.035Z, items: [ [Object] ] }
+}
+{ seasonsUID: 'OURL-BLK-XL-015-01', warehouseLocation: null }
+{
+  id: 'ckq8c55yx0sfb0757spaoqx5p',
+  createdAt: 2021-06-22T17:42:28.473Z,
+  shippingMethod: null,
+  newProducts: [
+    { seasonsUID: 'OURL-BLK-XL-015-01' },
+    { seasonsUID: 'OASC-BWN-XL-001-02' },
+    { seasonsUID: 'OASC-GRN-365-002-01' }
+  ],
+  status: 'Delivered',
+  returnedProducts: [],
+  sentPackage: {
+    id: 'ckq8c55yz0sfc07577e544i58',
+    enteredDeliverySystemAt: null,
+    deliveredAt: null,
+    items: [ [Object], [Object], [Object] ]
+  },
+  returnPackages: [
+    {
+      id: 'cko0n1fkk21sj0773nk8yrbfz',
+      items: [],
+      deliveredAt: null,
+      enteredDeliverySystemAt: null
+    },
+    {
+      id: 'ckq8c55ze0sfe0757tro8vipp',
+      items: [],
+      deliveredAt: null,
+      enteredDeliverySystemAt: null
+    }
+  ],
+  receipt: null
+}
+{ seasonsUID: 'OASC-BWN-XL-001-02', warehouseLocation: null }
+{
+  id: 'ckq8c55yx0sfb0757spaoqx5p',
+  createdAt: 2021-06-22T17:42:28.473Z,
+  shippingMethod: null,
+  newProducts: [
+    { seasonsUID: 'OURL-BLK-XL-015-01' },
+    { seasonsUID: 'OASC-BWN-XL-001-02' },
+    { seasonsUID: 'OASC-GRN-365-002-01' }
+  ],
+  status: 'Delivered',
+  returnedProducts: [],
+  sentPackage: {
+    id: 'ckq8c55yz0sfc07577e544i58',
+    enteredDeliverySystemAt: null,
+    deliveredAt: null,
+    items: [ [Object], [Object], [Object] ]
+  },
+  returnPackages: [
+    {
+      id: 'cko0n1fkk21sj0773nk8yrbfz',
+      items: [],
+      deliveredAt: null,
+      enteredDeliverySystemAt: null
+    },
+    {
+      id: 'ckq8c55ze0sfe0757tro8vipp',
+      items: [],
+      deliveredAt: null,
+      enteredDeliverySystemAt: null
+    }
+  ],
+  receipt: null
+}
+{ seasonsUID: 'OASC-GRN-365-002-01', warehouseLocation: null }
+{
+  id: 'ckq8c55yx0sfb0757spaoqx5p',
+  createdAt: 2021-06-22T17:42:28.473Z,
+  shippingMethod: null,
+  newProducts: [
+    { seasonsUID: 'OURL-BLK-XL-015-01' },
+    { seasonsUID: 'OASC-BWN-XL-001-02' },
+    { seasonsUID: 'OASC-GRN-365-002-01' }
+  ],
+  status: 'Delivered',
+  returnedProducts: [],
+  sentPackage: {
+    id: 'ckq8c55yz0sfc07577e544i58',
+    enteredDeliverySystemAt: null,
+    deliveredAt: null,
+    items: [ [Object], [Object], [Object] ]
+  },
+  returnPackages: [
+    {
+      id: 'cko0n1fkk21sj0773nk8yrbfz',
+      items: [],
+      deliveredAt: null,
+      enteredDeliverySystemAt: null
+    },
+    {
+      id: 'ckq8c55ze0sfe0757tro8vipp',
+      items: [],
+      deliveredAt: null,
+      enteredDeliverySystemAt: null
+    }
+  ],
+  receipt: null
+}
+{ seasonsUID: 'SNBD-BLK-UNI-004-04', warehouseLocation: null }
+{
+  id: 'ckqmzzh8c7225622x8wcqfp2yc',
+  createdAt: 2021-07-02T23:58:40.380Z,
+  shippingMethod: null,
+  newProducts: [ { seasonsUID: 'SNBD-BLK-UNI-004-04' } ],
+  status: 'Delivered',
+  returnedProducts: [],
+  sentPackage: {
+    id: 'ckqmzzh8c7225722x8sokm9mdx',
+    enteredDeliverySystemAt: null,
+    deliveredAt: null,
+    items: [ [Object] ]
+  },
+  returnPackages: [
+    {
+      id: 'ckqmzzh8c7226122x84a4logbr',
+      items: [],
+      deliveredAt: null,
+      enteredDeliverySystemAt: null
+    }
+  ],
+  receipt: null
+}
+{ seasonsUID: 'STIS-GRN-LL-002-01', warehouseLocation: null }
+{
+  id: 'ckp93c0qy1lg80505j1q2ytlv',
+  createdAt: 2021-05-29T01:43:55.593Z,
+  shippingMethod: null,
+  newProducts: [
+    { seasonsUID: 'STIS-GRN-LL-002-01' },
+    { seasonsUID: 'STIS-BLK-LL-003-01' },
+    { seasonsUID: 'AMIR-BLU-MM-001-01' }
+  ],
+  status: 'Delivered',
+  returnedProducts: [],
+  sentPackage: {
+    id: 'ckp93c0r31lg9050593xa8geo',
+    enteredDeliverySystemAt: null,
+    deliveredAt: null,
+    items: [ [Object], [Object], [Object] ]
+  },
+  returnPackages: [
+    {
+      id: 'ckp93c0rp1lgb05057t2r68hq',
+      items: [],
+      deliveredAt: null,
+      enteredDeliverySystemAt: null
+    }
+  ],
+  receipt: null
+}
+{ seasonsUID: 'STIS-BLK-LL-003-01', warehouseLocation: null }
+{
+  id: 'ckp93c0qy1lg80505j1q2ytlv',
+  createdAt: 2021-05-29T01:43:55.593Z,
+  shippingMethod: null,
+  newProducts: [
+    { seasonsUID: 'STIS-GRN-LL-002-01' },
+    { seasonsUID: 'STIS-BLK-LL-003-01' },
+    { seasonsUID: 'AMIR-BLU-MM-001-01' }
+  ],
+  status: 'Delivered',
+  returnedProducts: [],
+  sentPackage: {
+    id: 'ckp93c0r31lg9050593xa8geo',
+    enteredDeliverySystemAt: null,
+    deliveredAt: null,
+    items: [ [Object], [Object], [Object] ]
+  },
+  returnPackages: [
+    {
+      id: 'ckp93c0rp1lgb05057t2r68hq',
+      items: [],
+      deliveredAt: null,
+      enteredDeliverySystemAt: null
+    }
+  ],
+  receipt: null
+}
+{ seasonsUID: 'AMIR-BLU-MM-001-01', warehouseLocation: null }
+{
+  id: 'ckp93c0qy1lg80505j1q2ytlv',
+  createdAt: 2021-05-29T01:43:55.593Z,
+  shippingMethod: null,
+  newProducts: [
+    { seasonsUID: 'STIS-GRN-LL-002-01' },
+    { seasonsUID: 'STIS-BLK-LL-003-01' },
+    { seasonsUID: 'AMIR-BLU-MM-001-01' }
+  ],
+  status: 'Delivered',
+  returnedProducts: [],
+  sentPackage: {
+    id: 'ckp93c0r31lg9050593xa8geo',
+    enteredDeliverySystemAt: null,
+    deliveredAt: null,
+    items: [ [Object], [Object], [Object] ]
+  },
+  returnPackages: [
+    {
+      id: 'ckp93c0rp1lgb05057t2r68hq',
+      items: [],
+      deliveredAt: null,
+      enteredDeliverySystemAt: null
+    }
+  ],
+  receipt: null
+}
+{ seasonsUID: 'PRDA-BLU-MM-002-01', warehouseLocation: null }
+{
+  id: 'ckwb3esjc008e1jyjhkha60zo',
+  createdAt: 2021-11-22T19:59:33.629Z,
+  shippingMethod: { id: 'ckhdnkufy07150733vtyimiw3' },
+  newProducts: [ { seasonsUID: 'PRDA-BLU-MM-002-01' } ],
+  status: 'Delivered',
+  returnedProducts: [],
+  sentPackage: {
+    id: 'ckwb3esjh3096894yyjqk4h5a51',
+    enteredDeliverySystemAt: 2021-11-23T07:15:21.279Z,
+    deliveredAt: 2021-11-24T02:03:53.279Z,
+    items: [ [Object] ]
+  },
+  returnPackages: [
+    {
+      id: 'ckuirvkml303412exnqe2hrkof',
+      items: [],
+      deliveredAt: null,
+      enteredDeliverySystemAt: null
+    },
+    {
+      id: 'ckvsvqlbg7149803rs4hxe184al',
+      items: [],
+      deliveredAt: null,
+      enteredDeliverySystemAt: null
+    },
+    {
+      id: 'ckwb3esji3096934yyjyza0h7a1',
+      items: [],
+      deliveredAt: null,
+      enteredDeliverySystemAt: null
+    }
+  ],
+  receipt: null
+}
+{ seasonsUID: 'HRNO-BLU-SS-001-01', warehouseLocation: null }
+{
+  id: 'ckvsvqlbc00fk0vs49wg1hi2g',
+  createdAt: 2021-11-10T02:04:56.043Z,
+  shippingMethod: { id: 'ckhdnkxjp071h07334tf5dzo7' },
+  newProducts: [ { seasonsUID: 'HRNO-BLU-SS-001-01' } ],
+  status: 'ReturnPending',
+  returnedProducts: [],
+  sentPackage: {
+    id: 'ckvsvqlbg7149763rs4gpnsdyhi',
+    enteredDeliverySystemAt: 2021-11-11T00:35:57.116Z,
+    deliveredAt: 2021-11-11T19:23:05.116Z,
+    items: [ [Object] ]
+  },
+  returnPackages: [
+    {
+      id: 'ckuirvkml303412exnqe2hrkof',
+      items: [],
+      deliveredAt: null,
+      enteredDeliverySystemAt: null
+    },
+    {
+      id: 'ckvsvqlbg7149803rs4hxe184al',
+      items: [],
+      deliveredAt: null,
+      enteredDeliverySystemAt: null
+    }
+  ],
+  receipt: null
+}
+{ seasonsUID: 'CSBA-WTE-MM-007-02', warehouseLocation: null }
+{
+  id: 'ckuirvkme000s0vxn732e2pqr',
+  createdAt: 2021-10-08T19:39:25.868Z,
+  shippingMethod: null,
+  newProducts: [ { seasonsUID: 'CSBA-WTE-MM-007-02' } ],
+  status: 'ReturnPending',
+  returnedProducts: [],
+  sentPackage: {
+    id: 'ckuirvkmk303372exnzxp7iuxu',
+    enteredDeliverySystemAt: 2021-10-09T03:09:51.687Z,
+    deliveredAt: 2021-10-09T21:55:18.658Z,
+    items: [ [Object] ]
+  },
+  returnPackages: [
+    {
+      id: 'ckuirvkml303412exnqe2hrkof',
+      items: [],
+      deliveredAt: null,
+      enteredDeliverySystemAt: null
+    }
+  ],
+  receipt: null
+}
+{ seasonsUID: 'CSBA-WTE-MM-020-01', warehouseLocation: null }
+{
+  id: 'ckvo4hcfp00980vwwdvau2v5b',
+  createdAt: 2021-11-06T18:10:50.297Z,
+  shippingMethod: { id: 'ckhdnkufy07150733vtyimiw3' },
+  newProducts: [ { seasonsUID: 'CSBA-WTE-MM-020-01' } ],
+  status: 'Shipped',
+  returnedProducts: [],
+  sentPackage: {
+    id: 'ckvo4hcft14533792ewwfodq00iv',
+    enteredDeliverySystemAt: 2021-11-09T02:27:43.889Z,
+    deliveredAt: 2021-11-13T00:20:59.067Z,
+    items: [ [Object] ]
+  },
+  returnPackages: [
+    {
+      id: 'ckvo4hcft14533832eww8vukiyag',
+      items: [],
+      deliveredAt: null,
+      enteredDeliverySystemAt: 2021-11-27T02:03:25.124Z
+    }
+  ],
+  receipt: null
+}
+{ seasonsUID: 'KAYE-BLK-MM-003-01', warehouseLocation: null }
+{
+  id: 'cku6ebaki00000vy3che029uw',
+  createdAt: 2021-09-30T03:46:30.598Z,
+  shippingMethod: null,
+  newProducts: [ { seasonsUID: 'KAYE-BLK-MM-003-01' } ],
+  status: 'Delivered',
+  returnedProducts: [],
+  sentPackage: {
+    id: 'cku6ebakm18592fy3q25snv9p',
+    enteredDeliverySystemAt: 2021-10-02T04:34:35.165Z,
+    deliveredAt: 2021-10-05T22:39:48.742Z,
+    items: [ [Object] ]
+  },
+  returnPackages: [
+    {
+      id: 'cku6ebakm18632fy36n4urt19',
+      items: [],
+      deliveredAt: null,
+      enteredDeliverySystemAt: null
+    }
+  ],
+  receipt: null
+}
+{ seasonsUID: 'STRY-BLK-LL-003-02', warehouseLocation: null }
+{
+  id: 'ckvqy8obi00dn0v0q5028dd53',
+  createdAt: 2021-11-08T17:39:26.627Z,
+  shippingMethod: { id: 'ckhdnkxjp071h07334tf5dzo7' },
+  newProducts: [
+    { seasonsUID: 'STRY-BWN-MM-004-02' },
+    { seasonsUID: 'STRY-BWN-LL-010-02' },
+    { seasonsUID: 'STRY-BLK-LL-003-02' },
+    { seasonsUID: 'STRY-BWN-3427-007-01' }
+  ],
+  status: 'Completed',
+  returnedProducts: [ { seasonsUID: 'STRY-BWN-3427-007-01' } ],
+  sentPackage: {
+    id: 'ckvqy8obn11958332g0qx3vux25g',
+    enteredDeliverySystemAt: 2021-11-09T01:09:58.634Z,
+    deliveredAt: 2021-11-09T16:11:50.865Z,
+    items: [ [Object], [Object], [Object], [Object] ]
+  },
+  returnPackages: [
+    {
+      id: 'ckvqy8obo11958372g0qwd688gtp',
+      items: [Array],
+      deliveredAt: 2021-11-19T16:31:03.361Z,
+      enteredDeliverySystemAt: 2021-11-17T15:41:30.165Z
+    }
+  ],
+  receipt: { createdAt: 2021-11-19T17:34:35.521Z, items: [ [Object] ] }
+}
+{ seasonsUID: 'STRY-BWN-MM-004-02', warehouseLocation: null }
+{
+  id: 'ckvqy8obi00dn0v0q5028dd53',
+  createdAt: 2021-11-08T17:39:26.627Z,
+  shippingMethod: { id: 'ckhdnkxjp071h07334tf5dzo7' },
+  newProducts: [
+    { seasonsUID: 'STRY-BWN-MM-004-02' },
+    { seasonsUID: 'STRY-BWN-LL-010-02' },
+    { seasonsUID: 'STRY-BLK-LL-003-02' },
+    { seasonsUID: 'STRY-BWN-3427-007-01' }
+  ],
+  status: 'Completed',
+  returnedProducts: [ { seasonsUID: 'STRY-BWN-3427-007-01' } ],
+  sentPackage: {
+    id: 'ckvqy8obn11958332g0qx3vux25g',
+    enteredDeliverySystemAt: 2021-11-09T01:09:58.634Z,
+    deliveredAt: 2021-11-09T16:11:50.865Z,
+    items: [ [Object], [Object], [Object], [Object] ]
+  },
+  returnPackages: [
+    {
+      id: 'ckvqy8obo11958372g0qwd688gtp',
+      items: [Array],
+      deliveredAt: 2021-11-19T16:31:03.361Z,
+      enteredDeliverySystemAt: 2021-11-17T15:41:30.165Z
+    }
+  ],
+  receipt: { createdAt: 2021-11-19T17:34:35.521Z, items: [ [Object] ] }
+}
+{ seasonsUID: 'STRY-BWN-LL-010-02', warehouseLocation: null }
+{
+  id: 'ckvqy8obi00dn0v0q5028dd53',
+  createdAt: 2021-11-08T17:39:26.627Z,
+  shippingMethod: { id: 'ckhdnkxjp071h07334tf5dzo7' },
+  newProducts: [
+    { seasonsUID: 'STRY-BWN-MM-004-02' },
+    { seasonsUID: 'STRY-BWN-LL-010-02' },
+    { seasonsUID: 'STRY-BLK-LL-003-02' },
+    { seasonsUID: 'STRY-BWN-3427-007-01' }
+  ],
+  status: 'Completed',
+  returnedProducts: [ { seasonsUID: 'STRY-BWN-3427-007-01' } ],
+  sentPackage: {
+    id: 'ckvqy8obn11958332g0qx3vux25g',
+    enteredDeliverySystemAt: 2021-11-09T01:09:58.634Z,
+    deliveredAt: 2021-11-09T16:11:50.865Z,
+    items: [ [Object], [Object], [Object], [Object] ]
+  },
+  returnPackages: [
+    {
+      id: 'ckvqy8obo11958372g0qwd688gtp',
+      items: [Array],
+      deliveredAt: 2021-11-19T16:31:03.361Z,
+      enteredDeliverySystemAt: 2021-11-17T15:41:30.165Z
+    }
+  ],
+  receipt: { createdAt: 2021-11-19T17:34:35.521Z, items: [ [Object] ] }
+}
+{ seasonsUID: 'YZY-BLK-LL-002-02', warehouseLocation: null }
+{
+  id: 'ckuyi73x300si0vwkhtgtfpse',
+  createdAt: 2021-10-19T19:52:46.749Z,
+  shippingMethod: null,
+  newProducts: [
+    { seasonsUID: 'PHIP-BLK-XL-008-01' },
+    { seasonsUID: 'MRNI-BLU-LL-016-01' },
+    { seasonsUID: 'YZY-BLK-LL-002-02' },
+    { seasonsUID: 'WLSB-RED-LL-015-02' },
+    { seasonsUID: 'OURL-GRY-3430-024-01' },
+    { seasonsUID: 'OURL-BLU-3332-031-02' }
+  ],
+  status: 'Completed',
+  returnedProducts: [
+    { seasonsUID: 'PHIP-BLK-XL-008-01' },
+    { seasonsUID: 'OURL-GRY-3430-024-01' }
+  ],
+  sentPackage: {
+    id: 'ckuyi73x912255332fwkfwdoir6t',
+    enteredDeliverySystemAt: 2021-10-20T03:52:35.854Z,
+    deliveredAt: 2021-10-20T19:00:45.699Z,
+    items: [ [Object], [Object], [Object], [Object], [Object], [Object] ]
+  },
+  returnPackages: [
+    {
+      id: 'ckuyi73xa12255372fwkd7wve84i',
+      items: [Array],
+      deliveredAt: 2021-10-28T17:01:07.551Z,
+      enteredDeliverySystemAt: 2021-10-27T14:41:41.695Z
+    }
+  ],
+  receipt: {
+    createdAt: 2021-10-28T18:24:19.261Z,
+    items: [ [Object], [Object] ]
+  }
+}
+{ seasonsUID: 'KNKE-GRY-3434-008-01', warehouseLocation: null }
+{
+  id: 'ckvjty15u001d0vymg72j815n',
+  createdAt: 2021-11-03T18:04:48.359Z,
+  shippingMethod: { id: 'ckhdnkxjp071h07334tf5dzo7' },
+  newProducts: [
+    { seasonsUID: 'KNKE-GRY-3434-008-01' },
+    { seasonsUID: 'ACNE-GRY-LL-035-02' }
+  ],
+  status: 'Delivered',
+  returnedProducts: [],
+  sentPackage: {
+    id: 'ckvjty1601809902eym391q0xbv',
+    enteredDeliverySystemAt: 2021-11-04T01:35:16.250Z,
+    deliveredAt: 2021-11-04T20:20:54.229Z,
+    items: [ [Object], [Object] ]
+  },
+  returnPackages: [
+    {
+      id: 'ckvjty1601809942eympfzkfby4',
+      items: [],
+      deliveredAt: null,
+      enteredDeliverySystemAt: null
+    }
+  ],
+  receipt: null
+}
+{ seasonsUID: 'OURL-BLU-3332-031-02', warehouseLocation: null }
+{
+  id: 'ckuyi73x300si0vwkhtgtfpse',
+  createdAt: 2021-10-19T19:52:46.749Z,
+  shippingMethod: null,
+  newProducts: [
+    { seasonsUID: 'PHIP-BLK-XL-008-01' },
+    { seasonsUID: 'MRNI-BLU-LL-016-01' },
+    { seasonsUID: 'YZY-BLK-LL-002-02' },
+    { seasonsUID: 'WLSB-RED-LL-015-02' },
+    { seasonsUID: 'OURL-GRY-3430-024-01' },
+    { seasonsUID: 'OURL-BLU-3332-031-02' }
+  ],
+  status: 'Completed',
+  returnedProducts: [
+    { seasonsUID: 'PHIP-BLK-XL-008-01' },
+    { seasonsUID: 'OURL-GRY-3430-024-01' }
+  ],
+  sentPackage: {
+    id: 'ckuyi73x912255332fwkfwdoir6t',
+    enteredDeliverySystemAt: 2021-10-20T03:52:35.854Z,
+    deliveredAt: 2021-10-20T19:00:45.699Z,
+    items: [ [Object], [Object], [Object], [Object], [Object], [Object] ]
+  },
+  returnPackages: [
+    {
+      id: 'ckuyi73xa12255372fwkd7wve84i',
+      items: [Array],
+      deliveredAt: 2021-10-28T17:01:07.551Z,
+      enteredDeliverySystemAt: 2021-10-27T14:41:41.695Z
+    }
+  ],
+  receipt: {
+    createdAt: 2021-10-28T18:24:19.261Z,
+    items: [ [Object], [Object] ]
+  }
+}
+{ seasonsUID: 'MRNI-BLU-LL-016-01', warehouseLocation: null }
+{
+  id: 'ckuyi73x300si0vwkhtgtfpse',
+  createdAt: 2021-10-19T19:52:46.749Z,
+  shippingMethod: null,
+  newProducts: [
+    { seasonsUID: 'PHIP-BLK-XL-008-01' },
+    { seasonsUID: 'MRNI-BLU-LL-016-01' },
+    { seasonsUID: 'YZY-BLK-LL-002-02' },
+    { seasonsUID: 'WLSB-RED-LL-015-02' },
+    { seasonsUID: 'OURL-GRY-3430-024-01' },
+    { seasonsUID: 'OURL-BLU-3332-031-02' }
+  ],
+  status: 'Completed',
+  returnedProducts: [
+    { seasonsUID: 'PHIP-BLK-XL-008-01' },
+    { seasonsUID: 'OURL-GRY-3430-024-01' }
+  ],
+  sentPackage: {
+    id: 'ckuyi73x912255332fwkfwdoir6t',
+    enteredDeliverySystemAt: 2021-10-20T03:52:35.854Z,
+    deliveredAt: 2021-10-20T19:00:45.699Z,
+    items: [ [Object], [Object], [Object], [Object], [Object], [Object] ]
+  },
+  returnPackages: [
+    {
+      id: 'ckuyi73xa12255372fwkd7wve84i',
+      items: [Array],
+      deliveredAt: 2021-10-28T17:01:07.551Z,
+      enteredDeliverySystemAt: 2021-10-27T14:41:41.695Z
+    }
+  ],
+  receipt: {
+    createdAt: 2021-10-28T18:24:19.261Z,
+    items: [ [Object], [Object] ]
+  }
+}
+{ seasonsUID: 'WLSB-RED-LL-015-02', warehouseLocation: null }
+{
+  id: 'ckuyi73x300si0vwkhtgtfpse',
+  createdAt: 2021-10-19T19:52:46.749Z,
+  shippingMethod: null,
+  newProducts: [
+    { seasonsUID: 'PHIP-BLK-XL-008-01' },
+    { seasonsUID: 'MRNI-BLU-LL-016-01' },
+    { seasonsUID: 'YZY-BLK-LL-002-02' },
+    { seasonsUID: 'WLSB-RED-LL-015-02' },
+    { seasonsUID: 'OURL-GRY-3430-024-01' },
+    { seasonsUID: 'OURL-BLU-3332-031-02' }
+  ],
+  status: 'Completed',
+  returnedProducts: [
+    { seasonsUID: 'PHIP-BLK-XL-008-01' },
+    { seasonsUID: 'OURL-GRY-3430-024-01' }
+  ],
+  sentPackage: {
+    id: 'ckuyi73x912255332fwkfwdoir6t',
+    enteredDeliverySystemAt: 2021-10-20T03:52:35.854Z,
+    deliveredAt: 2021-10-20T19:00:45.699Z,
+    items: [ [Object], [Object], [Object], [Object], [Object], [Object] ]
+  },
+  returnPackages: [
+    {
+      id: 'ckuyi73xa12255372fwkd7wve84i',
+      items: [Array],
+      deliveredAt: 2021-10-28T17:01:07.551Z,
+      enteredDeliverySystemAt: 2021-10-27T14:41:41.695Z
+    }
+  ],
+  receipt: {
+    createdAt: 2021-10-28T18:24:19.261Z,
+    items: [ [Object], [Object] ]
+  }
+}
+{ seasonsUID: 'ACNE-GRY-LL-035-02', warehouseLocation: null }
+{
+  id: 'ckvjty15u001d0vymg72j815n',
+  createdAt: 2021-11-03T18:04:48.359Z,
+  shippingMethod: { id: 'ckhdnkxjp071h07334tf5dzo7' },
+  newProducts: [
+    { seasonsUID: 'KNKE-GRY-3434-008-01' },
+    { seasonsUID: 'ACNE-GRY-LL-035-02' }
+  ],
+  status: 'Delivered',
+  returnedProducts: [],
+  sentPackage: {
+    id: 'ckvjty1601809902eym391q0xbv',
+    enteredDeliverySystemAt: 2021-11-04T01:35:16.250Z,
+    deliveredAt: 2021-11-04T20:20:54.229Z,
+    items: [ [Object], [Object] ]
+  },
+  returnPackages: [
+    {
+      id: 'ckvjty1601809942eympfzkfby4',
+      items: [],
+      deliveredAt: null,
+      enteredDeliverySystemAt: null
+    }
+  ],
+  receipt: null
+}
+{ seasonsUID: 'STIS-WTE-MM-030-01', warehouseLocation: null }
+{
+  id: 'cktgdy24900050vymc5t5byyl',
+  createdAt: 2021-09-11T22:54:12.541Z,
+  shippingMethod: null,
+  newProducts: [
+    { seasonsUID: 'BRDE-YLW-MM-005-01' },
+    { seasonsUID: 'STIS-WTE-MM-030-01' }
+  ],
+  status: 'Completed',
+  returnedProducts: [
+    { seasonsUID: 'BRDE-YLW-MM-005-01' },
+    { seasonsUID: 'STIS-WTE-MM-030-01' }
+  ],
+  sentPackage: {
+    id: 'cktgdy24d2161072fymcywdgp88',
+    enteredDeliverySystemAt: 2021-09-14T03:25:34.586Z,
+    deliveredAt: 2021-09-14T22:11:06.399Z,
+    items: [ [Object], [Object] ]
+  },
+  returnPackages: [
+    {
+      id: 'cktgdy24e2161112fymceqigzmg',
+      items: [Array],
+      deliveredAt: 2021-10-01T16:04:06.964Z,
+      enteredDeliverySystemAt: 2021-10-01T16:04:06.964Z
+    }
+  ],
+  receipt: { createdAt: 2021-10-01T17:22:02.506Z, items: [ [Object] ] }
+}
+{ seasonsUID: 'DVNN-BLK-LL-022-01', warehouseLocation: null }
+{
+  id: 'ckvh6med400eo0vusb4ir37az',
+  createdAt: 2021-11-01T21:36:22.076Z,
+  shippingMethod: { id: 'ckhdnkufy07150733vtyimiw3' },
+  newProducts: [
+    { seasonsUID: 'DVNN-BLK-LL-022-01' },
+    { seasonsUID: 'KNKE-ORG-XL-013-01' }
+  ],
+  status: 'Shipped',
+  returnedProducts: [],
+  sentPackage: {
+    id: 'ckvh6med8674072eusf7x9l9ps',
+    enteredDeliverySystemAt: 2021-11-03T01:28:10.414Z,
+    deliveredAt: 2021-11-05T21:02:10.957Z,
+    items: [ [Object], [Object] ]
+  },
+  returnPackages: [
+    {
+      id: 'cko35ijna29yz0760rnjtwgxb',
+      items: [],
+      deliveredAt: null,
+      enteredDeliverySystemAt: null
+    },
+    {
+      id: 'ckqsddb1j1052922v8wcdd3nt1',
+      items: [],
+      deliveredAt: null,
+      enteredDeliverySystemAt: null
+    },
+    {
+      id: 'cks7j7k5q11740692d7qfpa8yqcn',
+      items: [Array],
+      deliveredAt: null,
+      enteredDeliverySystemAt: null
+    },
+    {
+      id: 'cktybd7b53863822exj8gyk1uqy',
+      items: [Array],
+      deliveredAt: null,
+      enteredDeliverySystemAt: null
+    },
+    {
+      id: 'ckvh6med9674112eusus31zmx7',
+      items: [],
+      deliveredAt: null,
+      enteredDeliverySystemAt: 2021-11-30T18:53:35.894Z
+    }
+  ],
+  receipt: null
+}
+{ seasonsUID: 'KNKE-ORG-XL-013-01', warehouseLocation: null }
+{
+  id: 'ckvh6med400eo0vusb4ir37az',
+  createdAt: 2021-11-01T21:36:22.076Z,
+  shippingMethod: { id: 'ckhdnkufy07150733vtyimiw3' },
+  newProducts: [
+    { seasonsUID: 'DVNN-BLK-LL-022-01' },
+    { seasonsUID: 'KNKE-ORG-XL-013-01' }
+  ],
+  status: 'Shipped',
+  returnedProducts: [],
+  sentPackage: {
+    id: 'ckvh6med8674072eusf7x9l9ps',
+    enteredDeliverySystemAt: 2021-11-03T01:28:10.414Z,
+    deliveredAt: 2021-11-05T21:02:10.957Z,
+    items: [ [Object], [Object] ]
+  },
+  returnPackages: [
+    {
+      id: 'cko35ijna29yz0760rnjtwgxb',
+      items: [],
+      deliveredAt: null,
+      enteredDeliverySystemAt: null
+    },
+    {
+      id: 'ckqsddb1j1052922v8wcdd3nt1',
+      items: [],
+      deliveredAt: null,
+      enteredDeliverySystemAt: null
+    },
+    {
+      id: 'cks7j7k5q11740692d7qfpa8yqcn',
+      items: [Array],
+      deliveredAt: null,
+      enteredDeliverySystemAt: null
+    },
+    {
+      id: 'cktybd7b53863822exj8gyk1uqy',
+      items: [Array],
+      deliveredAt: null,
+      enteredDeliverySystemAt: null
+    },
+    {
+      id: 'ckvh6med9674112eusus31zmx7',
+      items: [],
+      deliveredAt: null,
+      enteredDeliverySystemAt: 2021-11-30T18:53:35.894Z
+    }
+  ],
+  receipt: null
+}
+{ seasonsUID: 'ALDE-GRN-SS-007-01', warehouseLocation: null }
+{
+  id: 'ckuimf1fa00ar0vwg2yl0f5kj',
+  createdAt: 2021-10-08T17:06:36.411Z,
+  shippingMethod: null,
+  newProducts: [
+    { seasonsUID: 'SCAI-BLU-SS-001-01' },
+    { seasonsUID: 'ALDE-GRN-SS-007-01' }
+  ],
+  status: 'ReturnPending',
+  returnedProducts: [ { seasonsUID: 'SCAI-BLU-SS-001-01' } ],
+  sentPackage: {
+    id: 'ckuimf1ff14477052fwg4rrnw6r5',
+    enteredDeliverySystemAt: 2021-10-09T00:37:04.270Z,
+    deliveredAt: 2021-10-09T19:22:40.630Z,
+    items: [ [Object], [Object] ]
+  },
+  returnPackages: [
+    {
+      id: 'ckuimf1ff14477092fwgzkukcl01',
+      items: [Array],
+      deliveredAt: 2021-10-27T18:10:34.031Z,
+      enteredDeliverySystemAt: 2021-10-26T00:44:07.487Z
+    }
+  ],
+  receipt: { createdAt: 2021-10-27T17:17:58.021Z, items: [ [Object] ] }
+}
+{ seasonsUID: 'JQMU-BWN-3030-032-01', warehouseLocation: null }
+{
+  id: 'ckwkzujws00dn1jum7hgce3gz',
+  createdAt: 2021-11-29T18:17:32.240Z,
+  shippingMethod: { id: 'ckhdnkufy07150733vtyimiw3' },
+  newProducts: [
+    { seasonsUID: 'JQMU-BWN-3030-032-01' },
+    { seasonsUID: 'KNKE-BLK-SS-014-02' }
+  ],
+  status: 'Delivered',
+  returnedProducts: [],
+  sentPackage: {
+    id: 'ckwkzujww12041034vumyrfl8720',
+    enteredDeliverySystemAt: 2021-11-30T07:24:36.610Z,
+    deliveredAt: 2021-11-30T21:38:58.702Z,
+    items: [ [Object], [Object] ]
+  },
+  returnPackages: [
+    {
+      id: 'ckwkzujww12041074vumpte9r4hg',
+      items: [],
+      deliveredAt: null,
+      enteredDeliverySystemAt: null
+    }
+  ],
+  receipt: null
+}
+{ seasonsUID: 'KNKE-BLK-SS-014-02', warehouseLocation: null }
+{
+  id: 'ckwkzujws00dn1jum7hgce3gz',
+  createdAt: 2021-11-29T18:17:32.240Z,
+  shippingMethod: { id: 'ckhdnkufy07150733vtyimiw3' },
+  newProducts: [
+    { seasonsUID: 'JQMU-BWN-3030-032-01' },
+    { seasonsUID: 'KNKE-BLK-SS-014-02' }
+  ],
+  status: 'Delivered',
+  returnedProducts: [],
+  sentPackage: {
+    id: 'ckwkzujww12041034vumyrfl8720',
+    enteredDeliverySystemAt: 2021-11-30T07:24:36.610Z,
+    deliveredAt: 2021-11-30T21:38:58.702Z,
+    items: [ [Object], [Object] ]
+  },
+  returnPackages: [
+    {
+      id: 'ckwkzujww12041074vumpte9r4hg',
+      items: [],
+      deliveredAt: null,
+      enteredDeliverySystemAt: null
+    }
+  ],
+  receipt: null
+}
+{ seasonsUID: 'MRNI-BLU-LL-007-01', warehouseLocation: null }
+{
+  id: 'ckrwj4dnd894751jwhssw52fky',
+  createdAt: 2021-08-03T20:43:59.641Z,
+  shippingMethod: null,
+  newProducts: [ { seasonsUID: 'MRNI-BLU-LL-007-01' } ],
+  status: 'Delivered',
+  returnedProducts: [],
+  sentPackage: {
+    id: 'ckrwj4dnd894761jwh2q5izjjn',
+    enteredDeliverySystemAt: null,
+    deliveredAt: null,
+    items: [ [Object] ]
+  },
+  returnPackages: [
+    {
+      id: 'ckrwj4dne894801jwhxkusrpul',
+      items: [],
+      deliveredAt: null,
+      enteredDeliverySystemAt: null
+    }
+  ],
+  receipt: null
+}
+{ seasonsUID: 'ACNE-PRP-MM-041-01', warehouseLocation: null }
+{
+  id: 'ckvt3mf5u00i90vy7184544xa',
+  createdAt: 2021-11-10T05:45:38.374Z,
+  shippingMethod: { id: 'ckhdnkxjp071h07334tf5dzo7' },
+  newProducts: [
+    { seasonsUID: 'ACNE-PRP-MM-041-01' },
+    { seasonsUID: 'KNKE-BLK-MM-014-01' }
+  ],
+  status: 'Delivered',
+  returnedProducts: [],
+  sentPackage: {
+    id: 'ckvt3mf5y13473573sy7ies2r4fi',
+    enteredDeliverySystemAt: 2021-11-11T00:31:33.918Z,
+    deliveredAt: 2021-11-15T20:52:34.215Z,
+    items: [ [Object], [Object] ]
+  },
+  returnPackages: [
+    {
+      id: 'ckp6blft41h400596mhthv0g7',
+      items: [Array],
+      deliveredAt: null,
+      enteredDeliverySystemAt: null
+    },
+    {
+      id: 'cktjfnqw77018002fzbeiyl637d',
+      items: [Array],
+      deliveredAt: null,
+      enteredDeliverySystemAt: null
+    },
+    {
+      id: 'ckvt3mf5y13473613sy7o2nq37nm',
+      items: [],
+      deliveredAt: null,
+      enteredDeliverySystemAt: null
+    }
+  ],
+  receipt: null
+}
+{ seasonsUID: 'KNKE-BLK-MM-014-01', warehouseLocation: null }
+{
+  id: 'ckvt3mf5u00i90vy7184544xa',
+  createdAt: 2021-11-10T05:45:38.374Z,
+  shippingMethod: { id: 'ckhdnkxjp071h07334tf5dzo7' },
+  newProducts: [
+    { seasonsUID: 'ACNE-PRP-MM-041-01' },
+    { seasonsUID: 'KNKE-BLK-MM-014-01' }
+  ],
+  status: 'Delivered',
+  returnedProducts: [],
+  sentPackage: {
+    id: 'ckvt3mf5y13473573sy7ies2r4fi',
+    enteredDeliverySystemAt: 2021-11-11T00:31:33.918Z,
+    deliveredAt: 2021-11-15T20:52:34.215Z,
+    items: [ [Object], [Object] ]
+  },
+  returnPackages: [
+    {
+      id: 'ckp6blft41h400596mhthv0g7',
+      items: [Array],
+      deliveredAt: null,
+      enteredDeliverySystemAt: null
+    },
+    {
+      id: 'cktjfnqw77018002fzbeiyl637d',
+      items: [Array],
+      deliveredAt: null,
+      enteredDeliverySystemAt: null
+    },
+    {
+      id: 'ckvt3mf5y13473613sy7o2nq37nm',
+      items: [],
+      deliveredAt: null,
+      enteredDeliverySystemAt: null
+    }
+  ],
+  receipt: null
+}
+{ seasonsUID: 'NOAH-BLU-SS-003-01', warehouseLocation: null }
+{
+  id: 'ckwimtq29008k1jx91cy443e8',
+  createdAt: 2021-11-28T02:37:26.199Z,
+  shippingMethod: { id: 'ckhdnkufy07150733vtyimiw3' },
+  newProducts: [
+    { seasonsUID: 'NOAH-BLU-SS-003-01' },
+    { seasonsUID: 'ALDE-PRP-MM-006-01' },
+    { seasonsUID: 'BODE-BLU-SS-037-01' }
+  ],
+  status: 'Delivered',
+  returnedProducts: [],
+  sentPackage: {
+    id: 'ckwimtq2g2251274xx9k768v685',
+    enteredDeliverySystemAt: 2021-11-30T05:14:14.963Z,
+    deliveredAt: 2021-11-30T19:13:13.228Z,
+    items: [ [Object], [Object], [Object] ]
+  },
+  returnPackages: [
+    {
+      id: 'ckwimtq2g2251314xx9ypdbdeey',
+      items: [],
+      deliveredAt: null,
+      enteredDeliverySystemAt: null
+    }
+  ],
+  receipt: null
+}
+{ seasonsUID: 'ALDE-PRP-MM-006-01', warehouseLocation: null }
+{
+  id: 'ckwimtq29008k1jx91cy443e8',
+  createdAt: 2021-11-28T02:37:26.199Z,
+  shippingMethod: { id: 'ckhdnkufy07150733vtyimiw3' },
+  newProducts: [
+    { seasonsUID: 'NOAH-BLU-SS-003-01' },
+    { seasonsUID: 'ALDE-PRP-MM-006-01' },
+    { seasonsUID: 'BODE-BLU-SS-037-01' }
+  ],
+  status: 'Delivered',
+  returnedProducts: [],
+  sentPackage: {
+    id: 'ckwimtq2g2251274xx9k768v685',
+    enteredDeliverySystemAt: 2021-11-30T05:14:14.963Z,
+    deliveredAt: 2021-11-30T19:13:13.228Z,
+    items: [ [Object], [Object], [Object] ]
+  },
+  returnPackages: [
+    {
+      id: 'ckwimtq2g2251314xx9ypdbdeey',
+      items: [],
+      deliveredAt: null,
+      enteredDeliverySystemAt: null
+    }
+  ],
+  receipt: null
+}
+{ seasonsUID: 'BODE-BLU-SS-037-01', warehouseLocation: null }
+{
+  id: 'ckwimtq29008k1jx91cy443e8',
+  createdAt: 2021-11-28T02:37:26.199Z,
+  shippingMethod: { id: 'ckhdnkufy07150733vtyimiw3' },
+  newProducts: [
+    { seasonsUID: 'NOAH-BLU-SS-003-01' },
+    { seasonsUID: 'ALDE-PRP-MM-006-01' },
+    { seasonsUID: 'BODE-BLU-SS-037-01' }
+  ],
+  status: 'Delivered',
+  returnedProducts: [],
+  sentPackage: {
+    id: 'ckwimtq2g2251274xx9k768v685',
+    enteredDeliverySystemAt: 2021-11-30T05:14:14.963Z,
+    deliveredAt: 2021-11-30T19:13:13.228Z,
+    items: [ [Object], [Object], [Object] ]
+  },
+  returnPackages: [
+    {
+      id: 'ckwimtq2g2251314xx9ypdbdeey',
+      items: [],
+      deliveredAt: null,
+      enteredDeliverySystemAt: null
+    }
+  ],
+  receipt: null
+}
+{ seasonsUID: 'CSBA-BLK-MM-040-01', warehouseLocation: null }
+{
+  id: 'ckwgpnhxd00ca1juedse49aly',
+  createdAt: 2021-11-26T18:21:02.212Z,
+  shippingMethod: { id: 'ckhdnkufy07150733vtyimiw3' },
+  newProducts: [ { seasonsUID: 'CSBA-BLK-MM-040-01' } ],
+  status: 'Shipped',
+  returnedProducts: [],
+  sentPackage: {
+    id: 'ckwgpnhxh11370534wuenxujfgx0',
+    enteredDeliverySystemAt: 2021-11-30T07:03:44.258Z,
+    deliveredAt: null,
+    items: [ [Object] ]
+  },
+  returnPackages: [
+    {
+      id: 'ckss2us1a4447262fwghxb0o7ww',
+      items: [Array],
+      deliveredAt: null,
+      enteredDeliverySystemAt: null
+    },
+    {
+      id: 'ckwgpnhxh11370574wueqqeedqmb',
+      items: [],
+      deliveredAt: null,
+      enteredDeliverySystemAt: null
+    }
+  ],
+  receipt: null
+}
+{ seasonsUID: 'PHIP-BLK-SS-014-01', warehouseLocation: null }
+{
+  id: 'ckvicrqco002s0vtnenjf0se7',
+  createdAt: 2021-11-02T17:16:14.817Z,
+  shippingMethod: { id: 'ckhdnkufy07150733vtyimiw3' },
+  newProducts: [
+    { seasonsUID: 'PHIP-BLK-SS-014-01' },
+    { seasonsUID: 'JWA-BLK-SS-001-01' }
+  ],
+  status: 'Delivered',
+  returnedProducts: [],
+  sentPackage: {
+    id: 'ckvicrqe93762482htn503jz4hw',
+    enteredDeliverySystemAt: 2021-11-03T01:54:55.426Z,
+    deliveredAt: 2021-11-04T04:10:54.774Z,
+    items: [ [Object], [Object] ]
+  },
+  returnPackages: [
+    {
+      id: 'ckvicrqe93762522htn74t2zfgt',
+      items: [],
+      deliveredAt: null,
+      enteredDeliverySystemAt: null
+    }
+  ],
+  receipt: null
+}
+{ seasonsUID: 'JWA-BLK-SS-001-01', warehouseLocation: null }
+{
+  id: 'ckvicrqco002s0vtnenjf0se7',
+  createdAt: 2021-11-02T17:16:14.817Z,
+  shippingMethod: { id: 'ckhdnkufy07150733vtyimiw3' },
+  newProducts: [
+    { seasonsUID: 'PHIP-BLK-SS-014-01' },
+    { seasonsUID: 'JWA-BLK-SS-001-01' }
+  ],
+  status: 'Delivered',
+  returnedProducts: [],
+  sentPackage: {
+    id: 'ckvicrqe93762482htn503jz4hw',
+    enteredDeliverySystemAt: 2021-11-03T01:54:55.426Z,
+    deliveredAt: 2021-11-04T04:10:54.774Z,
+    items: [ [Object], [Object] ]
+  },
+  returnPackages: [
+    {
+      id: 'ckvicrqe93762522htn74t2zfgt',
+      items: [],
+      deliveredAt: null,
+      enteredDeliverySystemAt: null
+    }
+  ],
+  receipt: null
+}
+{ seasonsUID: 'GUCC-BLK-SS-001-01', warehouseLocation: null }
+{
+  id: 'cku3grpiy005d0vxb0e0d27et',
+  createdAt: 2021-09-28T02:31:57.183Z,
+  shippingMethod: null,
+  newProducts: [
+    { seasonsUID: 'GUCC-BLK-SS-001-01' },
+    { seasonsUID: 'OASC-RED-SS-006-02' },
+    { seasonsUID: 'SNBD-BLK-UNI-004-01' }
+  ],
+  status: 'Delivered',
+  returnedProducts: [],
+  sentPackage: {
+    id: 'cku3grpj36875612fxbu083o23a',
+    enteredDeliverySystemAt: 2021-09-29T01:02:50.435Z,
+    deliveredAt: 2021-09-30T18:19:09.860Z,
+    items: [ [Object], [Object], [Object] ]
+  },
+  returnPackages: [
+    {
+      id: 'cku3grpj46875652fxbg11hs5bl',
+      items: [],
+      deliveredAt: null,
+      enteredDeliverySystemAt: null
+    }
+  ],
+  receipt: null
+}
+{ seasonsUID: 'OASC-RED-SS-006-02', warehouseLocation: null }
+{
+  id: 'cku3grpiy005d0vxb0e0d27et',
+  createdAt: 2021-09-28T02:31:57.183Z,
+  shippingMethod: null,
+  newProducts: [
+    { seasonsUID: 'GUCC-BLK-SS-001-01' },
+    { seasonsUID: 'OASC-RED-SS-006-02' },
+    { seasonsUID: 'SNBD-BLK-UNI-004-01' }
+  ],
+  status: 'Delivered',
+  returnedProducts: [],
+  sentPackage: {
+    id: 'cku3grpj36875612fxbu083o23a',
+    enteredDeliverySystemAt: 2021-09-29T01:02:50.435Z,
+    deliveredAt: 2021-09-30T18:19:09.860Z,
+    items: [ [Object], [Object], [Object] ]
+  },
+  returnPackages: [
+    {
+      id: 'cku3grpj46875652fxbg11hs5bl',
+      items: [],
+      deliveredAt: null,
+      enteredDeliverySystemAt: null
+    }
+  ],
+  receipt: null
+}
+{ seasonsUID: 'SNBD-BLK-UNI-004-01', warehouseLocation: null }
+{
+  id: 'cku3grpiy005d0vxb0e0d27et',
+  createdAt: 2021-09-28T02:31:57.183Z,
+  shippingMethod: null,
+  newProducts: [
+    { seasonsUID: 'GUCC-BLK-SS-001-01' },
+    { seasonsUID: 'OASC-RED-SS-006-02' },
+    { seasonsUID: 'SNBD-BLK-UNI-004-01' }
+  ],
+  status: 'Delivered',
+  returnedProducts: [],
+  sentPackage: {
+    id: 'cku3grpj36875612fxbu083o23a',
+    enteredDeliverySystemAt: 2021-09-29T01:02:50.435Z,
+    deliveredAt: 2021-09-30T18:19:09.860Z,
+    items: [ [Object], [Object], [Object] ]
+  },
+  returnPackages: [
+    {
+      id: 'cku3grpj46875652fxbg11hs5bl',
+      items: [],
+      deliveredAt: null,
+      enteredDeliverySystemAt: null
+    }
+  ],
+  receipt: null
+}
+{ seasonsUID: 'DAPA-BLU-MM-004-01', warehouseLocation: null }
+{
+  id: 'ckvmknmqk001e0vym4jgd8a7g',
+  createdAt: 2021-11-05T16:08:05.089Z,
+  shippingMethod: { id: 'ckhdnkufy07150733vtyimiw3' },
+  newProducts: [
+    { seasonsUID: 'DAPA-BLU-MM-004-01' },
+    { seasonsUID: 'JDYT-RED-LL-004-01' },
+    { seasonsUID: 'VNTG-YLW-MM-053-01' },
+    { seasonsUID: 'AURA-BWN-3031-033-01' },
+    { seasonsUID: 'AURA-BWN-MM-034-02' }
+  ],
+  status: 'Delivered',
+  returnedProducts: [],
+  sentPackage: {
+    id: 'ckvmknmqq562572eyminmkrd4w',
+    enteredDeliverySystemAt: 2021-11-05T23:38:36.832Z,
+    deliveredAt: 2021-11-09T17:41:44.533Z,
+    items: [ [Object], [Object], [Object], [Object], [Object] ]
+  },
+  returnPackages: [
+    {
+      id: 'cku4itq8f5849692gwyf1v8v024',
+      items: [Array],
+      deliveredAt: null,
+      enteredDeliverySystemAt: null
+    },
+    {
+      id: 'ckvmknmqq562612eympq1ksh5b',
+      items: [],
+      deliveredAt: null,
+      enteredDeliverySystemAt: 2021-11-29T22:45:17.717Z
+    }
+  ],
+  receipt: null
+}
+{ seasonsUID: 'JDYT-RED-LL-004-01', warehouseLocation: null }
+{
+  id: 'ckvmknmqk001e0vym4jgd8a7g',
+  createdAt: 2021-11-05T16:08:05.089Z,
+  shippingMethod: { id: 'ckhdnkufy07150733vtyimiw3' },
+  newProducts: [
+    { seasonsUID: 'DAPA-BLU-MM-004-01' },
+    { seasonsUID: 'JDYT-RED-LL-004-01' },
+    { seasonsUID: 'VNTG-YLW-MM-053-01' },
+    { seasonsUID: 'AURA-BWN-3031-033-01' },
+    { seasonsUID: 'AURA-BWN-MM-034-02' }
+  ],
+  status: 'Delivered',
+  returnedProducts: [],
+  sentPackage: {
+    id: 'ckvmknmqq562572eyminmkrd4w',
+    enteredDeliverySystemAt: 2021-11-05T23:38:36.832Z,
+    deliveredAt: 2021-11-09T17:41:44.533Z,
+    items: [ [Object], [Object], [Object], [Object], [Object] ]
+  },
+  returnPackages: [
+    {
+      id: 'cku4itq8f5849692gwyf1v8v024',
+      items: [Array],
+      deliveredAt: null,
+      enteredDeliverySystemAt: null
+    },
+    {
+      id: 'ckvmknmqq562612eympq1ksh5b',
+      items: [],
+      deliveredAt: null,
+      enteredDeliverySystemAt: 2021-11-29T22:45:17.717Z
+    }
+  ],
+  receipt: null
+}
+{ seasonsUID: 'VNTG-YLW-MM-053-01', warehouseLocation: null }
+{
+  id: 'ckvmknmqk001e0vym4jgd8a7g',
+  createdAt: 2021-11-05T16:08:05.089Z,
+  shippingMethod: { id: 'ckhdnkufy07150733vtyimiw3' },
+  newProducts: [
+    { seasonsUID: 'DAPA-BLU-MM-004-01' },
+    { seasonsUID: 'JDYT-RED-LL-004-01' },
+    { seasonsUID: 'VNTG-YLW-MM-053-01' },
+    { seasonsUID: 'AURA-BWN-3031-033-01' },
+    { seasonsUID: 'AURA-BWN-MM-034-02' }
+  ],
+  status: 'Delivered',
+  returnedProducts: [],
+  sentPackage: {
+    id: 'ckvmknmqq562572eyminmkrd4w',
+    enteredDeliverySystemAt: 2021-11-05T23:38:36.832Z,
+    deliveredAt: 2021-11-09T17:41:44.533Z,
+    items: [ [Object], [Object], [Object], [Object], [Object] ]
+  },
+  returnPackages: [
+    {
+      id: 'cku4itq8f5849692gwyf1v8v024',
+      items: [Array],
+      deliveredAt: null,
+      enteredDeliverySystemAt: null
+    },
+    {
+      id: 'ckvmknmqq562612eympq1ksh5b',
+      items: [],
+      deliveredAt: null,
+      enteredDeliverySystemAt: 2021-11-29T22:45:17.717Z
+    }
+  ],
+  receipt: null
+}
+{ seasonsUID: 'AURA-BWN-3031-033-01', warehouseLocation: null }
+{
+  id: 'ckvmknmqk001e0vym4jgd8a7g',
+  createdAt: 2021-11-05T16:08:05.089Z,
+  shippingMethod: { id: 'ckhdnkufy07150733vtyimiw3' },
+  newProducts: [
+    { seasonsUID: 'DAPA-BLU-MM-004-01' },
+    { seasonsUID: 'JDYT-RED-LL-004-01' },
+    { seasonsUID: 'VNTG-YLW-MM-053-01' },
+    { seasonsUID: 'AURA-BWN-3031-033-01' },
+    { seasonsUID: 'AURA-BWN-MM-034-02' }
+  ],
+  status: 'Delivered',
+  returnedProducts: [],
+  sentPackage: {
+    id: 'ckvmknmqq562572eyminmkrd4w',
+    enteredDeliverySystemAt: 2021-11-05T23:38:36.832Z,
+    deliveredAt: 2021-11-09T17:41:44.533Z,
+    items: [ [Object], [Object], [Object], [Object], [Object] ]
+  },
+  returnPackages: [
+    {
+      id: 'cku4itq8f5849692gwyf1v8v024',
+      items: [Array],
+      deliveredAt: null,
+      enteredDeliverySystemAt: null
+    },
+    {
+      id: 'ckvmknmqq562612eympq1ksh5b',
+      items: [],
+      deliveredAt: null,
+      enteredDeliverySystemAt: 2021-11-29T22:45:17.717Z
+    }
+  ],
+  receipt: null
+}
+{ seasonsUID: 'AURA-BWN-MM-034-02', warehouseLocation: null }
+{
+  id: 'ckvmknmqk001e0vym4jgd8a7g',
+  createdAt: 2021-11-05T16:08:05.089Z,
+  shippingMethod: { id: 'ckhdnkufy07150733vtyimiw3' },
+  newProducts: [
+    { seasonsUID: 'DAPA-BLU-MM-004-01' },
+    { seasonsUID: 'JDYT-RED-LL-004-01' },
+    { seasonsUID: 'VNTG-YLW-MM-053-01' },
+    { seasonsUID: 'AURA-BWN-3031-033-01' },
+    { seasonsUID: 'AURA-BWN-MM-034-02' }
+  ],
+  status: 'Delivered',
+  returnedProducts: [],
+  sentPackage: {
+    id: 'ckvmknmqq562572eyminmkrd4w',
+    enteredDeliverySystemAt: 2021-11-05T23:38:36.832Z,
+    deliveredAt: 2021-11-09T17:41:44.533Z,
+    items: [ [Object], [Object], [Object], [Object], [Object] ]
+  },
+  returnPackages: [
+    {
+      id: 'cku4itq8f5849692gwyf1v8v024',
+      items: [Array],
+      deliveredAt: null,
+      enteredDeliverySystemAt: null
+    },
+    {
+      id: 'ckvmknmqq562612eympq1ksh5b',
+      items: [],
+      deliveredAt: null,
+      enteredDeliverySystemAt: 2021-11-29T22:45:17.717Z
+    }
+  ],
+  receipt: null
+}
+{ seasonsUID: 'KNKE-ORG-MM-017-03', warehouseLocation: null }
+{
+  id: 'ckw5e2oj200031jq32g3chfmr',
+  createdAt: 2021-11-18T20:11:27.283Z,
+  shippingMethod: { id: 'ckhdnkufy07150733vtyimiw3' },
+  newProducts: [ { seasonsUID: 'KNKE-ORG-MM-017-03' } ],
+  status: 'Shipped',
+  returnedProducts: [],
+  sentPackage: {
+    id: 'ckw5e2oj773334xq3qgjxkov4',
+    enteredDeliverySystemAt: 2021-11-19T03:41:51.043Z,
+    deliveredAt: 2021-11-22T18:00:07.969Z,
+    items: [ [Object] ]
+  },
+  returnPackages: [
+    {
+      id: 'cku4itq8f5849692gwyf1v8v024',
+      items: [Array],
+      deliveredAt: null,
+      enteredDeliverySystemAt: null
+    },
+    {
+      id: 'ckvmknmqq562612eympq1ksh5b',
+      items: [],
+      deliveredAt: null,
+      enteredDeliverySystemAt: 2021-11-29T22:45:17.717Z
+    },
+    {
+      id: 'ckvq35r98776222e41idattvl3',
+      items: [],
+      deliveredAt: null,
+      enteredDeliverySystemAt: null
+    },
+    {
+      id: 'ckw5e2oj873374xq37bkdnc1f',
+      items: [],
+      deliveredAt: null,
+      enteredDeliverySystemAt: null
+    }
+  ],
+  receipt: null
+}
+{ seasonsUID: 'ALDE-RED-3230-013-01', warehouseLocation: null }
+{
+  id: 'ckw4x567x002b1jpshy6ldd06',
+  createdAt: 2021-11-18T12:17:30.053Z,
+  shippingMethod: { id: 'ckhdnkufy07150733vtyimiw3' },
+  newProducts: [
+    { seasonsUID: 'ALDE-RED-3230-013-01' },
+    { seasonsUID: 'MRNI-BLU-MM-003-01' },
+    { seasonsUID: 'ACNE-BLK-3232-021-02' },
+    { seasonsUID: 'PMOS-RED-MM-002-01' },
+    { seasonsUID: 'JDYT-GRY-3226-021-01' }
+  ],
+  status: 'Completed',
+  returnedProducts: [
+    { seasonsUID: 'MRNI-BLU-MM-003-01' },
+    { seasonsUID: 'ACNE-BLK-3232-021-02' },
+    { seasonsUID: 'PMOS-RED-MM-002-01' },
+    { seasonsUID: 'JQMU-BWN-3230-032-02' }
+  ],
+  sentPackage: {
+    id: 'ckw4x5685591554wpswx7dd6b5',
+    enteredDeliverySystemAt: 2021-11-19T03:18:03.508Z,
+    deliveredAt: 2021-11-21T00:19:33.947Z,
+    items: [ [Object], [Object], [Object], [Object], [Object] ]
+  },
+  returnPackages: [
+    {
+      id: 'ckvq47n8v50012eyrzp2llrqm',
+      items: [Array],
+      deliveredAt: 2021-11-24T17:31:01.878Z,
+      enteredDeliverySystemAt: 2021-11-22T20:29:30.125Z
+    },
+    {
+      id: 'ckw4x5685591594wpsokdp0fl3',
+      items: [Array],
+      deliveredAt: null,
+      enteredDeliverySystemAt: null
+    }
+  ],
+  receipt: { createdAt: 2021-11-24T17:47:13.207Z, items: [ [Object] ] }
+}
+{ seasonsUID: 'JDYT-GRY-3226-021-01', warehouseLocation: null }
+{
+  id: 'ckw4x567x002b1jpshy6ldd06',
+  createdAt: 2021-11-18T12:17:30.053Z,
+  shippingMethod: { id: 'ckhdnkufy07150733vtyimiw3' },
+  newProducts: [
+    { seasonsUID: 'ALDE-RED-3230-013-01' },
+    { seasonsUID: 'MRNI-BLU-MM-003-01' },
+    { seasonsUID: 'ACNE-BLK-3232-021-02' },
+    { seasonsUID: 'PMOS-RED-MM-002-01' },
+    { seasonsUID: 'JDYT-GRY-3226-021-01' }
+  ],
+  status: 'Completed',
+  returnedProducts: [
+    { seasonsUID: 'MRNI-BLU-MM-003-01' },
+    { seasonsUID: 'ACNE-BLK-3232-021-02' },
+    { seasonsUID: 'PMOS-RED-MM-002-01' },
+    { seasonsUID: 'JQMU-BWN-3230-032-02' }
+  ],
+  sentPackage: {
+    id: 'ckw4x5685591554wpswx7dd6b5',
+    enteredDeliverySystemAt: 2021-11-19T03:18:03.508Z,
+    deliveredAt: 2021-11-21T00:19:33.947Z,
+    items: [ [Object], [Object], [Object], [Object], [Object] ]
+  },
+  returnPackages: [
+    {
+      id: 'ckvq47n8v50012eyrzp2llrqm',
+      items: [Array],
+      deliveredAt: 2021-11-24T17:31:01.878Z,
+      enteredDeliverySystemAt: 2021-11-22T20:29:30.125Z
+    },
+    {
+      id: 'ckw4x5685591594wpsokdp0fl3',
+      items: [Array],
+      deliveredAt: null,
+      enteredDeliverySystemAt: null
+    }
+  ],
+  receipt: { createdAt: 2021-11-24T17:47:13.207Z, items: [ [Object] ] }
+}
+{ seasonsUID: 'NANU-BWN-XL-033-01', warehouseLocation: null }
+{
+  id: 'ckvh28h00000w0vus6cwp4zri',
+  createdAt: 2021-11-01T19:33:33.844Z,
+  shippingMethod: { id: 'ckhdnkufy07150733vtyimiw3' },
+  newProducts: [ { seasonsUID: 'NANU-BWN-XL-033-01' } ],
+  status: 'Completed',
+  returnedProducts: [
+    { seasonsUID: 'CDGS-GRN-XL-008-01' },
+    { seasonsUID: 'PHIP-YLW-XL-011-01' },
+    { seasonsUID: 'SNBD-YLW-UNI-009-02' },
+    { seasonsUID: 'OASC-ORG-XL-017-01' }
+  ],
+  sentPackage: {
+    id: 'ckvh28h044066362eus7lnr4oci',
+    enteredDeliverySystemAt: 2021-11-01T23:19:09.821Z,
+    deliveredAt: 2021-11-05T22:52:46.629Z,
+    items: [ [Object] ]
+  },
+  returnPackages: [
+    {
+      id: 'ckvb4oz7111416952fuz509ab8f6',
+      items: [],
+      deliveredAt: null,
+      enteredDeliverySystemAt: null
+    },
+    {
+      id: 'ckvh28h044066402euszp48oc4d',
+      items: [Array],
+      deliveredAt: 2021-11-11T17:42:35.798Z,
+      enteredDeliverySystemAt: 2021-11-06T21:23:28.477Z
+    }
+  ],
+  receipt: {
+    createdAt: 2021-11-11T19:34:51.327Z,
+    items: [ [Object], [Object], [Object], [Object] ]
+  }
+}
+{ seasonsUID: 'HEPR-BLK-SS-005-01', warehouseLocation: null }
+{
+  id: 'ckstgv80j8430982fzkp0j75462',
+  createdAt: 2021-08-26T21:57:17.011Z,
+  shippingMethod: null,
+  newProducts: [
+    { seasonsUID: 'HEPR-BLK-SS-005-01' },
+    { seasonsUID: 'JQMU-GRN-3232-027-02' }
+  ],
+  status: 'Completed',
+  returnedProducts: [
+    { seasonsUID: 'HEPR-BLK-SS-005-01' },
+    { seasonsUID: 'JQMU-GRN-3232-027-02' }
+  ],
+  sentPackage: {
+    id: 'ckstgv80j8430992fzk2gdje7fi',
+    enteredDeliverySystemAt: 2021-09-02T00:17:52.040Z,
+    deliveredAt: 2021-09-03T21:34:49.363Z,
+    items: [ [Object], [Object], [Object] ]
+  },
+  returnPackages: [
+    {
+      id: 'ckstgv80j8431032fzk6loum8nt',
+      items: [Array],
+      deliveredAt: null,
+      enteredDeliverySystemAt: null
+    }
+  ],
+  receipt: {
+    createdAt: 2021-11-30T19:04:11.635Z,
+    items: [ [Object], [Object] ]
+  }
+}
+{ seasonsUID: 'JQMU-GRN-3232-027-02', warehouseLocation: null }
+{
+  id: 'ckstgv80j8430982fzkp0j75462',
+  createdAt: 2021-08-26T21:57:17.011Z,
+  shippingMethod: null,
+  newProducts: [
+    { seasonsUID: 'HEPR-BLK-SS-005-01' },
+    { seasonsUID: 'JQMU-GRN-3232-027-02' }
+  ],
+  status: 'Completed',
+  returnedProducts: [
+    { seasonsUID: 'HEPR-BLK-SS-005-01' },
+    { seasonsUID: 'JQMU-GRN-3232-027-02' }
+  ],
+  sentPackage: {
+    id: 'ckstgv80j8430992fzk2gdje7fi',
+    enteredDeliverySystemAt: 2021-09-02T00:17:52.040Z,
+    deliveredAt: 2021-09-03T21:34:49.363Z,
+    items: [ [Object], [Object], [Object] ]
+  },
+  returnPackages: [
+    {
+      id: 'ckstgv80j8431032fzk6loum8nt',
+      items: [Array],
+      deliveredAt: null,
+      enteredDeliverySystemAt: null
+    }
+  ],
+  receipt: {
+    createdAt: 2021-11-30T19:04:11.635Z,
+    items: [ [Object], [Object] ]
+  }
+}
+{ seasonsUID: 'NANU-ORG-3031-026-01', warehouseLocation: null }
+{
+  id: 'ckvnj4exp00370vwwc2wu9ggy',
+  createdAt: 2021-11-06T08:12:55.073Z,
+  shippingMethod: { id: 'ckhdnkufy07150733vtyimiw3' },
+  newProducts: [
+    { seasonsUID: 'NANU-ORG-3031-026-01' },
+    { seasonsUID: 'OURL-WTE-SS-036-01' }
+  ],
+  status: 'Delivered',
+  returnedProducts: [],
+  sentPackage: {
+    id: 'ckvnj4ext1980712ewwifc7j4t0',
+    enteredDeliverySystemAt: 2021-11-09T03:45:26.413Z,
+    deliveredAt: 2021-11-16T00:53:04.584Z,
+    items: [ [Object], [Object] ]
+  },
+  returnPackages: [
+    {
+      id: 'ckstgv80j8431032fzk6loum8nt',
+      items: [Array],
+      deliveredAt: null,
+      enteredDeliverySystemAt: null
+    },
+    {
+      id: 'ckvnj4ext1980752ewwjmm5heo2',
+      items: [],
+      deliveredAt: null,
+      enteredDeliverySystemAt: null
+    }
+  ],
+  receipt: null
+}
+{ seasonsUID: 'OURL-WTE-SS-036-01', warehouseLocation: null }
+{
+  id: 'ckvnj4exp00370vwwc2wu9ggy',
+  createdAt: 2021-11-06T08:12:55.073Z,
+  shippingMethod: { id: 'ckhdnkufy07150733vtyimiw3' },
+  newProducts: [
+    { seasonsUID: 'NANU-ORG-3031-026-01' },
+    { seasonsUID: 'OURL-WTE-SS-036-01' }
+  ],
+  status: 'Delivered',
+  returnedProducts: [],
+  sentPackage: {
+    id: 'ckvnj4ext1980712ewwifc7j4t0',
+    enteredDeliverySystemAt: 2021-11-09T03:45:26.413Z,
+    deliveredAt: 2021-11-16T00:53:04.584Z,
+    items: [ [Object], [Object] ]
+  },
+  returnPackages: [
+    {
+      id: 'ckstgv80j8431032fzk6loum8nt',
+      items: [Array],
+      deliveredAt: null,
+      enteredDeliverySystemAt: null
+    },
+    {
+      id: 'ckvnj4ext1980752ewwjmm5heo2',
+      items: [],
+      deliveredAt: null,
+      enteredDeliverySystemAt: null
+    }
+  ],
+  receipt: null
+}
+{ seasonsUID: 'JDYT-BLK-LL-001-01', warehouseLocation: null }
+{
+  id: 'cktoqjybv001q0v00beheeoyv',
+  createdAt: 2021-09-17T19:09:18.864Z,
+  shippingMethod: null,
+  newProducts: [
+    { seasonsUID: 'JDYT-BLK-LL-001-01' },
+    { seasonsUID: 'PRDA-RED-SS-011-01' }
+  ],
+  status: 'Completed',
+  returnedProducts: [
+    { seasonsUID: 'JDYT-BLK-LL-001-01' },
+    { seasonsUID: 'PRDA-RED-SS-011-01' }
+  ],
+  sentPackage: {
+    id: 'cktoqjyc011257682f00n8eja9yf',
+    enteredDeliverySystemAt: 2021-09-18T02:39:35.053Z,
+    deliveredAt: 2021-09-24T05:07:41.364Z,
+    items: [ [Object], [Object] ]
+  },
+  returnPackages: [
+    {
+      id: 'ckodmds0v8cxs0710c134y1u6',
+      items: [Array],
+      deliveredAt: null,
+      enteredDeliverySystemAt: null
+    },
+    {
+      id: 'cktoqjyc011257722f0008lb2le9',
+      items: [Array],
+      deliveredAt: null,
+      enteredDeliverySystemAt: null
+    }
+  ],
+  receipt: {
+    createdAt: 2021-11-30T17:48:04.769Z,
+    items: [ [Object], [Object] ]
+  }
+}
+{ seasonsUID: 'PRDA-RED-SS-011-01', warehouseLocation: null }
+{
+  id: 'cktoqjybv001q0v00beheeoyv',
+  createdAt: 2021-09-17T19:09:18.864Z,
+  shippingMethod: null,
+  newProducts: [
+    { seasonsUID: 'JDYT-BLK-LL-001-01' },
+    { seasonsUID: 'PRDA-RED-SS-011-01' }
+  ],
+  status: 'Completed',
+  returnedProducts: [
+    { seasonsUID: 'JDYT-BLK-LL-001-01' },
+    { seasonsUID: 'PRDA-RED-SS-011-01' }
+  ],
+  sentPackage: {
+    id: 'cktoqjyc011257682f00n8eja9yf',
+    enteredDeliverySystemAt: 2021-09-18T02:39:35.053Z,
+    deliveredAt: 2021-09-24T05:07:41.364Z,
+    items: [ [Object], [Object] ]
+  },
+  returnPackages: [
+    {
+      id: 'ckodmds0v8cxs0710c134y1u6',
+      items: [Array],
+      deliveredAt: null,
+      enteredDeliverySystemAt: null
+    },
+    {
+      id: 'cktoqjyc011257722f0008lb2le9',
+      items: [Array],
+      deliveredAt: null,
+      enteredDeliverySystemAt: null
+    }
+  ],
+  receipt: {
+    createdAt: 2021-11-30T17:48:04.769Z,
+    items: [ [Object], [Object] ]
+  }
+}
+{ seasonsUID: 'CRGR-BLK-MM-003-01', warehouseLocation: null }
+{
+  id: 'ckvmq9ww000200vywboldfxxf',
+  createdAt: 2021-11-05T18:45:22.756Z,
+  shippingMethod: { id: 'ckhdnkxjp071h07334tf5dzo7' },
+  newProducts: [
+    { seasonsUID: 'CSBA-WTE-LL-019-01' },
+    { seasonsUID: 'CRGR-BLK-MM-003-01' },
+    { seasonsUID: 'DEVA-BLK-3231-024-01' }
+  ],
+  status: 'Completed',
+  returnedProducts: [ { seasonsUID: 'DEVA-BLK-3231-024-01' } ],
+  sentPackage: {
+    id: 'ckvmq9ww596882eywya652b9o',
+    enteredDeliverySystemAt: 2021-11-05T22:30:39.810Z,
+    deliveredAt: 2021-11-07T00:46:34.970Z,
+    items: [ [Object], [Object], [Object] ]
+  },
+  returnPackages: [
+    {
+      id: 'cko0bpotq27q80728pnd0igcz',
+      items: [],
+      deliveredAt: null,
+      enteredDeliverySystemAt: null
+    },
+    {
+      id: 'ckvmq9ww596922eyw61urf6vs',
+      items: [Array],
+      deliveredAt: 2021-11-09T20:19:00.611Z,
+      enteredDeliverySystemAt: 2021-11-09T01:34:28.139Z
+    }
+  ],
+  receipt: { createdAt: 2021-11-09T17:19:33.872Z, items: [ [Object] ] }
+}
+{ seasonsUID: 'CSBA-PNK-MM-003-02', warehouseLocation: null }
+{
+  id: 'ckwdz3j0b00lc1jwb6y6bdjx6',
+  createdAt: 2021-11-24T20:22:08.127Z,
+  shippingMethod: { id: 'ckhdnkufy07150733vtyimiw3' },
+  newProducts: [
+    { seasonsUID: 'CSBA-PNK-MM-003-02' },
+    { seasonsUID: 'JQMU-WTE-MM-017-01' }
+  ],
+  status: 'Delivered',
+  returnedProducts: [],
+  sentPackage: {
+    id: 'ckwdz3j0f5015094wwbddr0gdr4',
+    enteredDeliverySystemAt: 2021-11-26T13:39:02.880Z,
+    deliveredAt: 2021-11-26T21:09:29.170Z,
+    items: [ [Object], [Object] ]
+  },
+  returnPackages: [
+    {
+      id: 'cko0bpotq27q80728pnd0igcz',
+      items: [],
+      deliveredAt: null,
+      enteredDeliverySystemAt: null
+    },
+    {
+      id: 'ckwdz3j0g5015134wwb0ogcfuup',
+      items: [],
+      deliveredAt: null,
+      enteredDeliverySystemAt: null
+    }
+  ],
+  receipt: null
+}
+{ seasonsUID: 'JQMU-WTE-MM-017-01', warehouseLocation: null }
+{
+  id: 'ckwdz3j0b00lc1jwb6y6bdjx6',
+  createdAt: 2021-11-24T20:22:08.127Z,
+  shippingMethod: { id: 'ckhdnkufy07150733vtyimiw3' },
+  newProducts: [
+    { seasonsUID: 'CSBA-PNK-MM-003-02' },
+    { seasonsUID: 'JQMU-WTE-MM-017-01' }
+  ],
+  status: 'Delivered',
+  returnedProducts: [],
+  sentPackage: {
+    id: 'ckwdz3j0f5015094wwbddr0gdr4',
+    enteredDeliverySystemAt: 2021-11-26T13:39:02.880Z,
+    deliveredAt: 2021-11-26T21:09:29.170Z,
+    items: [ [Object], [Object] ]
+  },
+  returnPackages: [
+    {
+      id: 'cko0bpotq27q80728pnd0igcz',
+      items: [],
+      deliveredAt: null,
+      enteredDeliverySystemAt: null
+    },
+    {
+      id: 'ckwdz3j0g5015134wwb0ogcfuup',
+      items: [],
+      deliveredAt: null,
+      enteredDeliverySystemAt: null
+    }
+  ],
+  receipt: null
+}
+{ seasonsUID: 'CSBA-WTE-LL-019-01', warehouseLocation: null }
+{
+  id: 'ckvmq9ww000200vywboldfxxf',
+  createdAt: 2021-11-05T18:45:22.756Z,
+  shippingMethod: { id: 'ckhdnkxjp071h07334tf5dzo7' },
+  newProducts: [
+    { seasonsUID: 'CSBA-WTE-LL-019-01' },
+    { seasonsUID: 'CRGR-BLK-MM-003-01' },
+    { seasonsUID: 'DEVA-BLK-3231-024-01' }
+  ],
+  status: 'Completed',
+  returnedProducts: [ { seasonsUID: 'DEVA-BLK-3231-024-01' } ],
+  sentPackage: {
+    id: 'ckvmq9ww596882eywya652b9o',
+    enteredDeliverySystemAt: 2021-11-05T22:30:39.810Z,
+    deliveredAt: 2021-11-07T00:46:34.970Z,
+    items: [ [Object], [Object], [Object] ]
+  },
+  returnPackages: [
+    {
+      id: 'cko0bpotq27q80728pnd0igcz',
+      items: [],
+      deliveredAt: null,
+      enteredDeliverySystemAt: null
+    },
+    {
+      id: 'ckvmq9ww596922eyw61urf6vs',
+      items: [Array],
+      deliveredAt: 2021-11-09T20:19:00.611Z,
+      enteredDeliverySystemAt: 2021-11-09T01:34:28.139Z
+    }
+  ],
+  receipt: { createdAt: 2021-11-09T17:19:33.872Z, items: [ [Object] ] }
+}
+{ seasonsUID: 'PRDA-BLU-SS-002-01', warehouseLocation: null }
+{
+  id: 'ckwayvs4600ek1jurcg9c62r9',
+  createdAt: 2021-11-22T17:52:48.157Z,
+  shippingMethod: { id: 'ckhdnkufy07150733vtyimiw3' },
+  newProducts: [ { seasonsUID: 'PRDA-BLU-SS-002-01' } ],
+  status: 'Completed',
+  returnedProducts: [
+    { seasonsUID: 'AURA-BWN-MM-035-02' },
+    { seasonsUID: 'WLSB-GRY-MM-019-02' }
+  ],
+  sentPackage: {
+    id: 'ckwayvs4d2498674vurbceh9jak',
+    enteredDeliverySystemAt: 2021-11-23T01:23:19.457Z,
+    deliveredAt: 2021-11-23T23:54:17.824Z,
+    items: [ [Object] ]
+  },
+  returnPackages: [
+    {
+      id: 'cktn6pman1765652ew07dhtk9mk',
+      items: [],
+      deliveredAt: null,
+      enteredDeliverySystemAt: null
+    },
+    {
+      id: 'ckucvv5i916709422f3wojuutgjb',
+      items: [],
+      deliveredAt: null,
+      enteredDeliverySystemAt: null
+    },
+    {
+      id: 'ckucyz048438042fvfcjikaw6a',
+      items: [Array],
+      deliveredAt: null,
+      enteredDeliverySystemAt: null
+    },
+    {
+      id: 'ckvompjwc10592e3czg6b679g',
+      items: [],
+      deliveredAt: null,
+      enteredDeliverySystemAt: null
+    },
+    {
+      id: 'ckvwbdgm45925543sv0i9sludmk',
+      items: [Array],
+      deliveredAt: 2021-11-25T00:08:50.511Z,
+      enteredDeliverySystemAt: 2021-11-24T01:37:42.764Z
+    },
+    {
+      id: 'ckw5b9do5367144wwdqx87437n',
+      items: [],
+      deliveredAt: null,
+      enteredDeliverySystemAt: null
+    },
+    {
+      id: 'ckwayvs4e2498714vurpktgyquk',
+      items: [],
+      deliveredAt: null,
+      enteredDeliverySystemAt: null
+    }
+  ],
+  receipt: {
+    createdAt: 2021-11-29T16:59:15.270Z,
+    items: [ [Object], [Object] ]
+  }
+}
+{ seasonsUID: 'AURA-BWN-MM-035-02', warehouseLocation: null }
+{
+  id: 'ckvompjw800000v3c3z7x7mub',
+  createdAt: 2021-11-07T02:41:06.300Z,
+  shippingMethod: { id: 'ckhdnkufy07150733vtyimiw3' },
+  newProducts: [ { seasonsUID: 'AURA-BWN-MM-035-02' } ],
+  status: 'Completed',
+  returnedProducts: [
+    { seasonsUID: 'RHUD-BLK-SS-016-01' },
+    { seasonsUID: 'ELST-WTE-LL-003-01' },
+    { seasonsUID: 'DEVA-BWN-SS-011-01' }
+  ],
+  sentPackage: {
+    id: 'ckvompjwc10552e3cnoxfecro',
+    enteredDeliverySystemAt: 2021-11-09T03:27:59.904Z,
+    deliveredAt: 2021-11-09T22:13:59.729Z,
+    items: [ [Object] ]
+  },
+  returnPackages: [
+    {
+      id: 'cktn6pman1765652ew07dhtk9mk',
+      items: [],
+      deliveredAt: null,
+      enteredDeliverySystemAt: null
+    },
+    {
+      id: 'ckucvv5i916709422f3wojuutgjb',
+      items: [],
+      deliveredAt: null,
+      enteredDeliverySystemAt: null
+    },
+    {
+      id: 'ckucyz048438042fvfcjikaw6a',
+      items: [Array],
+      deliveredAt: null,
+      enteredDeliverySystemAt: null
+    },
+    {
+      id: 'ckvompjwc10592e3czg6b679g',
+      items: [],
+      deliveredAt: null,
+      enteredDeliverySystemAt: null
+    }
+  ],
+  receipt: {
+    createdAt: 2021-11-11T18:16:49.851Z,
+    items: [ [Object], [Object], [Object] ]
+  }
+}
+{ seasonsUID: 'WLSB-GRY-MM-019-02', warehouseLocation: null }
+{
+  id: 'ckvwbdglz00n10vv0d075ddiw',
+  createdAt: 2021-11-12T11:45:55.804Z,
+  shippingMethod: { id: 'ckhdnkufy07150733vtyimiw3' },
+  newProducts: [ { seasonsUID: 'WLSB-GRY-MM-019-02' } ],
+  status: 'ReturnPending',
+  returnedProducts: [ { seasonsUID: 'WLSB-GRY-MM-019-02' } ],
+  sentPackage: {
+    id: 'ckvwbdgm45925503sv069cmir3m',
+    enteredDeliverySystemAt: 2021-11-13T02:49:00.763Z,
+    deliveredAt: 2021-11-13T17:49:29.613Z,
+    items: [ [Object] ]
+  },
+  returnPackages: [
+    {
+      id: 'cktn6pman1765652ew07dhtk9mk',
+      items: [],
+      deliveredAt: null,
+      enteredDeliverySystemAt: null
+    },
+    {
+      id: 'ckucvv5i916709422f3wojuutgjb',
+      items: [],
+      deliveredAt: null,
+      enteredDeliverySystemAt: null
+    },
+    {
+      id: 'ckucyz048438042fvfcjikaw6a',
+      items: [Array],
+      deliveredAt: null,
+      enteredDeliverySystemAt: null
+    },
+    {
+      id: 'ckvompjwc10592e3czg6b679g',
+      items: [],
+      deliveredAt: null,
+      enteredDeliverySystemAt: null
+    },
+    {
+      id: 'ckvwbdgm45925543sv0i9sludmk',
+      items: [Array],
+      deliveredAt: 2021-11-25T00:08:50.511Z,
+      enteredDeliverySystemAt: 2021-11-24T01:37:42.764Z
+    }
+  ],
+  receipt: null
+}
+{ seasonsUID: 'WLSB-BLU-MM-021-01', warehouseLocation: null }
+{
+  id: 'ckw5b9do0000c1jwd697423yx',
+  createdAt: 2021-11-18T18:52:40.949Z,
+  shippingMethod: { id: 'ckhdnkufy07150733vtyimiw3' },
+  newProducts: [ { seasonsUID: 'WLSB-BLU-MM-021-01' } ],
+  status: 'ReturnPending',
+  returnedProducts: [
+    { seasonsUID: 'AURA-BWN-MM-035-02' },
+    { seasonsUID: 'WLSB-GRY-MM-019-02' }
+  ],
+  sentPackage: {
+    id: 'ckw5b9do5367104wwd4pifqyuj',
+    enteredDeliverySystemAt: 2021-11-19T02:23:12.787Z,
+    deliveredAt: 2021-11-19T21:08:57.657Z,
+    items: [ [Object] ]
+  },
+  returnPackages: [
+    {
+      id: 'cktn6pman1765652ew07dhtk9mk',
+      items: [],
+      deliveredAt: null,
+      enteredDeliverySystemAt: null
+    },
+    {
+      id: 'ckucvv5i916709422f3wojuutgjb',
+      items: [],
+      deliveredAt: null,
+      enteredDeliverySystemAt: null
+    },
+    {
+      id: 'ckucyz048438042fvfcjikaw6a',
+      items: [Array],
+      deliveredAt: null,
+      enteredDeliverySystemAt: null
+    },
+    {
+      id: 'ckvompjwc10592e3czg6b679g',
+      items: [],
+      deliveredAt: null,
+      enteredDeliverySystemAt: null
+    },
+    {
+      id: 'ckvwbdgm45925543sv0i9sludmk',
+      items: [Array],
+      deliveredAt: 2021-11-25T00:08:50.511Z,
+      enteredDeliverySystemAt: 2021-11-24T01:37:42.764Z
+    },
+    {
+      id: 'ckw5b9do5367144wwdqx87437n',
+      items: [],
+      deliveredAt: null,
+      enteredDeliverySystemAt: null
+    }
+  ],
+  receipt: null
+}
+{ seasonsUID: 'BURB-ORG-LL-001-01', warehouseLocation: null }
+{
+  id: 'ckvmnkleo00280vym4q3d37jo',
+  createdAt: 2021-11-05T17:29:42.243Z,
+  shippingMethod: { id: 'ckhdnkufy07150733vtyimiw3' },
+  newProducts: [
+    { seasonsUID: 'BURB-ORG-LL-001-01' },
+    { seasonsUID: 'BURB-BLU-MM-004-01' },
+    { seasonsUID: 'OURL-YLW-MM-023-01' }
+  ],
+  status: 'Delivered',
+  returnedProducts: [],
+  sentPackage: {
+    id: 'ckvmnkler4649312eymj2vs3020',
+    enteredDeliverySystemAt: 2021-11-06T01:00:09.154Z,
+    deliveredAt: 2021-11-06T16:00:39.793Z,
+    items: [ [Object], [Object], [Object] ]
+  },
+  returnPackages: [
+    {
+      id: 'ckrv0vqgk8595791j193r2lhskc',
+      items: [Array],
+      deliveredAt: null,
+      enteredDeliverySystemAt: null
+    },
+    {
+      id: 'ckvmnkles4649352eymdgrdwmr5',
+      items: [],
+      deliveredAt: null,
+      enteredDeliverySystemAt: null
+    }
+  ],
+  receipt: null
+}
+{ seasonsUID: 'BURB-BLU-MM-004-01', warehouseLocation: null }
+{
+  id: 'ckvmnkleo00280vym4q3d37jo',
+  createdAt: 2021-11-05T17:29:42.243Z,
+  shippingMethod: { id: 'ckhdnkufy07150733vtyimiw3' },
+  newProducts: [
+    { seasonsUID: 'BURB-ORG-LL-001-01' },
+    { seasonsUID: 'BURB-BLU-MM-004-01' },
+    { seasonsUID: 'OURL-YLW-MM-023-01' }
+  ],
+  status: 'Delivered',
+  returnedProducts: [],
+  sentPackage: {
+    id: 'ckvmnkler4649312eymj2vs3020',
+    enteredDeliverySystemAt: 2021-11-06T01:00:09.154Z,
+    deliveredAt: 2021-11-06T16:00:39.793Z,
+    items: [ [Object], [Object], [Object] ]
+  },
+  returnPackages: [
+    {
+      id: 'ckrv0vqgk8595791j193r2lhskc',
+      items: [Array],
+      deliveredAt: null,
+      enteredDeliverySystemAt: null
+    },
+    {
+      id: 'ckvmnkles4649352eymdgrdwmr5',
+      items: [],
+      deliveredAt: null,
+      enteredDeliverySystemAt: null
+    }
+  ],
+  receipt: null
+}
+{ seasonsUID: 'OURL-YLW-MM-023-01', warehouseLocation: null }
+{
+  id: 'ckvmnkleo00280vym4q3d37jo',
+  createdAt: 2021-11-05T17:29:42.243Z,
+  shippingMethod: { id: 'ckhdnkufy07150733vtyimiw3' },
+  newProducts: [
+    { seasonsUID: 'BURB-ORG-LL-001-01' },
+    { seasonsUID: 'BURB-BLU-MM-004-01' },
+    { seasonsUID: 'OURL-YLW-MM-023-01' }
+  ],
+  status: 'Delivered',
+  returnedProducts: [],
+  sentPackage: {
+    id: 'ckvmnkler4649312eymj2vs3020',
+    enteredDeliverySystemAt: 2021-11-06T01:00:09.154Z,
+    deliveredAt: 2021-11-06T16:00:39.793Z,
+    items: [ [Object], [Object], [Object] ]
+  },
+  returnPackages: [
+    {
+      id: 'ckrv0vqgk8595791j193r2lhskc',
+      items: [Array],
+      deliveredAt: null,
+      enteredDeliverySystemAt: null
+    },
+    {
+      id: 'ckvmnkles4649352eymdgrdwmr5',
+      items: [],
+      deliveredAt: null,
+      enteredDeliverySystemAt: null
+    }
+  ],
+  receipt: null
+}
+{ seasonsUID: 'KNKE-BWN-MM-011-02', warehouseLocation: null }
+{
+  id: 'ckwim5fii00281jp4a9w9984v',
+  createdAt: 2021-11-28T02:18:32.783Z,
+  shippingMethod: { id: 'ckhdnkxjp071h07334tf5dzo7' },
+  newProducts: [
+    { seasonsUID: 'KNKE-BWN-MM-011-02' },
+    { seasonsUID: 'KNKE-BWN-3232-012-02' }
+  ],
+  status: 'Shipped',
+  returnedProducts: [],
+  sentPackage: {
+    id: 'ckwim5fin1505234wp47ou41tys',
+    enteredDeliverySystemAt: 2021-11-30T04:50:38.490Z,
+    deliveredAt: null,
+    items: [ [Object], [Object] ]
+  },
+  returnPackages: [
+    {
+      id: 'ckwim5fin1505274wp4z60z1zxv',
+      items: [],
+      deliveredAt: null,
+      enteredDeliverySystemAt: null
+    }
+  ],
+  receipt: null
+}
+{ seasonsUID: 'KNKE-BWN-3232-012-02', warehouseLocation: null }
+{
+  id: 'ckwim5fii00281jp4a9w9984v',
+  createdAt: 2021-11-28T02:18:32.783Z,
+  shippingMethod: { id: 'ckhdnkxjp071h07334tf5dzo7' },
+  newProducts: [
+    { seasonsUID: 'KNKE-BWN-MM-011-02' },
+    { seasonsUID: 'KNKE-BWN-3232-012-02' }
+  ],
+  status: 'Shipped',
+  returnedProducts: [],
+  sentPackage: {
+    id: 'ckwim5fin1505234wp47ou41tys',
+    enteredDeliverySystemAt: 2021-11-30T04:50:38.490Z,
+    deliveredAt: null,
+    items: [ [Object], [Object] ]
+  },
+  returnPackages: [
+    {
+      id: 'ckwim5fin1505274wp4z60z1zxv',
+      items: [],
+      deliveredAt: null,
+      enteredDeliverySystemAt: null
+    }
+  ],
+  receipt: null
+}
+{ seasonsUID: 'CPFM-YLW-XL-004-01', warehouseLocation: null }
+{
+  id: 'ckwkgfqoo00921juc1ytu5p9y',
+  createdAt: 2021-11-29T09:14:08.478Z,
+  shippingMethod: { id: 'ckhdnkxjp071h07334tf5dzo7' },
+  newProducts: [
+    { seasonsUID: 'CPFM-YLW-XL-004-01' },
+    { seasonsUID: 'OASC-ORG-XL-009-02' },
+    { seasonsUID: 'BODE-GRN-346-022-01' },
+    { seasonsUID: 'NANU-BLK-XL-030-01' }
+  ],
+  status: 'Shipped',
+  returnedProducts: [],
+  sentPackage: {
+    id: 'ckwkgfqou6983944vucyl26wyjw',
+    enteredDeliverySystemAt: 2021-11-30T05:57:38.045Z,
+    deliveredAt: null,
+    items: [ [Object], [Object], [Object], [Object] ]
+  },
+  returnPackages: [
+    {
+      id: 'ckwkgfqov6983984vucegme6r0l',
+      items: [],
+      deliveredAt: null,
+      enteredDeliverySystemAt: null
+    }
+  ],
+  receipt: null
+}
+{ seasonsUID: 'OASC-ORG-XL-009-02', warehouseLocation: null }
+{
+  id: 'ckwkgfqoo00921juc1ytu5p9y',
+  createdAt: 2021-11-29T09:14:08.478Z,
+  shippingMethod: { id: 'ckhdnkxjp071h07334tf5dzo7' },
+  newProducts: [
+    { seasonsUID: 'CPFM-YLW-XL-004-01' },
+    { seasonsUID: 'OASC-ORG-XL-009-02' },
+    { seasonsUID: 'BODE-GRN-346-022-01' },
+    { seasonsUID: 'NANU-BLK-XL-030-01' }
+  ],
+  status: 'Shipped',
+  returnedProducts: [],
+  sentPackage: {
+    id: 'ckwkgfqou6983944vucyl26wyjw',
+    enteredDeliverySystemAt: 2021-11-30T05:57:38.045Z,
+    deliveredAt: null,
+    items: [ [Object], [Object], [Object], [Object] ]
+  },
+  returnPackages: [
+    {
+      id: 'ckwkgfqov6983984vucegme6r0l',
+      items: [],
+      deliveredAt: null,
+      enteredDeliverySystemAt: null
+    }
+  ],
+  receipt: null
+}
+{ seasonsUID: 'BODE-GRN-346-022-01', warehouseLocation: null }
+{
+  id: 'ckwkgfqoo00921juc1ytu5p9y',
+  createdAt: 2021-11-29T09:14:08.478Z,
+  shippingMethod: { id: 'ckhdnkxjp071h07334tf5dzo7' },
+  newProducts: [
+    { seasonsUID: 'CPFM-YLW-XL-004-01' },
+    { seasonsUID: 'OASC-ORG-XL-009-02' },
+    { seasonsUID: 'BODE-GRN-346-022-01' },
+    { seasonsUID: 'NANU-BLK-XL-030-01' }
+  ],
+  status: 'Shipped',
+  returnedProducts: [],
+  sentPackage: {
+    id: 'ckwkgfqou6983944vucyl26wyjw',
+    enteredDeliverySystemAt: 2021-11-30T05:57:38.045Z,
+    deliveredAt: null,
+    items: [ [Object], [Object], [Object], [Object] ]
+  },
+  returnPackages: [
+    {
+      id: 'ckwkgfqov6983984vucegme6r0l',
+      items: [],
+      deliveredAt: null,
+      enteredDeliverySystemAt: null
+    }
+  ],
+  receipt: null
+}
+{ seasonsUID: 'NANU-BLK-XL-030-01', warehouseLocation: null }
+{
+  id: 'ckwkgfqoo00921juc1ytu5p9y',
+  createdAt: 2021-11-29T09:14:08.478Z,
+  shippingMethod: { id: 'ckhdnkxjp071h07334tf5dzo7' },
+  newProducts: [
+    { seasonsUID: 'CPFM-YLW-XL-004-01' },
+    { seasonsUID: 'OASC-ORG-XL-009-02' },
+    { seasonsUID: 'BODE-GRN-346-022-01' },
+    { seasonsUID: 'NANU-BLK-XL-030-01' }
+  ],
+  status: 'Shipped',
+  returnedProducts: [],
+  sentPackage: {
+    id: 'ckwkgfqou6983944vucyl26wyjw',
+    enteredDeliverySystemAt: 2021-11-30T05:57:38.045Z,
+    deliveredAt: null,
+    items: [ [Object], [Object], [Object], [Object] ]
+  },
+  returnPackages: [
+    {
+      id: 'ckwkgfqov6983984vucegme6r0l',
+      items: [],
+      deliveredAt: null,
+      enteredDeliverySystemAt: null
+    }
+  ],
+  receipt: null
+}
+{
+  seasonsUID: 'BURB-ORG-MM-001-01',
+  warehouseLocation: { id: 'ckt4oneye2646wum9paj9ppp6' }
+}
+{
+  id: 'ckwig657700cc1jti9kto9b5x',
+  createdAt: 2021-11-27T23:31:08.378Z,
+  shippingMethod: { id: 'ckhdnkufy07150733vtyimiw3' },
+  newProducts: [
+    { seasonsUID: 'BURB-ORG-MM-001-01' },
+    { seasonsUID: 'HEPR-ORG-MM-003-01' },
+    { seasonsUID: 'UNCV-BLK-LL-001-01' },
+    { seasonsUID: 'JISA-BLK-3630-003-01' },
+    { seasonsUID: 'DVNN-RED-3134-024-01' },
+    { seasonsUID: 'RHUD-RED-3232-020-01' }
+  ],
+  status: 'Hold',
+  returnedProducts: [],
+  sentPackage: {
+    id: 'ckwig657f10384604wtim88uewps',
+    enteredDeliverySystemAt: null,
+    deliveredAt: null,
+    items: [ [Object], [Object], [Object], [Object], [Object], [Object] ]
+  },
+  returnPackages: [
+    {
+      id: 'ckwig657f10384644wtizbbgy129',
+      items: [],
+      deliveredAt: null,
+      enteredDeliverySystemAt: null
+    }
+  ],
+  receipt: null
+}
+{
+  seasonsUID: 'HEPR-ORG-MM-003-01',
+  warehouseLocation: { id: 'ckt4oo7cx5166wum99esvi261' }
+}
+{
+  id: 'ckwig657700cc1jti9kto9b5x',
+  createdAt: 2021-11-27T23:31:08.378Z,
+  shippingMethod: { id: 'ckhdnkufy07150733vtyimiw3' },
+  newProducts: [
+    { seasonsUID: 'BURB-ORG-MM-001-01' },
+    { seasonsUID: 'HEPR-ORG-MM-003-01' },
+    { seasonsUID: 'UNCV-BLK-LL-001-01' },
+    { seasonsUID: 'JISA-BLK-3630-003-01' },
+    { seasonsUID: 'DVNN-RED-3134-024-01' },
+    { seasonsUID: 'RHUD-RED-3232-020-01' }
+  ],
+  status: 'Hold',
+  returnedProducts: [],
+  sentPackage: {
+    id: 'ckwig657f10384604wtim88uewps',
+    enteredDeliverySystemAt: null,
+    deliveredAt: null,
+    items: [ [Object], [Object], [Object], [Object], [Object], [Object] ]
+  },
+  returnPackages: [
+    {
+      id: 'ckwig657f10384644wtizbbgy129',
+      items: [],
+      deliveredAt: null,
+      enteredDeliverySystemAt: null
+    }
+  ],
+  receipt: null
+}
+{
+  seasonsUID: 'UNCV-BLK-LL-001-01',
+  warehouseLocation: { id: 'ckt4ondf02457wum95fsdkde1' }
+}
+{
+  id: 'ckwig657700cc1jti9kto9b5x',
+  createdAt: 2021-11-27T23:31:08.378Z,
+  shippingMethod: { id: 'ckhdnkufy07150733vtyimiw3' },
+  newProducts: [
+    { seasonsUID: 'BURB-ORG-MM-001-01' },
+    { seasonsUID: 'HEPR-ORG-MM-003-01' },
+    { seasonsUID: 'UNCV-BLK-LL-001-01' },
+    { seasonsUID: 'JISA-BLK-3630-003-01' },
+    { seasonsUID: 'DVNN-RED-3134-024-01' },
+    { seasonsUID: 'RHUD-RED-3232-020-01' }
+  ],
+  status: 'Hold',
+  returnedProducts: [],
+  sentPackage: {
+    id: 'ckwig657f10384604wtim88uewps',
+    enteredDeliverySystemAt: null,
+    deliveredAt: null,
+    items: [ [Object], [Object], [Object], [Object], [Object], [Object] ]
+  },
+  returnPackages: [
+    {
+      id: 'ckwig657f10384644wtizbbgy129',
+      items: [],
+      deliveredAt: null,
+      enteredDeliverySystemAt: null
+    }
+  ],
+  receipt: null
+}
+{
+  seasonsUID: 'JISA-BLK-3630-003-01',
+  warehouseLocation: { id: 'ckt4oo60x4968wum99uepym4y' }
+}
+{
+  id: 'ckwig657700cc1jti9kto9b5x',
+  createdAt: 2021-11-27T23:31:08.378Z,
+  shippingMethod: { id: 'ckhdnkufy07150733vtyimiw3' },
+  newProducts: [
+    { seasonsUID: 'BURB-ORG-MM-001-01' },
+    { seasonsUID: 'HEPR-ORG-MM-003-01' },
+    { seasonsUID: 'UNCV-BLK-LL-001-01' },
+    { seasonsUID: 'JISA-BLK-3630-003-01' },
+    { seasonsUID: 'DVNN-RED-3134-024-01' },
+    { seasonsUID: 'RHUD-RED-3232-020-01' }
+  ],
+  status: 'Hold',
+  returnedProducts: [],
+  sentPackage: {
+    id: 'ckwig657f10384604wtim88uewps',
+    enteredDeliverySystemAt: null,
+    deliveredAt: null,
+    items: [ [Object], [Object], [Object], [Object], [Object], [Object] ]
+  },
+  returnPackages: [
+    {
+      id: 'ckwig657f10384644wtizbbgy129',
+      items: [],
+      deliveredAt: null,
+      enteredDeliverySystemAt: null
+    }
+  ],
+  receipt: null
+}
+{
+  seasonsUID: 'DVNN-RED-3134-024-01',
+  warehouseLocation: { id: 'ckt4oo7595130wum9jhlk337a' }
+}
+{
+  id: 'ckwig657700cc1jti9kto9b5x',
+  createdAt: 2021-11-27T23:31:08.378Z,
+  shippingMethod: { id: 'ckhdnkufy07150733vtyimiw3' },
+  newProducts: [
+    { seasonsUID: 'BURB-ORG-MM-001-01' },
+    { seasonsUID: 'HEPR-ORG-MM-003-01' },
+    { seasonsUID: 'UNCV-BLK-LL-001-01' },
+    { seasonsUID: 'JISA-BLK-3630-003-01' },
+    { seasonsUID: 'DVNN-RED-3134-024-01' },
+    { seasonsUID: 'RHUD-RED-3232-020-01' }
+  ],
+  status: 'Hold',
+  returnedProducts: [],
+  sentPackage: {
+    id: 'ckwig657f10384604wtim88uewps',
+    enteredDeliverySystemAt: null,
+    deliveredAt: null,
+    items: [ [Object], [Object], [Object], [Object], [Object], [Object] ]
+  },
+  returnPackages: [
+    {
+      id: 'ckwig657f10384644wtizbbgy129',
+      items: [],
+      deliveredAt: null,
+      enteredDeliverySystemAt: null
+    }
+  ],
+  receipt: null
+}
+{
+  seasonsUID: 'RHUD-RED-3232-020-01',
+  warehouseLocation: { id: 'ckt4ondf02457wum95fsdkde1' }
+}
+{
+  id: 'ckwig657700cc1jti9kto9b5x',
+  createdAt: 2021-11-27T23:31:08.378Z,
+  shippingMethod: { id: 'ckhdnkufy07150733vtyimiw3' },
+  newProducts: [
+    { seasonsUID: 'BURB-ORG-MM-001-01' },
+    { seasonsUID: 'HEPR-ORG-MM-003-01' },
+    { seasonsUID: 'UNCV-BLK-LL-001-01' },
+    { seasonsUID: 'JISA-BLK-3630-003-01' },
+    { seasonsUID: 'DVNN-RED-3134-024-01' },
+    { seasonsUID: 'RHUD-RED-3232-020-01' }
+  ],
+  status: 'Hold',
+  returnedProducts: [],
+  sentPackage: {
+    id: 'ckwig657f10384604wtim88uewps',
+    enteredDeliverySystemAt: null,
+    deliveredAt: null,
+    items: [ [Object], [Object], [Object], [Object], [Object], [Object] ]
+  },
+  returnPackages: [
+    {
+      id: 'ckwig657f10384644wtizbbgy129',
+      items: [],
+      deliveredAt: null,
+      enteredDeliverySystemAt: null
+    }
+  ],
+  receipt: null
+}
+{ seasonsUID: 'STIS-BLK-LL-028-01', warehouseLocation: null }
+{
+  id: 'ckvh2puda00000vyq6k954jki',
+  createdAt: 2021-11-01T19:47:04.326Z,
+  shippingMethod: { id: 'ckhdnkufy07150733vtyimiw3' },
+  newProducts: [ { seasonsUID: 'STIS-BLK-LL-028-01' } ],
+  status: 'Completed',
+  returnedProducts: [ { seasonsUID: 'ACNE-GRY-LL-035-01' } ],
+  sentPackage: {
+    id: 'ckvh2pudi265982eyqqb4vhagl',
+    enteredDeliverySystemAt: 2021-11-01T23:32:22.225Z,
+    deliveredAt: 2021-11-02T19:07:55.094Z,
+    items: [ [Object] ]
+  },
+  returnPackages: [
+    {
+      id: 'ckvh2pudi266022eyq34a1gawp',
+      items: [Array],
+      deliveredAt: 2021-11-16T18:04:50.297Z,
+      enteredDeliverySystemAt: 2021-11-15T19:33:54.380Z
+    }
+  ],
+  receipt: { createdAt: 2021-11-16T18:26:40.548Z, items: [ [Object] ] }
+}
+{ seasonsUID: 'MONC-BLU-SS-001-01', warehouseLocation: null }
+{
+  id: 'ckw0p252800cj0vyu1l6q13wq',
+  createdAt: 2021-11-15T13:20:06.948Z,
+  shippingMethod: { id: 'ckhdnkufy07150733vtyimiw3' },
+  newProducts: [ { seasonsUID: 'MONC-BLU-SS-001-01' } ],
+  status: 'Delivered',
+  returnedProducts: [],
+  sentPackage: {
+    id: 'ckw0p252c12589773ryumhp9o909',
+    enteredDeliverySystemAt: 2021-11-16T04:20:54.873Z,
+    deliveredAt: 2021-11-17T02:52:11.806Z,
+    items: [ [Object] ]
+  },
+  returnPackages: [
+    {
+      id: 'ckvcrmgue2397802f4sw94407rf',
+      items: [],
+      deliveredAt: null,
+      enteredDeliverySystemAt: null
+    },
+    {
+      id: 'ckw0p252d12589813ryu1z4aa2iz',
+      items: [],
+      deliveredAt: null,
+      enteredDeliverySystemAt: null
+    }
+  ],
+  receipt: null
+}
+{ seasonsUID: 'ALDE-YLW-SS-004-01', warehouseLocation: null }
+{
+  id: 'ckw2re6nf00351jtbbio9bgny',
+  createdAt: 2021-11-17T00:01:00.464Z,
+  shippingMethod: { id: 'ckhdnkxjp071h07334tf5dze4' },
+  newProducts: [ { seasonsUID: 'ALDE-YLW-SS-004-01' } ],
+  status: 'Delivered',
+  returnedProducts: [],
+  sentPackage: {
+    id: 'ckw2re6nk1146074vtbto218skr',
+    enteredDeliverySystemAt: null,
+    deliveredAt: null,
+    items: [ [Object] ]
+  },
+  returnPackages: [
+    {
+      id: 'ckvcrmgue2397802f4sw94407rf',
+      items: [],
+      deliveredAt: null,
+      enteredDeliverySystemAt: null
+    },
+    {
+      id: 'ckw0p252d12589813ryu1z4aa2iz',
+      items: [],
+      deliveredAt: null,
+      enteredDeliverySystemAt: null
+    },
+    {
+      id: 'ckw2re6nl1146114vtbxptxizeq',
+      items: [],
+      deliveredAt: null,
+      enteredDeliverySystemAt: null
+    }
+  ],
+  receipt: null
+}
+{ seasonsUID: 'MTRO-ORG-SS-003-01', warehouseLocation: null }
+{
+  id: 'ckun0pjy400090vy4cszkds5j',
+  createdAt: 2021-10-11T18:57:46.305Z,
+  shippingMethod: null,
+  newProducts: [
+    { seasonsUID: 'ACNE-BLU-SS-037-01' },
+    { seasonsUID: 'MTRO-ORG-SS-003-01' }
+  ],
+  status: 'Completed',
+  returnedProducts: [
+    { seasonsUID: 'ACNE-BLU-SS-002-01' },
+    { seasonsUID: 'ACNE-BLU-SS-037-01' },
+    { seasonsUID: 'CSBA-RED-SS-021-01' }
+  ],
+  sentPackage: {
+    id: 'ckun0pjy9138472ey42mj96x1y',
+    enteredDeliverySystemAt: 2021-10-12T02:28:22.777Z,
+    deliveredAt: 2021-10-13T00:59:19.776Z,
+    items: [ [Object], [Object] ]
+  },
+  returnPackages: [
+    {
+      id: 'cku20oj6y42242gze2c4nj8jz',
+      items: [Array],
+      deliveredAt: 2021-10-21T18:14:37.614Z,
+      enteredDeliverySystemAt: 2021-10-20T21:33:29.112Z
+    },
+    {
+      id: 'ckun0pjy9138512ey4j6kzlg74',
+      items: [Array],
+      deliveredAt: 2021-11-09T17:39:02.545Z,
+      enteredDeliverySystemAt: 2021-11-08T22:53:11.586Z
+    }
+  ],
+  receipt: { createdAt: 2021-11-09T17:49:10.901Z, items: [ [Object] ] }
+}
+{ seasonsUID: 'JWA-BWN-MM-005-02', warehouseLocation: null }
+{
+  id: 'ckvcrmgua00480v4sf2lxdply',
+  createdAt: 2021-10-29T19:25:26.342Z,
+  shippingMethod: { id: 'ckhdnkufy07150733vtyimiw3' },
+  newProducts: [ { seasonsUID: 'JWA-BWN-MM-005-02' } ],
+  status: 'ReturnPending',
+  returnedProducts: [],
+  sentPackage: {
+    id: 'ckvcrmgue2397762f4sbus3hjjp',
+    enteredDeliverySystemAt: 2021-10-29T23:10:49.976Z,
+    deliveredAt: 2021-10-30T17:56:32.398Z,
+    items: [ [Object] ]
+  },
+  returnPackages: [
+    {
+      id: 'ckun0pjy9138512ey4j6kzlg74',
+      items: [Array],
+      deliveredAt: 2021-11-09T17:39:02.545Z,
+      enteredDeliverySystemAt: 2021-11-08T22:53:11.586Z
+    },
+    {
+      id: 'ckvcrmgue2397802f4sw94407rf',
+      items: [],
+      deliveredAt: null,
+      enteredDeliverySystemAt: null
+    }
+  ],
+  receipt: null
+}
+{ seasonsUID: 'GUCC-BWN-3427-004-01', warehouseLocation: null }
+{
+  id: 'cku711haj008w0vxk2lqphzmg',
+  createdAt: 2021-09-30T14:22:43.918Z,
+  shippingMethod: null,
+  newProducts: [ { seasonsUID: 'GUCC-BWN-3427-004-01' } ],
+  status: 'ReturnPending',
+  returnedProducts: [],
+  sentPackage: {
+    id: 'cku711ham458872fxkc84ctudl',
+    enteredDeliverySystemAt: 2021-10-02T00:10:02.698Z,
+    deliveredAt: 2021-10-02T18:55:44.955Z,
+    items: [ [Object] ]
+  },
+  returnPackages: [
+    {
+      id: 'cku711ham458912fxktuxbv8m0',
+      items: [],
+      deliveredAt: null,
+      enteredDeliverySystemAt: null
+    }
+  ],
+  receipt: null
+}
+{ seasonsUID: 'MTAL-GRY-UNI-001-07', warehouseLocation: null }
+{
+  id: 'ckue1vxxg000f0vx4gvdn00ox',
+  createdAt: 2021-10-05T12:20:48.396Z,
+  shippingMethod: null,
+  newProducts: [
+    { seasonsUID: 'MTAL-GRY-UNI-001-07' },
+    { seasonsUID: 'MTRO-GRY-3432-020-01' },
+    { seasonsUID: 'OURL-GRY-LL-041-01' }
+  ],
+  status: 'Delivered',
+  returnedProducts: [],
+  sentPackage: {
+    id: 'ckue1vxxo08722ex4d377cnl4',
+    enteredDeliverySystemAt: 2021-10-06T03:21:33.000Z,
+    deliveredAt: 2021-10-07T20:38:25.171Z,
+    items: [ [Object], [Object], [Object] ]
+  },
+  returnPackages: [
+    {
+      id: 'cku711ham458912fxktuxbv8m0',
+      items: [],
+      deliveredAt: null,
+      enteredDeliverySystemAt: null
+    },
+    {
+      id: 'ckue1vxxo08762ex4ojd106gx',
+      items: [],
+      deliveredAt: null,
+      enteredDeliverySystemAt: null
+    }
+  ],
+  receipt: null
+}
+{ seasonsUID: 'MTRO-GRY-3432-020-01', warehouseLocation: null }
+{
+  id: 'ckue1vxxg000f0vx4gvdn00ox',
+  createdAt: 2021-10-05T12:20:48.396Z,
+  shippingMethod: null,
+  newProducts: [
+    { seasonsUID: 'MTAL-GRY-UNI-001-07' },
+    { seasonsUID: 'MTRO-GRY-3432-020-01' },
+    { seasonsUID: 'OURL-GRY-LL-041-01' }
+  ],
+  status: 'Delivered',
+  returnedProducts: [],
+  sentPackage: {
+    id: 'ckue1vxxo08722ex4d377cnl4',
+    enteredDeliverySystemAt: 2021-10-06T03:21:33.000Z,
+    deliveredAt: 2021-10-07T20:38:25.171Z,
+    items: [ [Object], [Object], [Object] ]
+  },
+  returnPackages: [
+    {
+      id: 'cku711ham458912fxktuxbv8m0',
+      items: [],
+      deliveredAt: null,
+      enteredDeliverySystemAt: null
+    },
+    {
+      id: 'ckue1vxxo08762ex4ojd106gx',
+      items: [],
+      deliveredAt: null,
+      enteredDeliverySystemAt: null
+    }
+  ],
+  receipt: null
+}
+{ seasonsUID: 'OURL-GRY-LL-041-01', warehouseLocation: null }
+{
+  id: 'ckue1vxxg000f0vx4gvdn00ox',
+  createdAt: 2021-10-05T12:20:48.396Z,
+  shippingMethod: null,
+  newProducts: [
+    { seasonsUID: 'MTAL-GRY-UNI-001-07' },
+    { seasonsUID: 'MTRO-GRY-3432-020-01' },
+    { seasonsUID: 'OURL-GRY-LL-041-01' }
+  ],
+  status: 'Delivered',
+  returnedProducts: [],
+  sentPackage: {
+    id: 'ckue1vxxo08722ex4d377cnl4',
+    enteredDeliverySystemAt: 2021-10-06T03:21:33.000Z,
+    deliveredAt: 2021-10-07T20:38:25.171Z,
+    items: [ [Object], [Object], [Object] ]
+  },
+  returnPackages: [
+    {
+      id: 'cku711ham458912fxktuxbv8m0',
+      items: [],
+      deliveredAt: null,
+      enteredDeliverySystemAt: null
+    },
+    {
+      id: 'ckue1vxxo08762ex4ojd106gx',
+      items: [],
+      deliveredAt: null,
+      enteredDeliverySystemAt: null
+    }
+  ],
+  receipt: null
+}
+{ seasonsUID: 'MTRO-ORG-LL-003-01', warehouseLocation: null }
+{
+  id: 'cku3buxde002k0vxbc5ci5zln',
+  createdAt: 2021-09-28T00:14:29.241Z,
+  shippingMethod: null,
+  newProducts: [
+    { seasonsUID: 'MTRO-ORG-LL-003-01' },
+    { seasonsUID: 'OURL-BWN-SS-004-01' },
+    { seasonsUID: 'JOEL-BWN-327-016-01' },
+    { seasonsUID: 'VNTG-BLU-MM-068-01' },
+    { seasonsUID: 'MTRO-BLU-MM-006-01' },
+    { seasonsUID: 'OURL-GRY-XL-041-01' }
+  ],
+  status: 'Delivered',
+  returnedProducts: [],
+  sentPackage: {
+    id: 'cku3buxdm4813242fxbcqbrybrn',
+    enteredDeliverySystemAt: 2021-09-29T02:30:34.198Z,
+    deliveredAt: 2021-09-29T17:31:08.332Z,
+    items: [ [Object], [Object], [Object], [Object], [Object], [Object] ]
+  },
+  returnPackages: [
+    {
+      id: 'cku3buxdo4813282fxbz9col53n',
+      items: [],
+      deliveredAt: null,
+      enteredDeliverySystemAt: null
+    }
+  ],
+  receipt: null
+}
+{ seasonsUID: 'OURL-BWN-SS-004-01', warehouseLocation: null }
+{
+  id: 'cku3buxde002k0vxbc5ci5zln',
+  createdAt: 2021-09-28T00:14:29.241Z,
+  shippingMethod: null,
+  newProducts: [
+    { seasonsUID: 'MTRO-ORG-LL-003-01' },
+    { seasonsUID: 'OURL-BWN-SS-004-01' },
+    { seasonsUID: 'JOEL-BWN-327-016-01' },
+    { seasonsUID: 'VNTG-BLU-MM-068-01' },
+    { seasonsUID: 'MTRO-BLU-MM-006-01' },
+    { seasonsUID: 'OURL-GRY-XL-041-01' }
+  ],
+  status: 'Delivered',
+  returnedProducts: [],
+  sentPackage: {
+    id: 'cku3buxdm4813242fxbcqbrybrn',
+    enteredDeliverySystemAt: 2021-09-29T02:30:34.198Z,
+    deliveredAt: 2021-09-29T17:31:08.332Z,
+    items: [ [Object], [Object], [Object], [Object], [Object], [Object] ]
+  },
+  returnPackages: [
+    {
+      id: 'cku3buxdo4813282fxbz9col53n',
+      items: [],
+      deliveredAt: null,
+      enteredDeliverySystemAt: null
+    }
+  ],
+  receipt: null
+}
+{ seasonsUID: 'JOEL-BWN-327-016-01', warehouseLocation: null }
+{
+  id: 'cku3buxde002k0vxbc5ci5zln',
+  createdAt: 2021-09-28T00:14:29.241Z,
+  shippingMethod: null,
+  newProducts: [
+    { seasonsUID: 'MTRO-ORG-LL-003-01' },
+    { seasonsUID: 'OURL-BWN-SS-004-01' },
+    { seasonsUID: 'JOEL-BWN-327-016-01' },
+    { seasonsUID: 'VNTG-BLU-MM-068-01' },
+    { seasonsUID: 'MTRO-BLU-MM-006-01' },
+    { seasonsUID: 'OURL-GRY-XL-041-01' }
+  ],
+  status: 'Delivered',
+  returnedProducts: [],
+  sentPackage: {
+    id: 'cku3buxdm4813242fxbcqbrybrn',
+    enteredDeliverySystemAt: 2021-09-29T02:30:34.198Z,
+    deliveredAt: 2021-09-29T17:31:08.332Z,
+    items: [ [Object], [Object], [Object], [Object], [Object], [Object] ]
+  },
+  returnPackages: [
+    {
+      id: 'cku3buxdo4813282fxbz9col53n',
+      items: [],
+      deliveredAt: null,
+      enteredDeliverySystemAt: null
+    }
+  ],
+  receipt: null
+}
+{ seasonsUID: 'VNTG-BLU-MM-068-01', warehouseLocation: null }
+{
+  id: 'cku3buxde002k0vxbc5ci5zln',
+  createdAt: 2021-09-28T00:14:29.241Z,
+  shippingMethod: null,
+  newProducts: [
+    { seasonsUID: 'MTRO-ORG-LL-003-01' },
+    { seasonsUID: 'OURL-BWN-SS-004-01' },
+    { seasonsUID: 'JOEL-BWN-327-016-01' },
+    { seasonsUID: 'VNTG-BLU-MM-068-01' },
+    { seasonsUID: 'MTRO-BLU-MM-006-01' },
+    { seasonsUID: 'OURL-GRY-XL-041-01' }
+  ],
+  status: 'Delivered',
+  returnedProducts: [],
+  sentPackage: {
+    id: 'cku3buxdm4813242fxbcqbrybrn',
+    enteredDeliverySystemAt: 2021-09-29T02:30:34.198Z,
+    deliveredAt: 2021-09-29T17:31:08.332Z,
+    items: [ [Object], [Object], [Object], [Object], [Object], [Object] ]
+  },
+  returnPackages: [
+    {
+      id: 'cku3buxdo4813282fxbz9col53n',
+      items: [],
+      deliveredAt: null,
+      enteredDeliverySystemAt: null
+    }
+  ],
+  receipt: null
+}
+{ seasonsUID: 'MTRO-BLU-MM-006-01', warehouseLocation: null }
+{
+  id: 'cku3buxde002k0vxbc5ci5zln',
+  createdAt: 2021-09-28T00:14:29.241Z,
+  shippingMethod: null,
+  newProducts: [
+    { seasonsUID: 'MTRO-ORG-LL-003-01' },
+    { seasonsUID: 'OURL-BWN-SS-004-01' },
+    { seasonsUID: 'JOEL-BWN-327-016-01' },
+    { seasonsUID: 'VNTG-BLU-MM-068-01' },
+    { seasonsUID: 'MTRO-BLU-MM-006-01' },
+    { seasonsUID: 'OURL-GRY-XL-041-01' }
+  ],
+  status: 'Delivered',
+  returnedProducts: [],
+  sentPackage: {
+    id: 'cku3buxdm4813242fxbcqbrybrn',
+    enteredDeliverySystemAt: 2021-09-29T02:30:34.198Z,
+    deliveredAt: 2021-09-29T17:31:08.332Z,
+    items: [ [Object], [Object], [Object], [Object], [Object], [Object] ]
+  },
+  returnPackages: [
+    {
+      id: 'cku3buxdo4813282fxbz9col53n',
+      items: [],
+      deliveredAt: null,
+      enteredDeliverySystemAt: null
+    }
+  ],
+  receipt: null
+}
+{ seasonsUID: 'OURL-GRY-XL-041-01', warehouseLocation: null }
+{
+  id: 'cku3buxde002k0vxbc5ci5zln',
+  createdAt: 2021-09-28T00:14:29.241Z,
+  shippingMethod: null,
+  newProducts: [
+    { seasonsUID: 'MTRO-ORG-LL-003-01' },
+    { seasonsUID: 'OURL-BWN-SS-004-01' },
+    { seasonsUID: 'JOEL-BWN-327-016-01' },
+    { seasonsUID: 'VNTG-BLU-MM-068-01' },
+    { seasonsUID: 'MTRO-BLU-MM-006-01' },
+    { seasonsUID: 'OURL-GRY-XL-041-01' }
+  ],
+  status: 'Delivered',
+  returnedProducts: [],
+  sentPackage: {
+    id: 'cku3buxdm4813242fxbcqbrybrn',
+    enteredDeliverySystemAt: 2021-09-29T02:30:34.198Z,
+    deliveredAt: 2021-09-29T17:31:08.332Z,
+    items: [ [Object], [Object], [Object], [Object], [Object], [Object] ]
+  },
+  returnPackages: [
+    {
+      id: 'cku3buxdo4813282fxbz9col53n',
+      items: [],
+      deliveredAt: null,
+      enteredDeliverySystemAt: null
+    }
+  ],
+  receipt: null
+}
+{ seasonsUID: 'OURL-WTE-MM-017-02', warehouseLocation: null }
+{
+  id: 'ckvr45syp00160vun9scf4pnn',
+  createdAt: 2021-11-08T20:25:10.373Z,
+  shippingMethod: { id: 'ckhdnkxjp071h07334tf5dzo7' },
+  newProducts: [
+    { seasonsUID: 'OURL-WTE-MM-017-02' },
+    { seasonsUID: 'OASC-BWN-MM-022-02' }
+  ],
+  status: 'Completed',
+  returnedProducts: [
+    { seasonsUID: 'OURL-WTE-MM-017-02' },
+    { seasonsUID: 'OASC-BWN-MM-022-02' }
+  ],
+  sentPackage: {
+    id: 'ckvr45syt2888082fun2kdcjtfr',
+    enteredDeliverySystemAt: 2021-11-09T03:55:37.391Z,
+    deliveredAt: 2021-11-10T21:14:15.435Z,
+    items: [ [Object], [Object] ]
+  },
+  returnPackages: [
+    {
+      id: 'ckvr45syu2888122funi4x74reg',
+      items: [Array],
+      deliveredAt: 2021-11-30T00:49:27.270Z,
+      enteredDeliverySystemAt: 2021-11-23T06:09:12.563Z
+    }
+  ],
+  receipt: {
+    createdAt: 2021-11-30T18:11:09.489Z,
+    items: [ [Object], [Object] ]
+  }
+}
+{ seasonsUID: 'OASC-BWN-MM-022-02', warehouseLocation: null }
+{
+  id: 'ckvr45syp00160vun9scf4pnn',
+  createdAt: 2021-11-08T20:25:10.373Z,
+  shippingMethod: { id: 'ckhdnkxjp071h07334tf5dzo7' },
+  newProducts: [
+    { seasonsUID: 'OURL-WTE-MM-017-02' },
+    { seasonsUID: 'OASC-BWN-MM-022-02' }
+  ],
+  status: 'Completed',
+  returnedProducts: [
+    { seasonsUID: 'OURL-WTE-MM-017-02' },
+    { seasonsUID: 'OASC-BWN-MM-022-02' }
+  ],
+  sentPackage: {
+    id: 'ckvr45syt2888082fun2kdcjtfr',
+    enteredDeliverySystemAt: 2021-11-09T03:55:37.391Z,
+    deliveredAt: 2021-11-10T21:14:15.435Z,
+    items: [ [Object], [Object] ]
+  },
+  returnPackages: [
+    {
+      id: 'ckvr45syu2888122funi4x74reg',
+      items: [Array],
+      deliveredAt: 2021-11-30T00:49:27.270Z,
+      enteredDeliverySystemAt: 2021-11-23T06:09:12.563Z
+    }
+  ],
+  receipt: {
+    createdAt: 2021-11-30T18:11:09.489Z,
+    items: [ [Object], [Object] ]
+  }
+}
+{ seasonsUID: 'OURL-YLW-MM-021-02', warehouseLocation: null }
+{
+  id: 'ckw5l4edn001w1jye3clf5phd',
+  createdAt: 2021-11-18T23:28:44.753Z,
+  shippingMethod: { id: 'ckhdnkufy07150733vtyimiw3' },
+  newProducts: [
+    { seasonsUID: 'OURL-YLW-MM-021-02' },
+    { seasonsUID: 'BODE-WTE-MM-032-03' }
+  ],
+  status: 'Delivered',
+  returnedProducts: [],
+  sentPackage: {
+    id: 'ckw5l4edt71174vyenz0regdk',
+    enteredDeliverySystemAt: 2021-11-20T01:44:58.961Z,
+    deliveredAt: 2021-11-21T00:15:50.336Z,
+    items: [ [Object], [Object] ]
+  },
+  returnPackages: [
+    {
+      id: 'ckw5l4edt71214vyeagqdnhuv',
+      items: [],
+      deliveredAt: null,
+      enteredDeliverySystemAt: null
+    }
+  ],
+  receipt: null
+}
+{ seasonsUID: 'BODE-WTE-MM-032-03', warehouseLocation: null }
+{
+  id: 'ckw5l4edn001w1jye3clf5phd',
+  createdAt: 2021-11-18T23:28:44.753Z,
+  shippingMethod: { id: 'ckhdnkufy07150733vtyimiw3' },
+  newProducts: [
+    { seasonsUID: 'OURL-YLW-MM-021-02' },
+    { seasonsUID: 'BODE-WTE-MM-032-03' }
+  ],
+  status: 'Delivered',
+  returnedProducts: [],
+  sentPackage: {
+    id: 'ckw5l4edt71174vyenz0regdk',
+    enteredDeliverySystemAt: 2021-11-20T01:44:58.961Z,
+    deliveredAt: 2021-11-21T00:15:50.336Z,
+    items: [ [Object], [Object] ]
+  },
+  returnPackages: [
+    {
+      id: 'ckw5l4edt71214vyeagqdnhuv',
+      items: [],
+      deliveredAt: null,
+      enteredDeliverySystemAt: null
+    }
+  ],
+  receipt: null
+}
+{ seasonsUID: 'CRGR-BLU-SS-012-01', warehouseLocation: null }
+{
+  id: 'cku8zz64h00g70vydb7xshkxa',
+  createdAt: 2021-10-01T23:28:28.869Z,
+  shippingMethod: null,
+  newProducts: [
+    { seasonsUID: 'NANU-ORG-3031-026-01' },
+    { seasonsUID: 'CRGR-BLU-SS-012-01' },
+    { seasonsUID: 'OASC-YLW-SS-018-02' }
+  ],
+  status: 'Completed',
+  returnedProducts: [ { seasonsUID: 'NANU-ORG-3031-026-01' } ],
+  sentPackage: {
+    id: 'cku8zz64l5944112fydg0llw95f',
+    enteredDeliverySystemAt: 2021-10-05T02:31:40.613Z,
+    deliveredAt: 2021-10-07T18:19:51.706Z,
+    items: [ [Object], [Object], [Object] ]
+  },
+  returnPackages: [
+    {
+      id: 'cks63uo991316912e063clwyszi',
+      items: [Array],
+      deliveredAt: null,
+      enteredDeliverySystemAt: null
+    },
+    {
+      id: 'cku8zz64l5944152fyd1iwziofr',
+      items: [Array],
+      deliveredAt: 2021-10-13T16:54:50.278Z,
+      enteredDeliverySystemAt: 2021-10-08T16:50:42.270Z
+    }
+  ],
+  receipt: { createdAt: 2021-10-13T16:18:38.206Z, items: [ [Object] ] }
+}
+{ seasonsUID: 'MRNI-GRN-SS-010-01', warehouseLocation: null }
+{
+  id: 'ckuk98cdi000i0vr0at0dg660',
+  createdAt: 2021-10-09T20:33:01.354Z,
+  shippingMethod: null,
+  newProducts: [ { seasonsUID: 'MRNI-GRN-SS-010-01' } ],
+  status: 'Delivered',
+  returnedProducts: [],
+  sentPackage: {
+    id: 'ckuk98cdm1100012fr0os3nbcd2',
+    enteredDeliverySystemAt: 2021-10-12T01:04:55.175Z,
+    deliveredAt: 2021-10-15T00:22:20.795Z,
+    items: [ [Object] ]
+  },
+  returnPackages: [
+    {
+      id: 'cks63uo991316912e063clwyszi',
+      items: [Array],
+      deliveredAt: null,
+      enteredDeliverySystemAt: null
+    },
+    {
+      id: 'ckuk98cdn1100052fr0wdvepeaw',
+      items: [],
+      deliveredAt: null,
+      enteredDeliverySystemAt: null
+    }
+  ],
+  receipt: null
+}
+{ seasonsUID: 'OASC-YLW-SS-018-02', warehouseLocation: null }
+{
+  id: 'cku8zz64h00g70vydb7xshkxa',
+  createdAt: 2021-10-01T23:28:28.869Z,
+  shippingMethod: null,
+  newProducts: [
+    { seasonsUID: 'NANU-ORG-3031-026-01' },
+    { seasonsUID: 'CRGR-BLU-SS-012-01' },
+    { seasonsUID: 'OASC-YLW-SS-018-02' }
+  ],
+  status: 'Completed',
+  returnedProducts: [ { seasonsUID: 'NANU-ORG-3031-026-01' } ],
+  sentPackage: {
+    id: 'cku8zz64l5944112fydg0llw95f',
+    enteredDeliverySystemAt: 2021-10-05T02:31:40.613Z,
+    deliveredAt: 2021-10-07T18:19:51.706Z,
+    items: [ [Object], [Object], [Object] ]
+  },
+  returnPackages: [
+    {
+      id: 'cks63uo991316912e063clwyszi',
+      items: [Array],
+      deliveredAt: null,
+      enteredDeliverySystemAt: null
+    },
+    {
+      id: 'cku8zz64l5944152fyd1iwziofr',
+      items: [Array],
+      deliveredAt: 2021-10-13T16:54:50.278Z,
+      enteredDeliverySystemAt: 2021-10-08T16:50:42.270Z
+    }
+  ],
+  receipt: { createdAt: 2021-10-13T16:18:38.206Z, items: [ [Object] ] }
+}
+{ seasonsUID: 'BODE-BLU-SS-037-02', warehouseLocation: null }
+{
+  id: 'ckvviktxb00570vv0ccpefjz8',
+  createdAt: 2021-11-11T22:19:50.786Z,
+  shippingMethod: { id: 'ckhdnkufy07150733vtyimiw3' },
+  newProducts: [ { seasonsUID: 'BODE-BLU-SS-037-02' } ],
+  status: 'Delivered',
+  returnedProducts: [],
+  sentPackage: {
+    id: 'ckvviktxe3601533sv0bewib2mo',
+    enteredDeliverySystemAt: null,
+    deliveredAt: null,
+    items: [ [Object] ]
+  },
+  returnPackages: [
+    {
+      id: 'ckoncs93d35vc0754snopva3c',
+      items: [],
+      deliveredAt: null,
+      enteredDeliverySystemAt: null
+    },
+    {
+      id: 'ckvviktxf3601573sv01q5x9h6z',
+      items: [],
+      deliveredAt: null,
+      enteredDeliverySystemAt: null
+    }
+  ],
+  receipt: null
+}
+{
+  seasonsUID: 'ACNE-RED-SS-039-02',
+  warehouseLocation: { id: 'ckt4onfft2682wum92bs0ud0m' }
+}
+{
+  id: 'ckun712o4000z0wus4myv25nr',
+  createdAt: 2021-10-11T21:54:41.480Z,
+  shippingMethod: null,
+  newProducts: [ { seasonsUID: 'ACNE-RED-SS-039-02' } ],
+  status: 'Completed',
+  returnedProducts: [
+    { seasonsUID: 'ACNE-RED-SS-039-02' },
+    { seasonsUID: 'SMJN-BLU-MM-001-01' },
+    { seasonsUID: 'BODE-WTE-SS-018-02' },
+    { seasonsUID: 'SMJN-BLU-3226-004-01' }
+  ],
+  sentPackage: {
+    id: 'ckun712o8200192gusklh0r39u',
+    enteredDeliverySystemAt: 2021-10-13T00:11:00.368Z,
+    deliveredAt: 2021-10-13T18:56:40.057Z,
+    items: [ [Object] ]
+  },
+  returnPackages: [
+    {
+      id: 'cku340gbs2764802eq58odl5jwb',
+      items: [Array],
+      deliveredAt: null,
+      enteredDeliverySystemAt: null
+    },
+    {
+      id: 'cku4tidlc14244332gwybkmzj3gz',
+      items: [Array],
+      deliveredAt: null,
+      enteredDeliverySystemAt: null
+    },
+    {
+      id: 'cku8huko016672172gxn9ru24i0g',
+      items: [Array],
+      deliveredAt: null,
+      enteredDeliverySystemAt: null
+    },
+    {
+      id: 'ckun712o8200232gusxykz41x0',
+      items: [],
+      deliveredAt: null,
+      enteredDeliverySystemAt: null
+    }
+  ],
+  receipt: { createdAt: 2021-11-16T18:33:26.544Z, items: [ [Object] ] }
+}
+{ seasonsUID: 'JDYT-PRP-MM-028-02', warehouseLocation: null }
+{
+  id: 'ckwmgwyf300kr1j0m7yngg2tv',
+  createdAt: 2021-11-30T19:03:04.004Z,
+  shippingMethod: { id: 'ckhdnkufy07150733vtyimiw3' },
+  newProducts: [ { seasonsUID: 'JDYT-PRP-MM-028-02' } ],
+  status: 'Packed',
+  returnedProducts: [],
+  sentPackage: {
+    id: 'ckwmgwyf81648344w0m27ewmc7m',
+    enteredDeliverySystemAt: null,
+    deliveredAt: null,
+    items: [ [Object] ]
+  },
+  returnPackages: [
+    {
+      id: 'cku340gbs2764802eq58odl5jwb',
+      items: [Array],
+      deliveredAt: null,
+      enteredDeliverySystemAt: null
+    },
+    {
+      id: 'cku4tidlc14244332gwybkmzj3gz',
+      items: [Array],
+      deliveredAt: null,
+      enteredDeliverySystemAt: null
+    },
+    {
+      id: 'cku8huko016672172gxn9ru24i0g',
+      items: [Array],
+      deliveredAt: null,
+      enteredDeliverySystemAt: null
+    },
+    {
+      id: 'ckun712o8200232gusxykz41x0',
+      items: [],
+      deliveredAt: null,
+      enteredDeliverySystemAt: null
+    },
+    {
+      id: 'ckwmgwyf81648384w0m56vgnmm5',
+      items: [],
+      deliveredAt: null,
+      enteredDeliverySystemAt: null
+    }
+  ],
+  receipt: null
+}
+{ seasonsUID: 'NOAH-BLK-XL-004-01', warehouseLocation: null }
+{
+  id: 'ckqdz2pd037ox0733cpl4jmnn',
+  createdAt: 2021-06-26T16:23:15.684Z,
+  shippingMethod: null,
+  newProducts: [
+    { seasonsUID: 'NOAH-BLK-XL-004-01' },
+    { seasonsUID: 'NANU-ORG-346-022-01' }
+  ],
+  status: 'Completed',
+  returnedProducts: [
+    { seasonsUID: 'NOAH-BLK-XL-004-01' },
+    { seasonsUID: 'NANU-ORG-346-022-01' }
+  ],
+  sentPackage: {
+    id: 'ckqdz2pd237oy0733scvcvnm2',
+    enteredDeliverySystemAt: null,
+    deliveredAt: null,
+    items: [ [Object], [Object] ]
+  },
+  returnPackages: [
+    {
+      id: 'ckqdz2pdf37p00733fgom5glg',
+      items: [Array],
+      deliveredAt: null,
+      enteredDeliverySystemAt: null
+    }
+  ],
+  receipt: {
+    createdAt: 2021-11-29T17:31:32.927Z,
+    items: [ [Object], [Object] ]
+  }
+}
+{ seasonsUID: 'NANU-ORG-346-022-01', warehouseLocation: null }
+{
+  id: 'ckqdz2pd037ox0733cpl4jmnn',
+  createdAt: 2021-06-26T16:23:15.684Z,
+  shippingMethod: null,
+  newProducts: [
+    { seasonsUID: 'NOAH-BLK-XL-004-01' },
+    { seasonsUID: 'NANU-ORG-346-022-01' }
+  ],
+  status: 'Completed',
+  returnedProducts: [
+    { seasonsUID: 'NOAH-BLK-XL-004-01' },
+    { seasonsUID: 'NANU-ORG-346-022-01' }
+  ],
+  sentPackage: {
+    id: 'ckqdz2pd237oy0733scvcvnm2',
+    enteredDeliverySystemAt: null,
+    deliveredAt: null,
+    items: [ [Object], [Object] ]
+  },
+  returnPackages: [
+    {
+      id: 'ckqdz2pdf37p00733fgom5glg',
+      items: [Array],
+      deliveredAt: null,
+      enteredDeliverySystemAt: null
+    }
+  ],
+  receipt: {
+    createdAt: 2021-11-29T17:31:32.927Z,
+    items: [ [Object], [Object] ]
+  }
+}
+{ seasonsUID: 'NANU-BWN-MM-008-02', warehouseLocation: null }
+{
+  id: 'ckvybqkuk000l0vtj8gfk9a7s',
+  createdAt: 2021-11-13T21:31:40.178Z,
+  shippingMethod: { id: 'ckhdnkxjp071h07334tf5dzo7' },
+  newProducts: [
+    { seasonsUID: 'NANU-BWN-MM-008-02' },
+    { seasonsUID: 'NANU-BWN-MM-009-01' }
+  ],
+  status: 'Delivered',
+  returnedProducts: [],
+  sentPackage: {
+    id: 'ckvybqkuq2084263rtjtxsxgagi',
+    enteredDeliverySystemAt: 2021-11-16T05:48:44.602Z,
+    deliveredAt: 2021-11-18T17:51:22.160Z,
+    items: [ [Object], [Object] ]
+  },
+  returnPackages: [
+    {
+      id: 'cksavw1w73102152dxr8s0fh6f1',
+      items: [Array],
+      deliveredAt: null,
+      enteredDeliverySystemAt: null
+    },
+    {
+      id: 'ckton3qk88425352hwwep9odo7r',
+      items: [Array],
+      deliveredAt: null,
+      enteredDeliverySystemAt: null
+    },
+    {
+      id: 'ckvybqkuq2084303rtjykdmxnf8',
+      items: [],
+      deliveredAt: null,
+      enteredDeliverySystemAt: null
+    }
+  ],
+  receipt: null
+}
+{ seasonsUID: 'NANU-BWN-MM-009-01', warehouseLocation: null }
+{
+  id: 'ckvybqkuk000l0vtj8gfk9a7s',
+  createdAt: 2021-11-13T21:31:40.178Z,
+  shippingMethod: { id: 'ckhdnkxjp071h07334tf5dzo7' },
+  newProducts: [
+    { seasonsUID: 'NANU-BWN-MM-008-02' },
+    { seasonsUID: 'NANU-BWN-MM-009-01' }
+  ],
+  status: 'Delivered',
+  returnedProducts: [],
+  sentPackage: {
+    id: 'ckvybqkuq2084263rtjtxsxgagi',
+    enteredDeliverySystemAt: 2021-11-16T05:48:44.602Z,
+    deliveredAt: 2021-11-18T17:51:22.160Z,
+    items: [ [Object], [Object] ]
+  },
+  returnPackages: [
+    {
+      id: 'cksavw1w73102152dxr8s0fh6f1',
+      items: [Array],
+      deliveredAt: null,
+      enteredDeliverySystemAt: null
+    },
+    {
+      id: 'ckton3qk88425352hwwep9odo7r',
+      items: [Array],
+      deliveredAt: null,
+      enteredDeliverySystemAt: null
+    },
+    {
+      id: 'ckvybqkuq2084303rtjykdmxnf8',
+      items: [],
+      deliveredAt: null,
+      enteredDeliverySystemAt: null
+    }
+  ],
+  receipt: null
+}
+{ seasonsUID: 'YZY-BLK-MM-002-02', warehouseLocation: null }
+{
+  id: 'ckvl4oury00z10vymbt7v27og',
+  createdAt: 2021-11-04T15:53:22.132Z,
+  shippingMethod: { id: 'ckhdnkufy07150733vtyimiw3' },
+  newProducts: [
+    { seasonsUID: 'YZY-BLK-MM-002-02' },
+    { seasonsUID: 'PMOS-RED-LL-002-01' },
+    { seasonsUID: 'NOAH-BLK-3430-011-01' },
+    { seasonsUID: 'RAFS-BLK-MM-002-01' }
+  ],
+  status: 'Delivered',
+  returnedProducts: [
+    { seasonsUID: 'NOAH-BLK-3430-011-01' },
+    { seasonsUID: 'AMIR-PNK-LL-012-01' },
+    { seasonsUID: 'RAFS-BLK-MM-002-01' },
+    { seasonsUID: 'MRNI-GRN-LL-002-01' }
+  ],
+  sentPackage: {
+    id: 'ckvl4ous45112252eym89qnlako',
+    enteredDeliverySystemAt: 2021-11-04T23:23:48.739Z,
+    deliveredAt: 2021-11-06T16:40:16.881Z,
+    items: [ [Object], [Object], [Object], [Object] ]
+  },
+  returnPackages: [
+    {
+      id: 'ckss0exck4477292ettwbsucp24',
+      items: [],
+      deliveredAt: null,
+      enteredDeliverySystemAt: null
+    },
+    {
+      id: 'ckvl4ous45112292eymmii2c461',
+      items: [],
+      deliveredAt: null,
+      enteredDeliverySystemAt: null
+    }
+  ],
+  receipt: null
+}
+{ seasonsUID: 'PMOS-RED-LL-002-01', warehouseLocation: null }
+{
+  id: 'ckvl4oury00z10vymbt7v27og',
+  createdAt: 2021-11-04T15:53:22.132Z,
+  shippingMethod: { id: 'ckhdnkufy07150733vtyimiw3' },
+  newProducts: [
+    { seasonsUID: 'YZY-BLK-MM-002-02' },
+    { seasonsUID: 'PMOS-RED-LL-002-01' },
+    { seasonsUID: 'NOAH-BLK-3430-011-01' },
+    { seasonsUID: 'RAFS-BLK-MM-002-01' }
+  ],
+  status: 'Delivered',
+  returnedProducts: [
+    { seasonsUID: 'NOAH-BLK-3430-011-01' },
+    { seasonsUID: 'AMIR-PNK-LL-012-01' },
+    { seasonsUID: 'RAFS-BLK-MM-002-01' },
+    { seasonsUID: 'MRNI-GRN-LL-002-01' }
+  ],
+  sentPackage: {
+    id: 'ckvl4ous45112252eym89qnlako',
+    enteredDeliverySystemAt: 2021-11-04T23:23:48.739Z,
+    deliveredAt: 2021-11-06T16:40:16.881Z,
+    items: [ [Object], [Object], [Object], [Object] ]
+  },
+  returnPackages: [
+    {
+      id: 'ckss0exck4477292ettwbsucp24',
+      items: [],
+      deliveredAt: null,
+      enteredDeliverySystemAt: null
+    },
+    {
+      id: 'ckvl4ous45112292eymmii2c461',
+      items: [],
+      deliveredAt: null,
+      enteredDeliverySystemAt: null
+    }
+  ],
+  receipt: null
+}
+{ seasonsUID: 'NOAH-BLK-3430-011-01', warehouseLocation: null }
+{
+  id: 'ckvl4oury00z10vymbt7v27og',
+  createdAt: 2021-11-04T15:53:22.132Z,
+  shippingMethod: { id: 'ckhdnkufy07150733vtyimiw3' },
+  newProducts: [
+    { seasonsUID: 'YZY-BLK-MM-002-02' },
+    { seasonsUID: 'PMOS-RED-LL-002-01' },
+    { seasonsUID: 'NOAH-BLK-3430-011-01' },
+    { seasonsUID: 'RAFS-BLK-MM-002-01' }
+  ],
+  status: 'Delivered',
+  returnedProducts: [
+    { seasonsUID: 'NOAH-BLK-3430-011-01' },
+    { seasonsUID: 'AMIR-PNK-LL-012-01' },
+    { seasonsUID: 'RAFS-BLK-MM-002-01' },
+    { seasonsUID: 'MRNI-GRN-LL-002-01' }
+  ],
+  sentPackage: {
+    id: 'ckvl4ous45112252eym89qnlako',
+    enteredDeliverySystemAt: 2021-11-04T23:23:48.739Z,
+    deliveredAt: 2021-11-06T16:40:16.881Z,
+    items: [ [Object], [Object], [Object], [Object] ]
+  },
+  returnPackages: [
+    {
+      id: 'ckss0exck4477292ettwbsucp24',
+      items: [],
+      deliveredAt: null,
+      enteredDeliverySystemAt: null
+    },
+    {
+      id: 'ckvl4ous45112292eymmii2c461',
+      items: [],
+      deliveredAt: null,
+      enteredDeliverySystemAt: null
+    }
+  ],
+  receipt: null
+}

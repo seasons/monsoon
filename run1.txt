@@ -1,0 +1,12 @@
+{
+  seasonsUID: 'CSBA-GRN-2829-037-01',
+  warehouseLocation: { id: 'ckt4oo67v4995wum9xvbtmy1v' }
+}
+RPP already exists for: CSBA-GRN-2829-037-01, fporterr1@gmail.com
+{
+  seasonsUID: 'CSBA-GRN-SS-036-01',
+  warehouseLocation: { id: 'ckt4omvhk0144wum9ny8wuzzy' }
+}
+RPP already exists for: CSBA-GRN-SS-036-01, fporterr1@gmail.com
+{ seasonsUID: 'CRGR-BLK-SS-002-02', warehouseLocation: null }
+RPP already exists for: CRGR-BLK-SS-002-02, jexy84@gmail.com

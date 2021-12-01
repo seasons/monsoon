@@ -1653,7 +1653,6 @@ export class RentalService {
     )
   }
 
-  // TODO: Add a fallback based on the initial reservation
   private initializeRentalStartedAt = (
     invoice: Pick<RentalInvoice, "billingStartAt" | "billingEndAt">,
     reservationPhysicalProduct: Pick<
@@ -1663,7 +1662,11 @@ export class RentalService {
   ) => {
     const itemDeliveredAt =
       reservationPhysicalProduct.deliveredToCustomerAt ||
-      reservationPhysicalProduct.createdAt
+      (this.timeUtils.xDaysAfterDate(
+        reservationPhysicalProduct.createdAt,
+        SENT_PACKAGE_CUSHION,
+        "date"
+      ) as Date)
     const deliveredBeforeBillingCycle = this.timeUtils.isLaterDate(
       invoice.billingStartAt,
       itemDeliveredAt

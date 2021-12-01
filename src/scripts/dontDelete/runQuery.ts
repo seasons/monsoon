@@ -5,12 +5,8 @@ import { PrismaService } from "../../prisma/prisma.service"
 const run = async () => {
   const ps = new PrismaService()
 
-  await ps.client.rentalInvoice.updateMany({
-    where: {
-      membership: { customer: { status: "Deactivated" } },
-      status: "ChargeFailed",
-    },
-    data: { status: "Cancelled" },
+  await ps.client.reservationPhysicalProduct.deleteMany({
+    where: { physicalProduct: { seasonsUID: "CRGR-BLK-SS-002-02" } },
   })
   console.log("done")
 }
