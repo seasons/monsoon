@@ -78,14 +78,15 @@ type Mutation {
     droppedOffBy: ReservationDropOffAgent!
     customerId: String
   ): Boolean @hasRole(roles: [Admin])
-  pickItems(bagItemIDs: [ID!]!): [ReservationPhysicalProduct!]
+  pickItems(bagItemIds: [ID!]!): [ReservationPhysicalProduct!]
     @hasRole(roles: [Admin])
-  packItems(bagItemIDs: [ID!]!): [ReservationPhysicalProduct!]
+  packItems(bagItemIds: [ID!]!): [ReservationPhysicalProduct!]
     @hasRole(roles: [Admin])
-  generateShippingLabels(bagItemIDs: [ID!]!): [Package!]
+  generateShippingLabels(bagItemIds: [ID!]!): [Package!]
     @hasRole(roles: [Admin])
   markAsLost(lostBagItemId: ID!): Boolean @hasRole(roles: [Admin])
-  markAsPickedUp(bagItemIDs: [ID]!): Boolean @hasRole(roles: [Admin])
+  markAsPickedUp(bagItemIds: [ID]!): Boolean @hasRole(roles: [Admin])
+  markNotReturned(bagItemIds: [ID]!): Boolean @hasRole(roles: [Admin])
 }
 
 type ReservationFeedback {
@@ -314,15 +315,18 @@ enum ReservationPhysicalProductStatus {
   Queued
   Picked
   Packed
-  ShippedToCustomer
-  ShippedToBusiness
-  DeliveredToCustomer
+  ScannedOnInbound
+  InTransitInbound
+  ScannedOnOutbound
+  InTransitOutbound
   AtHome
+  DeliveredToCustomer
   DeliveredToBusiness
+  ReturnPending
   ReturnProcessed
   ResetEarly
-  Returned
   Lost
+  Cancelled
 }
 
 enum ReservationDropOffAgent {

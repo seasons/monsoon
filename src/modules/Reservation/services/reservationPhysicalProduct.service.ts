@@ -286,16 +286,16 @@ export class ReservationPhysicalProductService {
   }
 
   async pickItems({
-    bagItemIDs,
+    bagItemIds,
     select,
   }: {
-    bagItemIDs: string[]
+    bagItemIds: string[]
     select?: Prisma.ReservationPhysicalProductSelect
   }) {
     const bagItems = await this.prisma.client.bagItem.findMany({
       where: {
         id: {
-          in: bagItemIDs,
+          in: bagItemIds,
         },
       },
       select: {
@@ -363,16 +363,16 @@ export class ReservationPhysicalProductService {
   }
 
   async packItems({
-    bagItemIDs,
+    bagItemIds,
     select,
   }: {
-    bagItemIDs: string[]
+    bagItemIds: string[]
     select?: Prisma.ReservationPhysicalProductSelect
   }) {
     const bagItems = await this.prisma.client.bagItem.findMany({
       where: {
         id: {
-          in: bagItemIDs,
+          in: bagItemIds,
         },
       },
       select: {
@@ -430,16 +430,16 @@ export class ReservationPhysicalProductService {
   }
 
   async generateShippingLabels({
-    bagItemIDs,
+    bagItemIds,
     select,
   }: {
-    bagItemIDs?: string[]
+    bagItemIds?: string[]
     select?: Prisma.PackageSelect
   }) {
     const bagItems = await this.prisma.client.bagItem.findMany({
       where: {
         id: {
-          in: bagItemIDs,
+          in: bagItemIds,
         },
         reservationPhysicalProduct: {
           status: "Packed",
@@ -573,11 +573,11 @@ export class ReservationPhysicalProductService {
     return [outboundPackage, inboundPackage]
   }
 
-  async markAsPickedUp(bagItemIDs) {
+  async markAsPickedUp(bagItemIds) {
     const bagItems = await this.prisma.client.bagItem.findMany({
       where: {
         id: {
-          in: bagItemIDs,
+          in: bagItemIds,
         },
       },
       select: {
@@ -603,7 +603,7 @@ export class ReservationPhysicalProductService {
       item => item.reservationPhysicalProduct.id
     )
 
-    await this.generateShippingLabels({ bagItemIDs })
+    await this.generateShippingLabels({ bagItemIds })
 
     await this.prisma.client.reservationPhysicalProduct.updateMany({
       where: {

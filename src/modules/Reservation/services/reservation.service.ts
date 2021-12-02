@@ -357,6 +357,11 @@ export class ReservationService {
             },
             select: {
               id: true,
+              shippingMethod: {
+                select: {
+                  code: true,
+                },
+              },
               reservationPhysicalProducts: {
                 select: {
                   physicalProduct: {
@@ -394,9 +399,7 @@ export class ReservationService {
         variantIDs = reservationWithProducts.reservationPhysicalProducts.map(
           rpp => rpp.physicalProduct.productVariant.id
         )
-        updatedShippingCode =
-          (reservationWithProducts as any)?.shippingOption?.shippingMethod
-            ?.code || shippingCode
+        updatedShippingCode = reservationWithProducts?.shippingMethod?.code
       } else {
         const bagItems = await this.prisma.client.bagItem.findMany({
           where: {

@@ -150,9 +150,6 @@ export class ReserveService {
     const newProductVariantIDs = activeBagItemsWithData
       .filter(a => a.status === "Added")
       .map(a => a.productVariant.id)
-    const heldPhysicalProducts = activeBagItemsWithData
-      .filter(a => a.status === "Reserved")
-      .map(b => b.physicalProduct)
 
     const [
       productVariantsCountsUpdatePromises,
