@@ -1,20 +1,18 @@
 import { PrismaService } from "@app/prisma/prisma.service"
 import { Injectable } from "@nestjs/common"
 
-interface InitialState {
-  Lost?: number
-  ReturnProcessed?: number
-  DeliveredToCustomer?: number
-}
-
 @Injectable()
 export class ReservationUtilsService {
   constructor(private readonly prisma: PrismaService) {}
 
   async updateReservationOnChange(
     reservationIds: string[],
-    initialState: InitialState,
-    resPhysProdsIds: string[]
+    /**
+     * should ba an object that has the rpp ids as keys and the statuses they will be changed to as the values
+     * example: {"afiaowefiuwhf": "Lost", "asdfasdfasdf": "Lost"}
+     * */
+
+    rppStatusesAfterChange: any
   ) {
     const reservations = await this.prisma.client.reservation.findMany({
       where: {
@@ -26,11 +24,6 @@ export class ReservationUtilsService {
         id: true,
         status: true,
         reservationPhysicalProducts: {
-          where: {
-            id: {
-              notIn: resPhysProdsIds,
-            },
-          },
           select: {
             id: true,
             status: true,
@@ -43,10 +36,20 @@ export class ReservationUtilsService {
 
     for (const reservation of reservations) {
       const reservationPhysProds = reservation.reservationPhysicalProducts
-      const resPhysProdStatusCounts = { ...initialState }
+      const resPhysProdStatusCounts = {
+        Lost: 0,
+        ReturnProcessed: 0,
+        DeliveredToBusiness: 0,
+      }
 
       for (const resPhysProd of reservationPhysProds) {
         const status = resPhysProd.status
+        const rppStatusAfterChange = rppStatusesAfterChange[resPhysProd.id]
+
+        if (rppStatusAfterChange) {
+          resPhysProdStatusCounts[rppStatusAfterChange] += 1
+          continue
+        }
 
         if (
           !["Lost", "ReturnProcessed", "DeliveredToCustomer"].includes(status)

@@ -205,13 +205,15 @@ export class ShippoController {
         })
       )
     }
-
+    const rppStatusesAfterChange = {}
+    rppsToUpdate.forEach(
+      a => (rppStatusesAfterChange[a.id] = "DeliveredToCustomer")
+    )
     if (numRPPsSetToDeliveredToCustomer > 0) {
       const reservationsToUpdate = uniq(rppsToUpdate.map(a => a.reservation.id))
       const reservationStatusUpdatePromises = await this.reservationUtils.updateReservationOnChange(
         reservationsToUpdate,
-        { DeliveredToCustomer: numRPPsSetToDeliveredToCustomer },
-        rppsToUpdate.map(a => a.id)
+        rppStatusesAfterChange
       )
       promises.push(...reservationStatusUpdatePromises)
     }
