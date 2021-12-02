@@ -238,12 +238,11 @@ const createReservationPhysicalProduct = async (
     throw new Error(`No outbound package found for product ${prod.seasonsUID}`)
   }
 
-  // TODO: Check the logic here.
   const returnReceiptForItem = await ps.client.reservationReceipt.findFirst({
     where: {
       items: { some: { product: { seasonsUID: prod.seasonsUID } } },
       reservation: { customer: { id: ri.membership.customer.id } },
-      createdAt: { gt: firstResy.createdAt },
+      createdAt: { gte: firstResy.createdAt },
     },
   })
   const hasReturnProcessed = !!returnReceiptForItem
@@ -275,7 +274,7 @@ const createReservationPhysicalProduct = async (
   const outboundPackageDeliveredWithNoTimestampsSet =
     prod.productStatus !== "Lost" &&
     !!reservedBagItemForProd &&
-    timeUtils.numDaysBetween(shipmentResy.createdAt, new Date()) > 10
+    timeUtils.numDaysBetween(shipmentResy.createdAt, new Date()) > 5
   let hasBeenDeliveredToCustomer =
     outboundPackageDeliveredCleanly ||
     outboundPackageDeliveredWithoutDeliveredAtSet ||
@@ -313,7 +312,7 @@ const createReservationPhysicalProduct = async (
         a.lineItems.some(b => b.recordID === prod.id) &&
         ["Fulfilled", "Submitted"].includes(a.status)
     )
-    purchasedAt = orderForCust.createdAt
+    purchasedAt = orderForCust?.createdAt
   }
 
   let status: ReservationPhysicalProductStatus
@@ -448,11 +447,20 @@ const migrateToRpp = async () => {
   let failureCount = 0
   const total = allBillableRentalInvoices.flatMap(a => a.products).length
   let i = 0
+  const ignoreList = [
+    // Reserved by Perla but something wrong in the data. Let it be
+    "ACNE-RED-LL-039-01",
+    // Reserved by Jesse out of band. Handled manually offline. See https://seasonsnyc.slack.com/archives/C01AX0QBRK9/p1637623034030900
+    "MRNI-RED-SS-023-01",
+  ]
   for (const ri of allBillableRentalInvoices) {
     console.log(`${i++} of ${total}`)
     const products = ri.products
 
     for (const prod of products) {
+      if (ignoreList.includes(prod.seasonsUID)) {
+        continue
+      }
       try {
         await createReservationPhysicalProduct(ri, prod, ps, timeUtils)
         successCount++
