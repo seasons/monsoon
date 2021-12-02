@@ -1492,6 +1492,10 @@ model ReservationPhysicalProduct {
   scannedOnOutboundAt      DateTime?
   hasBeenScannedOnOutbound Boolean   @default(false)
 
+  foundAt            DateTime?
+  hasBeenFound       Boolean @default(false)
+  foundInPhase       ReservationPhase?
+
   lineItemId String?        @db.VarChar(30)
   lineItem   OrderLineItem? @relation(fields: [lineItemId], references: [id])
 
