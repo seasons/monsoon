@@ -11,7 +11,6 @@ export class ReservationUtilsService {
      * should ba an object that has the rpp ids as keys and the statuses they will be changed to as the values
      * example: {"afiaowefiuwhf": "Lost", "asdfasdfasdf": "Lost"}
      * */
-
     rppStatusesAfterChange: any
   ) {
     const reservations = await this.prisma.client.reservation.findMany({
@@ -39,7 +38,7 @@ export class ReservationUtilsService {
       const resPhysProdStatusCounts = {
         Lost: 0,
         ReturnProcessed: 0,
-        DeliveredToBusiness: 0,
+        DeliveredToCustomer: 0,
       }
 
       for (const resPhysProd of reservationPhysProds) {
