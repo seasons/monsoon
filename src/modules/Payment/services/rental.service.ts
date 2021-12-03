@@ -804,10 +804,10 @@ export class RentalService {
             price,
             adjustedForPreviousMinimum,
             appliedMinimum,
-          } = await this.calculatePriceForDaysRented({
+          } = await this.calculateRentalPrice({
             invoice,
             customer: invoice.membership.customer,
-            product: reservationPhysicalProduct.physicalProduct,
+            reservationPhysicalProduct,
             daysRented,
           })
 
@@ -1090,17 +1090,19 @@ export class RentalService {
     return datas.filter(Boolean)
   }
 
-  async calculatePriceForDaysRented({
+  async calculateRentalPrice({
     invoice,
     customer,
-    product,
+    reservationPhysicalProduct,
     daysRented,
   }: {
     invoice: Pick<RentalInvoice, "id">
     customer: Pick<Customer, "id">
-    product: Pick<PhysicalProduct, "id"> & {
-      productVariant: {
-        product: { computedRentalPrice: number }
+    reservationPhysicalProduct: Pick<ReservationPhysicalProduct, "status"> & {
+      physicalProduct: Pick<PhysicalProduct, "id"> & {
+        productVariant: {
+          product: { computedRentalPrice: number }
+        }
       }
     }
     daysRented: number
@@ -1109,6 +1111,18 @@ export class RentalService {
     appliedMinimum: boolean
     adjustedForPreviousMinimum: boolean
   }> {
+    const daysNeededForMinimumCharge = 12
+    let appliedMinimum = false
+    let adjustedForPreviousMinimum = false
+
+    if (daysRented === 0 || reservationPhysicalProduct.status === "Purchased") {
+      return {
+        price: 0,
+        appliedMinimum,
+        adjustedForPreviousMinimum,
+      }
+    }
+
     const previousInvoice = await this.prisma.client.rentalInvoice.findFirst({
       where: {
         membership: {
@@ -1141,21 +1155,10 @@ export class RentalService {
         createdAt: "desc",
       },
     })
-    const daysNeededForMinimumCharge = 12
-    let appliedMinimum = false
-    let adjustedForPreviousMinimum = false
 
     const previousLineItem = previousInvoice?.lineItems?.find(
-      l => l.physicalProductId === product.id
+      l => l.physicalProductId === reservationPhysicalProduct.physicalProduct.id
     )
-
-    if (daysRented === 0) {
-      return {
-        price: 0,
-        appliedMinimum,
-        adjustedForPreviousMinimum,
-      }
-    }
 
     // Apply minimum if needed
     if (
@@ -1172,7 +1175,7 @@ export class RentalService {
 
       return {
         price: this.calculateUnadjustedPriceForDaysRented(
-          product,
+          reservationPhysicalProduct.physicalProduct,
           adjustedDaysRented
         ),
         appliedMinimum,
@@ -1196,7 +1199,7 @@ export class RentalService {
 
         return {
           price: this.calculateUnadjustedPriceForDaysRented(
-            product,
+            reservationPhysicalProduct.physicalProduct,
             countedDaysForCurrentInvoice
           ),
           appliedMinimum,
@@ -1206,7 +1209,10 @@ export class RentalService {
     }
 
     return {
-      price: this.calculateUnadjustedPriceForDaysRented(product, daysRented),
+      price: this.calculateUnadjustedPriceForDaysRented(
+        reservationPhysicalProduct.physicalProduct,
+        daysRented
+      ),
       appliedMinimum,
       adjustedForPreviousMinimum,
     }
@@ -1271,9 +1277,9 @@ export class RentalService {
         { upTo: options.upTo }
       )
 
-      const { price } = await this.calculatePriceForDaysRented({
+      const { price } = await this.calculateRentalPrice({
         invoice: currentInvoice,
-        product: reservationPhysicalProduct.physicalProduct,
+        reservationPhysicalProduct: reservationPhysicalProduct,
         customer: { id: customerId },
         daysRented,
       })
