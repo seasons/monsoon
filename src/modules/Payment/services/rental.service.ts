@@ -583,6 +583,7 @@ export class RentalService {
     )
     switch (logicCase) {
       case "Outbound":
+      case "Cancelled":
         rentalStartedAt = undefined
         break
       case "Inbound":
@@ -711,6 +712,7 @@ export class RentalService {
       case "ResetEarly":
       case "ReturnProcessed":
       case "Lost":
+      case "Cancelled":
         // noop
         break
       default:
@@ -740,6 +742,7 @@ export class RentalService {
       case "ResetEarly":
       case "ReturnProcessed":
       case "Lost":
+      case "Cancelled":
         return status
       default:
         throw new Error(

@@ -5,7 +5,6 @@ import { ReserveService } from "@app/modules/Reservation/services/reserve.servic
 import { ReservationTestUtilsService } from "@app/modules/Reservation/tests/reservation.test.utils"
 import { TestUtilsService } from "@app/modules/Test/services/test.service"
 import { TimeUtilsService } from "@app/modules/Utils/services/time.service"
-import { UtilsModule } from "@app/modules/Utils/utils.module"
 import { PrismaService } from "@app/prisma/prisma.service"
 import { Test } from "@nestjs/testing"
 import { ReservationPhysicalProductStatus } from "@prisma/client"
@@ -13,7 +12,6 @@ import { ReservationPhysicalProductStatus } from "@prisma/client"
 import { RentalService } from "../services/rental.service"
 import {
   expectTimeToEqual,
-  getCustWithData,
   getReservationPhysicalProductWithData,
   setReservationPhysicalProductDeliveredToBusinessAt,
   setReservationPhysicalProductDeliveredToCustomerAt,
@@ -32,8 +30,6 @@ describe("Calculate Days Rented", () => {
   let reserveService: ReserveService
   let reservationTestUtils: ReservationTestUtilsService
 
-  let addToBagAndReserveForCustomerWithParams
-  let getCustWithDataWithParams
   let setReservationPhysicalProductDeliveredToCustomerAtWithParams
   let setReservationPhysicalProductStatusWithParams
   let getReservationPhysicalProductWithDataWithParams
@@ -70,24 +66,6 @@ describe("Calculate Days Rented", () => {
         numDaysAgo,
         { prisma, timeUtils }
       )
-    addToBagAndReserveForCustomerWithParams = async (
-      numBagItems,
-      { numDaysAgo }
-    ) => {
-      const {
-        reservation,
-      } = await reservationTestUtils.addToBagAndReserveForCustomer({
-        customer: testCustomer,
-        numProductsToAdd: numBagItems,
-        options: { numDaysAgo },
-      })
-      return reservation
-    }
-    getCustWithDataWithParams = () =>
-      getCustWithData(testCustomer, {
-        prisma,
-        select: {},
-      })
     setReservationPhysicalProductDeliveredToCustomerAtWithParams = (
       reservationPhysicalProductId,
       deliveredAt
@@ -173,9 +151,13 @@ describe("Calculate Days Rented", () => {
 
     describe("Lost", () => {
       it("Was lost on the way to the customer", async () => {
-        initialReservation = await addToBagAndReserveForCustomerWithParams(1, {
-          numDaysAgo: 23,
-        })
+        ;({
+          reservation: initialReservation,
+        } = await reservationTestUtils.addToBagAndReserveForCustomer({
+          customer: testCustomer,
+          numProductsToAdd: 1,
+          options: { numDaysAgo: 23 },
+        }))
         reservationPhysicalProductAfterReservation =
           initialReservation.reservationPhysicalProducts[0]
         await prisma.client.reservationPhysicalProduct.update({
@@ -208,9 +190,13 @@ describe("Calculate Days Rented", () => {
       })
 
       it("Was lost on the way to us", async () => {
-        initialReservation = await addToBagAndReserveForCustomerWithParams(1, {
-          numDaysAgo: 23,
-        })
+        ;({
+          reservation: initialReservation,
+        } = await reservationTestUtils.addToBagAndReserveForCustomer({
+          customer: testCustomer,
+          numProductsToAdd: 1,
+          options: { numDaysAgo: 23 },
+        }))
         reservationPhysicalProductAfterReservation =
           initialReservation.reservationPhysicalProducts[0]
         await setReservationPhysicalProductScannedOnOutboundAtWithParams(
@@ -253,9 +239,13 @@ describe("Calculate Days Rented", () => {
     })
     describe("Reached customer", () => {
       beforeEach(async () => {
-        initialReservation = await addToBagAndReserveForCustomerWithParams(1, {
-          numDaysAgo: 25,
-        })
+        ;({
+          reservation: initialReservation,
+        } = await reservationTestUtils.addToBagAndReserveForCustomer({
+          customer: testCustomer,
+          numProductsToAdd: 1,
+          options: { numDaysAgo: 25 },
+        }))
         reservationPhysicalProductAfterReservation =
           initialReservation.reservationPhysicalProducts[0]
         await setReservationPhysicalProductDeliveredToCustomerAtWithParams(
@@ -667,9 +657,13 @@ describe("Calculate Days Rented", () => {
 
     describe("On the way out", () => {
       beforeEach(async () => {
-        initialReservation = await addToBagAndReserveForCustomerWithParams(1, {
-          numDaysAgo: 1,
-        })
+        ;({
+          reservation: initialReservation,
+        } = await reservationTestUtils.addToBagAndReserveForCustomer({
+          customer: testCustomer,
+          numProductsToAdd: 1,
+          options: { numDaysAgo: 1 },
+        }))
         reservationPhysicalProductAfterReservation =
           initialReservation.reservationPhysicalProducts[0]
       })
@@ -804,6 +798,44 @@ describe("Calculate Days Rented", () => {
         expect(rentalEndedAt).toBe(undefined)
         expect(comment).toBe("") // TODO:
       })
+    })
+
+    test("Cancelled", async () => {
+      ;({
+        reservation: initialReservation,
+      } = await reservationTestUtils.addToBagAndReserveForCustomer({
+        customer: testCustomer,
+        numProductsToAdd: 1,
+        options: { numDaysAgo: 23 },
+      }))
+
+      reservationPhysicalProductAfterReservation =
+        initialReservation.reservationPhysicalProducts[0]
+      await prisma.client.reservationPhysicalProduct.update({
+        where: { id: reservationPhysicalProductAfterReservation.id },
+        data: {
+          status: "Cancelled",
+          cancelledAt: timeUtils.xDaysAgoISOString(22),
+        },
+      })
+      reservationPhysicalProductWithData = await getReservationPhysicalProductWithDataWithParams(
+        initialReservation.reservationPhysicalProducts[0].id
+      )
+
+      const {
+        daysRented,
+        comment,
+        rentalEndedAt,
+        rentalStartedAt,
+      } = await rentalService.calcDaysRented(
+        testCustomer.membership.rentalInvoices[0],
+        reservationPhysicalProductWithData
+      )
+
+      expect(daysRented).toBe(0)
+      expect(rentalStartedAt).toBeUndefined()
+      expect(rentalEndedAt).toBeUndefined()
+      expect(comment).toBe("") // TODO:
     })
   })
 
