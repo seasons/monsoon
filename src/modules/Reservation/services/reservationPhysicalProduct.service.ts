@@ -144,16 +144,21 @@ export class ReservationPhysicalProductService {
         id: true,
       },
     })
-    const reservationPhysicalProductData = {
+    const reservationPhysicalProductData = Prisma.validator<
+      Prisma.ReservationPhysicalProductUpdateInput
+    >()({
       status: <ReservationPhysicalProductStatus>"ReturnProcessed",
       hasReturnProcessed: true,
       returnProcessedAt: DateTime.local().toISO(),
       ...(returnedPackage && {
-        inboundPackageId: returnedPackage.id,
+        inboundPackage: { connect: { id: returnedPackage.id } },
+        physicalProduct: {
+          update: { packages: { connect: { id: returnedPackage.id } } },
+        },
       }),
       droppedOffBy,
       droppedOffAt: DateTime.local().toISO(),
-    }
+    })
 
     const promise = this.prisma.client.reservationPhysicalProduct.updateMany({
       where: {
