@@ -20,7 +20,6 @@ import { BrandFieldsResolver } from "./fields/brand.fields.resolver"
 import { PhysicalProductFieldsResolver } from "./fields/physicalProduct.fields.resolver"
 import { ProductFieldsResolver } from "./fields/product.fields.resolver"
 import { ProductVariantFieldsResolver } from "./fields/productVariant.fields.resolver"
-import { BagMutationsResolver } from "./mutations/bag.mutations.resolver"
 import { BrandMutationsResolver } from "./mutations/brand.mutations.resolver"
 import { LaunchMutationsResolver } from "./mutations/launch.mutations.resolver"
 import { PhysicalProductMutationsResolver } from "./mutations/physicalProduct.mutations.resolver"
@@ -59,7 +58,6 @@ export const ProductModuleDef = {
     BrandService,
     BrandUtilsService,
     BrandQueriesResolver,
-    BagMutationsResolver,
     BrandMutationsResolver,
     LaunchService,
     LaunchMutationsResolver,
