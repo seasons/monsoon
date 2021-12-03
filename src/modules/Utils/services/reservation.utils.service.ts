@@ -38,18 +38,17 @@ export class ReservationUtilsService {
 
     for (const reservation of reservations) {
       const reservationPhysProds = reservation.reservationPhysicalProducts
-      const resPhysProdStatusCounts = {
-        Lost: 0,
-        ReturnProcessed: 0,
-        DeliveredToCustomer: 0,
-      } as { [key in ReservationPhysicalProductStatus]: number }
+      const resPhysProdStatusCounts = {} as {
+        [key in ReservationPhysicalProductStatus]: number
+      }
 
       for (const resPhysProd of reservationPhysProds) {
         const status = resPhysProd.status
         const rppStatusAfterChange = rppStatusesAfterChange[resPhysProd.id]
 
         if (rppStatusAfterChange) {
-          resPhysProdStatusCounts[rppStatusAfterChange] += 1
+          resPhysProdStatusCounts[rppStatusAfterChange] =
+            (resPhysProdStatusCounts[rppStatusAfterChange] || 0) + 1
           continue
         }
 
@@ -59,12 +58,8 @@ export class ReservationUtilsService {
           continue
         }
 
-        if (resPhysProdStatusCounts[status]) {
-          resPhysProdStatusCounts[status] += 1
-          continue
-        }
-
-        resPhysProdStatusCounts[status] = 1
+        resPhysProdStatusCounts[status] =
+          (resPhysProdStatusCounts[status] || 0) + 1
       }
 
       let statusWithMaxCount = {
