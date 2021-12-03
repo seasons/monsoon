@@ -691,6 +691,7 @@ export class ReservationPhysicalProductService {
           id: rppId,
         },
         select: {
+          reservation: { select: { id: true } },
           inboundPackage: true,
         },
       }
@@ -713,15 +714,25 @@ export class ReservationPhysicalProductService {
       })
     }
 
-    return await this.prisma.client.reservationPhysicalProduct.update({
-      where: {
-        id: rppId,
-      },
-      data: updateData,
-      select: {
-        id: true,
-      },
-    })
+    const promises = [
+      this.prisma.client.reservationPhysicalProduct.update({
+        where: {
+          id: rppId,
+        },
+        data: updateData,
+        select: {
+          id: true,
+        },
+      }),
+    ]
+    promises.push(
+      ...(await this.reservationUtils.updateReservationOnChange(
+        [rppWithData.reservation.id],
+        {
+          rppId: "AtHome",
+        }
+      ))
+    )
   }
 
   async markAsPickedUp({ bagItemIds }) {
