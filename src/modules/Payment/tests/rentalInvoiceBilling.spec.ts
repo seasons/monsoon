@@ -79,10 +79,7 @@ describe("Rental Invoice Billing", () => {
         numProductsToAdd: 2,
       })
 
-      reservationTestUtils.setReservationCreatedAt(
-        reservation,
-        timeUtils.xDaysAgo(25)
-      )
+      await reservationTestUtils.setReservationCreatedAt(reservation.id, 25)
 
       await rppService.pickItems({ bagItemIds: bagItems.map(b => b.id) })
       await rppService.packItems({ bagItemIds: bagItems.map(b => b.id) })
@@ -102,10 +99,12 @@ describe("Rental Invoice Billing", () => {
       await request(httpServer)
         .post("/shippo_events")
         .send(packageEvents["PackageAccepted"])
+      Mockdate.reset()
       Mockdate.set(timeUtils.xDaysAgo(24))
       await request(httpServer)
         .post("/shippo_events")
         .send(packageEvents["PackageDeparted"])
+      Mockdate.reset()
       Mockdate.set(timeUtils.xDaysAgo(23))
       await request(httpServer)
         .post("/shippo_events")
@@ -147,8 +146,8 @@ describe("Rental Invoice Billing", () => {
       expect(rentalUsageLineItems.length).toBe(2)
       for (const li of rentalUsageLineItems) {
         expect(li.daysRented).toBe(23)
-        expect(li.rentalStartedAt).toBe(timeUtils.xDaysAgo(23))
-        expect(li.rentalEndedAt).toBe(new Date())
+        testUtils.expectTimeToEqual(li.rentalStartedAt, timeUtils.xDaysAgo(23))
+        testUtils.expectTimeToEqual(li.rentalEndedAt, new Date())
       }
     })
 
