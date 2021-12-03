@@ -118,18 +118,6 @@ export const setReservationStatus = async (
   })
 }
 
-export const setReservationCreatedAt = async (
-  reservationId,
-  numDaysAgo,
-  { prisma, timeUtils }: PrismaOption & TimeUtilsOption
-) => {
-  const date = timeUtils.xDaysAgoISOString(numDaysAgo)
-  await prisma.client.reservation.update({
-    where: { id: reservationId },
-    data: { createdAt: date },
-  })
-}
-
 export const setPackageDeliveredAt = async (
   packageId,
   numDaysAgo,

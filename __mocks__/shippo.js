@@ -15,7 +15,7 @@ class ShippoMock {
     create: () =>
       new Promise((resolve, reject) => {
         resolve({
-          object_id: "mock-object-id",
+          object_id: Math.random().toString(36).slice(2), // random string
           label_url: "mock-label-url",
           tracking_number: "mock-tracking-number",
           tracking_url_provide: "mock-tracking-url-provider",

@@ -1,7 +1,6 @@
 import {
   expectTimeToEqual,
   setPackageEnteredSystemAt,
-  setReservationCreatedAt,
 } from "@app/modules/Payment/tests/utils/utils"
 import { ReserveService } from "@app/modules/Reservation/services/reserve.service"
 import { ReservationTestUtilsService } from "@app/modules/Reservation/tests/reservation.test.utils"
@@ -95,10 +94,7 @@ describe("Mark Items as Lost", () => {
         options: { shippingCode: "UPSGround" },
       })
       newReservation = reservation
-      await setReservationCreatedAt(reservation.id, 4, {
-        prisma: prismaService,
-        timeUtils,
-      })
+      await reservationTestUtils.setReservationCreatedAt(reservation.id, 4)
 
       const transactionID = cuid()
       outboundPackage = await prismaService.client.package.create({
@@ -240,10 +236,7 @@ describe("Mark Items as Lost", () => {
         options: { shippingCode: "UPSGround" },
       })
 
-      await setReservationCreatedAt(reservation.id, 10, {
-        prisma: prismaService,
-        timeUtils,
-      })
+      await reservationTestUtils.setReservationCreatedAt(reservation.id, 10)
 
       const transactionID = cuid()
       inboundPackage = await prismaService.client.package.create({
@@ -381,10 +374,7 @@ describe("Mark Items as Lost", () => {
         options: { shippingCode: "UPSGround" },
       })
 
-      await setReservationCreatedAt(reservation.id, 10, {
-        prisma: prismaService,
-        timeUtils,
-      })
+      await reservationTestUtils.setReservationCreatedAt(reservation.id, 10)
 
       const transactionID = cuid()
       outboundPackage = await prismaService.client.package.create({
