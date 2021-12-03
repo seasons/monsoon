@@ -735,6 +735,7 @@ export class RentalService {
         return "Inbound"
       case "DeliveredToCustomer":
       case "ReturnPending":
+      case "AtHome":
         return "WithCustomer"
       case "ResetEarly":
       case "ReturnProcessed":
