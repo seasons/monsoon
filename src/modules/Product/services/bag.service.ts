@@ -565,8 +565,7 @@ export class BagService {
 
     return await this.reservationUtils.updateReservationOnChange(
       [currentReservation.id],
-      { Lost: 1 },
-      [lostResPhysProd.id]
+      { [lostResPhysProd.id]: "Lost" }
     )
   }
 

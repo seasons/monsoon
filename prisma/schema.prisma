@@ -1126,7 +1126,7 @@ model PhysicalProduct {
   purchasedOnReservationId     String?                        @map("purchasedOnReservation") @db.VarChar(30)
   purchasedOnReservation       Reservation?                   @relation("ReservationToPurchasedProducts", fields: [purchasedOnReservationId], references: [id])
   bagItems                     BagItem[]
-  reservationPhysicalProduct   ReservationPhysicalProduct[]
+  reservationPhysicalProducts   ReservationPhysicalProduct[]
 }
 
 model PhysicalProductPrice {
@@ -1518,6 +1518,7 @@ model ReservationPhysicalProduct {
   shippingMethod   ShippingMethod? @relation(fields: [shippingMethodId], references: [id])
 
   pickupWindowId String?
+  pickupDate DateTime?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

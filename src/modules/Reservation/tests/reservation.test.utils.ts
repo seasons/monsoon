@@ -30,6 +30,17 @@ export class ReservationTestUtilsService {
     private readonly reserve: ReserveService
   ) {}
 
+  setReservationCreatedAt = async (reservationId, numDaysAgo) => {
+    const date = this.timeUtils.xDaysAgoISOString(numDaysAgo)
+    await this.prisma.client.reservation.update({
+      where: { id: reservationId },
+      data: { createdAt: date },
+    })
+    await this.prisma.client.reservationPhysicalProduct.updateMany({
+      where: { reservationId },
+      data: { createdAt: date },
+    })
+  }
   async addToBagAndReserveForCustomer({
     customer,
     numProductsToAdd,

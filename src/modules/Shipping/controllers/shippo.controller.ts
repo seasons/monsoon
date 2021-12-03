@@ -181,6 +181,7 @@ export class ShippoController {
 
     let numRPPsSetToDeliveredToCustomer = 0
 
+    const rppStatusesAfterChange = {}
     for (const rpp of rppsToUpdate) {
       let updateData: Prisma.ReservationPhysicalProductUpdateInput = {}
       if (!rpp.hasBeenScannedOnOutbound) {
@@ -204,14 +205,16 @@ export class ShippoController {
           where: { id: rpp.id },
         })
       )
+      if (updateData[status]) {
+        rppStatusesAfterChange[rpp.id] = updateData[status]
+      }
     }
 
     if (numRPPsSetToDeliveredToCustomer > 0) {
       const reservationsToUpdate = uniq(rppsToUpdate.map(a => a.reservation.id))
       const reservationStatusUpdatePromises = await this.reservationUtils.updateReservationOnChange(
         reservationsToUpdate,
-        { DeliveredToCustomer: numRPPsSetToDeliveredToCustomer },
-        rppsToUpdate.map(a => a.id)
+        rppStatusesAfterChange
       )
       promises.push(...reservationStatusUpdatePromises)
     }
