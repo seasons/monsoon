@@ -691,11 +691,6 @@ describe("Swap Bag Item", () => {
           },
           select: {
             seasonsUID: true,
-            reservationPhysicalProducts: {
-              select: {
-                id: true,
-              },
-            },
           },
         }
       )
