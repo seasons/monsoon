@@ -1518,6 +1518,7 @@ model ReservationPhysicalProduct {
   shippingMethod   ShippingMethod? @relation(fields: [shippingMethodId], references: [id])
 
   pickupWindowId String?
+  pickupDate DateTime?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
