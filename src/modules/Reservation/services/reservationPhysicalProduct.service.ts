@@ -510,11 +510,6 @@ export class ReservationPhysicalProductService {
             id: bagItem.reservationPhysicalProduct.id,
           },
           data: {
-            inboundPackage: {
-              connect: {
-                id: inboundPackageId,
-              },
-            },
             ...(outboundPackageId && {
               outboundPackage: {
                 connect: {
