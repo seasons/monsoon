@@ -43,14 +43,14 @@ export class ReservationUtilsService {
       }
 
       for (const resPhysProd of reservationPhysProds) {
-        const status = resPhysProd.status
-        const rppStatusAfterChange = rppStatusesAfterChange[resPhysProd.id]
+        const status = this.getEffectiveStatus(resPhysProd.status)
+        const rppStatusAfterChange = this.getEffectiveStatus(
+          rppStatusesAfterChange[resPhysProd.id]
+        )
 
         if (rppStatusAfterChange) {
           resPhysProdStatusCounts[rppStatusAfterChange] =
-            (status === "AtHome"
-              ? resPhysProdStatusCounts["DeliveredToCustomer"] || 0
-              : resPhysProdStatusCounts[rppStatusAfterChange] || 0) + 1
+            (resPhysProdStatusCounts[rppStatusAfterChange] || 0) + 1
           continue
         }
 
@@ -66,9 +66,7 @@ export class ReservationUtilsService {
         }
 
         resPhysProdStatusCounts[status] =
-          (status === "AtHome"
-            ? resPhysProdStatusCounts["DeliveredToCustomer"] || 0
-            : resPhysProdStatusCounts[status] || 0) + 1
+          (resPhysProdStatusCounts[status] || 0) + 1
       }
 
       let statusWithMaxCount = {
@@ -110,5 +108,9 @@ export class ReservationUtilsService {
       }
     }
     return promises
+  }
+
+  private getEffectiveStatus(status) {
+    return status === "AtHome" ? "DeliveredToCustomer" : status
   }
 }
