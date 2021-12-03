@@ -270,10 +270,11 @@ export class ReservationPhysicalProductService {
       })
     )
 
-    await this.reservationUtils.updateReservationOnChange(
-      [rppWithData.reservation.id],
-      { DeliveredToCustomer: 1 },
-      [rppId]
+    promises.push(
+      await this.reservationUtils.updateReservationOnChange(
+        [rppWithData.reservation.id],
+        { rppId: status }
+      )
     )
 
     await this.prisma.client.$transaction(promises)
