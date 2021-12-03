@@ -1,4 +1,3 @@
-import { setReservationCreatedAt } from "@app/modules/Payment/tests/utils/utils"
 import { TimeUtilsService } from "@app/modules/Utils/services/time.service"
 import { PrismaService } from "@app/prisma/prisma.service"
 import { TestUtilsService } from "@modules/Test/services/test.service"
@@ -82,7 +81,7 @@ describe("Reservation Service", () => {
       numProductsToAdd: 2,
     })
 
-    await setReservationCreatedAt(reservation.id, 2, { prisma, timeUtils })
+    await reservationUtilsTestService.setReservationCreatedAt(reservation.id, 2)
 
     const lineItems = await reservationService.draftReservationLineItems({
       application: "flare",
