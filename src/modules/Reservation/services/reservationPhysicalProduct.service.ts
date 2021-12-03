@@ -733,6 +733,8 @@ export class ReservationPhysicalProductService {
         }
       ))
     )
+
+    await this.prisma.client.$transaction(promises)
   }
 
   async markAsPickedUp({ bagItemIds }) {
