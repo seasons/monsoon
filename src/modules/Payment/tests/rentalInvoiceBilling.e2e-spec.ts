@@ -5,7 +5,6 @@ import {
 } from "@app/modules/Payment/services/rental.service"
 import { ReservationPhysicalProductService } from "@app/modules/Reservation/services/reservationPhysicalProduct.service"
 import { ReservationTestUtilsService } from "@app/modules/Reservation/tests/reservation.test.utils"
-import { ShippingService } from "@app/modules/Shipping/services/shipping.service"
 import { getEventsForTransactionId } from "@app/modules/Shipping/tests/shippoEvents.stub"
 import { TestUtilsService } from "@app/modules/Test/services/test.service"
 import { TimeUtilsService } from "@app/modules/Utils/services/time.service"
@@ -30,7 +29,6 @@ describe("Rental Invoice Billing", () => {
   let testUtils: TestUtilsService
   let rentalService: RentalService
   let timeUtils: TimeUtilsService
-  let shipping: ShippingService
   let prisma: PrismaService
   let reservationTestUtils: ReservationTestUtilsService
   let rppService: ReservationPhysicalProductService
@@ -50,7 +48,6 @@ describe("Rental Invoice Billing", () => {
     prisma = moduleRef.get<PrismaService>(PrismaService)
     rentalService = moduleRef.get<RentalService>(RentalService)
     timeUtils = moduleRef.get<TimeUtilsService>(TimeUtilsService)
-    shipping = moduleRef.get<ShippingService>(ShippingService)
     reservationTestUtils = moduleRef.get<ReservationTestUtilsService>(
       ReservationTestUtilsService
     )
@@ -131,6 +128,8 @@ describe("Rental Invoice Billing", () => {
             status: true,
             lineItems: {
               select: {
+                name: true,
+                price: true,
                 physicalProduct: { select: { id: true } },
                 daysRented: true,
                 rentalEndedAt: true,
@@ -142,18 +141,30 @@ describe("Rental Invoice Billing", () => {
       )
     })
 
+    afterAll(() => {
+      chargebeeChargeMock.mockRestore()
+    })
+
     it("Creates line items with proper days rented data", () => {
       const lineItems = rentalInvoiceAfterProcessing.lineItems
       const rentalUsageLineItems = lineItems.filter(
         a => !!a.physicalProduct?.id
       )
+      const packageLineItems = lineItems.filter(a => !a.physicalProduct?.id)
 
+      expect(lineItems.length).toBe(3)
       expect(rentalUsageLineItems.length).toBe(2)
+      expect(packageLineItems.length).toBe(1)
       for (const li of rentalUsageLineItems) {
         expect(li.daysRented).toBe(23)
         testUtils.expectTimeToEqual(li.rentalStartedAt, timeUtils.xDaysAgo(23))
         testUtils.expectTimeToEqual(li.rentalEndedAt, new Date())
       }
+
+      expect(packageLineItems[0].price).toBe(0)
+      expect(
+        packageLineItems[0].name.toLowerCase().includes("outbound")
+      ).toBeTruthy()
     })
 
     it("Marks the invoice as billed", () => {
@@ -300,6 +311,10 @@ describe("Rental Invoice Billing", () => {
       )
     })
 
+    afterAll(() => {
+      chargebeeChargeMock.mockRestore()
+    })
+
     it("Creates line items with proper days rented and package data", () => {
       const lineItems = rentalInvoiceAfterProcessing.lineItems
       const rentalUsageLineItems = lineItems.filter(
@@ -351,7 +366,23 @@ describe("Rental Invoice Billing", () => {
     })
   })
 
-  describe("Rents two items and they get lost on the way there", () => {})
+  describe("Lost on the way there", () => {
+    // TODO: 1. Truly Lost. 2. Found with the customer
+  })
 
-  describe("Rents three items and one gets lost on the way back", () => {})
+  describe("Lost on the way back", () => {
+    // TODO: 1. Truly Lost. 2. Found with us
+  })
+
+  describe("Rents three items, returns two of them incl. filling out return flow", () => {
+    // TODO: Billed after all items return and are processed. 2. Billed after package comes inbound but one item is marked as not returned.
+    // TODO: Billed while items in transit. BOth items do end up returning back.
+    // TODO: Billed while items in transit, one item ends up not coming back.
+  })
+
+  // TODO:
+  describe("Reserved 3 items, cancelled one", () => {})
+
+  // TODO:
+  describe("Swapped out an item", () => {})
 })
