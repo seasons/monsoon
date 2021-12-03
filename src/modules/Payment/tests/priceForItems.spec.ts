@@ -113,6 +113,7 @@ describe("Price for items", () => {
         invoice: { id: currentInvoiceId },
         customer: testCustomer,
         reservationPhysicalProduct: {
+          id: "1",
           status: "InTransitOutbound",
           physicalProduct,
         },
@@ -132,7 +133,11 @@ describe("Price for items", () => {
       } = await rentalService.calculateRentalPrice({
         invoice: { id: currentInvoiceId },
         customer: testCustomer,
-        reservationPhysicalProduct: { status: "AtHome", physicalProduct },
+        reservationPhysicalProduct: {
+          id: "1",
+          status: "AtHome",
+          physicalProduct,
+        },
         daysRented: 5,
       })
 
@@ -154,7 +159,11 @@ describe("Price for items", () => {
       } = await rentalService.calculateRentalPrice({
         invoice: { id: currentInvoiceId },
         customer: testCustomer,
-        reservationPhysicalProduct: { status: "AtHome", physicalProduct },
+        reservationPhysicalProduct: {
+          id: "1",
+          status: "AtHome",
+          physicalProduct,
+        },
         daysRented: 14,
       })
 
@@ -184,6 +193,7 @@ describe("Price for items", () => {
           invoice: { id: currentInvoiceId },
           customer: testCustomer,
           reservationPhysicalProduct: {
+            id: "1",
             status: "InTransitOutbound",
             physicalProduct,
           },
@@ -210,7 +220,11 @@ describe("Price for items", () => {
         } = await rentalService.calculateRentalPrice({
           invoice: { id: currentInvoiceId },
           customer: testCustomer,
-          reservationPhysicalProduct: { status: "AtHome", physicalProduct },
+          reservationPhysicalProduct: {
+            id: "1",
+            status: "AtHome",
+            physicalProduct,
+          },
           daysRented: 14,
         })
 
@@ -237,7 +251,11 @@ describe("Price for items", () => {
         } = await rentalService.calculateRentalPrice({
           invoice: { id: currentInvoiceId },
           customer: testCustomer,
-          reservationPhysicalProduct: { status: "AtHome", physicalProduct },
+          reservationPhysicalProduct: {
+            id: "1",
+            status: "AtHome",
+            physicalProduct,
+          },
           daysRented: 14,
         })
 
@@ -261,6 +279,7 @@ describe("Price for items", () => {
           invoice: { id: currentInvoiceId },
           customer: testCustomer,
           reservationPhysicalProduct: {
+            id: "1",
             status: "InTransitOutbound",
             physicalProduct,
           },
@@ -287,6 +306,7 @@ describe("Price for items", () => {
           invoice: { id: currentInvoiceId },
           customer: testCustomer,
           reservationPhysicalProduct: {
+            id: "1",
             status: "ReturnProcessed",
             physicalProduct,
           },
@@ -319,6 +339,7 @@ describe("Price for items", () => {
           invoice: { id: currentInvoiceId },
           customer: testCustomer,
           reservationPhysicalProduct: {
+            id: "1",
             status: "ReturnProcessed",
             physicalProduct,
           },
@@ -348,7 +369,11 @@ describe("Price for items", () => {
         } = await rentalService.calculateRentalPrice({
           invoice: { id: currentInvoiceId },
           customer: testCustomer,
-          reservationPhysicalProduct: { status: "AtHome", physicalProduct },
+          reservationPhysicalProduct: {
+            id: "1",
+            status: "AtHome",
+            physicalProduct,
+          },
           daysRented: 18,
         })
 
@@ -372,6 +397,7 @@ describe("Price for items", () => {
           invoice: { id: currentInvoiceId },
           customer: testCustomer,
           reservationPhysicalProduct: {
+            id: "1",
             status: "ReturnProcessed",
             physicalProduct,
           },
@@ -395,7 +421,11 @@ describe("Price for items", () => {
         } = await rentalService.calculateRentalPrice({
           invoice: { id: currentInvoiceId },
           customer: testCustomer,
-          reservationPhysicalProduct: { status: "AtHome", physicalProduct },
+          reservationPhysicalProduct: {
+            id: "1",
+            status: "AtHome",
+            physicalProduct,
+          },
           daysRented: 15,
         })
 
@@ -426,7 +456,11 @@ describe("Price for items", () => {
     } = await rentalService.calculateRentalPrice({
       invoice: { id: currentInvoiceId },
       customer: testCustomer,
-      reservationPhysicalProduct: { status: "Purchased", physicalProduct },
+      reservationPhysicalProduct: {
+        id: "1",
+        status: "Purchased",
+        physicalProduct,
+      },
       daysRented: 12,
     })
 
