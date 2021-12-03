@@ -49,7 +49,7 @@ export class ChargebeeSyncService {
     const subscriptionsToCreatePostDeletion = []
 
     for (const sub of subscriptionsToSync) {
-      await this.sleep(100)
+      await this.sleep(200)
       if (i++ < startFrom) {
         continue
       }
@@ -241,7 +241,7 @@ export class ChargebeeSyncService {
     const total = customersToSync.length
     this.logger.log(`Starting Customer sync from index: ${startFrom}`)
     for (const cust of customersToSync) {
-      await this.sleep(100)
+      await this.sleep(200)
       if (i++ < startFrom) {
         continue
       }

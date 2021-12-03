@@ -1098,7 +1098,10 @@ export class RentalService {
   }: {
     invoice: Pick<RentalInvoice, "id">
     customer: Pick<Customer, "id">
-    reservationPhysicalProduct: Pick<ReservationPhysicalProduct, "status"> & {
+    reservationPhysicalProduct: Pick<
+      ReservationPhysicalProduct,
+      "id" | "status"
+    > & {
       physicalProduct: Pick<PhysicalProduct, "id"> & {
         productVariant: {
           product: { computedRentalPrice: number }
