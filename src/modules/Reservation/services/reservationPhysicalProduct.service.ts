@@ -172,6 +172,92 @@ export class ReservationPhysicalProductService {
     return this.utils.wrapPrismaPromise(promise)
   }
 
+  async cancelItem(bagItemsId) {
+    const cancelledBagItem = await this.prisma.client.bagItem.findUnique({
+      where: {
+        id: bagItemsId,
+      },
+      select: {
+        physicalProduct: {
+          select: {
+            id: true,
+            inventoryStatus: true,
+          },
+        },
+        reservationPhysicalProduct: {
+          select: {
+            id: true,
+            status: true,
+          },
+        },
+        productVariant: {
+          select: {
+            id: true,
+            reservable: true,
+            reserved: true,
+            nonReservable: true,
+          },
+        },
+      },
+    })
+
+    const cancelledPhysicalProduct = cancelledBagItem.physicalProduct
+    const cancelledRPP = cancelledBagItem.reservationPhysicalProduct
+    const cancelledPhysicalProductNewStatus =
+      cancelledRPP.status === "Queued" ? "Reservable" : "NonReservable"
+
+    const cancelledProdVariant = cancelledBagItem.productVariant
+
+    const promises = []
+
+    const productVariantData = this.productVariantService.getCountsForStatusChange(
+      {
+        productVariant: cancelledProdVariant,
+        oldInventoryStatus: cancelledPhysicalProduct.inventoryStatus as InventoryStatus,
+        newInventoryStatus: cancelledPhysicalProductNewStatus,
+      }
+    )
+
+    promises.push(
+      this.prisma.client.physicalProduct.update({
+        where: {
+          id: cancelledPhysicalProduct.id,
+        },
+        data: {
+          inventoryStatus: cancelledPhysicalProductNewStatus,
+          productVariant: {
+            update: {
+              ...productVariantData,
+            },
+          },
+        },
+      })
+    )
+
+    promises.push(
+      this.prisma.client.bagItem.delete({
+        where: {
+          id: bagItemsId,
+        },
+      })
+    )
+
+    promises.push(
+      this.prisma.client.reservationPhysicalProduct.update({
+        where: {
+          id: cancelledRPP.id,
+        },
+        data: {
+          status: "Cancelled",
+          cancelledAt: new Date(),
+        },
+      })
+    )
+
+    await this.prisma.client.$transaction(promises)
+    return true
+  }
+
   private async updateReservationsOnReturn(
     productStates: ProductState[],
     customerId: string
