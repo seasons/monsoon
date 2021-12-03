@@ -15,8 +15,8 @@ import { merge } from "lodash"
 import moment from "moment"
 
 import {
-  ProcessableRentalInvoiceSelect,
-  ProcessableReservationPhysicalProductSelect,
+  ProcessableRentalInvoiceArgs,
+  ProcessableReservationPhysicalProductArgs,
 } from "../../services/rental.service"
 
 export const UPS_GROUND_FEE = 1000
@@ -39,7 +39,7 @@ export const getCustWithData = async (
     membership: {
       select: {
         rentalInvoices: {
-          select: ProcessableRentalInvoiceSelect,
+          select: ProcessableRentalInvoiceArgs.select,
         },
       },
     },
@@ -283,15 +283,5 @@ export const setReservationPhysicalProductStatus = async (
   await prisma.client.reservationPhysicalProduct.update({
     where: { id: reservationPhysicalProductId },
     data: { status },
-  })
-}
-
-export const getReservationPhysicalProductWithData = async (
-  reservationPhysicalProductId,
-  { prisma }
-) => {
-  return await prisma.client.reservationPhysicalProduct.findUnique({
-    where: { id: reservationPhysicalProductId },
-    select: ProcessableReservationPhysicalProductSelect,
   })
 }

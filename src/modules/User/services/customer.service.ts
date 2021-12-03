@@ -3,7 +3,7 @@ import { WinstonLogger } from "@app/lib/logger"
 import { SegmentService } from "@app/modules/Analytics/services/segment.service"
 import { EmailService } from "@app/modules/Email/services/email.service"
 import {
-  ProcessableRentalInvoiceSelect,
+  ProcessableRentalInvoiceArgs,
   RentalService,
 } from "@app/modules/Payment/services/rental.service"
 import { PushNotificationService } from "@app/modules/PushNotification/services/pushNotification.service"
@@ -128,7 +128,7 @@ export class CustomerService {
     const invoiceWithData = await this.prisma.client.rentalInvoice.update({
       where: { id: activeInvoice.id },
       data: { billingEndAt: new Date() },
-      select: ProcessableRentalInvoiceSelect,
+      select: ProcessableRentalInvoiceArgs.select,
     })
     await this.rental.processInvoice(invoiceWithData, {
       onError: err => {

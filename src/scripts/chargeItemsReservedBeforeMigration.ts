@@ -7,10 +7,7 @@ import { groupBy, orderBy, uniqBy } from "lodash"
 import readlineSync from "readline-sync"
 
 import { ErrorService } from "../modules/Error/services/error.service"
-import {
-  ProcessableRentalInvoiceSelect,
-  RentalService,
-} from "../modules/Payment/services/rental.service"
+import { RentalService } from "../modules/Payment/services/rental.service"
 import { TimeUtilsService } from "../modules/Utils/services/time.service"
 import { PrismaService } from "../prisma/prisma.service"
 import { Prisma, Product, RentalInvoiceLineItem } from ".prisma/client"

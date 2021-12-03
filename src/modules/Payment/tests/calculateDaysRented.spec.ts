@@ -9,10 +9,10 @@ import { PrismaService } from "@app/prisma/prisma.service"
 import { Test } from "@nestjs/testing"
 import { ReservationPhysicalProductStatus } from "@prisma/client"
 
+import { PaymentTestUtilsService } from "../services/payment.test.utils"
 import { RentalService } from "../services/rental.service"
 import {
   expectTimeToEqual,
-  getReservationPhysicalProductWithData,
   setReservationPhysicalProductDeliveredToBusinessAt,
   setReservationPhysicalProductDeliveredToCustomerAt,
   setReservationPhysicalProductDroppedOffAt,
@@ -29,10 +29,10 @@ describe("Calculate Days Rented", () => {
   let timeUtils: TimeUtilsService
   let reserveService: ReserveService
   let reservationTestUtils: ReservationTestUtilsService
+  let paymentTestUtils: PaymentTestUtilsService
 
   let setReservationPhysicalProductDeliveredToCustomerAtWithParams
   let setReservationPhysicalProductStatusWithParams
-  let getReservationPhysicalProductWithDataWithParams
   let setReservationPhysicalProductDeliveredToBusinessAtWithParams
   let setReservationPhysicalProductScannedOnInboundAtWithParams
   let setReservationPhysicalProductReturnProcessedAtWithParams
@@ -55,6 +55,9 @@ describe("Calculate Days Rented", () => {
     reserveService = moduleRef.get<ReserveService>(ReserveService)
     reservationTestUtils = moduleRef.get<ReservationTestUtilsService>(
       ReservationTestUtilsService
+    )
+    paymentTestUtils = moduleRef.get<PaymentTestUtilsService>(
+      PaymentTestUtilsService
     )
 
     setReservationPhysicalProductScannedOnOutboundAtWithParams = (
@@ -84,10 +87,6 @@ describe("Calculate Days Rented", () => {
         status,
         { prisma }
       )
-    getReservationPhysicalProductWithDataWithParams = reservationPhysicalProductId =>
-      getReservationPhysicalProductWithData(reservationPhysicalProductId, {
-        prisma,
-      })
     setReservationPhysicalProductDeliveredToBusinessAtWithParams = (
       reservationPhysicalProductId,
       numDaysAgo
@@ -169,7 +168,7 @@ describe("Calculate Days Rented", () => {
             lostInPhase: "BusinessToCustomer",
           },
         })
-        reservationPhysicalProductWithData = await getReservationPhysicalProductWithDataWithParams(
+        reservationPhysicalProductWithData = await paymentTestUtils.getReservationPhysicalProductWithData(
           initialReservation.reservationPhysicalProducts[0].id
         )
 
@@ -217,7 +216,7 @@ describe("Calculate Days Rented", () => {
             lostInPhase: "CustomerToBusiness",
           },
         })
-        reservationPhysicalProductWithData = await getReservationPhysicalProductWithDataWithParams(
+        reservationPhysicalProductWithData = await paymentTestUtils.getReservationPhysicalProductWithData(
           initialReservation.reservationPhysicalProducts[0].id
         )
 
@@ -260,7 +259,7 @@ describe("Calculate Days Rented", () => {
           "DeliveredToCustomer"
         )
 
-        reservationPhysicalProductWithData = await getReservationPhysicalProductWithDataWithParams(
+        reservationPhysicalProductWithData = await paymentTestUtils.getReservationPhysicalProductWithData(
           reservationPhysicalProductAfterReservation.id
         )
         const {
@@ -285,7 +284,7 @@ describe("Calculate Days Rented", () => {
           "ReturnPending"
         )
 
-        reservationPhysicalProductWithData = await getReservationPhysicalProductWithDataWithParams(
+        reservationPhysicalProductWithData = await paymentTestUtils.getReservationPhysicalProductWithData(
           reservationPhysicalProductAfterReservation.id
         )
         const {
@@ -330,7 +329,7 @@ describe("Calculate Days Rented", () => {
           "ReturnProcessed"
         )
 
-        reservationPhysicalProductWithData = await getReservationPhysicalProductWithDataWithParams(
+        reservationPhysicalProductWithData = await paymentTestUtils.getReservationPhysicalProductWithData(
           reservationPhysicalProductAfterReservation.id
         )
         const {
@@ -371,7 +370,7 @@ describe("Calculate Days Rented", () => {
           "ReturnProcessed"
         )
 
-        reservationPhysicalProductWithData = await getReservationPhysicalProductWithDataWithParams(
+        reservationPhysicalProductWithData = await paymentTestUtils.getReservationPhysicalProductWithData(
           reservationPhysicalProductAfterReservation.id
         )
         const {
@@ -407,7 +406,7 @@ describe("Calculate Days Rented", () => {
           "ReturnProcessed"
         )
 
-        reservationPhysicalProductWithData = await getReservationPhysicalProductWithDataWithParams(
+        reservationPhysicalProductWithData = await paymentTestUtils.getReservationPhysicalProductWithData(
           reservationPhysicalProductAfterReservation.id
         )
         const {
@@ -439,7 +438,7 @@ describe("Calculate Days Rented", () => {
           "ReturnProcessed"
         )
 
-        reservationPhysicalProductWithData = await getReservationPhysicalProductWithDataWithParams(
+        reservationPhysicalProductWithData = await paymentTestUtils.getReservationPhysicalProductWithData(
           reservationPhysicalProductAfterReservation.id
         )
         const {
@@ -458,6 +457,30 @@ describe("Calculate Days Rented", () => {
         expect(comment).toBe("") // TODO:
       })
 
+      it("Purchased", async () => {
+        await prisma.client.reservationPhysicalProduct.update({
+          where: { id: reservationPhysicalProductAfterReservation.id },
+          data: { status: "Purchased", purchasedAt: timeUtils.xDaysAgo(10) },
+        })
+
+        reservationPhysicalProductWithData = await paymentTestUtils.getReservationPhysicalProductWithData(
+          reservationPhysicalProductAfterReservation.id
+        )
+        const {
+          daysRented,
+          comment,
+          rentalEndedAt,
+          rentalStartedAt,
+        } = await rentalService.calcDaysRented(
+          testCustomer.membership.rentalInvoices[0],
+          reservationPhysicalProductWithData
+        )
+
+        expect(daysRented).toBe(13)
+        expectTimeToEqual(rentalStartedAt, twentyThreeDaysAgo)
+        expectTimeToEqual(rentalEndedAt, timeUtils.xDaysAgo(10))
+        expect(comment).toBe("") // TODO:
+      })
       describe("On the way back", () => {
         it("ScannedOnInbound at time of billing", async () => {
           // Fake the data
@@ -470,7 +493,7 @@ describe("Calculate Days Rented", () => {
             "ScannedOnInbound"
           )
 
-          reservationPhysicalProductWithData = await getReservationPhysicalProductWithDataWithParams(
+          reservationPhysicalProductWithData = await paymentTestUtils.getReservationPhysicalProductWithData(
             reservationPhysicalProductAfterReservation.id
           )
           const {
@@ -500,7 +523,7 @@ describe("Calculate Days Rented", () => {
             "InTransitInbound"
           )
 
-          reservationPhysicalProductWithData = await getReservationPhysicalProductWithDataWithParams(
+          reservationPhysicalProductWithData = await paymentTestUtils.getReservationPhysicalProductWithData(
             reservationPhysicalProductAfterReservation.id
           )
           const {
@@ -534,7 +557,7 @@ describe("Calculate Days Rented", () => {
             "DeliveredToBusiness"
           )
 
-          reservationPhysicalProductWithData = await getReservationPhysicalProductWithDataWithParams(
+          reservationPhysicalProductWithData = await paymentTestUtils.getReservationPhysicalProductWithData(
             reservationPhysicalProductAfterReservation.id
           )
           const {
@@ -564,7 +587,7 @@ describe("Calculate Days Rented", () => {
             "DeliveredToBusiness"
           )
 
-          reservationPhysicalProductWithData = await getReservationPhysicalProductWithDataWithParams(
+          reservationPhysicalProductWithData = await paymentTestUtils.getReservationPhysicalProductWithData(
             reservationPhysicalProductAfterReservation.id
           )
           const {
@@ -601,7 +624,7 @@ describe("Calculate Days Rented", () => {
               "ResetEarly"
             )
 
-            reservationPhysicalProductWithData = await getReservationPhysicalProductWithDataWithParams(
+            reservationPhysicalProductWithData = await paymentTestUtils.getReservationPhysicalProductWithData(
               reservationPhysicalProductAfterReservation.id
             )
             const {
@@ -633,7 +656,7 @@ describe("Calculate Days Rented", () => {
               "ResetEarly"
             )
 
-            reservationPhysicalProductWithData = await getReservationPhysicalProductWithDataWithParams(
+            reservationPhysicalProductWithData = await paymentTestUtils.getReservationPhysicalProductWithData(
               reservationPhysicalProductAfterReservation.id
             )
             const {
@@ -673,7 +696,7 @@ describe("Calculate Days Rented", () => {
           "Queued"
         )
 
-        reservationPhysicalProductWithData = await getReservationPhysicalProductWithDataWithParams(
+        reservationPhysicalProductWithData = await paymentTestUtils.getReservationPhysicalProductWithData(
           reservationPhysicalProductAfterReservation.id
         )
         const {
@@ -698,7 +721,7 @@ describe("Calculate Days Rented", () => {
           "Picked"
         )
 
-        reservationPhysicalProductWithData = await getReservationPhysicalProductWithDataWithParams(
+        reservationPhysicalProductWithData = await paymentTestUtils.getReservationPhysicalProductWithData(
           reservationPhysicalProductAfterReservation.id
         )
         const {
@@ -723,7 +746,7 @@ describe("Calculate Days Rented", () => {
           "Packed"
         )
 
-        reservationPhysicalProductWithData = await getReservationPhysicalProductWithDataWithParams(
+        reservationPhysicalProductWithData = await paymentTestUtils.getReservationPhysicalProductWithData(
           reservationPhysicalProductAfterReservation.id
         )
         const {
@@ -752,7 +775,7 @@ describe("Calculate Days Rented", () => {
           0
         )
 
-        reservationPhysicalProductWithData = await getReservationPhysicalProductWithDataWithParams(
+        reservationPhysicalProductWithData = await paymentTestUtils.getReservationPhysicalProductWithData(
           reservationPhysicalProductAfterReservation.id
         )
         const {
@@ -780,7 +803,7 @@ describe("Calculate Days Rented", () => {
           1
         )
 
-        reservationPhysicalProductWithData = await getReservationPhysicalProductWithDataWithParams(
+        reservationPhysicalProductWithData = await paymentTestUtils.getReservationPhysicalProductWithData(
           reservationPhysicalProductAfterReservation.id
         )
         const {
@@ -818,7 +841,7 @@ describe("Calculate Days Rented", () => {
           cancelledAt: timeUtils.xDaysAgoISOString(22),
         },
       })
-      reservationPhysicalProductWithData = await getReservationPhysicalProductWithDataWithParams(
+      reservationPhysicalProductWithData = await paymentTestUtils.getReservationPhysicalProductWithData(
         initialReservation.reservationPhysicalProducts[0].id
       )
 

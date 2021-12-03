@@ -4,7 +4,7 @@ import { NestFactory } from "@nestjs/core"
 
 import { AppModule } from "../app.module"
 import {
-  ProcessableRentalInvoiceSelect,
+  ProcessableRentalInvoiceArgs,
   RentalService,
 } from "../modules/Payment/services/rental.service"
 import { PrismaService } from "../prisma/prisma.service"
@@ -23,7 +23,7 @@ const run = async () => {
       },
       status: { in: ["Draft", "ChargeFailed"] },
     },
-    select: ProcessableRentalInvoiceSelect,
+    select: ProcessableRentalInvoiceArgs.select,
   })
 
   for (const invoice of invoicesToHandle) {
