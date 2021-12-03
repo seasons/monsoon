@@ -360,7 +360,7 @@ export class ReservationPhysicalProductService {
     }
 
     const results = await this.prisma.client.$transaction(promises)
-    await this.utils.updateOutboundResProcessingStats()
+    await this.reservationUtils.updateOutboundResProcessingStats()
 
     return results
   }

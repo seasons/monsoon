@@ -1,4 +1,4 @@
-import { UtilsService } from "@app/modules/Utils/services/utils.service"
+import { ReservationUtilsService } from "@app/modules/Utils/services/reservation.utils.service"
 import { PrismaService } from "@app/prisma/prisma.service"
 import { Injectable, Logger } from "@nestjs/common"
 import { Cron, CronExpression } from "@nestjs/schedule"
@@ -7,7 +7,7 @@ import { Cron, CronExpression } from "@nestjs/schedule"
 export class ReservationProcessingStats {
   constructor(
     private readonly prisma: PrismaService,
-    private readonly utils: UtilsService
+    private readonly reservationUtils: ReservationUtilsService
   ) {}
 
   @Cron(CronExpression.EVERY_DAY_AT_8AM)
@@ -15,10 +15,10 @@ export class ReservationProcessingStats {
     const {
       queuedReservationCount,
       queuedResProdsCount,
-    } = await this.utils.getOutboundResProcessingCounts()
+    } = await this.reservationUtils.getOutboundResProcessingCounts()
     const {
       deliveredToBusinessCounts,
-    } = await this.utils.getInboundResProcessingCounts()
+    } = await this.reservationUtils.getInboundResProcessingCounts()
 
     return await this.prisma.client.reservationProcessingStats.create({
       data: {

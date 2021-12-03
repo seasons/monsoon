@@ -73,22 +73,6 @@ export class ReservationService {
     return result
   }
 
-  async reservationProcessingStats() {
-    return await this.prisma.client.reservationProcessingStats.findFirst({
-      orderBy: {
-        day: "desc",
-      },
-      select: {
-        initialNumQueuedItems: true,
-        initialNumQueuedReservations: true,
-        initialNumDeliveredToBusinessItems: true,
-        currentNumQueuedItems: true,
-        currentNumQueuedReservations: true,
-        currentNumDeliveredToBusinessItems: true,
-      },
-    })
-  }
-
   async cancelReturn(customer: Customer, bagItemId: string) {
     if (bagItemId) {
       // If one bagItemId is passed just cancel the single return

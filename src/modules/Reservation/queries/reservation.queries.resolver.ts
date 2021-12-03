@@ -105,7 +105,19 @@ export class ReservationQueriesResolver {
 
   @Query()
   async reservationProcessingStats() {
-    return await this.reservationService.reservationProcessingStats()
+    return await this.prisma.client.reservationProcessingStats.findFirst({
+      orderBy: {
+        day: "desc",
+      },
+      select: {
+        initialNumQueuedItems: true,
+        initialNumQueuedReservations: true,
+        initialNumDeliveredToBusinessItems: true,
+        currentNumQueuedItems: true,
+        currentNumQueuedReservations: true,
+        currentNumDeliveredToBusinessItems: true,
+      },
+    })
   }
 
   @Query()

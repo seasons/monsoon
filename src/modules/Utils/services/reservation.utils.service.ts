@@ -1,6 +1,7 @@
 import { ReservationPhysicalProductService } from "@app/modules/Reservation"
 import { PrismaService } from "@app/prisma/prisma.service"
 import { Injectable } from "@nestjs/common"
+import { uniq } from "lodash"
 
 import { ReservationPhysicalProductStatus } from ".prisma/client"
 
@@ -101,5 +102,88 @@ export class ReservationUtilsService {
       }
     }
     return promises
+  }
+
+  async getOutboundResProcessingCounts() {
+    const queuedResProds = await this.prisma.client.reservationPhysicalProduct.findMany(
+      {
+        where: {
+          status: "Queued",
+        },
+        select: {
+          id: true,
+          reservationId: true,
+        },
+      }
+    )
+
+    const queuedResProdsCount = queuedResProds.length
+
+    const queuedReservationCount = uniq(
+      queuedResProds.map(a => a.reservationId)
+    ).length
+
+    return { queuedResProdsCount, queuedReservationCount }
+  }
+
+  async updateOutboundResProcessingStats() {
+    const {
+      queuedResProdsCount,
+      queuedReservationCount,
+    } = await this.getOutboundResProcessingCounts()
+
+    const currentResProcessingStatsRecord = await this.prisma.client.reservationProcessingStats.findFirst(
+      {
+        orderBy: {
+          day: "desc",
+        },
+        select: {
+          id: true,
+        },
+      }
+    )
+
+    return await this.prisma.client.reservationProcessingStats.update({
+      where: {
+        id: currentResProcessingStatsRecord.id,
+      },
+      data: {
+        currentNumQueuedItems: queuedResProdsCount,
+        currentNumQueuedReservations: queuedReservationCount,
+      },
+    })
+  }
+
+  async getInboundResProcessingCounts() {
+    const deliveredToBusinessRPPs = await this.prisma.client.reservationPhysicalProduct.count(
+      {
+        where: {
+          status: "DeliveredToBusiness",
+        },
+      }
+    )
+    return { deliveredToBusinessCounts: deliveredToBusinessRPPs }
+  }
+
+  async updateInboundResProcessingStats() {
+    const {
+      deliveredToBusinessCounts,
+    } = await this.getInboundResProcessingCounts()
+    const currentResProcessingStatsRecord = await this.prisma.client.reservationProcessingStats.findFirst(
+      {
+        orderBy: {
+          day: "desc",
+        },
+      }
+    )
+
+    return await this.prisma.client.reservationProcessingStats.update({
+      where: {
+        id: currentResProcessingStatsRecord.id,
+      },
+      data: {
+        currentNumDeliveredToBusinessItems: deliveredToBusinessCounts,
+      },
+    })
   }
 }
