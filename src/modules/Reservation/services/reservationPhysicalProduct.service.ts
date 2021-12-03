@@ -226,11 +226,14 @@ export class ReservationPhysicalProductService {
         },
       }
     )
+    const rppStatusesAfterChange = {}
+    resPhysProds.forEach(
+      a => (rppStatusesAfterChange[a.id] = "ReturnProcessed")
+    )
 
     return await this.reservationUtils.updateReservationOnChange(
       reservations.map(a => a.id),
-      { ReturnProcessed: productStates.length },
-      resPhysProds.map(a => a.id)
+      rppStatusesAfterChange
     )
   }
 
