@@ -55,12 +55,7 @@ export class ReservationUtilsService {
         }
 
         if (
-          ![
-            "Lost",
-            "ReturnProcessed",
-            "DeliveredToCustomer",
-            "AtHome",
-          ].includes(status)
+          !["Lost", "ReturnProcessed", "DeliveredToCustomer"].includes(status)
         ) {
           continue
         }
