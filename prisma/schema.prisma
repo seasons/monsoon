@@ -1126,7 +1126,7 @@ model PhysicalProduct {
   purchasedOnReservationId     String?                        @map("purchasedOnReservation") @db.VarChar(30)
   purchasedOnReservation       Reservation?                   @relation("ReservationToPurchasedProducts", fields: [purchasedOnReservationId], references: [id])
   bagItems                     BagItem[]
-  reservationPhysicalProduct   ReservationPhysicalProduct[]
+  reservationPhysicalProducts   ReservationPhysicalProduct[]
 }
 
 model PhysicalProductPrice {

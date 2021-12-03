@@ -830,9 +830,9 @@ export class RentalService {
       }>
     }
   ) => {
-    const allInboundPackages = invoice.reservationPhysicalProducts.map(
-      a => a.inboundPackage
-    )
+    const allInboundPackages = invoice.reservationPhysicalProducts
+      .map(a => a.inboundPackage)
+      .filter(Boolean)
     const uniqueInboundPackages = uniqBy(allInboundPackages, p => p.id)
 
     const returnedUniqueInboundPackages = uniqueInboundPackages.filter(

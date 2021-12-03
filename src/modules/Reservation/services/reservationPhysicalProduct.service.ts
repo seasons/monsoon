@@ -7,6 +7,7 @@ import { Injectable } from "@nestjs/common"
 import {
   Prisma,
   ReservationDropOffAgent,
+  ReservationPhysicalProduct,
   ReservationPhysicalProductStatus,
 } from "@prisma/client"
 import { every, some } from "lodash"
@@ -45,6 +46,10 @@ const ProcessReturnPhysicalProductFindManyArgs = Prisma.validator<
 type ProcessReturnPhysicalProduct = Prisma.PhysicalProductGetPayload<
   typeof ProcessReturnPhysicalProductFindManyArgs
 >
+
+type ProcessReturnPhysicalProductWithRPP = ProcessReturnPhysicalProduct & {
+  reservationPhysicalProducts: Array<Pick<ReservationPhysicalProduct, "id">>
+}
 
 @Injectable()
 export class ReservationPhysicalProductService {
@@ -85,19 +90,25 @@ export class ReservationPhysicalProductService {
           in: productStates.map(p => p.productUID),
         },
       },
-      select: ProcessReturnPhysicalProductsSelect,
+      select: {
+        ...ProcessReturnPhysicalProductsSelect,
+        // get the customer's most recent rpp for this phys prod also
+        reservationPhysicalProducts: {
+          select: { id: true },
+          orderBy: { createdAt: "desc" },
+          take: 1,
+          where: { customer: { id: customerId } },
+        },
+      },
     })
 
     let promises = []
-    const {
-      promise: updateReservationPhysicalProductsPromise,
-    } = await this.updateReservationPhysicalProductsOnReturn(
+    const updateRPPPromises = await this.updateReservationPhysicalProductsOnReturn(
       physicalProducts,
       trackingNumber,
-      droppedOffBy,
-      customerId
+      droppedOffBy
     )
-    promises.push(updateReservationPhysicalProductsPromise)
+    promises.push(...updateRPPPromises)
 
     promises.push(
       this.prisma.client.bagItem.deleteMany({
@@ -129,10 +140,9 @@ export class ReservationPhysicalProductService {
   }
 
   private async updateReservationPhysicalProductsOnReturn(
-    physicalProductsWithData: ProcessReturnPhysicalProduct[],
+    physicalProductsWithData: ProcessReturnPhysicalProductWithRPP[],
     trackingNumber: string | undefined,
-    droppedOffBy: ReservationDropOffAgent,
-    customerId: string
+    droppedOffBy: ReservationDropOffAgent
   ) {
     const returnedPackage = await this.prisma.client.package.findFirst({
       where: {
@@ -147,7 +157,7 @@ export class ReservationPhysicalProductService {
     const reservationPhysicalProductData = Prisma.validator<
       Prisma.ReservationPhysicalProductUpdateInput
     >()({
-      status: <ReservationPhysicalProductStatus>"ReturnProcessed",
+      status: "ReturnProcessed",
       hasReturnProcessed: true,
       returnProcessedAt: DateTime.local().toISO(),
       ...(returnedPackage && {
@@ -160,21 +170,17 @@ export class ReservationPhysicalProductService {
       droppedOffAt: DateTime.local().toISO(),
     })
 
-    const promise = this.prisma.client.reservationPhysicalProduct.updateMany({
-      where: {
-        physicalProductId: {
-          in: physicalProductsWithData.map(a => {
-            return a.id
-          }),
-        },
-        bagItem: {
-          customerId: customerId,
-        },
-      },
-      data: { ...reservationPhysicalProductData },
-    })
+    let promises = []
+    for (const physProd of physicalProductsWithData) {
+      promises.push(
+        this.prisma.client.reservationPhysicalProduct.update({
+          where: { id: physProd.reservationPhysicalProducts[0].id },
+          data: reservationPhysicalProductData,
+        })
+      )
+    }
 
-    return this.utils.wrapPrismaPromise(promise)
+    return promises
   }
 
   private async updateReservationsOnReturn(
@@ -230,7 +236,7 @@ export class ReservationPhysicalProductService {
 
   private async updateProductsOnReturn(
     productStates: ProductState[],
-    physicalProductsWithData: ProcessReturnPhysicalProduct[]
+    physicalProductsWithData: ProcessReturnPhysicalProductWithRPP[]
   ) {
     let promises = []
     for (let state of productStates) {
