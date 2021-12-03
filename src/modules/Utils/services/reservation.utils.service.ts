@@ -48,18 +48,27 @@ export class ReservationUtilsService {
 
         if (rppStatusAfterChange) {
           resPhysProdStatusCounts[rppStatusAfterChange] =
-            (resPhysProdStatusCounts[rppStatusAfterChange] || 0) + 1
+            (status === "AtHome"
+              ? resPhysProdStatusCounts["DeliveredToCustomer"] || 0
+              : resPhysProdStatusCounts[rppStatusAfterChange] || 0) + 1
           continue
         }
 
         if (
-          !["Lost", "ReturnProcessed", "DeliveredToCustomer"].includes(status)
+          ![
+            "Lost",
+            "ReturnProcessed",
+            "DeliveredToCustomer",
+            "AtHome",
+          ].includes(status)
         ) {
           continue
         }
 
         resPhysProdStatusCounts[status] =
-          (resPhysProdStatusCounts[status] || 0) + 1
+          (status === "AtHome"
+            ? resPhysProdStatusCounts["DeliveredToCustomer"] || 0
+            : resPhysProdStatusCounts[status] || 0) + 1
       }
 
       let statusWithMaxCount = {
