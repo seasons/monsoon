@@ -245,21 +245,35 @@ export class ReservationPhysicalProductService {
       })
     )
 
+    const rppUpdateData: Prisma.ReservationPhysicalProductUpdateInput = {
+      status,
+      foundAt: new Date().toISOString(),
+      hasBeenFound: true,
+      foundInPhase:
+        status === "DeliveredToCustomer"
+          ? "BusinessToCustomer"
+          : "CustomerToBusiness",
+    }
+    if (status === "DeliveredToBusiness") {
+      rppUpdateData.deliveredToBusinessAt = new Date().toISOString()
+      rppUpdateData.hasBeenDeliveredToBusiness = true
+    } else {
+      rppUpdateData.hasBeenDeliveredToCustomer = true
+    }
+
     promises.push(
       this.prisma.client.reservationPhysicalProduct.update({
         where: {
           id: rppId,
         },
-        data: {
-          status,
-        },
+        data: rppUpdateData,
       })
     )
 
     await this.reservationUtils.updateReservationOnChange(
       [rppWithData.reservation.id],
       { DeliveredToCustomer: 1 },
-      [rppWithData.physicalProduct.id]
+      [rppId]
     )
 
     await this.prisma.client.$transaction(promises)
