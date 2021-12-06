@@ -76,8 +76,6 @@ describe("Rental Invoice Billing", () => {
         numProductsToAdd: 2,
       })
 
-      await reservationTestUtils.setReservationCreatedAt(reservation.id, 25)
-
       await rppService.pickItems({ bagItemIds: bagItems.map(b => b.id) })
       await rppService.packItems({ bagItemIds: bagItems.map(b => b.id) })
       const [
@@ -201,8 +199,6 @@ describe("Rental Invoice Billing", () => {
           bagItemSelect: { physicalProduct: { select: { seasonsUID: true } } },
         },
       })
-
-      await reservationTestUtils.setReservationCreatedAt(reservation.id, 25)
 
       await rppService.pickItems({ bagItemIds: bagItems.map(b => b.id) })
       await rppService.packItems({ bagItemIds: bagItems.map(b => b.id) })
@@ -367,7 +363,188 @@ describe("Rental Invoice Billing", () => {
   })
 
   describe("Lost on the way there", () => {
-    // TODO: 1. Truly Lost. 2. Found with the customer
+    let rentalInvoiceAfterProcessing
+    let chargebeeChargeMock
+
+    beforeAll(async () => {
+      chargebeeChargeMock = mockChargebeeInvoiceCreate()
+
+      const { customer } = await testUtils.createTestCustomer({
+        select: {
+          membership: { select: { rentalInvoices: { select: { id: true } } } },
+        },
+      })
+      const {
+        reservation,
+        bagItems,
+      } = await reservationTestUtils.addToBagAndReserveForCustomer({
+        customer,
+        numProductsToAdd: 3,
+        options: {
+          bagItemSelect: { physicalProduct: { select: { seasonsUID: true } } },
+        },
+      })
+
+      await rppService.pickItems({ bagItemIds: bagItems.map(b => b.id) })
+      await rppService.packItems({ bagItemIds: bagItems.map(b => b.id) })
+      const [
+        outboundPackage,
+        inboundPackage,
+      ] = await rppService.generateShippingLabels({
+        bagItemIds: bagItems.map(b => b.id),
+      })
+      await testUtils.setPackageCreatedAt(outboundPackage.id, 25)
+      await testUtils.setPackageCreatedAt(inboundPackage.id, 25)
+
+      const outboundPackageWithData = await prisma.client.package.findUnique({
+        where: { id: outboundPackage.id },
+        select: { transactionID: true },
+      })
+
+      const outboundPackageEvents = await getEventsForTransactionId(
+        outboundPackageWithData.transactionID
+      )
+      Mockdate.set(timeUtils.xDaysAgo(25))
+      await request(httpServer)
+        .post("/shippo_events")
+        .send(outboundPackageEvents["PackageAccepted"])
+      Mockdate.reset()
+      Mockdate.set(timeUtils.xDaysAgo(24))
+      await request(httpServer)
+        .post("/shippo_events")
+        .send(outboundPackageEvents["PackageDeparted"])
+      Mockdate.reset()
+      Mockdate.set(timeUtils.xDaysAgo(23))
+      await request(httpServer)
+        .post("/shippo_events")
+        .send(outboundPackageEvents["Delivered"])
+      Mockdate.reset()
+
+      const inboundPackageWithData = await prisma.client.package.findUnique({
+        where: { id: inboundPackage.id },
+        select: {
+          transactionID: true,
+          shippingLabel: { select: { trackingNumber: true } },
+        },
+      })
+      const inboundPackageEvents = await getEventsForTransactionId(
+        inboundPackageWithData.transactionID
+      )
+      Mockdate.set(timeUtils.xDaysAgo(5))
+      await request(httpServer)
+        .post("/shippo_events")
+        .send(inboundPackageEvents["PackageAccepted"])
+      Mockdate.reset()
+      Mockdate.set(timeUtils.xDaysAgo(4))
+      await request(httpServer)
+        .post("/shippo_events")
+        .send(inboundPackageEvents["PackageDeparted"])
+      Mockdate.reset()
+      Mockdate.set(timeUtils.xDaysAgo(2))
+      await request(httpServer)
+        .post("/shippo_events")
+        .send(inboundPackageEvents["Delivered"])
+
+      returnedSUIDs = bagItems.map(b => b.physicalProduct).slice(0, 2)
+      heldSUID = bagItems.map(b => b.physicalProduct)[2]
+      await rppService.processReturn({
+        droppedOffBy: "UPS",
+        trackingNumber: inboundPackageWithData.shippingLabel.trackingNumber,
+        customerId: customer.id,
+        productStates: returnedSUIDs.map(a => ({
+          productUID: a.seasonsUID,
+          returned: true,
+          notes: "none",
+          productStatus: "Dirty",
+        })),
+      })
+
+      Mockdate.reset()
+
+      const rentalInvoiceToBill = await prisma.client.rentalInvoice.findUnique({
+        where: { id: customer.membership.rentalInvoices[0].id },
+        select: ProcessableRentalInvoiceSelect,
+      })
+      await rentalService.processInvoice(rentalInvoiceToBill, {
+        forceImmediateCharge: true,
+        onError: err => {
+          console.log(err)
+        },
+      })
+
+      rentalInvoiceAfterProcessing = await prisma.client.rentalInvoice.findUnique(
+        {
+          where: { id: rentalInvoiceToBill.id },
+          select: {
+            status: true,
+            lineItems: {
+              select: {
+                name: true,
+                price: true,
+                physicalProduct: { select: { id: true, seasonsUID: true } },
+                daysRented: true,
+                rentalEndedAt: true,
+                rentalStartedAt: true,
+              },
+            },
+          },
+        }
+      )
+    })
+
+    afterAll(() => {
+      chargebeeChargeMock.mockRestore()
+    })
+
+    it("Creates line items with proper days rented and package data", () => {
+      const lineItems = rentalInvoiceAfterProcessing.lineItems
+      const rentalUsageLineItems = lineItems.filter(
+        a => !!a.physicalProduct?.id
+      )
+      const packageLineItems = lineItems.filter(a => !a.physicalProduct?.id)
+      expect(lineItems.length).toBe(5)
+      expect(rentalUsageLineItems.length).toBe(3)
+      expect(packageLineItems.length).toBe(2)
+
+      const heldItemLI = rentalUsageLineItems.find(
+        a => a.physicalProduct.seasonsUID === heldSUID.seasonsUID
+      )
+      expect(heldItemLI.daysRented).toBe(23)
+      testUtils.expectTimeToEqual(
+        heldItemLI.rentalStartedAt,
+        timeUtils.xDaysAgo(23)
+      )
+      testUtils.expectTimeToEqual(heldItemLI.rentalEndedAt, new Date())
+
+      const returnedItemLIs = rentalUsageLineItems.filter(a =>
+        returnedSUIDs
+          .map(b => b.seasonsUID)
+          .includes(a.physicalProduct.seasonsUID)
+      )
+      for (const li of returnedItemLIs) {
+        expect(li.daysRented).toBe(18)
+        testUtils.expectTimeToEqual(li.rentalStartedAt, timeUtils.xDaysAgo(23))
+        testUtils.expectTimeToEqual(li.rentalEndedAt, timeUtils.xDaysAgo(5))
+      }
+
+      const inboundPackageLineItem = packageLineItems.find(a =>
+        a.name.toLowerCase().includes("inboundpackage")
+      )
+      expect(inboundPackageLineItem.price).toBeGreaterThan(0)
+
+      const outboundPackageLineItem = packageLineItems.find(a =>
+        a.name.toLowerCase().includes("outbound package")
+      )
+      expect(outboundPackageLineItem.price).toBe(0)
+    })
+
+    it("Marks the invoice as billed", () => {
+      expect(rentalInvoiceAfterProcessing.status).toBe("Billed")
+    })
+
+    it("Calls the chargebee charge func", () => {
+      expect(chargebeeChargeMock).toHaveBeenCalledTimes(1)
+    })
   })
 
   describe("Lost on the way back", () => {
