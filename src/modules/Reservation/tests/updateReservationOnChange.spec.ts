@@ -81,7 +81,6 @@ describe("Update reservation on change", () => {
         id: true,
       },
     })
-    console.log(reservation.id)
   })
 
   it("sets reservation to Completed if majority of the rpp's on said reservation have a status of ReturnProcessed", async () => {

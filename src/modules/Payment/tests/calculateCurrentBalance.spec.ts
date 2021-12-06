@@ -13,9 +13,6 @@ describe("Calculate Current Balance", () => {
   let testUtils: TestUtilsService
   let prisma: PrismaService
   let rentalService: RentalService
-  let timeUtils: TimeUtilsService
-  let reservationService: ReservationService
-  let reservationTestUtils: ReservationTestUtilsService
 
   let calcDaysRentedMock, currentBalance
 
@@ -26,17 +23,9 @@ describe("Calculate Current Balance", () => {
     testUtils = moduleRef.get<TestUtilsService>(TestUtilsService)
     prisma = moduleRef.get<PrismaService>(PrismaService)
     rentalService = moduleRef.get<RentalService>(RentalService)
-    timeUtils = moduleRef.get<TimeUtilsService>(TimeUtilsService)
-    reservationService = moduleRef.get<ReservationService>(ReservationService)
-    reservationTestUtils = moduleRef.get<ReservationTestUtilsService>(
-      ReservationTestUtilsService
-    )
 
     jest.spyOn(prisma.client.rentalInvoice, "findFirst").mockResolvedValue({
-      reservationPhysicalProducts: [
-        { physicalProduct: { id: "1" } },
-        { physicalProduct: { id: "2" } },
-      ],
+      reservationPhysicalProducts: [{ id: "1" }, { id: "2" }],
     } as any)
 
     calcDaysRentedMock = jest
@@ -44,15 +33,15 @@ describe("Calculate Current Balance", () => {
       .mockResolvedValue({ daysRented: 5 } as any)
 
     jest
-      .spyOn(rentalService, "calculatePriceForDaysRented")
-      .mockImplementation(async ({ product }) => {
+      .spyOn(rentalService, "calculateRentalPrice")
+      .mockImplementation(async ({ reservationPhysicalProduct }) => {
         const data = {
           appliedMinimum: false,
           adjustedForPreviousMinimum: false,
         }
-        if (product.id === "1") {
+        if (reservationPhysicalProduct.id === "1") {
           return { price: 10, ...data }
-        } else if (product.id === "2") {
+        } else if (reservationPhysicalProduct.id === "2") {
           return { price: 20, ...data }
         } else {
           throw "Unexpected ID"
@@ -83,15 +72,12 @@ describe("Calculate Current Balance", () => {
   })
 
   it("Calls calcDaysRented with the proper upTo value", () => {
-    expect(calcDaysRentedMock).toBeCalledWith(
+    expect(calcDaysRentedMock).toHaveBeenCalledWith(
+      { reservationPhysicalProducts: [{ id: "1" }, { id: "2" }] },
+      { id: "1" },
       {
-        reservationPhysicalProducts: [
-          { physicalProduct: { id: "1" } },
-          { physicalProduct: { id: "2" } },
-        ],
-      },
-      { physicalProduct: { id: "1" } },
-      { upTo: "today" }
+        upTo: "today",
+      }
     )
   })
 })
