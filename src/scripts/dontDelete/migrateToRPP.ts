@@ -441,6 +441,7 @@ const migrateToRpp = async () => {
   const allBillableRentalInvoices = await ps.client.rentalInvoice.findMany({
     where: { status: { in: ["Draft", "ChargeFailed"] } },
     select: RentalInvoiceSelect,
+    orderBy: { createdAt: "asc" },
   })
 
   let successCount = 0
@@ -452,10 +453,10 @@ const migrateToRpp = async () => {
     "ACNE-RED-LL-039-01",
   ]
   for (const ri of allBillableRentalInvoices) {
-    console.log(`${i++} of ${total}`)
     const products = ri.products
 
     for (const prod of products) {
+      console.log(`${i++} of ${total}`)
       if (ignoreList.includes(prod.seasonsUID)) {
         continue
       }
