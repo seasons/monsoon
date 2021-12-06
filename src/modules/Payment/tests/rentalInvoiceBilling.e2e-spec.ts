@@ -1,6 +1,6 @@
 import { APP_MODULE_DEF } from "@app/app.module"
 import {
-  ProcessableRentalInvoiceSelect,
+  ProcessableRentalInvoiceArgs,
   RentalService,
 } from "@app/modules/Payment/services/rental.service"
 import { ReservationPhysicalProductService } from "@app/modules/Reservation/services/reservationPhysicalProduct.service"
@@ -115,7 +115,7 @@ describe("Rental Invoice Billing", () => {
 
       const rentalInvoiceToBill = await prisma.client.rentalInvoice.findUnique({
         where: { id: customer.membership.rentalInvoices[0].id },
-        select: ProcessableRentalInvoiceSelect,
+        select: ProcessableRentalInvoiceArgs.select,
       })
       await rentalService.processInvoice(rentalInvoiceToBill, {
         forceImmediateCharge: true,
@@ -282,7 +282,7 @@ describe("Rental Invoice Billing", () => {
 
       const rentalInvoiceToBill = await prisma.client.rentalInvoice.findUnique({
         where: { id: customer.membership.rentalInvoices[0].id },
-        select: ProcessableRentalInvoiceSelect,
+        select: ProcessableRentalInvoiceArgs.select,
       })
       await rentalService.processInvoice(rentalInvoiceToBill, {
         forceImmediateCharge: true,

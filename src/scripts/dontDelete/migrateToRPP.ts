@@ -333,7 +333,7 @@ const createReservationPhysicalProduct = async (
       status = "Picked"
     }
   } else if (
-    shipmentResy.status === "Shipped" &&
+    ["Shipped", "ReturnPending"].includes(shipmentResy.status) &&
     !!outboundPackage.enteredDeliverySystemAt &&
     !outboundPackage.deliveredAt
   ) {
@@ -441,6 +441,7 @@ const migrateToRpp = async () => {
   const allBillableRentalInvoices = await ps.client.rentalInvoice.findMany({
     where: { status: { in: ["Draft", "ChargeFailed"] } },
     select: RentalInvoiceSelect,
+    orderBy: { createdAt: "asc" },
   })
 
   let successCount = 0
@@ -450,14 +451,12 @@ const migrateToRpp = async () => {
   const ignoreList = [
     // Reserved by Perla but something wrong in the data. Let it be
     "ACNE-RED-LL-039-01",
-    // Reserved by Jesse out of band. Handled manually offline. See https://seasonsnyc.slack.com/archives/C01AX0QBRK9/p1637623034030900
-    "MRNI-RED-SS-023-01",
   ]
   for (const ri of allBillableRentalInvoices) {
-    console.log(`${i++} of ${total}`)
     const products = ri.products
 
     for (const prod of products) {
+      console.log(`${i++} of ${total}`)
       if (ignoreList.includes(prod.seasonsUID)) {
         continue
       }

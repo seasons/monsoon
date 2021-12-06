@@ -681,7 +681,13 @@ describe("Swap Bag Item", () => {
       newPhysicalProductBeforeSwap = await prismaService.client.physicalProduct.findFirst(
         {
           where: {
-            productVariantId: bagItemAlreadyReserved.productVariantId,
+            bagItems: {
+              some: {
+                id: {
+                  in: [bagItemAlreadyReserved.id],
+                },
+              },
+            },
           },
           select: {
             seasonsUID: true,

@@ -2,7 +2,7 @@ import { WinstonLogger } from "@app/lib/logger"
 import { ErrorService } from "@app/modules/Error/services/error.service"
 import { AccessPlanID } from "@app/modules/Payment/payment.types"
 import {
-  ProcessableRentalInvoiceSelect,
+  ProcessableRentalInvoiceArgs,
   RentalService,
 } from "@app/modules/Payment/services/rental.service"
 import { PrismaService } from "@modules/../prisma/prisma.service"
@@ -132,7 +132,7 @@ export class BillingScheduledJobs {
         },
         status: { in: ["Draft", "ChargeFailed"] },
       },
-      select: ProcessableRentalInvoiceSelect,
+      select: ProcessableRentalInvoiceArgs.select,
     })
 
     for (const invoice of invoicesToHandle) {

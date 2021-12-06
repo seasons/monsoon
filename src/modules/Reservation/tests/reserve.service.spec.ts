@@ -11,7 +11,7 @@ import { Test } from "@nestjs/testing"
 import { Prisma } from "@prisma/client"
 import { head, merge } from "lodash"
 
-import { ProcessableRentalInvoiceSelect } from "../../Payment/services/rental.service"
+import { ProcessableRentalInvoiceArgs } from "../../Payment/services/rental.service"
 import { ReservationModuleRef } from "../reservation.module"
 
 class PaymentServiceMock {
@@ -284,7 +284,7 @@ const getCustWithData = async (
     membership: {
       select: {
         rentalInvoices: {
-          select: ProcessableRentalInvoiceSelect,
+          select: ProcessableRentalInvoiceArgs.select,
         },
       },
     },
