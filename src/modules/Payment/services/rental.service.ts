@@ -735,6 +735,7 @@ export class RentalService {
         return "Inbound"
       case "DeliveredToCustomer":
       case "ReturnPending":
+      case "AtHome":
         return "WithCustomer"
       case "ResetEarly":
       case "ReturnProcessed":
@@ -830,9 +831,9 @@ export class RentalService {
       }>
     }
   ) => {
-    const allInboundPackages = invoice.reservationPhysicalProducts.map(
-      a => a.inboundPackage
-    )
+    const allInboundPackages = invoice.reservationPhysicalProducts
+      .map(a => a.inboundPackage)
+      .filter(Boolean)
     const uniqueInboundPackages = uniqBy(allInboundPackages, p => p.id)
 
     const returnedUniqueInboundPackages = uniqueInboundPackages.filter(
@@ -1653,7 +1654,6 @@ export class RentalService {
     )
   }
 
-  // TODO: Add a fallback based on the initial reservation
   private initializeRentalStartedAt = (
     invoice: Pick<RentalInvoice, "billingStartAt" | "billingEndAt">,
     reservationPhysicalProduct: Pick<
@@ -1663,7 +1663,11 @@ export class RentalService {
   ) => {
     const itemDeliveredAt =
       reservationPhysicalProduct.deliveredToCustomerAt ||
-      reservationPhysicalProduct.createdAt
+      (this.timeUtils.xDaysAfterDate(
+        reservationPhysicalProduct.createdAt,
+        SENT_PACKAGE_CUSHION,
+        "date"
+      ) as Date)
     const deliveredBeforeBillingCycle = this.timeUtils.isLaterDate(
       invoice.billingStartAt,
       itemDeliveredAt

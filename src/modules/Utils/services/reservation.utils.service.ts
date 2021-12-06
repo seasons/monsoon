@@ -1,10 +1,11 @@
+import { ReservationPhysicalProductService } from "@app/modules/Reservation"
 import { PrismaService } from "@app/prisma/prisma.service"
 import { Injectable } from "@nestjs/common"
 
-interface InitialState {
-  Lost?: number
-  ReturnProcessed?: number
-  DeliveredToCustomer?: number
+import { ReservationPhysicalProductStatus } from ".prisma/client"
+
+export type RPPStatusCounts = {
+  [key: string]: ReservationPhysicalProductStatus
 }
 
 @Injectable()
@@ -13,8 +14,7 @@ export class ReservationUtilsService {
 
   async updateReservationOnChange(
     reservationIds: string[],
-    initialState: InitialState,
-    resPhysProdsIds: string[]
+    rppStatusesAfterChange: RPPStatusCounts
   ) {
     const reservations = await this.prisma.client.reservation.findMany({
       where: {
@@ -26,11 +26,6 @@ export class ReservationUtilsService {
         id: true,
         status: true,
         reservationPhysicalProducts: {
-          where: {
-            id: {
-              notIn: resPhysProdsIds,
-            },
-          },
           select: {
             id: true,
             status: true,
@@ -43,10 +38,19 @@ export class ReservationUtilsService {
 
     for (const reservation of reservations) {
       const reservationPhysProds = reservation.reservationPhysicalProducts
-      const resPhysProdStatusCounts = { ...initialState }
+      const resPhysProdStatusCounts = {} as {
+        [key in ReservationPhysicalProductStatus]: number
+      }
 
       for (const resPhysProd of reservationPhysProds) {
         const status = resPhysProd.status
+        const rppStatusAfterChange = rppStatusesAfterChange[resPhysProd.id]
+
+        if (rppStatusAfterChange) {
+          resPhysProdStatusCounts[rppStatusAfterChange] =
+            (resPhysProdStatusCounts[rppStatusAfterChange] || 0) + 1
+          continue
+        }
 
         if (
           !["Lost", "ReturnProcessed", "DeliveredToCustomer"].includes(status)
@@ -54,12 +58,8 @@ export class ReservationUtilsService {
           continue
         }
 
-        if (resPhysProdStatusCounts[status]) {
-          resPhysProdStatusCounts[status] += 1
-          continue
-        }
-
-        resPhysProdStatusCounts[status] = 1
+        resPhysProdStatusCounts[status] =
+          (resPhysProdStatusCounts[status] || 0) + 1
       }
 
       let statusWithMaxCount = {

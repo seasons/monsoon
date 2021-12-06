@@ -356,11 +356,15 @@ export class ShippingService {
         id,
         ...createPartialPackageCreateInput(label),
         weight: shipmentWeight,
-        items: {
-          connect: bagItems.map(a => ({
-            id: a.reservationPhysicalProduct.physicalProduct.id,
-          })),
-        },
+        ...(direction === "Outbound"
+          ? {
+              items: {
+                connect: bagItems.map(a => ({
+                  id: a.reservationPhysicalProduct.physicalProduct.id,
+                })),
+              },
+            }
+          : {}),
         fromAddress: {
           connect: {
             slug:

@@ -147,6 +147,7 @@ describe("Process Return", () => {
           },
         },
         select: {
+          id: true,
           shippingLabel: {
             select: {
               trackingNumber: true,
@@ -194,6 +195,7 @@ describe("Process Return", () => {
                     nonReservable: true,
                   },
                 },
+                packages: { select: { id: true } },
               },
             },
             reservation: {
@@ -239,6 +241,12 @@ describe("Process Return", () => {
     it("sets inboundPackage on reservationPhysicalProduct", () => {
       resPhysProdsAfterReturn.forEach(a =>
         expect(!!a.inboundPackage).toBe(true)
+      )
+    })
+
+    it("attaches physical products to inbound package", () => {
+      physicalProductsAfterReturn.forEach(a =>
+        a.packages.map(a => a.id).includes(inboundPackage.id)
       )
     })
 
@@ -319,6 +327,7 @@ describe("Process Return", () => {
                 seasonsUID: true,
                 inventoryStatus: true,
                 productStatus: true,
+                packages: { select: { id: true } },
                 productVariant: {
                   select: {
                     id: true,
@@ -390,6 +399,7 @@ describe("Process Return", () => {
                 seasonsUID: true,
                 inventoryStatus: true,
                 productStatus: true,
+                packages: { select: { id: true } },
                 productVariant: {
                   select: {
                     id: true,
@@ -442,6 +452,15 @@ describe("Process Return", () => {
       resPhysProdsAfterReturn.forEach(a =>
         expect(!!a.inboundPackage).toBe(false)
       )
+    })
+
+    it("doesn't attach physical products to an inbound package", () => {
+      physicalProductsAfterReturn.forEach(a => {
+        const beforeReturn = physicalProductsBeforeReturn.find(
+          b => a.seasonsUID === b.seasonsUID
+        )
+        expect(beforeReturn.packages.length).toBe(a.packages.length)
+      })
     })
 
     it("sets droppedOffBy to Customer on reservationPhysicalProduct", () => {

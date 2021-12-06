@@ -313,7 +313,7 @@ describe("Reservation Physical Product Service", () => {
                   id: true,
                 },
               },
-              returnedPackage: {
+              returnPackages: {
                 select: {
                   id: true,
                 },
@@ -361,6 +361,7 @@ describe("Reservation Physical Product Service", () => {
             id: true,
             status: true,
             shippingMethod: true,
+            items: { select: { id: true } },
           },
         }),
       ]
@@ -385,11 +386,19 @@ describe("Reservation Physical Product Service", () => {
         const rpp = bagItem.reservationPhysicalProduct
 
         expect(rpp.outboundPackage.id).toEqual(outboundPackage.id)
-        expect(rpp.inboundPackage.id).toEqual(inboundPackage.id)
+        expect(rpp.inboundPackage).toBeNull()
         expect(rpp.reservation.sentPackage.id).toEqual(outboundPackage.id)
-        expect(rpp.reservation.returnedPackage.id).toEqual(inboundPackage.id)
+        expect(
+          rpp.reservation.returnPackages
+            .map(a => a.id)
+            .includes(inboundPackage.id)
+        ).toBe(true)
         expect(rpp.physicalProduct.packages.length).toBeGreaterThanOrEqual(1)
       }
+
+      // Should only set items on outbound package
+      expect(outboundPackage.items.length).toBeGreaterThan(0)
+      expect(inboundPackage.items.length).toBe(0)
 
       expect(outboundPackage.shippingMethod.code).toEqual("UPSGround")
       expect(inboundPackage.shippingMethod.code).toEqual("UPSGround")
@@ -414,11 +423,17 @@ describe("Reservation Physical Product Service", () => {
         const rpp = bagItem.reservationPhysicalProduct
 
         expect(rpp.outboundPackage.id).toEqual(outboundPackage.id)
-        expect(rpp.inboundPackage.id).toEqual(inboundPackage.id)
+        expect(rpp.inboundPackage).toBeNull()
         expect(rpp.reservation.sentPackage.id).toEqual(outboundPackage.id)
-        expect(rpp.reservation.returnedPackage.id).toEqual(inboundPackage.id)
+        expect(
+          rpp.reservation.returnPackages
+            .map(a => a.id)
+            .includes(inboundPackage.id)
+        ).toBe(true)
         expect(rpp.physicalProduct.packages.length).toBeGreaterThanOrEqual(2)
       }
+      expect(outboundPackage.items.length).toBeGreaterThan(0)
+      expect(inboundPackage.items.length).toBe(0)
 
       expect(outboundPackage.shippingMethod.code).toEqual("UPSSelect")
       expect(inboundPackage.shippingMethod.code).toEqual("UPSSelect")
@@ -442,11 +457,14 @@ describe("Reservation Physical Product Service", () => {
       for (let bagItem of updatedBagItems) {
         const rpp = bagItem.reservationPhysicalProduct
 
-        expect(rpp.inboundPackage.id).toEqual(inboundPackage.id)
-        expect(rpp.reservation.returnedPackage.id).toEqual(inboundPackage.id)
+        expect(rpp.inboundPackage).toBeNull()
+        expect(
+          rpp.reservation.returnPackages
+            .map(a => a.id)
+            .includes(inboundPackage.id)
+        ).toBe(true)
         expect(rpp.physicalProduct.packages.length).toBeGreaterThanOrEqual(2)
       }
-
       expect(outboundPackage).toBeNull()
       expect(inboundPackage.shippingMethod.code).toEqual("Pickup")
     })
