@@ -183,80 +183,89 @@ export class ReservationPhysicalProductService {
     return promises
   }
 
-  async cancelItem(bagItemsId) {
-    const cancelledBagItem = await this.prisma.client.bagItem.findUnique({
+  async cancelItems({ bagItemIds }: { bagItemIds: [string] }) {
+    const cancelledBagItem = await this.prisma.client.bagItem.findMany({
       where: {
-        id: bagItemsId,
+        id: {
+          in: bagItemIds,
+        },
       },
       select: {
-        physicalProduct: {
-          select: {
-            id: true,
-            inventoryStatus: true,
-          },
-        },
         reservationPhysicalProduct: {
           select: {
             id: true,
             status: true,
-          },
-        },
-        productVariant: {
-          select: {
-            id: true,
-            reservable: true,
-            reserved: true,
-            nonReservable: true,
+            physicalProduct: {
+              select: {
+                id: true,
+                inventoryStatus: true,
+                productVariant: {
+                  select: {
+                    id: true,
+                    reservable: true,
+                    reserved: true,
+                    nonReservable: true,
+                  },
+                },
+              },
+            },
           },
         },
       },
     })
 
-    const cancelledPhysicalProduct = cancelledBagItem.physicalProduct
-    const cancelledRPP = cancelledBagItem.reservationPhysicalProduct
-    const cancelledPhysicalProductNewStatus =
-      cancelledRPP.status === "Queued" ? "Reservable" : "NonReservable"
-
-    const cancelledProdVariant = cancelledBagItem.productVariant
-
     const promises = []
 
-    const productVariantData = this.productVariantService.getCountsForStatusChange(
-      {
-        productVariant: cancelledProdVariant,
-        oldInventoryStatus: cancelledPhysicalProduct.inventoryStatus as InventoryStatus,
-        newInventoryStatus: cancelledPhysicalProductNewStatus,
-      }
+    const cancelledRPPs = cancelledBagItem.map(
+      a => a.reservationPhysicalProduct
     )
 
-    promises.push(
-      this.prisma.client.physicalProduct.update({
-        where: {
-          id: cancelledPhysicalProduct.id,
-        },
-        data: {
-          inventoryStatus: cancelledPhysicalProductNewStatus,
-          productVariant: {
-            update: {
-              ...productVariantData,
+    for (let cancelledRPP of cancelledRPPs) {
+      const cancelledPhysicalProductNewStatus =
+        cancelledRPP.status === "Queued" ? "Reservable" : "NonReservable"
+      const cancelledPhysicalProduct = cancelledRPP.physicalProduct
+      const cancelledProdVariant = cancelledPhysicalProduct.productVariant
+
+      const productVariantData = this.productVariantService.getCountsForStatusChange(
+        {
+          productVariant: cancelledProdVariant,
+          oldInventoryStatus: cancelledPhysicalProduct.inventoryStatus as InventoryStatus,
+          newInventoryStatus: cancelledPhysicalProductNewStatus,
+        }
+      )
+      promises.push(
+        this.prisma.client.physicalProduct.update({
+          where: {
+            id: cancelledPhysicalProduct.id,
+          },
+          data: {
+            inventoryStatus: cancelledPhysicalProductNewStatus,
+            productVariant: {
+              update: {
+                ...productVariantData,
+              },
             },
+          },
+        })
+      )
+    }
+
+    promises.push(
+      this.prisma.client.bagItem.deleteMany({
+        where: {
+          id: {
+            in: bagItemIds,
           },
         },
       })
     )
 
     promises.push(
-      this.prisma.client.bagItem.delete({
+      this.prisma.client.reservationPhysicalProduct.updateMany({
         where: {
-          id: bagItemsId,
-        },
-      })
-    )
-
-    promises.push(
-      this.prisma.client.reservationPhysicalProduct.update({
-        where: {
-          id: cancelledRPP.id,
+          id: {
+            in: cancelledRPPs.map(a => a.id),
+          },
         },
         data: {
           status: "Cancelled",
