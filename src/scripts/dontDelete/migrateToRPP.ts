@@ -333,7 +333,7 @@ const createReservationPhysicalProduct = async (
       status = "Picked"
     }
   } else if (
-    shipmentResy.status === "Shipped" &&
+    ["Shipped", "ReturnPending"].includes(shipmentResy.status) &&
     !!outboundPackage.enteredDeliverySystemAt &&
     !outboundPackage.deliveredAt
   ) {
