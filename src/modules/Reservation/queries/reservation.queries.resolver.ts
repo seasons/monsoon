@@ -3,6 +3,7 @@ import { Select } from "@app/decorators/select.decorator"
 import { QueryUtilsService } from "@app/modules/Utils/services/queryUtils.service"
 import { PrismaService } from "@app/prisma/prisma.service"
 import { Args, Query, Resolver } from "@nestjs/graphql"
+import { Prisma } from "@prisma/client"
 import { merge, pick } from "lodash"
 
 import { ReservationService } from "../services/reservation.service"
@@ -18,8 +19,10 @@ export class ReservationQueriesResolver {
   @Query()
   async inboundReservations(@Args() { skip, take }, @Select() select) {
     const where = {
-      status: "ReturnPending",
-    } as any
+      status: {
+        in: ["ReturnPending", "ReturnProcessed", "DeliveredToBusiness"],
+      },
+    } as Prisma.ReservationPhysicalProductWhereInput
     const args = {
       orderBy: {
         updatedAt: "asc",
@@ -42,7 +45,7 @@ export class ReservationQueriesResolver {
           },
         },
       }),
-    } as any
+    } as Prisma.ReservationPhysicalProductArgs
 
     return this.reservationService.reservationPhysicalProductConnection({
       args,
@@ -62,7 +65,7 @@ export class ReservationQueriesResolver {
   async outboundReservations(@Args() { skip, take }, @Select() select) {
     const where = {
       status: "Queued",
-    } as any
+    } as Prisma.ReservationPhysicalProductWhereInput
 
     const args = {
       distinct: ["customerId"],
