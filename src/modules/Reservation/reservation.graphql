@@ -345,7 +345,7 @@ type AggregateReservationPhysicalProduct {
   count: Int!
 }
 
-type ReservationPhysicalProductConnection {
+type ReservationPhysicalProductConnection @cacheControl(maxAge: 0) {
   pageInfo: PageInfo!
   edges: [ReservationPhysicalProductEdge]!
   totalCount: Int!
