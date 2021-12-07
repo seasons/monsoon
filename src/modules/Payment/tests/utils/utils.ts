@@ -15,8 +15,8 @@ import { merge } from "lodash"
 import moment from "moment"
 
 import {
-  ProcessableRentalInvoiceSelect,
-  ProcessableReservationPhysicalProductSelect,
+  ProcessableRentalInvoiceArgs,
+  ProcessableReservationPhysicalProductArgs,
 } from "../../services/rental.service"
 
 export const UPS_GROUND_FEE = 1000
@@ -39,7 +39,7 @@ export const getCustWithData = async (
     membership: {
       select: {
         rentalInvoices: {
-          select: ProcessableRentalInvoiceSelect,
+          select: ProcessableRentalInvoiceArgs.select,
         },
       },
     },
@@ -95,18 +95,6 @@ export const setPackageAmount = async (
   })
 }
 
-export const setPackageCreatedAt = async (
-  packageId,
-  numDaysAgo: number,
-  { prisma, timeUtils }: PrismaOption & TimeUtilsOption
-) => {
-  const createdAt = timeUtils.xDaysAgoISOString(numDaysAgo)
-  await prisma.client.package.update({
-    where: { id: packageId },
-    data: { createdAt },
-  })
-}
-
 export const setReservationStatus = async (
   reservationId,
   status: ReservationStatus,
@@ -115,18 +103,6 @@ export const setReservationStatus = async (
   await prisma.client.reservation.update({
     where: { id: reservationId },
     data: { status },
-  })
-}
-
-export const setReservationCreatedAt = async (
-  reservationId,
-  numDaysAgo,
-  { prisma, timeUtils }: PrismaOption & TimeUtilsOption
-) => {
-  const date = timeUtils.xDaysAgoISOString(numDaysAgo)
-  await prisma.client.reservation.update({
-    where: { id: reservationId },
-    data: { createdAt: date },
   })
 }
 
@@ -307,15 +283,5 @@ export const setReservationPhysicalProductStatus = async (
   await prisma.client.reservationPhysicalProduct.update({
     where: { id: reservationPhysicalProductId },
     data: { status },
-  })
-}
-
-export const getReservationPhysicalProductWithData = async (
-  reservationPhysicalProductId,
-  { prisma }
-) => {
-  return await prisma.client.reservationPhysicalProduct.findUnique({
-    where: { id: reservationPhysicalProductId },
-    select: ProcessableReservationPhysicalProductSelect,
   })
 }

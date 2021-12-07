@@ -39,140 +39,139 @@ type LineItemToDescriptionLineItem = Pick<
   }
 }
 
-export const ProcessableReservationPhysicalProductSelect = Prisma.validator<
-  Prisma.ReservationPhysicalProductSelect
+export const ProcessableReservationPhysicalProductArgs = Prisma.validator<
+  Prisma.ReservationPhysicalProductArgs
 >()({
-  id: true,
-  status: true,
-  deliveredToCustomerAt: true,
-  deliveredToBusinessAt: true,
-  droppedOffAt: true,
-  droppedOffBy: true,
-  hasBeenScannedOnInbound: true,
-  scannedOnInboundAt: true,
-  returnProcessedAt: true,
-  createdAt: true,
-  lostAt: true,
-  lostInPhase: true,
-  hasBeenLost: true,
-  resetEarlyByAdminAt: true,
-  outboundPackage: {
-    select: {
-      id: true,
-      createdAt: true,
-      enteredDeliverySystemAt: true,
-      amount: true,
-      shippingMethod: {
-        select: {
-          code: true,
-        },
-      },
-    },
-  },
-  inboundPackage: {
-    select: {
-      id: true,
-      deliveredAt: true,
-      amount: true,
-      items: { select: { seasonsUID: true } },
-    },
-  },
-  physicalProduct: {
-    select: {
-      id: true,
-      seasonsUID: true,
-      productVariant: {
-        select: {
-          product: {
-            select: {
-              id: true,
-              rentalPriceOverride: true,
-              retailPrice: true,
-              wholesalePrice: true,
-              recoupment: true,
-              computedRentalPrice: true,
-            },
+  select: {
+    id: true,
+    status: true,
+    deliveredToCustomerAt: true,
+    deliveredToBusinessAt: true,
+    droppedOffAt: true,
+    droppedOffBy: true,
+    hasBeenScannedOnInbound: true,
+    scannedOnInboundAt: true,
+    returnProcessedAt: true,
+    createdAt: true,
+    lostAt: true,
+    lostInPhase: true,
+    hasBeenLost: true,
+    resetEarlyByAdminAt: true,
+    purchasedAt: true,
+    outboundPackage: {
+      select: {
+        id: true,
+        createdAt: true,
+        enteredDeliverySystemAt: true,
+        amount: true,
+        shippingMethod: {
+          select: {
+            code: true,
           },
         },
       },
     },
-  },
-})
-
-const ProcessableReservationPhysicalProductArg = Prisma.validator<
-  Prisma.ReservationPhysicalProductArgs
->()({ select: ProcessableReservationPhysicalProductSelect })
-
-export type ProcessableReservationPhysicalProduct = Prisma.ReservationPhysicalProductGetPayload<
-  typeof ProcessableReservationPhysicalProductArg
->
-
-export const ProcessableRentalInvoiceSelect = Prisma.validator<
-  Prisma.RentalInvoiceSelect
->()({
-  id: true,
-  billingStartAt: true,
-  billingEndAt: true,
-  reservationPhysicalProducts: {
-    select: ProcessableReservationPhysicalProductSelect,
-  },
-  reservations: {
-    select: {
-      id: true,
-      reservationNumber: true,
-      createdAt: true,
-      returnPackages: {
-        select: {
-          id: true,
-          deliveredAt: true,
-          amount: true,
-          items: { select: { seasonsUID: true } },
-        },
+    inboundPackage: {
+      select: {
+        id: true,
+        deliveredAt: true,
+        amount: true,
+        items: { select: { seasonsUID: true } },
       },
-      sentPackage: { select: { amount: true, enteredDeliverySystemAt: true } },
-      shippingMethod: { select: { code: true } },
     },
-    orderBy: { createdAt: "asc" },
-  },
-  membership: {
-    select: {
-      plan: { select: { planID: true } },
-      subscriptionId: true,
-      customer: {
-        select: {
-          id: true,
-          status: true,
-          user: { select: { id: true, email: true } },
-          reservations: {
-            where: {
-              status: {
-                notIn: ["Cancelled", "Completed", "Lost", "Unknown"],
+    physicalProduct: {
+      select: {
+        id: true,
+        seasonsUID: true,
+        productVariant: {
+          select: {
+            product: {
+              select: {
+                id: true,
+                rentalPriceOverride: true,
+                retailPrice: true,
+                wholesalePrice: true,
+                recoupment: true,
+                computedRentalPrice: true,
               },
             },
-            select: { id: true },
-          },
-          bagItems: {
-            where: { status: { in: ["Received", "Reserved"] } },
-            select: {
-              id: true,
-              physicalProduct: { select: { id: true } },
-            },
           },
         },
       },
-      id: true,
     },
   },
-  status: true,
-  lineItems: { select: { id: true } },
 })
 
-const ProcessableRentalInvoiceArg = Prisma.validator<
+export type ProcessableReservationPhysicalProduct = Prisma.ReservationPhysicalProductGetPayload<
+  typeof ProcessableReservationPhysicalProductArgs
+>
+
+export const ProcessableRentalInvoiceArgs = Prisma.validator<
   Prisma.RentalInvoiceArgs
->()({ select: ProcessableRentalInvoiceSelect })
+>()({
+  select: {
+    id: true,
+    billingStartAt: true,
+    billingEndAt: true,
+    reservationPhysicalProducts: {
+      select: ProcessableReservationPhysicalProductArgs.select,
+    },
+    reservations: {
+      select: {
+        id: true,
+        reservationNumber: true,
+        createdAt: true,
+        returnPackages: {
+          select: {
+            id: true,
+            deliveredAt: true,
+            amount: true,
+            items: { select: { seasonsUID: true } },
+          },
+        },
+        sentPackage: {
+          select: { amount: true, enteredDeliverySystemAt: true },
+        },
+        shippingMethod: { select: { code: true } },
+      },
+      orderBy: { createdAt: "asc" },
+    },
+    membership: {
+      select: {
+        plan: { select: { planID: true } },
+        subscriptionId: true,
+        customer: {
+          select: {
+            id: true,
+            status: true,
+            user: { select: { id: true, email: true } },
+            reservations: {
+              where: {
+                status: {
+                  notIn: ["Cancelled", "Completed", "Lost", "Unknown"],
+                },
+              },
+              select: { id: true },
+            },
+            bagItems: {
+              where: { status: { in: ["Received", "Reserved"] } },
+              select: {
+                id: true,
+                physicalProduct: { select: { id: true } },
+              },
+            },
+          },
+        },
+        id: true,
+      },
+    },
+    status: true,
+    lineItems: { select: { id: true } },
+  },
+})
 
 type ProcessableRentalInvoice = Prisma.RentalInvoiceGetPayload<
-  typeof ProcessableRentalInvoiceArg
+  typeof ProcessableRentalInvoiceArgs
 >
 
 @Injectable()
@@ -583,7 +582,11 @@ export class RentalService {
     )
     switch (logicCase) {
       case "Outbound":
+      case "Cancelled":
         rentalStartedAt = undefined
+        break
+      case "Purchased":
+        rentalEndedAt = reservationPhysicalProduct.purchasedAt
         break
       case "Inbound":
         rentalEndedAt =
@@ -711,6 +714,7 @@ export class RentalService {
       case "ResetEarly":
       case "ReturnProcessed":
       case "Lost":
+      case "Cancelled":
         // noop
         break
       default:
@@ -735,10 +739,13 @@ export class RentalService {
         return "Inbound"
       case "DeliveredToCustomer":
       case "ReturnPending":
+      case "AtHome":
         return "WithCustomer"
       case "ResetEarly":
       case "ReturnProcessed":
       case "Lost":
+      case "Cancelled":
+      case "Purchased":
         return status
       default:
         throw new Error(
@@ -797,10 +804,10 @@ export class RentalService {
             price,
             adjustedForPreviousMinimum,
             appliedMinimum,
-          } = await this.calculatePriceForDaysRented({
+          } = await this.calculateRentalPrice({
             invoice,
             customer: invoice.membership.customer,
-            product: reservationPhysicalProduct.physicalProduct,
+            reservationPhysicalProduct,
             daysRented,
           })
 
@@ -830,9 +837,9 @@ export class RentalService {
       }>
     }
   ) => {
-    const allInboundPackages = invoice.reservationPhysicalProducts.map(
-      a => a.inboundPackage
-    )
+    const allInboundPackages = invoice.reservationPhysicalProducts
+      .map(a => a.inboundPackage)
+      .filter(Boolean)
     const uniqueInboundPackages = uniqBy(allInboundPackages, p => p.id)
 
     const returnedUniqueInboundPackages = uniqueInboundPackages.filter(
@@ -1083,17 +1090,22 @@ export class RentalService {
     return datas.filter(Boolean)
   }
 
-  async calculatePriceForDaysRented({
+  async calculateRentalPrice({
     invoice,
     customer,
-    product,
+    reservationPhysicalProduct,
     daysRented,
   }: {
     invoice: Pick<RentalInvoice, "id">
     customer: Pick<Customer, "id">
-    product: Pick<PhysicalProduct, "id"> & {
-      productVariant: {
-        product: { computedRentalPrice: number }
+    reservationPhysicalProduct: Pick<
+      ReservationPhysicalProduct,
+      "id" | "status"
+    > & {
+      physicalProduct: Pick<PhysicalProduct, "id"> & {
+        productVariant: {
+          product: { computedRentalPrice: number }
+        }
       }
     }
     daysRented: number
@@ -1102,6 +1114,18 @@ export class RentalService {
     appliedMinimum: boolean
     adjustedForPreviousMinimum: boolean
   }> {
+    const daysNeededForMinimumCharge = 12
+    let appliedMinimum = false
+    let adjustedForPreviousMinimum = false
+
+    if (daysRented === 0 || reservationPhysicalProduct.status === "Purchased") {
+      return {
+        price: 0,
+        appliedMinimum,
+        adjustedForPreviousMinimum,
+      }
+    }
+
     const previousInvoice = await this.prisma.client.rentalInvoice.findFirst({
       where: {
         membership: {
@@ -1134,21 +1158,10 @@ export class RentalService {
         createdAt: "desc",
       },
     })
-    const daysNeededForMinimumCharge = 12
-    let appliedMinimum = false
-    let adjustedForPreviousMinimum = false
 
     const previousLineItem = previousInvoice?.lineItems?.find(
-      l => l.physicalProductId === product.id
+      l => l.physicalProductId === reservationPhysicalProduct.physicalProduct.id
     )
-
-    if (daysRented === 0) {
-      return {
-        price: 0,
-        appliedMinimum,
-        adjustedForPreviousMinimum,
-      }
-    }
 
     // Apply minimum if needed
     if (
@@ -1165,7 +1178,7 @@ export class RentalService {
 
       return {
         price: this.calculateUnadjustedPriceForDaysRented(
-          product,
+          reservationPhysicalProduct.physicalProduct,
           adjustedDaysRented
         ),
         appliedMinimum,
@@ -1189,7 +1202,7 @@ export class RentalService {
 
         return {
           price: this.calculateUnadjustedPriceForDaysRented(
-            product,
+            reservationPhysicalProduct.physicalProduct,
             countedDaysForCurrentInvoice
           ),
           appliedMinimum,
@@ -1199,15 +1212,15 @@ export class RentalService {
     }
 
     return {
-      price: this.calculateUnadjustedPriceForDaysRented(product, daysRented),
+      price: this.calculateUnadjustedPriceForDaysRented(
+        reservationPhysicalProduct.physicalProduct,
+        daysRented
+      ),
       appliedMinimum,
       adjustedForPreviousMinimum,
     }
   }
 
-  // Test calcDaysRented with the upTo set to Today, billingEnd
-  // Mock return values for calcDaysRented, calculatePriceForDaysRented, findFirst, all the package funcs. This unit test just
-  // needs to test that this function a) passes the upTo properly and b) aggregates the prices properly
   async calculateCurrentBalance(
     customerId: string,
     options: { upTo?: "today" | "billingEnd" | null } = { upTo: null }
@@ -1253,7 +1266,7 @@ export class RentalService {
           },
         },
         reservationPhysicalProducts: {
-          select: ProcessableReservationPhysicalProductSelect,
+          select: ProcessableReservationPhysicalProductArgs.select,
         },
       },
     })
@@ -1267,9 +1280,9 @@ export class RentalService {
         { upTo: options.upTo }
       )
 
-      const { price } = await this.calculatePriceForDaysRented({
+      const { price } = await this.calculateRentalPrice({
         invoice: currentInvoice,
-        product: reservationPhysicalProduct.physicalProduct,
+        reservationPhysicalProduct: reservationPhysicalProduct,
         customer: { id: customerId },
         daysRented,
       })
@@ -1626,6 +1639,11 @@ export class RentalService {
       return lineItem.name
     }
 
+    if (!lineItem.physicalProduct) {
+      throw new Error(
+        `Line item has no physical product: ${JSON.stringify(lineItem)}`
+      )
+    }
     // Else, it's for an actual item rented
     const productName = lineItem.physicalProduct.productVariant.product.name
     const displaySize = lineItem.physicalProduct.productVariant.displayShort
@@ -1647,9 +1665,8 @@ export class RentalService {
 
   private isProcessingLineItem(lineItem: Pick<RentalInvoiceLineItem, "name">) {
     return (
-      lineItem.name?.includes("OutboundPackage") ||
-      lineItem.name?.includes("InboundPackage") ||
-      lineItem.name?.includes("Processing")
+      lineItem.name?.toLowerCase()?.includes("outbound package") ||
+      lineItem.name?.toLowerCase()?.includes("inboundpackage")
     )
   }
 

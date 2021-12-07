@@ -49,6 +49,7 @@ export class ChargebeeSyncService {
     const subscriptionsToCreatePostDeletion = []
 
     for (const sub of subscriptionsToSync) {
+      await this.sleep(200)
       if (i++ < startFrom) {
         continue
       }
@@ -240,6 +241,7 @@ export class ChargebeeSyncService {
     const total = customersToSync.length
     this.logger.log(`Starting Customer sync from index: ${startFrom}`)
     for (const cust of customersToSync) {
+      await this.sleep(200)
       if (i++ < startFrom) {
         continue
       }
@@ -361,16 +363,20 @@ export class ChargebeeSyncService {
     let status = resourceExport.status
     let i = 0
     let limit = 100
+    const initialLimit = 50
     let waitInterval = 1000
 
     while (status !== "completed") {
-      await this.sleep(1000)
-      if (i++ > limit) {
+      i++
+      await this.sleep(waitInterval)
+      if (i > limit) {
         throw new Error(`Export not complete after ${limit} checks`)
       }
-      if (i++ > 50) {
+      if (i === initialLimit) {
         this.logger.log(
-          `Resource export not done after 50 seconds. Will try for another 2 minutes`
+          `Resource export not done after 50 seconds. Will try for another ${Math.round(
+            ((limit - initialLimit) * waitInterval) / 1000 / 60
+          )} minutes`
         )
         waitInterval = 2000
       }

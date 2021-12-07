@@ -1,4 +1,4 @@
-import { ProcessableReservationPhysicalProductSelect } from "@app/modules/Payment/services/rental.service"
+import { ProcessableReservationPhysicalProductArgs } from "@app/modules/Payment/services/rental.service"
 import { TimeUtilsService } from "@app/modules/Utils/services/time.service"
 import { PrismaService } from "@app/prisma/prisma.service"
 import { Injectable } from "@nestjs/common"
@@ -14,7 +14,7 @@ const DEFAULT_RESERVATION_ARGS = Prisma.validator<Prisma.ReservationArgs>()({
     id: true,
     reservationNumber: true,
     reservationPhysicalProducts: {
-      select: ProcessableReservationPhysicalProductSelect,
+      select: ProcessableReservationPhysicalProductArgs.select,
     },
     shippingMethod: { select: { code: true } },
   },
@@ -30,6 +30,17 @@ export class ReservationTestUtilsService {
     private readonly reserve: ReserveService
   ) {}
 
+  setReservationCreatedAt = async (reservationId, numDaysAgo) => {
+    const date = this.timeUtils.xDaysAgoISOString(numDaysAgo)
+    await this.prisma.client.reservation.update({
+      where: { id: reservationId },
+      data: { createdAt: date },
+    })
+    await this.prisma.client.reservationPhysicalProduct.updateMany({
+      where: { reservationId },
+      data: { createdAt: date },
+    })
+  }
   async addToBagAndReserveForCustomer({
     customer,
     numProductsToAdd,

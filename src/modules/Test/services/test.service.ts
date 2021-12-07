@@ -199,6 +199,14 @@ export class TestUtilsService {
     expect(sameYear).toBe(true)
   }
 
+  setPackageCreatedAt = async (packageId: string, numDaysAgo: number) => {
+    const createdAt = this.timeUtils.xDaysAgoISOString(numDaysAgo)
+    await this.prisma.client.package.update({
+      where: { id: packageId },
+      data: { createdAt },
+    })
+  }
+
   // returns the number of physical products with the given inventory status
   // to create on this product variant
   private getInventoryStatusCount(

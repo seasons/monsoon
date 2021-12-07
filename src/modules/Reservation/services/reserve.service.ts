@@ -179,6 +179,7 @@ export class ReserveService {
       customer: customerWithData,
       physicalProductsBeingReserved,
       shippingCode,
+      pickupTime,
     })
 
     promises.push(...reservationCreatePromises)
@@ -407,6 +408,7 @@ export class ReserveService {
     physicalProductsBeingReserved,
     lastReservation,
     shippingCode,
+    pickupTime,
   }: {
     lastReservation: Pick<Reservation, "status"> & {
       returnPackages: Array<
@@ -420,6 +422,10 @@ export class ReserveService {
     }
     physicalProductsBeingReserved: ReserveItemsPhysicalProduct[]
     shippingCode: ShippingCode | null
+    pickupTime?: {
+      date: string
+      timeWindowID?: string
+    }
   }): Promise<{
     promises: PrismaPromise<Reservation | ReservationPhysicalProduct[]>[]
     datas: {
@@ -454,6 +460,8 @@ export class ReserveService {
           shippingMethodId: shippingMethod.id,
           isNew: true,
           customerId: customer.id,
+          pickupDate: pickupTime?.date,
+          pickupWindowId: pickupTime?.timeWindowID,
         })
     )
 
@@ -475,6 +483,8 @@ export class ReserveService {
           id: a.id,
         })),
       },
+      pickupDate: pickupTime?.date,
+      pickupWindowId: pickupTime?.timeWindowID,
       reservationNumber: uniqueReservationNumber,
       lastLocation: {
         connect: {

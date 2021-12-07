@@ -17,6 +17,7 @@ const ReservationArgs = Prisma.validator<Prisma.ReservationFindManyArgs>()({
   select: {
     id: true,
     createdAt: true,
+    lostAt: true,
     shippingMethod: { select: { id: true, code: true } },
     newProducts: { select: { seasonsUID: true } },
     status: true,
@@ -64,6 +65,7 @@ const RentalInvoiceSelect = Prisma.validator<Prisma.RentalInvoiceSelect>()({
   status: true,
   membership: {
     select: {
+      id: true,
       customer: {
         select: {
           id: true,
@@ -115,7 +117,7 @@ const resyIsPickup = async (
     },
   })
   const markedAsDeliveredLog = resyAdminLogs.find(
-    a => a.changedFields["status"] === "Delivered"
+    a => a.changedFields?.["status"] === "Delivered"
   )
   const isPickup = resy.shippingMethod?.code === "Pickup"
   const deliveryState = resy.sentPackage.toAddress.state.toLowerCase()
@@ -248,12 +250,30 @@ const createReservationPhysicalProduct = async (
   const hasReturnProcessed = !!returnReceiptForItem
   const returnProcessedAt = returnReceiptForItem?.createdAt
 
+  let lostAt
   const hasBeenLost = prod.productStatus === "Lost"
+  if (hasBeenLost) {
+    const lostResy = await ps.client.reservation.findFirst({
+      where: {
+        products: { some: { seasonsUID: prod.seasonsUID } },
+        customer: { id: ri.membership.customer.id },
+        status: "Lost",
+      },
+      orderBy: { createdAt: "desc" },
+      select: ReservationArgs.select,
+    })
+    lostAt = lostResy?.lostAt || shipmentResy.lostAt || firstResy.lostAt
+  }
 
   const reservedBagItemForProd = ri.membership.customer.bagItems.find(
     a => a.physicalProduct.seasonsUID === prod.seasonsUID
   )
-  if (!!reservedBagItemForProd && hasReturnProcessed) {
+  if (
+    !!reservedBagItemForProd &&
+    hasReturnProcessed &&
+    // known exception: https://seasonsnyc.slack.com/archives/CMJE9QVA5/p1638835400065200
+    prod.seasonsUID !== "RHUD-BLK-MM-012-02"
+  ) {
     throw new Error(
       `Product ${prod.seasonsUID} has already been returned but has a reserved bag item`
     )
@@ -319,25 +339,12 @@ const createReservationPhysicalProduct = async (
   let cancelledAt
   if (purchasedAt) {
     status = "Purchased"
-  } else if (
-    ["Queued", "Picked", "Packed", "Cancelled"].includes(shipmentResy.status)
-  ) {
-    status = shipmentResy.status as ReservationPhysicalProductStatus
-    if (shipmentResy.status === "Cancelled") {
-      cancelledAt = shipmentResy.cancelledAt
-    }
-  } else if (shipmentResy.status === "Hold") {
-    if (!!prod.warehouseLocation) {
-      status = "Queued"
-    } else {
-      status = "Picked"
-    }
-  } else if (
-    shipmentResy.status === "Shipped" &&
-    !!outboundPackage.enteredDeliverySystemAt &&
-    !outboundPackage.deliveredAt
-  ) {
-    status = "InTransitOutbound"
+  } else if (hasBeenLost) {
+    status = "Lost"
+  } else if (hasReturnProcessed) {
+    status = "ReturnProcessed"
+  } else if (hasBeenDeliveredToBusiness && !hasReturnProcessed) {
+    status = "DeliveredToBusiness"
   } else if (hasBeenDeliveredToCustomer && !hasBeenDeliveredToBusiness) {
     const moreThan24H =
       (!!deliveredToCustomerAt &&
@@ -353,18 +360,18 @@ const createReservationPhysicalProduct = async (
     } else {
       status = "DeliveredToCustomer"
     }
-  } else if (hasBeenDeliveredToBusiness && !hasReturnProcessed) {
-    status = "DeliveredToBusiness"
   } else if (
     hasBeenDeliveredToCustomer &&
     !hasBeenDeliveredToBusiness &&
     shipmentResy.returnedProducts.some(a => a.seasonsUID === prod.seasonsUID)
   ) {
     status = "ReturnPending"
-  } else if (hasReturnProcessed) {
-    status = "ReturnProcessed"
-  } else if (hasBeenLost) {
-    status = "Lost"
+  } else if (
+    ["Shipped", "ReturnPending"].includes(shipmentResy.status) &&
+    !!outboundPackage.enteredDeliverySystemAt &&
+    !outboundPackage.deliveredAt
+  ) {
+    status = "InTransitOutbound"
   } else if (
     shipmentResy.status === "Completed" &&
     !!shipmentResy.sentPackage.enteredDeliverySystemAt &&
@@ -380,6 +387,19 @@ const createReservationPhysicalProduct = async (
     shipmentResy.phase === "BusinessToCustomer"
   ) {
     status = "InTransitOutbound"
+  } else if (
+    ["Queued", "Picked", "Packed", "Cancelled"].includes(shipmentResy.status)
+  ) {
+    status = shipmentResy.status as ReservationPhysicalProductStatus
+    if (shipmentResy.status === "Cancelled") {
+      cancelledAt = shipmentResy.cancelledAt
+    }
+  } else if (shipmentResy.status === "Hold") {
+    if (!!prod.warehouseLocation) {
+      status = "Queued"
+    } else {
+      status = "Picked"
+    }
   } else {
     throw new Error(`Unable to determine status for product ${prod.seasonsUID}`)
   }
@@ -395,6 +415,35 @@ const createReservationPhysicalProduct = async (
 
         lostAt, lostInPhase: no way to know
       */
+  let rentalInvoiceConnect = [{ id: ri.id }]
+  const otherRentalInvoicesToConnect = await ps.client.rentalInvoice.findMany({
+    where: {
+      id: { not: ri.id },
+      membership: { id: ri.membership.id },
+      status: { in: ["Draft", "ChargeFailed"] },
+      products: { some: { seasonsUID: prod.seasonsUID } },
+    },
+  })
+  if (otherRentalInvoicesToConnect.length > 1) {
+    throw new Error("More than 2 rental invoices to connect at one time")
+  } else if (otherRentalInvoicesToConnect.length === 1) {
+    const statuses = [otherRentalInvoicesToConnect[0].status, ri.status]
+    if (!statuses.includes("Draft") || !statuses.includes("ChargeFailed")) {
+      throw new Error(
+        `Two rental invoices to connect but they don't have the expected CHargeFailed, Draft status combo: ${statuses}`
+      )
+    }
+    rentalInvoiceConnect.push({ id: otherRentalInvoicesToConnect[0].id })
+  }
+
+  let lostInPhase
+  if (hasBeenLost) {
+    if (hasBeenDeliveredToCustomer) {
+      lostInPhase = "CustomerToBusiness"
+    } else {
+      lostInPhase = "BusinessToCustomer"
+    }
+  }
   const createData: Prisma.ReservationPhysicalProductCreateInput = {
     isNew: true,
     physicalProduct: { connect: { id: prod.id } },
@@ -418,7 +467,7 @@ const createReservationPhysicalProduct = async (
       ? { inboundPackage: { connect: { id: inboundPackageWithItem?.id } } }
       : {}),
     outboundPackage: { connect: { id: outboundPackage.id } },
-    rentalInvoices: { connect: { id: ri.id } },
+    rentalInvoices: { connect: rentalInvoiceConnect },
     ...(!!firstResy.shippingMethod
       ? { shippingMethod: { connect: { id: shipmentResy.shippingMethod.id } } }
       : {}),
@@ -429,6 +478,8 @@ const createReservationPhysicalProduct = async (
     status,
     cancelledAt,
     purchasedAt,
+    lostAt,
+    lostInPhase,
   }
 
   await ps.client.reservationPhysicalProduct.create({ data: createData })
@@ -441,6 +492,7 @@ const migrateToRpp = async () => {
   const allBillableRentalInvoices = await ps.client.rentalInvoice.findMany({
     where: { status: { in: ["Draft", "ChargeFailed"] } },
     select: RentalInvoiceSelect,
+    orderBy: { createdAt: "asc" },
   })
 
   let successCount = 0
@@ -450,14 +502,12 @@ const migrateToRpp = async () => {
   const ignoreList = [
     // Reserved by Perla but something wrong in the data. Let it be
     "ACNE-RED-LL-039-01",
-    // Reserved by Jesse out of band. Handled manually offline. See https://seasonsnyc.slack.com/archives/C01AX0QBRK9/p1637623034030900
-    "MRNI-RED-SS-023-01",
   ]
   for (const ri of allBillableRentalInvoices) {
-    console.log(`${i++} of ${total}`)
     const products = ri.products
 
     for (const prod of products) {
+      console.log(`${i++} of ${total}`)
       if (ignoreList.includes(prod.seasonsUID)) {
         continue
       }
@@ -474,6 +524,55 @@ const migrateToRpp = async () => {
   console.log(`Successes: ${successCount}`)
   console.log(`Failures: ${failureCount}`)
   console.log(`Failure rate: ${(failureCount / total) * 100}%`)
+
+  sanityCheck()
 }
 
+const sanityCheck = async () => {
+  const ps = new PrismaService()
+  // Sanity Checks
+  const reservedBagItemsWithoutRPPs = await ps.client.bagItem.findMany({
+    where: {
+      reservationPhysicalProduct: null,
+      status: "Reserved",
+      customer: { status: { notIn: ["Deactivated", "Suspended"] } },
+    },
+  })
+  console.log(
+    `Reserved bag items without RPPs on active customers (should be 0): ${reservedBagItemsWithoutRPPs.length}`
+  )
+  const a = await ps.client.rentalInvoice.findMany({
+    where: {
+      status: { in: ["Draft", "ChargeFailed"] },
+      // known exception. perla.
+      id: { not: "ckulh2ain01673trwm5g18nfc" },
+    },
+    select: {
+      id: true,
+      membership: {
+        select: {
+          customer: { select: { id: true, user: { select: { email: true } } } },
+        },
+      },
+      products: { select: { id: true, seasonsUID: true } },
+      reservationPhysicalProducts: {
+        select: { id: true, physicalProduct: { select: { seasonsUID: true } } },
+      },
+    },
+  })
+  const numDiffCounts = a.filter(
+    a => a.products.length !== a.reservationPhysicalProducts.length
+  )
+  console.log(
+    `Num billable rental invoices with different length product and rpp arrays (should be 0): ${numDiffCounts.length}`
+  )
+
+  const lostRPPs = await ps.client.reservationPhysicalProduct.findMany({
+    where: { status: "Lost", lostAt: null },
+  })
+  console.log(
+    `Lost RPPs without a lostAt (should be 0, but not critical): ${lostRPPs.length}`
+  )
+}
 migrateToRpp()
+// sanityCheck()

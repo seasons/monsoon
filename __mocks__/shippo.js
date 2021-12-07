@@ -1,3 +1,4 @@
+const getRandomString = () => Math.random().toString(36).slice(2)
 // A generic shippo so we can run shipping service functions without hitting shippo
 class ShippoMock {
   constructor(apiKey) {}
@@ -15,9 +16,9 @@ class ShippoMock {
     create: () =>
       new Promise((resolve, reject) => {
         resolve({
-          object_id: "mock-object-id",
+          object_id: getRandomString(),
           label_url: "mock-label-url",
-          tracking_number: "mock-tracking-number",
+          tracking_number: getRandomString(),
           tracking_url_provide: "mock-tracking-url-provider",
           rate: {
             amount: 1000,

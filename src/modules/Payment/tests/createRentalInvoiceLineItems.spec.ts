@@ -59,10 +59,15 @@ describe("Create Rental Invoice Line Items", () => {
           }
         })
       const calculatePriceForDaysRentedMock = jest
-        .spyOn(rentalService, "calculatePriceForDaysRented")
+        .spyOn(rentalService, "calculateRentalPrice")
         .mockImplementation(
-          async ({ invoice, customer, product, daysRented }) => {
-            switch (product.id) {
+          async ({
+            invoice,
+            customer,
+            reservationPhysicalProduct,
+            daysRented,
+          }) => {
+            switch (reservationPhysicalProduct.id) {
               case "1":
                 return {
                   price: 100,
