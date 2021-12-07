@@ -29,11 +29,15 @@ type Query {
   inboundReservations(
     skip: Int!
     take: Int!
-  ): ReservationPhysicalProductConnection! @hasRole(roles: [Admin])
+  ): ReservationPhysicalProductConnection!
+    @hasRole(roles: [Admin])
+    @cacheControl(maxAge: 0)
   outboundReservations(
     skip: Int!
     take: Int!
-  ): ReservationPhysicalProductConnection! @hasRole(roles: [Admin])
+  ): ReservationPhysicalProductConnection!
+    @hasRole(roles: [Admin])
+    @cacheControl(maxAge: 0)
 }
 
 type Mutation {
@@ -347,7 +351,7 @@ type ReservationPhysicalProductConnection {
   totalCount: Int!
 }
 
-type ReservationPhysicalProduct {
+type ReservationPhysicalProduct @cacheControl(maxAge: 0) {
   id: ID!
 
   physicalProduct: PhysicalProduct
