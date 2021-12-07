@@ -405,11 +405,12 @@ type ReservationProcessingStats @cacheControl(maxAge: 0) {
   id: ID!
   initialNumQueuedItems: Int!
   initialNumQueuedReservations: Int!
+  currentNumQueuedItems: Int!
   currentNumQueuedReservations: Int!
   initialNumDeliveredToBusinessItems: Int!
   currentNumDeliveredToBusinessItems: Int!
-  day: DateTime!
-  updatedAt: DateTime!
+  day: DateTime
+  updatedAt: DateTime
 }
 
 type AdminActionLog {
