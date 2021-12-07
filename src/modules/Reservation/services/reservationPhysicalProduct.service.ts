@@ -183,7 +183,7 @@ export class ReservationPhysicalProductService {
     return promises
   }
 
-  async cancelItems({ bagItemIds }: { bagItemIds: [string] }) {
+  async markAsCancelled({ bagItemIds }: { bagItemIds: [string] }) {
     const cancelledBagItem = await this.prisma.client.bagItem.findMany({
       where: {
         id: {

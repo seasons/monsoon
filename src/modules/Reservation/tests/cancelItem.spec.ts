@@ -41,7 +41,7 @@ describe("Cancel Item Mutation", () => {
     testCustomer = customer
 
     cancelItems = async () => {
-      await rppService.cancelItems({ bagItemIds })
+      await rppService.markAsCancelled({ bagItemIds })
     }
   })
 
