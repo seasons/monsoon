@@ -1,5 +1,10 @@
+import { ProcessableRentalInvoiceArgs } from "@app/modules/Payment/services/rental.service"
 import { Inject, forwardRef } from "@nestjs/common"
-import { InventoryStatus, PhysicalProductStatus } from "@prisma/client"
+import {
+  Customer,
+  InventoryStatus,
+  PhysicalProductStatus,
+} from "@prisma/client"
 import { Prisma } from "@prisma/client"
 import { PrismaService } from "@prisma1/prisma.service"
 import faker from "faker"
@@ -183,6 +188,24 @@ export class TestUtilsService {
     const cleanupFunc = async () =>
       this.prisma.client.customer.delete({ where: { id: customer.id } })
     return { cleanupFunc, customer }
+  }
+
+  async getCustWithData(customer, select: Prisma.CustomerSelect) {
+    const defaultSelect = Prisma.validator<Prisma.CustomerSelect>()({
+      membership: {
+        select: {
+          rentalInvoices: {
+            select: ProcessableRentalInvoiceArgs.select,
+          },
+        },
+      },
+    })
+
+    const mergedSelect = merge(defaultSelect, select) as Prisma.CustomerSelect
+    return await this.prisma.client.customer.findFirst({
+      where: { id: customer.id },
+      select: mergedSelect,
+    })
   }
 
   expectTimeToEqual = (testTime: Date, expectedTime: Date | null) => {

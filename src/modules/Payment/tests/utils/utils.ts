@@ -28,30 +28,6 @@ export type PrismaDateUpdateInput = Date | string | null
 export type PrismaOption = { prisma: PrismaService }
 export type TimeUtilsOption = { timeUtils: TimeUtilsService }
 
-export const getCustWithData = async (
-  testCustomer: TestCustomerWithId,
-  {
-    prisma,
-    select = {},
-  }: { prisma: PrismaService; select: Prisma.CustomerSelect }
-): Promise<any> => {
-  const defaultSelect = {
-    membership: {
-      select: {
-        rentalInvoices: {
-          select: ProcessableRentalInvoiceArgs.select,
-        },
-      },
-    },
-  }
-
-  const mergedSelect = merge(defaultSelect, select)
-  return await prisma.client.customer.findFirst({
-    where: { id: testCustomer.id },
-    select: mergedSelect,
-  })
-}
-
 export const setCustomerSubscriptionStatus = async (
   testCustomer: TestCustomerWithId,
   status: string,
