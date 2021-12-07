@@ -1639,6 +1639,11 @@ export class RentalService {
       return lineItem.name
     }
 
+    if (!lineItem.physicalProduct) {
+      throw new Error(
+        `Line item has no physical product: ${JSON.stringify(lineItem)}`
+      )
+    }
     // Else, it's for an actual item rented
     const productName = lineItem.physicalProduct.productVariant.product.name
     const displaySize = lineItem.physicalProduct.productVariant.displayShort
@@ -1660,9 +1665,8 @@ export class RentalService {
 
   private isProcessingLineItem(lineItem: Pick<RentalInvoiceLineItem, "name">) {
     return (
-      lineItem.name?.includes("OutboundPackage") ||
-      lineItem.name?.includes("InboundPackage") ||
-      lineItem.name?.includes("Processing")
+      lineItem.name?.toLowerCase()?.includes("outbound package") ||
+      lineItem.name?.toLowerCase()?.includes("inboundpackage")
     )
   }
 

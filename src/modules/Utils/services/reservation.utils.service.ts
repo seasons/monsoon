@@ -43,8 +43,10 @@ export class ReservationUtilsService {
       }
 
       for (const resPhysProd of reservationPhysProds) {
-        const status = resPhysProd.status
-        const rppStatusAfterChange = rppStatusesAfterChange[resPhysProd.id]
+        const status = this.getEffectiveStatus(resPhysProd.status)
+        const rppStatusAfterChange = this.getEffectiveStatus(
+          rppStatusesAfterChange[resPhysProd.id]
+        )
 
         if (rppStatusAfterChange) {
           resPhysProdStatusCounts[rppStatusAfterChange] =
@@ -101,5 +103,9 @@ export class ReservationUtilsService {
       }
     }
     return promises
+  }
+
+  private getEffectiveStatus(status) {
+    return status === "AtHome" ? "DeliveredToCustomer" : status
   }
 }
