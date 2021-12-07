@@ -6,6 +6,7 @@ import { Injectable, Logger } from "@nestjs/common"
 import { Cron, CronExpression } from "@nestjs/schedule"
 import { PaymentPlan, Reservation } from "@prisma/client"
 import { PrismaService } from "@prisma1/prisma.service"
+import { DateTime } from "luxon"
 
 @Injectable()
 export class ReservationScheduledJobs {
@@ -18,6 +19,57 @@ export class ReservationScheduledJobs {
     private readonly pushNotifs: PushNotificationService,
     private readonly utils: UtilsService
   ) {}
+
+  @Cron(CronExpression.EVERY_6_HOURS)
+  async setAtHomeReservationPhysicalProducts() {
+    this.logger.log(
+      "Reservation Set At home Reservation Physical Products Job ran"
+    )
+    const rpps = await this.prisma.client.reservationPhysicalProduct.findMany({
+      where: {
+        status: "DeliveredToCustomer",
+      },
+      select: {
+        id: true,
+        deliveredToCustomerAt: true,
+      },
+    })
+
+    const report = {
+      reservationPhysicalProductsUpdated: [],
+      errors: [],
+    }
+
+    for (const rpp of rpps) {
+      const updatedMoreThan24HoursAgo = this.checkIfDeliveredMoreThan24HoursAgo(
+        rpp
+      )
+      if (updatedMoreThan24HoursAgo) {
+        report.reservationPhysicalProductsUpdated.push(rpp.id)
+      }
+    }
+
+    try {
+      if (report.reservationPhysicalProductsUpdated.length > 0) {
+        await this.prisma.client.reservationPhysicalProduct.updateMany({
+          where: {
+            id: {
+              in: report.reservationPhysicalProductsUpdated,
+            },
+          },
+          data: {
+            status: "AtHome",
+          },
+        })
+      }
+    } catch (e) {
+      report.errors.push(e)
+      this.errorService.captureError(e)
+    }
+
+    this.logger.log("Set AtHome reservation physical products results:")
+    this.logger.log(report)
+  }
 
   @Cron(CronExpression.EVERY_6_HOURS)
   async sendReturnNotifications() {
@@ -80,6 +132,14 @@ export class ReservationScheduledJobs {
 
     this.logger.log("Reservation Return Notifications Job results:")
     this.logger.log(report)
+  }
+
+  private checkIfDeliveredMoreThan24HoursAgo = rpp => {
+    const date = rpp?.deliveredToCustomerAt.toISOString()
+    return (
+      // @ts-ignore
+      DateTime.fromISO(date).diffNow("days")?.values?.days <= -1
+    )
   }
 
   private async returnNoticeNeeded(

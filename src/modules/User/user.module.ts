@@ -7,11 +7,13 @@ import { DripModule } from "../Drip/drip.module"
 import { EmailModule } from "../Email/email.module"
 import { ErrorModule } from "../Error/error.module"
 import { PaymentModule } from "../Payment/payment.module"
+import { ProductModule } from "../Product/product.module"
 import { PushNotificationModule } from "../PushNotification/pushNotification.module"
 import { ReservationModule } from "../Reservation/reservation.module"
 import { ShippingModule } from "../Shipping/shipping.module"
 import { SMSModule } from "../SMS/sms.module"
 import { UtilsModule } from "../Utils/utils.module"
+import { BagSectionFieldsResolver } from "./fields/bagSection.fields"
 import { MeFieldsResolver } from "./fields/me.fields"
 import { UserFieldsResolver } from "./fields/user.fields"
 import { AuthMutationsResolver } from "./mutations/auth.mutations"
@@ -35,6 +37,7 @@ export const USER_MODULE_DEF = {
     SMSModule,
     ErrorModule,
     DripModule,
+    forwardRef(() => ProductModule),
     forwardRef(() => PaymentModule),
     forwardRef(() => ReservationModule),
   ],
@@ -48,6 +51,7 @@ export const USER_MODULE_DEF = {
     UserMutationsResolver,
     UserQueriesResolver,
     UserFieldsResolver,
+    BagSectionFieldsResolver,
     AdmissionsService,
     CustomerUtilsService,
   ],

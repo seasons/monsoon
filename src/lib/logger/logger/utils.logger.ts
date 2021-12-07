@@ -145,15 +145,20 @@ export function createExpressWinstonHandler(logger: Logger) {
     level: process.env.NODE_ENV === "development" ? "warn" : "info",
     metaField: null,
     msg: (req, res) => {
+      const operationName = req?.body?.operationName
       let msg = `status=${res.statusCode} `
       msg += `- method=${req.method} `
       msg += `- path=${decodeURIComponent(req.url)} `
       // @ts-ignore:
-      msg += `- duration=${res.responseTime}ms`
+      msg += `- duration=${res.responseTime}ms `
+
+      if (operationName) {
+        msg += `- operation=${operationName}`
+      }
 
       return msg
     },
-    expressFormat: false,
+    expressFormat: true,
     colorize: false,
     statusLevels: true,
     requestFilter: sanitizeHeaders,

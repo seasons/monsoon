@@ -1,24 +1,22 @@
 import { Inject, forwardRef } from "@nestjs/common"
-import {
-  Customer,
-  InventoryStatus,
-  PhysicalProductStatus,
-  UserPushNotificationInterestType,
-} from "@prisma/client"
+import { InventoryStatus, PhysicalProductStatus } from "@prisma/client"
 import { Prisma } from "@prisma/client"
 import { PrismaService } from "@prisma1/prisma.service"
+import faker from "faker"
 import { merge } from "lodash"
+import { DateTime } from "luxon"
+import slugify from "slugify"
 
+import { TimeUtilsService } from "../../Utils/services/time.service"
+import { UtilsService } from "../../Utils/services/utils.service"
 import {
-  CreateTestCustomerInput,
-  CreateTestCustomerOutput,
   CreateTestPhysicalProductInput,
   CreateTestProductInput,
   CreateTestProductOutput,
   CreateTestProductVariantInput,
-} from "../utils.types.d"
-import { TimeUtilsService } from "./time.service"
-import { UtilsService } from "./utils.service"
+} from "../../Utils/utils.types"
+
+export const UPS_GROUND_FEE = 1000
 
 export class TestUtilsService {
   constructor(
@@ -28,123 +26,6 @@ export class TestUtilsService {
     private readonly timeUtils: TimeUtilsService
   ) {}
 
-  async createTestReservation({
-    sentPackageTransactionID,
-    returnPackageTransactionID,
-    select = {},
-  }: {
-    sentPackageTransactionID: string
-    returnPackageTransactionID: string
-    select?: Prisma.ReservationSelect
-  }) {
-    const uniqueReservationNumber = await this.utils.getUniqueReservationNumber()
-    const customer = await this.prisma.client.customer.findFirst({
-      where: { status: "Active" },
-      select: { id: true, user: { select: { id: true } } },
-    })
-    const toLocation = await this.prisma.client.location.findFirst({
-      select: { id: true },
-    })
-    const products = await this.prisma.client.physicalProduct.findMany({
-      where: { inventoryStatus: "Reservable" },
-      take: 2,
-      select: { seasonsUID: true },
-    })
-    const productSUIDConnectInput = products.map(a => ({
-      seasonsUID: a.seasonsUID,
-    }))
-
-    const reservation = await this.prisma.client.reservation.create({
-      data: {
-        products: {
-          connect: productSUIDConnectInput,
-        },
-        newProducts: {
-          connect: productSUIDConnectInput,
-        },
-        customer: {
-          connect: {
-            id: customer.id,
-          },
-        },
-        user: {
-          connect: {
-            id: customer.user.id,
-          },
-        },
-        phase: "BusinessToCustomer",
-        sentPackage: {
-          create: {
-            transactionID: sentPackageTransactionID,
-            weight: 2,
-            items: {
-              connect: productSUIDConnectInput,
-            },
-            shippingLabel: {
-              create: {
-                image: "",
-                trackingNumber: "",
-                trackingURL: "",
-                name: "UPS",
-              },
-            },
-            fromAddress: {
-              connect: {
-                slug: process.env.SEASONS_CLEANER_LOCATION_SLUG,
-              },
-            },
-            toAddress: {
-              connect: { id: toLocation.id },
-            },
-          },
-        },
-        returnPackages: {
-          create: {
-            transactionID: returnPackageTransactionID,
-            shippingLabel: {
-              create: {
-                image: "",
-                trackingNumber: "",
-                trackingURL: "",
-                name: "UPS",
-              },
-            },
-            fromAddress: {
-              connect: {
-                id: toLocation.id,
-              },
-            },
-            toAddress: {
-              connect: {
-                slug: process.env.SEASONS_CLEANER_LOCATION_SLUG,
-              },
-            },
-          },
-        },
-        reservationNumber: uniqueReservationNumber,
-        lastLocation: {
-          connect: {
-            slug: process.env.SEASONS_CLEANER_LOCATION_SLUG,
-          },
-        },
-        shipped: false,
-        status: "Queued",
-      },
-      select: merge({ id: true }, select),
-    })
-
-    const cleanupFunc = async () =>
-      this.prisma.client.reservation.delete({ where: { id: reservation.id } })
-    return { reservation, cleanupFunc }
-  }
-
-  /* 
-    Creates a test product according to the constraints passed in. 
-    
-    Note that much of the data here is fudged. As use cases arise that
-    require things to be more fleshed out, we'll need to update this 
-    method accordingly
-  */
   async createTestProduct(
     { variants, type = "Top" }: CreateTestProductInput,
     info = `{id}`
@@ -240,20 +121,26 @@ export class TestUtilsService {
     select?: Prisma.CustomerSelect
   } = {}): Promise<{ cleanupFunc: () => void; customer: any }> {
     const chargebeeSubscriptionId = this.utils.randomString()
+    const firstName = faker.name.firstName()
+    const lastName = `${faker.name.lastName()} Tester`
+    const fullName = `${firstName} ${lastName}`
+    const slug = slugify(fullName)
+
     const defaultCreateData = {
       status: "Active",
       user: {
         create: {
           auth0Id: this.utils.randomString(),
-          email: this.utils.randomString() + "@seasons.nyc",
-          firstName: this.utils.randomString(),
-          lastName: this.utils.randomString(),
+          email: slug + "@seasons.nyc",
+          firstName,
+          lastName,
         },
       },
       detail: {
         create: {
           shippingAddress: {
             create: {
+              slug,
               address1: "55 Washington St Ste 736",
               city: "Brooklyn",
               state: "NY",
@@ -296,6 +183,28 @@ export class TestUtilsService {
     const cleanupFunc = async () =>
       this.prisma.client.customer.delete({ where: { id: customer.id } })
     return { cleanupFunc, customer }
+  }
+
+  expectTimeToEqual = (testTime: Date, expectedTime: Date | null) => {
+    if (!expectedTime) {
+      expect(testTime).toBe(expectedTime)
+    }
+    const timeLuxon = DateTime.fromJSDate(testTime)
+    const expectedValueLuxon = DateTime.fromJSDate(expectedTime)
+    const sameDay = timeLuxon.hasSame(expectedValueLuxon, "day")
+    const sameMonth = timeLuxon.hasSame(expectedValueLuxon, "month")
+    const sameYear = timeLuxon.hasSame(expectedValueLuxon, "year")
+    expect(sameDay).toBe(true)
+    expect(sameMonth).toBe(true)
+    expect(sameYear).toBe(true)
+  }
+
+  setPackageCreatedAt = async (packageId: string, numDaysAgo: number) => {
+    const createdAt = this.timeUtils.xDaysAgoISOString(numDaysAgo)
+    await this.prisma.client.package.update({
+      where: { id: packageId },
+      data: { createdAt },
+    })
   }
 
   // returns the number of physical products with the given inventory status

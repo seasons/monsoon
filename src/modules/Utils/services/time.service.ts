@@ -1,4 +1,5 @@
 import { Injectable } from "@nestjs/common"
+import { DateTime } from "luxon"
 import moment from "moment"
 
 // TODO: Move over time related util functions from utils.service
@@ -25,6 +26,9 @@ export class TimeUtilsService {
   }
 
   isBetweenDates(date: Date, startDate: Date, endDate: Date) {
+    if (!date) {
+      return false
+    }
     return (
       date.getTime() - startDate.getTime() >= 0 &&
       date.getTime() - endDate.getTime() <= 0
@@ -43,6 +47,16 @@ export class TimeUtilsService {
   // Returns an ISO string for a date that's X days ago
   xDaysAgoISOString(x: number) {
     return moment().subtract(x, "days").format()
+  }
+
+  xDaysAgo(x: number): Date {
+    var dt = DateTime.local()
+    return dt.minus({ days: x }).toJSDate()
+  }
+
+  xDaysFromNow(x: number): Date {
+    var dt = DateTime.local()
+    return dt.plus({ days: x }).toJSDate()
   }
 
   xDaysFromNowISOString(x: number) {

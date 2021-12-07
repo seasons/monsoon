@@ -1,8 +1,7 @@
 import { APP_MODULE_DEF } from "@app/app.module"
-import { EmailService } from "@app/modules/Email/services/email.service"
 import { BagService } from "@app/modules/Product/services/bag.service"
-import { ReservationService } from "@app/modules/Reservation/services/reservation.service"
-import { TestUtilsService } from "@app/modules/Utils/services/test.service"
+import { ReserveService } from "@app/modules/Reservation/services/reserve.service"
+import { TestUtilsService } from "@app/modules/Test/services/test.service"
 import { PrismaService } from "@app/prisma/prisma.service"
 import { Test, TestingModule } from "@nestjs/testing"
 import chargebee from "chargebee"
@@ -14,7 +13,7 @@ describe("Buy Used", () => {
   let moduleRef: TestingModule
   let prisma: PrismaService
   let bag: BagService
-  let reserve: ReservationService
+  let reserve: ReserveService
   let order: OrderService
   let testCustomer: any
 
@@ -25,7 +24,7 @@ describe("Buy Used", () => {
     testUtils = moduleRef.get<TestUtilsService>(TestUtilsService)
     prisma = moduleRef.get<PrismaService>(PrismaService)
     bag = moduleRef.get<BagService>(BagService)
-    reserve = moduleRef.get<ReservationService>(ReservationService)
+    reserve = moduleRef.get<ReserveService>(ReserveService)
     order = moduleRef.get<OrderService>(OrderService)
 
     // The prices don't correspond to the prices of the items being purchased
@@ -278,7 +277,6 @@ describe("Buy Used", () => {
         { id: true }
       )
       const reservationWithData = await reserve.reserveItems({
-        items: [reservableProductVariant.id],
         shippingCode: "UPSGround",
         customer: testCustomer,
         select: { products: { select: { seasonsUID: true, id: true } } },

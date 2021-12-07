@@ -7,7 +7,7 @@ const run = async () => {
   const ps = new PrismaService()
   const timeUtils = new TimeUtilsService()
 
-  const email = "larryrmilstein@gmail.com"
+  const email = "perla.trejo@live.com"
   const c = await ps.client.customer.findMany({
     where: { user: { email } },
     select: {
@@ -22,9 +22,37 @@ const run = async () => {
               billingEndAt: true,
               billingStartAt: true,
               reservations: { select: { reservationNumber: true } },
-              products: { select: { seasonsUID: true } },
+              products: {
+                select: { id: true, seasonsUID: true, productStatus: true },
+              },
               lineItems: {
-                select: { daysRented: true, price: true, comment: true },
+                select: {
+                  daysRented: true,
+                  price: true,
+                  comment: true,
+                  physicalProduct: {
+                    select: {
+                      productVariant: {
+                        select: { product: { select: { name: true } } },
+                      },
+                    },
+                  },
+                },
+              },
+              reservationPhysicalProducts: {
+                select: {
+                  hasBeenDeliveredToBusiness: true,
+                  deliveredToBusinessAt: true,
+                  hasBeenDeliveredToCustomer: true,
+                  deliveredToCustomerAt: true,
+                  hasBeenLost: true,
+                  hasBeenScannedOnInbound: true,
+                  scannedOnInboundAt: true,
+                  hasBeenScannedOnOutbound: true,
+                  scannedOnOutboundAt: true,
+                  status: true,
+                  shippingMethod: { select: { code: true } },
+                },
               },
             },
           },

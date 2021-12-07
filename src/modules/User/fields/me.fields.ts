@@ -1,6 +1,7 @@
 import { Customer, User } from "@app/decorators"
 import { Application } from "@app/decorators/application.decorator"
 import { Select } from "@app/decorators/select.decorator"
+import { BagService } from "@app/modules/Product/services/bag.service"
 import { ReservationService } from "@app/modules/Reservation/services/reservation.service"
 import { CustomerService } from "@app/modules/User/services/customer.service"
 import { CustomerUtilsService } from "@app/modules/User/services/customer.utils.service"
@@ -18,6 +19,7 @@ const EnsureFieldsForDownstreamFieldResolvers = `fragment EnsureFieldsForDownstr
     }
   }
 }`
+
 @Resolver("Me")
 export class MeFieldsResolver {
   constructor(
@@ -25,7 +27,8 @@ export class MeFieldsResolver {
     private readonly customerService: CustomerService,
     private readonly statements: StatementsService,
     private readonly customerUtils: CustomerUtilsService,
-    private readonly reservation: ReservationService
+    private readonly reservation: ReservationService,
+    private readonly bagService: BagService
   ) {}
 
   @ResolveField()
@@ -107,6 +110,30 @@ export class MeFieldsResolver {
     }
 
     return null
+  }
+
+  @ResolveField()
+  async bagSection(
+    @Args() { status },
+    @Customer() customer,
+    @Application() application
+  ) {
+    if (!customer) {
+      return null
+    }
+    return await this.bagService.bagSection({
+      status,
+      customer,
+      application,
+    })
+  }
+
+  @ResolveField()
+  async bagSections(@Customer() customer, @Application() application) {
+    if (!customer) {
+      return null
+    }
+    return await this.bagService.bagSections({ customer, application })
   }
 
   @ResolveField()

@@ -6,6 +6,7 @@ import { Module, forwardRef } from "@nestjs/common"
 import { PrismaModule } from "@prisma1/prisma.module"
 
 import { PaymentPlanFieldsResolver } from "../Payment/fields/paymentPlan.fields.resolver"
+import { ProductModule } from "../Product/product.module"
 import { BagItemFieldsResolver } from "./fields/bagItem.fields.resolvers"
 import { CustomerFieldsResolver } from "./fields/customer.fields.resolver"
 import { CustomerDetailFieldsResolver } from "./fields/customerDetail.fields.resolver"
@@ -19,6 +20,7 @@ export const CustomerModuleDef = {
     UtilsModule,
     forwardRef(() => PaymentModule),
     forwardRef(() => UserModule),
+    ProductModule,
   ],
   providers: [
     BagItemFieldsResolver,

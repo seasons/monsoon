@@ -1,16 +1,13 @@
-import {
-  addToBagAndReserveForCustomer,
-  setReservationCreatedAt,
-} from "@app/modules/Payment/tests/utils/utils"
 import { TimeUtilsService } from "@app/modules/Utils/services/time.service"
 import { PrismaService } from "@app/prisma/prisma.service"
-import { TestUtilsService } from "@modules/Utils/services/test.service"
+import { TestUtilsService } from "@modules/Test/services/test.service"
 import { Test } from "@nestjs/testing"
 import { Customer } from "@prisma/client"
 import chargebee from "chargebee"
 
 import { ReservationModuleRef } from "../reservation.module"
 import { ReservationService } from "../services/reservation.service"
+import { ReservationTestUtilsService } from "./reservation.test.utils"
 
 describe("Reservation Service", () => {
   let reservationService: ReservationService
@@ -18,6 +15,7 @@ describe("Reservation Service", () => {
   let prisma: PrismaService
   let timeUtils: TimeUtilsService
   let testCustomer: Customer
+  let reservationUtilsTestService: ReservationTestUtilsService
 
   beforeEach(async () => {
     const moduleRef = await Test.createTestingModule(
@@ -27,6 +25,9 @@ describe("Reservation Service", () => {
     reservationService = moduleRef.get<ReservationService>(ReservationService)
     timeUtils = moduleRef.get<TimeUtilsService>(TimeUtilsService)
     testService = moduleRef.get<TestUtilsService>(TestUtilsService)
+    reservationUtilsTestService = moduleRef.get<ReservationTestUtilsService>(
+      ReservationTestUtilsService
+    )
 
     const { customer } = await testService.createTestCustomer({
       create: {
@@ -73,12 +74,14 @@ describe("Reservation Service", () => {
   })
 
   it("doesnt charge for the first reservation but charges for the any subsequent ones if UPS Ground is selected", async () => {
-    const reservation = await addToBagAndReserveForCustomer(testCustomer, 2, {
-      prisma,
-      reservationService,
+    const {
+      reservation,
+    } = await reservationUtilsTestService.addToBagAndReserveForCustomer({
+      customer: testCustomer,
+      numProductsToAdd: 2,
     })
 
-    await setReservationCreatedAt(reservation.id, 2, { prisma, timeUtils })
+    await reservationUtilsTestService.setReservationCreatedAt(reservation.id, 2)
 
     const lineItems = await reservationService.draftReservationLineItems({
       application: "flare",
@@ -87,14 +90,12 @@ describe("Reservation Service", () => {
       shippingCode: "UPSGround",
     })
 
-    const otherReservation = await addToBagAndReserveForCustomer(
-      testCustomer,
-      2,
-      {
-        prisma,
-        reservationService,
-      }
-    )
+    const {
+      reservation: otherReservation,
+    } = await reservationUtilsTestService.addToBagAndReserveForCustomer({
+      customer: testCustomer,
+      numProductsToAdd: 2,
+    })
 
     const otherLineItems = await reservationService.draftReservationLineItems({
       application: "flare",
@@ -115,15 +116,15 @@ describe("Reservation Service", () => {
   })
 
   it("doesnt charge for shipping if Pickup is selected", async () => {
-    const reservation = await addToBagAndReserveForCustomer(
-      testCustomer,
-      2,
-      {
-        prisma,
-        reservationService,
+    const {
+      reservation,
+    } = await reservationUtilsTestService.addToBagAndReserveForCustomer({
+      customer: testCustomer,
+      numProductsToAdd: 2,
+      options: {
+        shippingCode: "Pickup",
       },
-      { shippingCode: "Pickup" }
-    )
+    })
 
     const lineItems = await reservationService.draftReservationLineItems({
       application: "flare",

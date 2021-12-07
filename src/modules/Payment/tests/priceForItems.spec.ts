@@ -1,5 +1,4 @@
-import { ReservationService } from "@app/modules/Reservation/services/reservation.service"
-import { TestUtilsService } from "@app/modules/Utils/services/test.service"
+import { TestUtilsService } from "@app/modules/Test/services/test.service"
 import { TimeUtilsService } from "@app/modules/Utils/services/time.service"
 import { UtilsService } from "@app/modules/Utils/services/utils.service"
 import { PrismaService } from "@app/prisma/prisma.service"
@@ -18,7 +17,6 @@ describe("Price for items", () => {
   let currentInvoiceId
   let physicalProduct
   let timeUtils: TimeUtilsService
-  let reservationService: ReservationService
   let testUtils: TestUtilsService
 
   let utils: UtilsService
@@ -111,10 +109,14 @@ describe("Price for items", () => {
         price,
         appliedMinimum,
         adjustedForPreviousMinimum,
-      } = await rentalService.calculatePriceForDaysRented({
+      } = await rentalService.calculateRentalPrice({
         invoice: { id: currentInvoiceId },
         customer: testCustomer,
-        product: physicalProduct,
+        reservationPhysicalProduct: {
+          id: "1",
+          status: "InTransitOutbound",
+          physicalProduct,
+        },
         daysRented: 0,
       })
 
@@ -128,10 +130,14 @@ describe("Price for items", () => {
         price,
         appliedMinimum,
         adjustedForPreviousMinimum,
-      } = await rentalService.calculatePriceForDaysRented({
+      } = await rentalService.calculateRentalPrice({
         invoice: { id: currentInvoiceId },
         customer: testCustomer,
-        product: physicalProduct,
+        reservationPhysicalProduct: {
+          id: "1",
+          status: "AtHome",
+          physicalProduct,
+        },
         daysRented: 5,
       })
 
@@ -150,10 +156,14 @@ describe("Price for items", () => {
         price,
         appliedMinimum,
         adjustedForPreviousMinimum,
-      } = await rentalService.calculatePriceForDaysRented({
+      } = await rentalService.calculateRentalPrice({
         invoice: { id: currentInvoiceId },
         customer: testCustomer,
-        product: physicalProduct,
+        reservationPhysicalProduct: {
+          id: "1",
+          status: "AtHome",
+          physicalProduct,
+        },
         daysRented: 14,
       })
 
@@ -179,10 +189,14 @@ describe("Price for items", () => {
           price,
           appliedMinimum,
           adjustedForPreviousMinimum,
-        } = await rentalService.calculatePriceForDaysRented({
+        } = await rentalService.calculateRentalPrice({
           invoice: { id: currentInvoiceId },
           customer: testCustomer,
-          product: physicalProduct,
+          reservationPhysicalProduct: {
+            id: "1",
+            status: "InTransitOutbound",
+            physicalProduct,
+          },
           daysRented: 0,
         })
 
@@ -203,10 +217,14 @@ describe("Price for items", () => {
           price,
           appliedMinimum,
           adjustedForPreviousMinimum,
-        } = await rentalService.calculatePriceForDaysRented({
+        } = await rentalService.calculateRentalPrice({
           invoice: { id: currentInvoiceId },
           customer: testCustomer,
-          product: physicalProduct,
+          reservationPhysicalProduct: {
+            id: "1",
+            status: "AtHome",
+            physicalProduct,
+          },
           daysRented: 14,
         })
 
@@ -230,10 +248,14 @@ describe("Price for items", () => {
           price,
           appliedMinimum,
           adjustedForPreviousMinimum,
-        } = await rentalService.calculatePriceForDaysRented({
+        } = await rentalService.calculateRentalPrice({
           invoice: { id: currentInvoiceId },
           customer: testCustomer,
-          product: physicalProduct,
+          reservationPhysicalProduct: {
+            id: "1",
+            status: "AtHome",
+            physicalProduct,
+          },
           daysRented: 14,
         })
 
@@ -253,10 +275,14 @@ describe("Price for items", () => {
           price,
           appliedMinimum,
           adjustedForPreviousMinimum,
-        } = await rentalService.calculatePriceForDaysRented({
+        } = await rentalService.calculateRentalPrice({
           invoice: { id: currentInvoiceId },
           customer: testCustomer,
-          product: physicalProduct,
+          reservationPhysicalProduct: {
+            id: "1",
+            status: "InTransitOutbound",
+            physicalProduct,
+          },
           daysRented: 0,
         })
 
@@ -276,10 +302,14 @@ describe("Price for items", () => {
           price,
           appliedMinimum,
           adjustedForPreviousMinimum,
-        } = await rentalService.calculatePriceForDaysRented({
+        } = await rentalService.calculateRentalPrice({
           invoice: { id: currentInvoiceId },
           customer: testCustomer,
-          product: physicalProduct,
+          reservationPhysicalProduct: {
+            id: "1",
+            status: "ReturnProcessed",
+            physicalProduct,
+          },
           daysRented: 3,
         })
 
@@ -305,10 +335,14 @@ describe("Price for items", () => {
           price,
           appliedMinimum,
           adjustedForPreviousMinimum,
-        } = await rentalService.calculatePriceForDaysRented({
+        } = await rentalService.calculateRentalPrice({
           invoice: { id: currentInvoiceId },
           customer: testCustomer,
-          product: physicalProduct,
+          reservationPhysicalProduct: {
+            id: "1",
+            status: "ReturnProcessed",
+            physicalProduct,
+          },
           daysRented: 3,
         })
 
@@ -332,10 +366,14 @@ describe("Price for items", () => {
           price,
           appliedMinimum,
           adjustedForPreviousMinimum,
-        } = await rentalService.calculatePriceForDaysRented({
+        } = await rentalService.calculateRentalPrice({
           invoice: { id: currentInvoiceId },
           customer: testCustomer,
-          product: physicalProduct,
+          reservationPhysicalProduct: {
+            id: "1",
+            status: "AtHome",
+            physicalProduct,
+          },
           daysRented: 18,
         })
 
@@ -355,10 +393,14 @@ describe("Price for items", () => {
           price,
           appliedMinimum,
           adjustedForPreviousMinimum,
-        } = await rentalService.calculatePriceForDaysRented({
+        } = await rentalService.calculateRentalPrice({
           invoice: { id: currentInvoiceId },
           customer: testCustomer,
-          product: physicalProduct,
+          reservationPhysicalProduct: {
+            id: "1",
+            status: "ReturnProcessed",
+            physicalProduct,
+          },
           daysRented: 3,
         })
 
@@ -376,10 +418,14 @@ describe("Price for items", () => {
           price,
           appliedMinimum,
           adjustedForPreviousMinimum,
-        } = await rentalService.calculatePriceForDaysRented({
+        } = await rentalService.calculateRentalPrice({
           invoice: { id: currentInvoiceId },
           customer: testCustomer,
-          product: physicalProduct,
+          reservationPhysicalProduct: {
+            id: "1",
+            status: "AtHome",
+            physicalProduct,
+          },
           daysRented: 15,
         })
 
@@ -392,6 +438,35 @@ describe("Price for items", () => {
         expect(adjustedForPreviousMinimum).toBe(false)
       })
     })
+  })
+
+  test("Return price of 0 for a Purchased item", async () => {
+    await createTestCustomerWithRentalInvoices([
+      {
+        billingStartAt: timeUtils.xDaysAgoISOString(15),
+        billingEndAt: new Date(),
+        status: "Draft",
+      },
+    ])
+
+    const {
+      price,
+      appliedMinimum,
+      adjustedForPreviousMinimum,
+    } = await rentalService.calculateRentalPrice({
+      invoice: { id: currentInvoiceId },
+      customer: testCustomer,
+      reservationPhysicalProduct: {
+        id: "1",
+        status: "Purchased",
+        physicalProduct,
+      },
+      daysRented: 12,
+    })
+
+    expect(price).toBe(0)
+    expect(appliedMinimum).toBe(false)
+    expect(adjustedForPreviousMinimum).toBe(false)
   })
 })
 
