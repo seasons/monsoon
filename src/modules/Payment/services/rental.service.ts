@@ -579,7 +579,7 @@ export class RentalService {
 
     const logicCase = this.calcDaysRentedCaseFromStatus(
       reservationPhysicalProduct.status
-    ))
+    )
     switch (logicCase) {
       case "Outbound":
       case "Cancelled":
