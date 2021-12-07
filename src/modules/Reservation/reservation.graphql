@@ -357,7 +357,7 @@ type ReservationPhysicalProduct {
   shippingMethod: ShippingMethod
 
   isNew: Boolean!
-  isPurchased: Boolean!
+  hasBeenPurchased: Boolean!
   purchasedAt: DateTime
 
   droppedOffBy: ReservationDropOffAgent
@@ -374,7 +374,7 @@ type ReservationPhysicalProduct {
 
   customer: Customer!
 
-  isLost: Boolean
+  hasBeenLost: Boolean
   lostAt: DateTime
   lostInPhase: ReservationPhase
 
@@ -394,6 +394,9 @@ type ReservationPhysicalProduct {
   inboundPackage: Package
 
   status: ReservationPhysicalProductStatus!
+
+  pickedAt: DateTime
+  packedAt: DateTime
 
   createdAt: DateTime
   updatedAt: DateTime
