@@ -205,8 +205,8 @@ export class ShippoController {
           where: { id: rpp.id },
         })
       )
-      if (updateData[status]) {
-        rppStatusesAfterChange[rpp.id] = updateData[status]
+      if (updateData["status"]) {
+        rppStatusesAfterChange[rpp.id] = updateData["status"]
       }
     }
 
