@@ -15,6 +15,7 @@ import {
   PhysicalProduct,
   Prisma,
   PrismaPromise,
+  Product,
   RentalInvoice,
   Reservation,
   ReservationPhysicalProduct,
@@ -23,6 +24,7 @@ import {
 } from "@prisma/client"
 import { PrismaService } from "@prisma1/prisma.service"
 import { ApolloError } from "apollo-server"
+import chargebee from "chargebee"
 import cuid from "cuid"
 import { merge } from "lodash"
 
@@ -104,6 +106,9 @@ export class ReserveService {
         productVariant: {
           select: {
             id: true,
+            product: {
+              select: { id: true, name: true, computedRentalPrice: true },
+            },
             physicalProducts: { select: { id: true } },
           },
         },
@@ -203,6 +208,12 @@ export class ReserveService {
     )
     promises.push(...bagItemPromises)
 
+    await this.chargeMinimum(
+      customerWithData.user.id,
+      activeBagItemsWithData
+        .filter(a => a.status === "Added")
+        .map(a => a.productVariant.product)
+    )
     await this.prisma.client.$transaction(promises.flat())
 
     const reservation = (await this.prisma.client.reservation.findUnique({
@@ -297,6 +308,33 @@ export class ReserveService {
     }
   }
 
+  async chargeMinimum(
+    prismaUserId: string,
+    newProducts: Pick<Product, "computedRentalPrice" | "name">[]
+  ) {
+    const charges = newProducts.map(a => ({
+      amount: Math.round(a.computedRentalPrice * 100 * 0.4),
+      description: `${a.name}: 40% of 30-Day Rental Price`,
+      date_from: new Date(),
+    }))
+    try {
+      return await chargebee.invoice
+        .create({
+          customer_id: prismaUserId,
+          currency_code: "USD",
+          charges,
+        })
+        .request((error, result) => {
+          if (error) {
+            // TODO: Add datadog log here
+            return error
+          }
+          return result
+        })
+    } catch (err) {
+      throw new ApolloError("Unable to charge minimum for reservation")
+    }
+  }
   private async updateBagItemsForReservation(
     activeBagItemsWithData: Array<
       Pick<BagItem, "status" | "id"> & {

@@ -41,23 +41,12 @@ export class ReservationTestUtilsService {
       data: { createdAt: date },
     })
   }
-  async addToBagAndReserveForCustomer({
-    customer,
-    numProductsToAdd,
-    options = {},
-  }: {
-    customer: Customer
-    numProductsToAdd: number
-    options?: {
-      shippingCode?: ShippingCode
-      numDaysAgo?: number
-      bagItemSelect?: Prisma.BagItemSelect
-    }
-  }): Promise<{
-    reservation: TestReservation
-    bagItems: (BagItem & { [key: string]: any })[]
-  }> {
-    const { shippingCode = "UPSGround", numDaysAgo = 0 } = options
+
+  async addToBag(
+    customer: Pick<Customer, "id">,
+    numProductsToAdd: number,
+    bagItemSelect: Prisma.BagItemSelect = null
+  ) {
     const reservedBagItems = await this.prisma.client.bagItem.findMany({
       where: {
         customer: { id: customer.id },
@@ -109,9 +98,32 @@ export class ReservationTestUtilsService {
             status: "Added",
             saved: false,
           },
+          select: bagItemSelect,
         })
       )
     }
+
+    return createdBagItems
+  }
+  async addToBagAndReserveForCustomer({
+    customer,
+    numProductsToAdd,
+    options = {},
+  }: {
+    customer: Customer
+    numProductsToAdd: number
+    options?: {
+      shippingCode?: ShippingCode
+      numDaysAgo?: number
+      bagItemSelect?: Prisma.BagItemSelect
+    }
+  }): Promise<{
+    reservation: TestReservation
+    bagItems: (BagItem & { [key: string]: any })[]
+  }> {
+    const { shippingCode = "UPSGround", numDaysAgo = 0 } = options
+
+    const createdBagItems = await this.addToBag(customer, numProductsToAdd)
 
     const r = await this.reserve.reserveItems({
       shippingCode,

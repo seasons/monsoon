@@ -1,6 +1,5 @@
 import { PaymentService } from "@app/modules/Payment/services/payment.service"
 import { BagService } from "@app/modules/Product/services/bag.service"
-import { ReservationService } from "@app/modules/Reservation"
 import { ReserveService } from "@app/modules/Reservation/services/reserve.service"
 import { ShippingService } from "@app/modules/Shipping/services/shipping.service"
 import { TestUtilsService } from "@app/modules/Test/services/test.service"
@@ -9,10 +8,12 @@ import { UtilsService } from "@app/modules/Utils/services/utils.service"
 import { PrismaService } from "@app/prisma/prisma.service"
 import { Test } from "@nestjs/testing"
 import { Prisma } from "@prisma/client"
+import chargebee from "chargebee"
 import { head, merge } from "lodash"
 
 import { ProcessableRentalInvoiceArgs } from "../../Payment/services/rental.service"
 import { ReservationModuleRef } from "../reservation.module"
+import { ReservationTestUtilsService } from "./reservation.test.utils"
 
 class PaymentServiceMock {
   addEarlySwapCharge = async () => null
@@ -23,6 +24,7 @@ let prisma: PrismaService
 let reserveService: ReserveService
 let shippingService: ShippingService
 let utils: UtilsService
+let reservationTestUtils: ReservationTestUtilsService
 let timeUtils: TimeUtilsService
 let testUtils: TestUtilsService
 let bagService: BagService
@@ -63,7 +65,7 @@ const testCustomerSelect = Prisma.validator<Prisma.CustomerSelect>()({
     },
   },
 })
-describe("Reserve Service", () => {
+describe("Reserve Items", () => {
   let reservation
 
   beforeAll(async () => {
@@ -79,6 +81,9 @@ describe("Reserve Service", () => {
     shippingService = moduleRef.get<ShippingService>(ShippingService)
     testUtils = moduleRef.get<TestUtilsService>(TestUtilsService)
     bagService = moduleRef.get<BagService>(BagService)
+    reservationTestUtils = moduleRef.get<ReservationTestUtilsService>(
+      ReservationTestUtilsService
+    )
 
     jest
       .spyOn<any, any>(shippingService, "shippoValidateAddress")
@@ -265,6 +270,97 @@ describe("Reserve Service", () => {
       ).toBe(true)
       expect(reservation.sentPackage).toBe(null)
       expect(reservation.returnPackages.length).toBe(0)
+    })
+  })
+
+  describe("Charges 40% upon reservation", () => {
+    it("Charges for only new items. Charges the correct amount.", async () => {
+      let billedCharges: Array<any>
+      const mock = jest
+        .spyOn(chargebee.invoice, "create")
+        .mockImplementation(({ customer_id, currency_code, charges }) => {
+          billedCharges = charges
+          return { request: () => {} }
+        })
+      const { customer } = await testUtils.createTestCustomer()
+      const bagItems = await reservationTestUtils.addToBag(customer, 2)
+      await prisma.client.bagItem.updateMany({
+        where: { id: { in: bagItems.map(a => a.id) } },
+        data: { status: "Reserved" },
+      })
+      const bagItemsToReserve = await reservationTestUtils.addToBag(
+        customer,
+        2,
+        {
+          id: true,
+          productVariant: {
+            select: { product: { select: { id: true, name: true } } },
+          },
+        }
+      )
+      const prod1 = bagItemsToReserve[0].productVariant.product
+      const prod2 = bagItemsToReserve[1].productVariant.product
+      await prisma.client.product.update({
+        where: { id: prod1.id },
+        data: { computedRentalPrice: 30 },
+      })
+      await prisma.client.product.update({
+        where: { id: prod2.id },
+        data: { computedRentalPrice: 50 },
+      })
+
+      // Set the computed Rental prices on bag items so we can predict the charges
+      await reserveService.reserveItems({
+        customer,
+        shippingCode: "UPSGround",
+        select: { id: true },
+      })
+
+      expect(billedCharges.length).toBe(2)
+      const prod1Charge = billedCharges.find(a =>
+        a.description.includes(prod1.name)
+      )
+      expect(prod1Charge).toBeDefined()
+      expect(prod1Charge.amount).toBe(1200)
+      const prod2Charge = billedCharges.find(a =>
+        a.description.includes(prod2.name)
+      )
+      expect(prod2Charge).toBeDefined()
+      expect(prod2Charge.amount).toBe(2000)
+
+      mock.mockRestore()
+    })
+
+    it("Throws the proper expected error", async () => {
+      const mock = jest
+        .spyOn(chargebee.invoice, "create")
+        .mockImplementation(({ customer_id, currency_code, charges }) => {
+          return {
+            request: () => {
+              throw "Test Error"
+            },
+          }
+        })
+      const { customer } = await testUtils.createTestCustomer()
+      await reservationTestUtils.addToBag(customer, 2)
+
+      // Set the computed Rental prices on bag items so we can predict the charges
+      let expectedError
+      try {
+        await reserveService.reserveItems({
+          customer,
+          shippingCode: "UPSGround",
+          select: { id: true },
+        })
+      } catch (err) {
+        expectedError = err
+      }
+      expect(expectedError).toBeDefined()
+      expect(expectedError.message).toBe(
+        "Unable to charge minimum for reservation"
+      )
+
+      mock.mockRestore()
     })
   })
 
