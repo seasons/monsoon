@@ -122,7 +122,9 @@ export class ReservationTestUtilsService {
     bagItems: (BagItem & { [key: string]: any })[]
   }> {
     // Don't do the charge min in test code...
-    jest.spyOn(this.reserve, "chargeMinimum").mockImplementation(async () => {})
+    const mock = jest
+      .spyOn(this.reserve, "chargeMinimum")
+      .mockImplementation(async () => {})
 
     const { shippingCode = "UPSGround", numDaysAgo = 0 } = options
 
@@ -174,6 +176,7 @@ export class ReservationTestUtilsService {
       ),
     })) as unknown) as (BagItem & { [key: string]: any })[]
 
+    mock.mockRestore()
     return {
       reservation: r,
       bagItems: updatedBagItems,
