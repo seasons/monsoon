@@ -1,3 +1,4 @@
+import { EmailService } from "@app/modules/Email/services/email.service"
 import { ProductVariantService } from "@app/modules/Product/services/productVariant.service"
 import { ShippingService } from "@app/modules/Shipping/services/shipping.service"
 import { UtilsService } from "@app/modules/Utils/services/utils.service"
@@ -58,7 +59,8 @@ export class ReservationPhysicalProductService {
     private readonly productVariantService: ProductVariantService,
     private readonly shippingService: ShippingService,
     private readonly utils: UtilsService,
-    private readonly reservationUtils: ReservationUtilsService
+    private readonly reservationUtils: ReservationUtilsService,
+    private readonly email: EmailService
   ) {}
 
   /*

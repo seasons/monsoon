@@ -252,6 +252,25 @@ export class EmailService {
     })
   }
 
+  async sendReservationProcessedEmail(data: {
+    user: EmailUser
+    customerWillPickup: boolean
+    trackingNumber?: string
+    trackingURL?: string
+  }) {
+    const payload = await RenderEmail.reservationProcessed({
+      ...data,
+    })
+
+    const { user } = data
+
+    await this.sendPreRenderedTransactionalEmail({
+      user,
+      payload,
+      emailId: "ReservationProcessed",
+    })
+  }
+
   async sendReservationConfirmationEmail({
     user,
     productsVariantIDs,

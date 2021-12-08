@@ -217,6 +217,7 @@ enum EmailId {
   PriorityAccess
   ReferralConfirmation
   ReservationConfirmation
+  ReservationProcessed
   ReservationReturnConfirmation
   ResumeConfirmation
   ResumeReminder
