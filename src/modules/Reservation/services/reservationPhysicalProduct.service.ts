@@ -184,7 +184,7 @@ export class ReservationPhysicalProductService {
   }
 
   async markAsCancelled({ bagItemIds }: { bagItemIds: [string] }) {
-    const cancelledBagItem = await this.prisma.client.bagItem.findMany({
+    const cancelledBagItems = await this.prisma.client.bagItem.findMany({
       where: {
         id: {
           in: bagItemIds,
@@ -216,7 +216,7 @@ export class ReservationPhysicalProductService {
 
     const promises = []
 
-    const cancelledRPPs = cancelledBagItem.map(
+    const cancelledRPPs = cancelledBagItems.map(
       a => a.reservationPhysicalProduct
     )
 
