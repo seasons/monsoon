@@ -121,6 +121,9 @@ export class ReservationTestUtilsService {
     reservation: TestReservation
     bagItems: (BagItem & { [key: string]: any })[]
   }> {
+    // Don't do the charge min in test code...
+    jest.spyOn(this.reserve, "chargeMinimum").mockImplementation(async () => {})
+
     const { shippingCode = "UPSGround", numDaysAgo = 0 } = options
 
     const createdBagItems = await this.addToBag(customer, numProductsToAdd)
