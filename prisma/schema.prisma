@@ -513,6 +513,7 @@ model BagItem {
   id                           String                      @id @default(cuid()) @db.VarChar(30)
   position                     Int?
   saved                        Boolean?
+  isInCart                     Boolean                     @default(false)
   status                       BagItemStatus
   customerId                   String?                     @map("customer") @db.VarChar(30)
   productVariantId             String?                     @map("productVariant") @db.VarChar(30)

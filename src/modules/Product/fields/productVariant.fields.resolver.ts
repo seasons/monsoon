@@ -211,6 +211,40 @@ export class ProductVariantFieldsResolver {
   }
 
   @ResolveField()
+  async isInCart(
+    @Parent() parent,
+    @Customer() customer,
+    @Loader({
+      params: {
+        model: "BagItem",
+        select: Prisma.validator<Prisma.BagItemSelect>()({
+          id: true,
+          productVariant: { select: { id: true } },
+        }),
+        formatWhere: (ids, ctx) =>
+          Prisma.validator<Prisma.BagItemWhereInput>()({
+            productVariant: {
+              id: { in: ids },
+            },
+            customer: {
+              id: ctx.customer?.id,
+            },
+            isInCart: true,
+          }),
+        fallbackValue: null,
+        getKeys: bagItem => [bagItem.productVariant.id],
+      },
+    })
+    bagItemloader: PrismaDataLoader
+  ) {
+    if (!customer) return false
+
+    const bagItem = await bagItemloader.load(parent.id)
+
+    return !!bagItem
+  }
+
+  @ResolveField()
   async isSaved(
     @Parent() parent,
     @Customer() customer,
@@ -562,6 +596,7 @@ export class ProductVariantFieldsResolver {
       buyUsedEnabled,
       buyUsedAvailableForSale: false,
       buyUsedPrice: 0,
+      buyUsedAdjustedPrice: 0,
     }
     if (buyUsedEnabled) {
       let reservedBagItem =
@@ -580,8 +615,11 @@ export class ProductVariantFieldsResolver {
       )
 
       buyUsedPrice.buyUsedAvailableForSale = buyUsedAvailableForSale
-      buyUsedPrice.buyUsedPrice =
+      const mostExpesiveBuyUsedPrice =
         mostExpensiveUsedPhysicalProduct?.price?.buyUsedPrice
+      buyUsedPrice.buyUsedPrice = mostExpesiveBuyUsedPrice
+      // FIXME: Update buyUsedAdjustedPrice for rent to own
+      buyUsedPrice.buyUsedAdjustedPrice = mostExpesiveBuyUsedPrice
     }
 
     return {

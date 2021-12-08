@@ -197,6 +197,8 @@ type Mutation {
     status: PhysicalProductStatus
   ): PhysicalProduct
   createUsedOrder(physicalProductID: ID!): Order!
+  upsertCartItem(productVariantId: ID!, addToCart: Boolean!): BagItem
+    @hasRole(roles: [Customer])
 }
 
 type BagItem {
@@ -208,6 +210,7 @@ type BagItem {
   reservationPhysicalProduct: ReservationPhysicalProduct
   position: Int
   saved: Boolean
+  hasBuyIntent: Boolean
   status: BagItemStatus!
   createdAt: DateTime!
   updatedAt: DateTime!
