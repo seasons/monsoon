@@ -145,3 +145,9 @@ input PhysicalProductSeasonsUIDSizes {
   manufacturerSize: String!
   count: Int!
 }
+
+input PhysicalProductWhereUniqueInput {
+  id: ID
+  seasonsUID: String
+  sequenceNumber: Int
+}
