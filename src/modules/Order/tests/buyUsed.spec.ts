@@ -390,8 +390,6 @@ describe("Buy Used", () => {
         },
       })) as any
 
-      console.log("submittedOrder", submittedOrder)
-
       const physicalProductAfterPurchase = await prisma.client.physicalProduct.findUnique(
         {
           where: { id: physicalProductToBePurchasedId },
