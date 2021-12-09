@@ -110,7 +110,7 @@ export class ReservationService {
             id: bagItem.reservationPhysicalProduct.id,
           },
           data: {
-            status: "DeliveredToCustomer",
+            status: "AtHome",
           },
           select: {
             id: true,
@@ -151,7 +151,7 @@ export class ReservationService {
           },
         },
         data: {
-          status: "DeliveredToCustomer",
+          status: "AtHome",
         },
       })
 
@@ -171,6 +171,7 @@ export class ReservationService {
   }
 
   async returnItems(
+    // items are rppIds
     items: string[],
     returnReasons: ReturnReasonInput[],
     customer: Customer
@@ -183,6 +184,7 @@ export class ReservationService {
         saved: false,
       },
       select: {
+        id: true,
         physicalProduct: {
           select: {
             id: true,
@@ -197,7 +199,7 @@ export class ReservationService {
     })
 
     const bagItemsToUpdate = bagItems.filter(bagItem => {
-      return items.includes(bagItem.physicalProduct.id)
+      return items.includes(bagItem.reservationPhysicalProduct.id)
     })
 
     const reservationPhysicalProductIds = bagItemsToUpdate.map(

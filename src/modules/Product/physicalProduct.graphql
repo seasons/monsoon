@@ -121,7 +121,6 @@ input PhysicalProductUpdateInput {
   dateReceived: DateTime
   unitCost: Float
   price: PhysicalProductPriceInput
-  returnReasons: [String!]
 }
 
 input UpsertPhysicalProductInput {

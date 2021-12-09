@@ -1,1 +1,7 @@
-["Done wearing", "Fit too small", "Fit too big", "Was damaged", "Other"]
+[
+  { "display": "Done wearing", "value": "DoneWearing" },
+  { "display": "Fit too small", "value": "FitTooSmall" },
+  { "display": "Fit too big", "value": "FitTooBig" },
+  { "display": "Was damaged", "value": "WasDamaged" },
+  { "display": "Other", "value": "Other" }
+]
