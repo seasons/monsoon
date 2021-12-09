@@ -88,6 +88,7 @@ export const ProcessableReservationPhysicalProductArgs = Prisma.validator<
             product: {
               select: {
                 id: true,
+                name: true,
                 rentalPriceOverride: true,
                 retailPrice: true,
                 wholesalePrice: true,
@@ -1275,7 +1276,11 @@ export class RentalService {
     const rentalPrices = []
 
     for (const reservationPhysicalProduct of currentInvoice.reservationPhysicalProducts) {
-      const { daysRented } = await this.calcDaysRented(
+      const {
+        daysRented,
+        rentalEndedAt,
+        rentalStartedAt,
+      } = await this.calcDaysRented(
         currentInvoice,
         reservationPhysicalProduct,
         { upTo: options.upTo }
@@ -1288,6 +1293,18 @@ export class RentalService {
         daysRented,
       })
 
+      if (price > 0) {
+        console.log(
+          `${
+            reservationPhysicalProduct.physicalProduct.productVariant.product
+              .name
+          } - ${daysRented} days. ${this.formatPackageShipmentDate(
+            rentalStartedAt
+          )} - ${this.formatPackageShipmentDate(rentalEndedAt)} - \$${
+            price / 100
+          }`
+        )
+      }
       rentalPrices.push(price)
     }
     const rentalBalance = rentalPrices.reduce((a, b) => a + b, 0)
@@ -1301,6 +1318,11 @@ export class RentalService {
     const inboundPackagesLineItemDatas = this.getInboundPackageLineItemDatas(
       currentInvoice
     )
+    console.dir(outboundPackagesFromPreviousBillingCycleLineItemDatas, {
+      depth: null,
+    })
+    console.dir(newReservationOutboundPackageLineItemDatas, { depth: null })
+    console.dir(inboundPackagesLineItemDatas, { depth: null })
     const packageBalance = [
       ...outboundPackagesFromPreviousBillingCycleLineItemDatas,
       ...newReservationOutboundPackageLineItemDatas,
