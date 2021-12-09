@@ -216,8 +216,6 @@ export class ReserveService {
       }),
     })) as any
 
-    await this.reservationUtils.updateOutboundResProcessingStats()
-
     // Send confirmation email
     // await this.emails.sendReservationConfirmationEmail(
     //   customerWithData.user,
@@ -232,6 +230,7 @@ export class ReserveService {
         productVariantIDs,
         customer.id
       )
+      await this.reservationUtils.updateOutboundResProcessingStats()
     } catch (err) {
       this.error.setUserContext(customerWithData.user)
       this.error.setExtraContext({ productVariantIDs })
