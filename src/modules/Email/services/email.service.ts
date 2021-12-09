@@ -254,32 +254,58 @@ export class EmailService {
 
   async sendReservationProcessedEmail(data: {
     user: EmailUser
-    customerWillPickup: boolean
-    trackingNumber?: string
-    trackingURL?: string
-    pickupTime?: {
-      date: string
-      timeWindowID: string
+    reservation: {
+      id: string
     }
+    outboundPackage?: {
+      shippingLabel?: {
+        trackingNumber: string
+        trackingURL: string
+      }
+    }
+    shippingCode: ShippingCode
   }) {
+    const reservation = await this.prisma.client.reservation.findFirst({
+      where: {
+        id: data.reservation.id,
+      },
+      select: {
+        shippingMethod: true,
+        pickupDate: true,
+        pickupWindowId: true,
+      },
+    })
+    const shippingLabel = data.outboundPackage.shippingLabel
+    const extraData =
+      data.shippingCode === ShippingCode.Pickup
+        ? {
+            pickup: {
+              // date: reservation.pickupDate,
+              // timeWindowID: reservation.pickupWindowId
+              date: reservation.pickupDate,
+              timeRange: ShippingMethodFieldsResolver.getTimeWindow(
+                reservation.pickupWindowId
+              )?.display,
+            },
+          }
+        : !!shippingLabel
+        ? {
+            trackingNumber: shippingLabel.trackingNumber,
+            trackingURL: shippingLabel.trackingURL,
+          }
+        : {}
+
     const payload = await RenderEmail.reservationProcessed({
-      ...data,
+      customerWillPickup: data.shippingCode === ShippingCode.Pickup,
     })
 
-    const { pickupTime, user } = data
+    const { user } = data
 
     await this.sendPreRenderedTransactionalEmail({
       user,
       payload,
       emailId: "ReservationProcessed",
-      ...(pickupTime && {
-        pickup: {
-          date: DateTime.fromISO(pickupTime?.date).toJSDate(),
-          timeRange: ShippingMethodFieldsResolver.getTimeWindow(
-            pickupTime?.timeWindowID
-          )?.display,
-        },
-      }),
+      ...extraData,
     })
   }
 

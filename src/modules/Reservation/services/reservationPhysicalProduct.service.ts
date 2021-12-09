@@ -457,7 +457,7 @@ export class ReservationPhysicalProductService {
         },
         reservationPhysicalProduct: {
           status: "Packed",
-          outboundPackage: {
+          inboundPackage: {
             is: null,
           },
         },
@@ -465,6 +465,18 @@ export class ReservationPhysicalProductService {
       select: {
         id: true,
         customerId: true,
+        customer: {
+          select: {
+            id: true,
+            user: {
+              select: {
+                id: true,
+                email: true,
+                firstName: true,
+              },
+            },
+          },
+        },
         reservationPhysicalProduct: {
           select: {
             id: true,
@@ -500,12 +512,15 @@ export class ReservationPhysicalProductService {
       throw new Error("No bag items need labels")
     }
 
-    const customerID = bagItems?.[0].customerId
+    const bagItem = bagItems?.[0]
+    const customerID = bagItem.customerId
+    const user = bagItem.customer.user
 
     const {
       promises: packagePromises,
       inboundPackageId,
       outboundPackageId,
+      shippingCode,
     } = await this.shippingService.createPackages({
       bagItems,
       customer: { id: customerID },
@@ -574,6 +589,15 @@ export class ReservationPhysicalProductService {
 
     const result = await this.prisma.client.$transaction(filteredPromises)
     const [inboundPackage, outboundPackage] = result
+
+    await this.email.sendReservationProcessedEmail({
+      user,
+      reservation: {
+        id: bagItem.reservationPhysicalProduct.reservation.id,
+      },
+      outboundPackage,
+      shippingCode,
+    })
 
     if (outboundPackageId === null) {
       return [null, inboundPackage]
