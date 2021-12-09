@@ -66,4 +66,9 @@ export class ReservationPhysicalProductMutationsResolver {
   async markAsPickedUp(@Args() { bagItemIds }) {
     return await this.reservationPhysicalProduct.markAsPickedUp(bagItemIds)
   }
+
+  @Mutation()
+  async markAsCancelled(@Args() { bagItemIds }) {
+    return await this.reservationPhysicalProduct.markAsCancelled({ bagItemIds })
+  }
 }
