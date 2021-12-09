@@ -183,6 +183,101 @@ export class ReservationPhysicalProductService {
     return promises
   }
 
+  async markAsCancelled({ bagItemIds }: { bagItemIds: [string] }) {
+    const cancelledBagItems = await this.prisma.client.bagItem.findMany({
+      where: {
+        id: {
+          in: bagItemIds,
+        },
+      },
+      select: {
+        reservationPhysicalProduct: {
+          select: {
+            id: true,
+            status: true,
+            physicalProduct: {
+              select: {
+                id: true,
+                inventoryStatus: true,
+                productVariant: {
+                  select: {
+                    id: true,
+                    reservable: true,
+                    reserved: true,
+                    nonReservable: true,
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    })
+
+    const promises = []
+
+    const cancelledRPPs = cancelledBagItems.map(
+      a => a.reservationPhysicalProduct
+    )
+
+    for (let cancelledRPP of cancelledRPPs) {
+      const cancelledPhysicalProductNewStatus =
+        cancelledRPP.status === "Queued" ? "Reservable" : "NonReservable"
+      const cancelledPhysicalProduct = cancelledRPP.physicalProduct
+      const cancelledProdVariant = cancelledPhysicalProduct.productVariant
+
+      const productVariantData = this.productVariantService.getCountsForStatusChange(
+        {
+          productVariant: cancelledProdVariant,
+          oldInventoryStatus: cancelledPhysicalProduct.inventoryStatus as InventoryStatus,
+          newInventoryStatus: cancelledPhysicalProductNewStatus,
+        }
+      )
+      promises.push(
+        this.prisma.client.physicalProduct.update({
+          where: {
+            id: cancelledPhysicalProduct.id,
+          },
+          data: {
+            inventoryStatus: cancelledPhysicalProductNewStatus,
+            productVariant: {
+              update: {
+                ...productVariantData,
+              },
+            },
+          },
+        })
+      )
+    }
+
+    promises.push(
+      this.prisma.client.bagItem.deleteMany({
+        where: {
+          id: {
+            in: bagItemIds,
+          },
+        },
+      })
+    )
+
+    promises.push(
+      this.prisma.client.reservationPhysicalProduct.updateMany({
+        where: {
+          id: {
+            in: cancelledRPPs.map(a => a.id),
+          },
+        },
+        data: {
+          status: "Cancelled",
+          cancelledAt: new Date(),
+        },
+      })
+    )
+
+    await this.prisma.client.$transaction(promises)
+    return true
+  }
+
   private async updateReservationsOnReturn(
     productStates: ProductState[],
     customerId: string

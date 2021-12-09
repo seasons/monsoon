@@ -278,6 +278,8 @@ input UpdateVariantInput {
 
 input ProductVariantSKUsInput {
   brandID: ID!
+  productID: ID
   colorCode: String!
   sizeNames: [String!]!
+  slug: String
 }

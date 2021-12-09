@@ -29,12 +29,16 @@ type Query {
   inboundReservations(
     skip: Int!
     take: Int!
-  ): ReservationPhysicalProductConnection! @hasRole(roles: [Admin])
+  ): ReservationPhysicalProductConnection!
+    @hasRole(roles: [Admin])
+    @cacheControl(maxAge: 0)
   outboundReservations(
     skip: Int!
     take: Int!
   ): ReservationPhysicalProductConnection! @hasRole(roles: [Admin])
   reservationProcessingStats: ReservationProcessingStats!
+  ): ReservationPhysicalProductConnection!
+    @hasRole(roles: [Admin])
     @cacheControl(maxAge: 0)
 }
 
@@ -87,6 +91,7 @@ type Mutation {
   markAsLost(lostBagItemId: ID!): Boolean @hasRole(roles: [Admin])
   markAsPickedUp(bagItemIds: [ID]!): Boolean @hasRole(roles: [Admin])
   markNotReturned(bagItemIds: [ID]!): Boolean @hasRole(roles: [Admin])
+  markAsCancelled(bagItemIds: [ID]!): Boolean @hasRole(roles: [Admin])
 }
 
 type ReservationFeedback {
@@ -343,13 +348,13 @@ type AggregateReservationPhysicalProduct {
   count: Int!
 }
 
-type ReservationPhysicalProductConnection {
+type ReservationPhysicalProductConnection @cacheControl(maxAge: 0) {
   pageInfo: PageInfo!
   edges: [ReservationPhysicalProductEdge]!
   totalCount: Int!
 }
 
-type ReservationPhysicalProduct {
+type ReservationPhysicalProduct @cacheControl(maxAge: 0) {
   id: ID!
 
   physicalProduct: PhysicalProduct

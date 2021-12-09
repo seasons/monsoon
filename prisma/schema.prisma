@@ -1113,7 +1113,7 @@ model PhysicalProduct {
   locationId                   String?                        @map("location") @db.VarChar(30)
   offloadMethod                PhysicalProductOffloadMethod?
   offloadNotes                 String?
-  sequenceNumber               Int
+  sequenceNumber               Int                            @unique()
   warehouseLocationId          String?                        @map("warehouseLocation") @db.VarChar(30)
   dateOrdered                  DateTime?
   dateReceived                 DateTime?
