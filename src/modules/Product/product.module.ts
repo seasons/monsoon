@@ -2,6 +2,7 @@ import { EmailModule } from "@modules/Email/email.module"
 import { ErrorModule } from "@modules/Error/error.module"
 import { ImageModule } from "@modules/Image/image.module"
 import { ShippingModule } from "@modules/Shipping/shipping.module"
+import { TestModule } from "@modules/Test/test.module"
 import { UtilsModule } from "@modules/Utils/utils.module"
 import { Module, forwardRef } from "@nestjs/common"
 import { PrismaModule } from "@prisma1/prisma.module"
@@ -19,6 +20,7 @@ import { BrandFieldsResolver } from "./fields/brand.fields.resolver"
 import { PhysicalProductFieldsResolver } from "./fields/physicalProduct.fields.resolver"
 import { ProductFieldsResolver } from "./fields/product.fields.resolver"
 import { ProductVariantFieldsResolver } from "./fields/productVariant.fields.resolver"
+import { BagMutationsResolver } from "./mutations/bag.mutations.resolver"
 import { BrandMutationsResolver } from "./mutations/brand.mutations.resolver"
 import { LaunchMutationsResolver } from "./mutations/launch.mutations.resolver"
 import { PhysicalProductMutationsResolver } from "./mutations/physicalProduct.mutations.resolver"
@@ -50,12 +52,14 @@ export const ProductModuleDef = {
     UtilsModule,
     forwardRef(() => UserModule),
     forwardRef(() => ReservationModule),
+    TestModule,
   ],
   providers: [
     BagService,
     BrandService,
     BrandUtilsService,
     BrandQueriesResolver,
+    BagMutationsResolver,
     BrandMutationsResolver,
     LaunchService,
     LaunchMutationsResolver,

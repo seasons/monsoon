@@ -5,6 +5,7 @@ import { uniq } from "lodash"
 const commonStaticOrigins = [
   /staging\.wearseasons\.com$/,
   /spring-staging\.herokuapp\.com/,
+  /spring-staging2\.herokuapp\.com/,
   /flare\.now\.sh$/,
   /seasons\.nyc$/,
   /wearseasons\.com$/,

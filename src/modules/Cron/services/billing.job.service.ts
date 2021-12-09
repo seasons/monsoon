@@ -2,7 +2,7 @@ import { WinstonLogger } from "@app/lib/logger"
 import { ErrorService } from "@app/modules/Error/services/error.service"
 import { AccessPlanID } from "@app/modules/Payment/payment.types"
 import {
-  CREATE_RENTAL_INVOICE_LINE_ITEMS_INVOICE_SELECT,
+  ProcessableRentalInvoiceArgs,
   RentalService,
 } from "@app/modules/Payment/services/rental.service"
 import { PrismaService } from "@modules/../prisma/prisma.service"
@@ -17,11 +17,10 @@ export class BillingScheduledJobs {
 
   constructor(
     private readonly prisma: PrismaService,
-    private readonly rental: RentalService,
-    private readonly error: ErrorService
+    private readonly rental: RentalService
   ) {}
 
-  @Cron(CronExpression.EVERY_DAY_AT_4AM)
+  @Cron(CronExpression.EVERY_DAY_AT_1AM)
   async updateCurrentBalanceOnCustomers() {
     const customers = await this.prisma.client.customer.findMany({
       where: {
@@ -73,7 +72,7 @@ export class BillingScheduledJobs {
     )
   }
 
-  @Cron(CronExpression.EVERY_DAY_AT_4AM)
+  @Cron(CronExpression.EVERY_DAY_AT_2AM)
   async updateEstimatedTotalOnInvoices() {
     const invoices = await this.prisma.client.rentalInvoice.findMany({
       where: {
@@ -96,7 +95,7 @@ export class BillingScheduledJobs {
         const [estimatedTotal] = await this.rental.updateEstimatedTotal(invoice)
 
         this.logger.log(
-          `Updated invoice ${invoice.id}, estimated total: ${(
+          `Updated estimated total on ${invoice.id}: ${(
             estimatedTotal / 100
           ).toLocaleString("en-US", {
             style: "currency",
@@ -108,7 +107,13 @@ export class BillingScheduledJobs {
           }
         )
       } catch (e) {
-        this.logger.error(`Error while updating invoice ${invoice.id}`, e)
+        this.logger.error(
+          `Error while updating estimated total on invoice ${invoice.id}`,
+          {
+            invoice,
+            error: e,
+          }
+        )
       }
     }
 
@@ -125,20 +130,20 @@ export class BillingScheduledJobs {
         billingEndAt: {
           lte: new Date(),
         },
-        status: "Draft",
+        status: { in: ["Draft", "ChargeFailed"] },
       },
-      select: CREATE_RENTAL_INVOICE_LINE_ITEMS_INVOICE_SELECT,
+      select: ProcessableRentalInvoiceArgs.select,
     })
 
     for (const invoice of invoicesToHandle) {
       invoicesHandled++
-      this.rental.processInvoice(invoice, err => {
-        this.error.setExtraContext(invoice)
-        this.error.captureError(err)
-        this.logger.error("Rental invoice billing failed", {
-          invoice,
-          error: err,
-        })
+      await this.rental.processInvoice(invoice, {
+        onError: err => {
+          this.logger.error("Rental invoice billing failed", {
+            invoice,
+            error: err,
+          })
+        },
       })
     }
 

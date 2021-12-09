@@ -5,13 +5,9 @@ import { PrismaService } from "../../prisma/prisma.service"
 const run = async () => {
   const ps = new PrismaService()
 
-  const email = "ryanofcali@yahoo.com"
-  const x = await ps.client.customer.findMany({
-    where: { status: { in: ["Active", "Paused", "PaymentFailed"] } },
-    select: { user: { select: { email: true } } },
+  await ps.client.reservationPhysicalProduct.deleteMany({
+    where: { physicalProduct: { seasonsUID: "CRGR-BLK-SS-002-02" } },
   })
-  for (const cust of x) {
-    console.log(cust.user.email)
-  }
+  console.log("done")
 }
 run()

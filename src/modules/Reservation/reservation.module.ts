@@ -12,17 +12,21 @@ import { ErrorModule } from "../Error/error.module"
 import { ProductModule } from "../Product/product.module"
 import { ReservationFeedbackMutationsResolver } from "../Reservation/mutations/reservationFeedback.mutations.resolver"
 import { ReservationFeedbackQueriesResolver } from "../Reservation/queries/reservationFeedback.queries.resolver"
+import { TestModule } from "../Test/test.module"
 import { UtilsModule } from "../Utils/utils.module"
 import { ReservationFieldsResolver } from "./fields/reservation.fields.resolver"
 import { ReservationMutationsResolver } from "./mutations/reservation.mutations.resolver"
+import { ReservationPhysicalProductMutationsResolver } from "./mutations/reservationPhysicalProduct.mutations.resolver"
 import { ReservationQueriesResolver } from "./queries/reservation.queries.resolver"
 import { ReservationService } from "./services/reservation.service"
-import { ReservationUtilsService } from "./services/reservation.utils.service"
 import { ReservationFeedbackService } from "./services/reservationFeedback.service"
+import { ReservationPhysicalProductService } from "./services/reservationPhysicalProduct.service"
+import { ReserveService } from "./services/reserve.service"
+import { ReservationTestUtilsService } from "./tests/reservation.test.utils"
 
-@Module({
+export const ReservationModuleRef = {
   imports: [
-    EmailModule,
+    forwardRef(() => EmailModule),
     ImageModule,
     PrismaModule,
     forwardRef(() => ProductModule),
@@ -33,17 +37,23 @@ import { ReservationFeedbackService } from "./services/reservationFeedback.servi
     UtilsModule,
     ErrorModule,
     forwardRef(() => UserModule),
+    forwardRef(() => TestModule),
   ],
   providers: [
+    ReservationPhysicalProductMutationsResolver,
     ReservationFeedbackMutationsResolver,
     ReservationFeedbackQueriesResolver,
     ReservationFeedbackService,
     ReservationFieldsResolver,
     ReservationQueriesResolver,
-    ReservationUtilsService,
     ReservationService,
+    ReserveService,
     ReservationMutationsResolver,
+    ReservationPhysicalProductService,
+    ReservationTestUtilsService,
   ],
-  exports: [ReservationService, ReservationUtilsService],
-})
+  exports: [ReservationService, ReserveService, ReservationTestUtilsService],
+}
+
+@Module(ReservationModuleRef)
 export class ReservationModule {}

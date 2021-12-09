@@ -15,22 +15,17 @@ export class SubscriptionMutationsResolver {
   }
 
   @Mutation()
-  async resumeSubscription(
-    @Args() { subscriptionID, date },
-    @Customer() customer
-  ) {
-    await this.subscription.resumeSubscription(subscriptionID, date, customer)
-    return true
+  async resumeSubscription() {
+    throw "Deprecated"
   }
 
   @Mutation()
   async pauseSubscription() {
-    throw new Error("Pause deprecated")
+    throw "Deprecated"
   }
 
   @Mutation()
   async removeScheduledPause(@Args() { subscriptionID }, @Customer() customer) {
-    await this.subscription.removeScheduledPause(subscriptionID, customer)
-    return true
+    throw "Deprecated"
   }
 }

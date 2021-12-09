@@ -27,6 +27,7 @@ import {
 import { PrismaService } from "@prisma1/prisma.service"
 import { ApolloError } from "apollo-server"
 import { difference, flatten, head, isArray, pick, sum } from "lodash"
+import { isEmpty, isUndefined } from "lodash"
 import { DateTime } from "luxon"
 
 import { UtilsService } from "../../Utils/services/utils.service"
@@ -48,7 +49,12 @@ export class ProductService {
     private readonly search: SearchService
   ) {}
 
-  async getProducts(args, select) {
+  async getProducts(args, select, application) {
+    const { where, ...otherArgs } = args
+    if (isEmpty(args.where) && isEmpty(otherArgs) && application !== "spring") {
+      return []
+    }
+
     const queryOptions = await this.productUtils.queryOptionsForProducts(args)
     const findManyArgs = QueryUtilsService.prismaOneToPrismaTwoArgs(
       {
@@ -656,24 +662,7 @@ export class ProductService {
       },
     })
 
-    // If they're unstoring, that should be all they're doing
-    if (product.status === "Stored" && status !== "Stored") {
-      if (Object.keys(data).length !== 1) {
-        throw new Error(
-          "To reduce the surface area of potential errors, do not make other changes when unstoring a product"
-        )
-      }
-    }
-
-    if (
-      !!status &&
-      status === "Available" &&
-      (!product?.variants?.length || photographyStatus !== "Done")
-    ) {
-      throw new ApolloError(
-        "Can not set product status to Available. Check that there are product variants and the photography status is done."
-      )
-    }
+    await this.validateUpdateProductPayload(product, data)
 
     if (!!status && status === "Available" && product.status !== "Available") {
       updateData.publishedAt = DateTime.local().toISO()
@@ -844,6 +833,50 @@ export class ProductService {
     })
   }
 
+  private async validateUpdateProductPayload(
+    productWithData: Pick<Product, "status" | "id"> & { variants: any[] },
+    data
+  ) {
+    const { status, photographyStatus, name, description } = data
+
+    // If they're unstoring, that should be all they're doing
+    if (productWithData.status === "Stored" && status !== "Stored") {
+      if (Object.keys(data).length !== 1) {
+        throw new Error(
+          "To reduce the surface area of potential errors, do not make other changes when unstoring a product"
+        )
+      }
+    }
+
+    if (
+      !!status &&
+      status === "Available" &&
+      (!productWithData?.variants?.length || photographyStatus !== "Done")
+    ) {
+      throw new ApolloError(
+        "Can not set product status to Available. Check that there are product variants and the photography status is done."
+      )
+    }
+
+    const collision = await this.prisma.client.product.findFirst({
+      where: {
+        name,
+        description,
+        id: { not: productWithData.id },
+      },
+      select: {
+        name: true,
+        brand: {
+          select: { name: true },
+        },
+      },
+    })
+    if (!!collision) {
+      throw new ApolloError(
+        `Possible product collision. Found product ${collision.name} from brand ${collision.brand.name} with same description`
+      )
+    }
+  }
   /**
    * Checks if all downstream physical products have been offloaded.
    * If so, marks the product as offloaded.

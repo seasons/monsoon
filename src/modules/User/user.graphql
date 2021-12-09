@@ -85,11 +85,47 @@ enum ReservationLineItemsFilter {
   NewItems
 }
 
+enum BagSectionStatus {
+  # Custom BagSectionStatus
+  Added
+  Inbound
+  Outbound
+  Processing
+
+  # The following correspond directly to ReservationPhysicalProductStatus
+  Queued
+  Picked
+  Packed
+  AtHome
+  ScannedOnInbound
+  InTransitInbound
+  ScannedOnOutbound
+  InTransitOutbound
+  DeliveredToCustomer
+  DeliveredToBusiness
+  ReturnPending
+  ReturnProcessed
+  ResetEarly
+  Lost
+}
+
+type BagSection {
+  id: String!
+  deliveryStep: Int
+  deliveryStatusText: String
+  deliveryTrackingUrl: String
+  status: BagSectionStatus!
+  title: String!
+  bagItems: [BagItem!]
+}
+
 type Me @cacheControl(maxAge: 0, scope: PRIVATE) {
   id: ID
   user: User
   customer: Customer
   activeReservation: Reservation
+  bagSections: [BagSection!]
+  bagSection(status: BagSectionStatus): BagSection
   bag(status: BagItemStatus): [BagItem!]
   savedItems: [BagItem!]
   reservationLineItems(
@@ -179,4 +215,5 @@ type User {
   pushNotificationStatus: PushNotificationStatus!
   pushNotification: UserPushNotification
   beamsToken: String!
+  creditUpdateHistory: [CreditBalanceUpdateLog]
 }

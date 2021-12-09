@@ -20,10 +20,36 @@ type Query {
     first: Int
     last: Int
   ): PackageConnection! @hasRole(roles: [Admin]) @cacheControl(maxAge: 0)
+  shippingMethods(
+    where: ShippingMethodWhereInput
+    orderBy: ShippingMethodOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): [ShippingMethod]!
 }
 
 type Mutation {
   validateAddress(input: ValidateAddressInput!): ValidationPayload!
+}
+
+type TimeWindow {
+  id: ID!
+  startTime: Int
+  endTime: Int
+  display: String
+}
+
+type ShippingMethod {
+  id: ID!
+  code: ShippingCode!
+  displayText: String!
+  timeWindows: [TimeWindow!]!
+  position: Int
+  createdAt: DateTime!
+  updatedAt: DateTime!
 }
 
 input AddressInput {
@@ -43,4 +69,41 @@ type ValidationPayload {
   isValid: Boolean!
   code: String
   text: String
+}
+
+enum PackageDirection {
+  Inbound
+  Outbound
+}
+
+type Package {
+  id: ID!
+  items(
+    where: PhysicalProductWhereInput
+    orderBy: PhysicalProductOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): [PhysicalProduct!]
+  transactionID: String!
+  shippingLabel: Label!
+  fromAddress: Location!
+  toAddress: Location!
+  weight: Float
+  cost: Int
+  events(
+    where: PackageTransitEventWhereInput
+    orderBy: PackageTransitEventOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): [PackageTransitEvent!]
+  status: PackageStatus
+  direction: PackageDirection
+  createdAt: DateTime!
+  updatedAt: DateTime!
 }

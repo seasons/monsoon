@@ -56,7 +56,8 @@ export class ProductUtilsService {
     // get all price values in the DB into cents
     const rentalPriceOverrideCents = (product.rentalPriceOverride || 0) * 100
     const wholesalePriceCents = (product.wholesalePrice || 0) * 100
-    const dryCleaningFeeCents = product.category.dryCleaningFee || 0
+    const dryCleaningFeeCents = (product.category.dryCleaningFee || 0) * 1.5
+    const reservationProcessingFeeCents = 300
 
     const roundToNearestMultipleOfFive = price => Math.ceil(price / 5) * 5
 
@@ -64,8 +65,14 @@ export class ProductUtilsService {
     if (!ignoreOverride && product.rentalPriceOverride) {
       monthlyPriceInCents = rentalPriceOverrideCents
     } else {
+      // Roll in 1.5 times the dry cleaning fee so on average, even if customers
+      // hold the item for less than 30 days, we recoup a full dry cleaning fee.
+      // Roll in 3 dollars for procssing so that on average, we recoup a full 5.50
+      // processing fee per reservation no matter how many items or how long a customer
+      // holds things.
+      const baseUsageCharge = wholesalePriceCents / recoupment
       monthlyPriceInCents =
-        wholesalePriceCents / recoupment + dryCleaningFeeCents
+        baseUsageCharge + dryCleaningFeeCents + reservationProcessingFeeCents
     }
     monthlyPriceInDollars = roundToNearestMultipleOfFive(
       monthlyPriceInCents / 100
@@ -587,5 +594,32 @@ export class ProductUtilsService {
       )
     )
     return [categoryWithChildren, ...flatten(allChildrenWithData)] as any
+  }
+
+  async removeRestockNotifications(items: string[], customerID: string) {
+    const restockNotifications = await this.prisma.client.productNotification.findMany(
+      {
+        where: {
+          customer: {
+            id: customerID,
+          },
+          productVariant: {
+            id: { in: items },
+          },
+        },
+        orderBy: {
+          createdAt: "desc",
+        },
+      }
+    )
+
+    if (restockNotifications?.length > 0) {
+      return await this.prisma.client.productNotification.updateMany({
+        where: { id: { in: restockNotifications.map(notif => notif.id) } },
+        data: {
+          shouldNotify: false,
+        },
+      })
+    }
   }
 }

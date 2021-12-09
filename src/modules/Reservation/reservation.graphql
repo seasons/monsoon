@@ -25,6 +25,19 @@ type Query {
     @hasRole(roles: [Customer, Admin, Partner])
     @cacheControl(maxAge: 0)
   reservationFeedback: ReservationFeedback @cacheControl(maxAge: 0)
+
+  inboundReservations(
+    skip: Int!
+    take: Int!
+  ): ReservationPhysicalProductConnection!
+    @hasRole(roles: [Admin])
+    @cacheControl(maxAge: 0)
+  outboundReservations(
+    skip: Int!
+    take: Int!
+  ): ReservationPhysicalProductConnection!
+    @hasRole(roles: [Admin])
+    @cacheControl(maxAge: 0)
 }
 
 input ReturnReasonInput {
@@ -44,6 +57,10 @@ type Mutation {
   ): Reservation @hasRole(roles: [Admin])
   draftReservationLineItems(hasFreeSwap: Boolean): [OrderLineItem!]
   checkItemsAvailability(items: [ID!]!): Boolean! @hasRole(roles: [Customer])
+  updateReservationPhysicalProduct(
+    data: ReservationPhysicalProductUpdateInput!
+    where: ReservationPhysicalProductWhereUniqueInput!
+  ): ReservationPhysicalProduct!
   updateReservationFeedback(
     feedbackID: ID!
     input: ReservationFeedbackUpdateInput!
@@ -54,8 +71,6 @@ type Mutation {
     input: ProductVariantFeedbackUpdateInput!
     responses: JSON
   ): ProductVariantFeedback! @hasRole(roles: [Customer])
-  processReservation(data: ReservationProcessReturnInput!): ReservationReceipt
-    @hasRole(roles: [Admin, Partner])
   updateReservation(
     data: ReservationUpdateInput!
     where: ReservationWhereUniqueInput!
@@ -63,6 +78,21 @@ type Mutation {
   returnItems(items: [ID!]!, returnReasons: [ReturnReasonInput!]): Reservation
     @hasRole(roles: [Customer])
   cancelReturn: Reservation @hasRole(roles: [Customer])
+  processReturn(
+    trackingNumber: String
+    productStates: [ProductStateInput!]!
+    droppedOffBy: ReservationDropOffAgent!
+    customerId: String
+  ): Boolean @hasRole(roles: [Admin])
+  pickItems(bagItemIds: [ID!]!): [ReservationPhysicalProduct!]
+    @hasRole(roles: [Admin])
+  packItems(bagItemIds: [ID!]!): [ReservationPhysicalProduct!]
+    @hasRole(roles: [Admin])
+  generateShippingLabels(bagItemIds: [ID!]!): [Package!]
+    @hasRole(roles: [Admin])
+  markAsLost(lostBagItemId: ID!): Boolean @hasRole(roles: [Admin])
+  markAsPickedUp(bagItemIds: [ID]!): Boolean @hasRole(roles: [Admin])
+  markNotReturned(bagItemIds: [ID]!): Boolean @hasRole(roles: [Admin])
 }
 
 type ReservationFeedback {
@@ -85,6 +115,12 @@ type ReservationFeedback {
   createdAt: DateTime!
   updatedAt: DateTime!
   respondedAt: DateTime
+}
+
+enum ShippingCode {
+  UPSGround
+  UPSSelect
+  Pickup
 }
 
 enum ReservationLineItemRecordType {
@@ -212,6 +248,11 @@ input ReservationProcessReturnInput {
   trackingNumber: String
 }
 
+enum ReservationDropOffAgent {
+  UPS
+  Customer
+}
+
 input ProductStateInput {
   productUID: String!
   returned: Boolean!
@@ -221,6 +262,8 @@ input ProductStateInput {
 
 input ReserveItemsOptions {
   dryRun: Boolean
+  timeWindowID: ID
+  pickupDate: DateTime
 }
 
 enum ReservationAdminMessage {
@@ -241,6 +284,7 @@ type Reservation @cacheControl(maxAge: 0) {
   products: [PhysicalProduct!]!
   newProducts: [PhysicalProduct!]!
   returnedProducts: [PhysicalProduct!]!
+  reservationPhysicalProducts: [ReservationPhysicalProduct!]!
   packageEvents(
     where: PackageTransitEventWhereInput
     orderBy: PackageTransitEventOrderByInput
@@ -263,9 +307,104 @@ type Reservation @cacheControl(maxAge: 0) {
   returnedAt: DateTime
   createdAt: DateTime!
   updatedAt: DateTime!
+  pickupDate: DateTime
+  pickupWindowId: String
+  pickupWindow: TimeWindow
   adminLogs: [AdminActionLog!]! @hasRole(roles: [Admin])
   shippingOption: ShippingOption
+    @deprecated(reason: "Use shippingMethod instead")
+  shippingMethod: ShippingMethod
   adminMessage: ReservationAdminMessage! @hasRole(roles: [Admin])
+}
+
+enum ReservationPhysicalProductStatus {
+  Queued
+  Picked
+  Packed
+  ScannedOnInbound
+  InTransitInbound
+  ScannedOnOutbound
+  InTransitOutbound
+  AtHome
+  DeliveredToCustomer
+  DeliveredToBusiness
+  ReturnPending
+  ReturnProcessed
+  ResetEarly
+  Lost
+  Cancelled
+}
+
+enum ReservationDropOffAgent {
+  Customer
+  UPS
+}
+
+type ReservationPhysicalProductEdge {
+  node: ReservationPhysicalProduct!
+  cursor: String!
+}
+
+type AggregateReservationPhysicalProduct {
+  count: Int!
+}
+
+type ReservationPhysicalProductConnection @cacheControl(maxAge: 0) {
+  pageInfo: PageInfo!
+  edges: [ReservationPhysicalProductEdge]!
+  totalCount: Int!
+}
+
+type ReservationPhysicalProduct @cacheControl(maxAge: 0) {
+  id: ID!
+
+  physicalProduct: PhysicalProduct
+  reservation: Reservation
+  bagItem: BagItem
+  isOnHold: Boolean
+  shippingMethod: ShippingMethod
+
+  isNew: Boolean!
+  isPurchased: Boolean!
+  purchasedAt: DateTime
+
+  droppedOffBy: ReservationDropOffAgent
+  droppedOffAt: DateTime
+
+  hasReturnProcessed: Boolean!
+  returnProcessedAt: DateTime
+
+  isResetEarlyByAdmin: Boolean!
+  resetEarlyByAdminAt: DateTime
+
+  hasCustomerReturnIntent: Boolean!
+  customerReturnIntentAt: DateTime
+
+  customer: Customer!
+
+  isLost: Boolean
+  lostAt: DateTime
+  lostInPhase: ReservationPhase
+
+  isDeliveredToCustomer: Boolean!
+  deliveredToCustomerAt: DateTime
+
+  isDeliveredToBusiness: Boolean!
+  deliveredToBusinessAt: DateTime
+
+  hasBeenScannedOnInbound: Boolean!
+  scannedOnInboundAt: DateTime
+
+  hasBeenScannedOnOutbound: Boolean!
+  scannedOnOutboundAt: DateTime
+
+  outboundPackage: Package
+  inboundPackage: Package
+
+  status: ReservationPhysicalProductStatus!
+
+  createdAt: DateTime
+  updatedAt: DateTime
 }
 
 type AdminActionLog {
@@ -279,4 +418,70 @@ type AdminActionLog {
   changedFields: Json
   statementOnly: Boolean!
   interpretation: AdminActionLogInterpretation
+}
+
+input ReservationPhysicalProductUpdateInput {
+  physicalProduct: PhysicalProductUpdateInput
+  reservation: ReservationUpdateInput
+  bagItem: BagItemUpdateInput
+  isOnHold: Boolean
+
+  shippingMethod: ShippingMethodUpdateInput
+  isNew: Boolean
+  isPurchased: Boolean
+  purchasedAt: DateTime
+  droppedOffBy: ReservationDropOffAgent
+  droppedOffAt: DateTime
+  hasReturnProcessed: Boolean
+  returnProcessedAt: DateTime
+  isResetEarlyByAdmin: Boolean
+  resetEarlyByAdminAt: DateTime
+  hasCustomerReturnIntent: Boolean
+  customerReturnIntentAt: DateTime
+  isLost: Boolean
+  lostAt: DateTime
+  lostInPhase: ReservationPhase
+  isDeliveredToCustomer: Boolean
+  deliveredToCustomerAt: DateTime
+  isDeliveredToBusiness: Boolean
+  deliveredToBusinessAt: DateTime
+  hasBeenScannedOnInbound: Boolean
+  scannedOnInboundAt: DateTime
+  hasBeenScannedOnOutbound: Boolean
+  scannedOnOutboundAt: DateTime
+  status: ReservationPhysicalProductStatus
+}
+
+input ReservationPhysicalProductWhereUniqueInput {
+  id: ID
+  id_not: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  id_lt: ID
+  id_lte: ID
+  id_gt: ID
+  id_gte: ID
+  id_contains: ID
+  id_not_contains: ID
+  id_starts_with: ID
+  id_not_starts_with: ID
+  id_ends_with: ID
+  id_not_ends_with: ID
+
+  createdAt: DateTime
+  createdAt_not: DateTime
+  createdAt_in: [DateTime!]
+  createdAt_not_in: [DateTime!]
+  createdAt_lt: DateTime
+  createdAt_lte: DateTime
+  createdAt_gt: DateTime
+  createdAt_gte: DateTime
+  updatedAt: DateTime
+  updatedAt_not: DateTime
+  updatedAt_in: [DateTime!]
+  updatedAt_not_in: [DateTime!]
+  updatedAt_lt: DateTime
+  updatedAt_lte: DateTime
+  updatedAt_gt: DateTime
+  updatedAt_gte: DateTime
 }

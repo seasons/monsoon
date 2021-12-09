@@ -6,6 +6,7 @@ import { PrismaService } from "@app/prisma/prisma.service"
 import { Args, Mutation, Resolver } from "@nestjs/graphql"
 import { pick } from "lodash"
 
+import { ReserveService } from "../services/reserve.service"
 import { ReservationService } from ".."
 
 const ENSURE_TRACK_DATA_FRAGMENT = `fragment EnsureTrackData on Reservation {id products {seasonsUID}}`
@@ -14,6 +15,7 @@ const ENSURE_TRACK_DATA_FRAGMENT = `fragment EnsureTrackData on Reservation {id 
 export class ReservationMutationsResolver {
   constructor(
     private readonly reservation: ReservationService,
+    private readonly reserve: ReserveService,
     private readonly segment: SegmentService,
     private readonly prisma: PrismaService
   ) {}
@@ -34,7 +36,7 @@ export class ReservationMutationsResolver {
 
   @Mutation()
   async reserveItems(
-    @Args() { shippingCode },
+    @Args() { shippingCode, options },
     @User() user,
     @Customer() customer,
     @Select({
@@ -43,27 +45,20 @@ export class ReservationMutationsResolver {
     select,
     @Application() application
   ) {
-    const itemsToReserve = await this.prisma.client.bagItem.findMany({
-      where: {
-        customer: { id: customer.id },
-        status: { in: ["Reserved", "Added"] },
-        saved: false,
+    const returnData = await this.reserve.reserveItems({
+      pickupTime: {
+        date: options?.pickupDate,
+        timeWindowID: options?.timeWindowID,
       },
-      select: { productVariant: { select: { id: true } } },
-    })
-    const productVariantIDs = itemsToReserve.map(a => a.productVariant.id)
-    const returnData = await this.reservation.reserveItems(
-      productVariantIDs,
       shippingCode,
       customer,
-      select
-    )
+      select,
+    })
 
     // Track the selection
     this.segment.track(user.id, "Reserved Items", {
       ...pick(user, ["email", "firstName", "lastName"]),
       reservationID: returnData.id,
-      productVariantIDs,
       units: returnData.products.map(a => a.seasonsUID),
       application,
     })
@@ -77,8 +72,7 @@ export class ReservationMutationsResolver {
     @Select({
       withFragment: ENSURE_TRACK_DATA_FRAGMENT,
     })
-    select,
-    @Application() application
+    select
   ) {
     const custWithData = await this.prisma.client.customer.findUnique({
       where: { id: customerID },
@@ -95,44 +89,20 @@ export class ReservationMutationsResolver {
         },
       },
     })
-
-    const items = custWithData.bagItems.map(a => a.productVariant.id)
-    const returnData = await this.reservation.reserveItems(
-      items,
+    const returnData = await this.reserve.reserveItems({
       shippingCode,
-      custWithData,
-      select
-    )
+      customer: custWithData,
+      select,
+    })
 
     // Track the selection
     this.segment.track(custWithData.user.id, "Reserved Items", {
       ...pick(custWithData.user, ["email", "firstName", "lastName"]),
       reservationID: returnData.id,
-      items,
       units: returnData.products.map(a => a.seasonsUID),
-      application,
     })
 
     return returnData
-  }
-
-  @Mutation()
-  async processReservation(@Args() { data }) {
-    const { reservationNumber, productStates, trackingNumber = "" } = data
-
-    if (trackingNumber === "") {
-      throw new Error(
-        `Must specify return package tracking number when processing reservation`
-      )
-    }
-
-    const result = await this.reservation.processReservation(
-      reservationNumber,
-      productStates,
-      trackingNumber
-    )
-
-    return result
   }
 
   @Mutation()
@@ -141,7 +111,7 @@ export class ReservationMutationsResolver {
   }
 
   @Mutation()
-  async cancelReturn(@Customer() customer) {
-    return this.reservation.cancelReturn(customer)
+  async cancelReturn(@Args() { bagItemId }, @Customer() customer) {
+    return this.reservation.cancelReturn(customer, bagItemId)
   }
 }

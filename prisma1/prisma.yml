@@ -1,9 +1,0 @@
-endpoint: ${env:PRISMA_ENDPOINT}
-datamodel: datamodel.prisma
-secret: ${env:PRISMA_SECRET}
-
-generate:
-  - generator: typescript-client
-    output: ./src/prisma
-  - generator: graphql-schema
-    output: ./src/prisma/prisma.graphql

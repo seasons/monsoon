@@ -17,8 +17,6 @@ export const AllPushNotificationIDs = [
   "Custom",
   "CompleteAccount",
   "NewBlogPost",
-  "ReservationShipped",
-  "ReservationDelivered",
   "ResetBag",
   "ReturnDue",
   "PublishFitPic",

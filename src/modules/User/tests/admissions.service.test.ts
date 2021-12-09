@@ -1,7 +1,7 @@
 import { AppModule } from "@app/app.module"
 import { SMSService } from "@app/modules/SMS/services/sms.service"
+import { TestUtilsService } from "@app/modules/Test/services/test.service"
 import { QueryUtilsService } from "@app/modules/Utils/services/queryUtils.service"
-import { TestUtilsService } from "@app/modules/Utils/services/test.service"
 import { TimeUtilsService } from "@app/modules/Utils/services/time.service"
 import { UtilsService } from "@app/modules/Utils/services/utils.service"
 import { UtilsModule } from "@app/modules/Utils/utils.module"
@@ -295,235 +295,237 @@ xdescribe("Admissions Service", () => {
     })
   })
 
-  describe("Inventory Threshold", () => {
-    let testUtils: TestUtilsService
-    let utils: UtilsService
-    let timeUtils: TimeUtilsService
-    let prismaService: PrismaService
-    let cleanupFuncs = []
-    let allTestProductsToCreate: CreateTestProductInput[]
-    let topXSReservable
-    let topSReservable
-    let topMReservable
-    let bottom30Reservable
-    let bottom31Reservable
-    let bottom35Reservable
-    let topXSNonReservable
-    let bottom31Stored
-    let bottom30OneReservableOneNonReservable
-    let testCustomer
+  //   describe("Inventory Threshold", () => {
+  //     let testUtils: TestUtilsService
+  //     let utils: UtilsService
+  //     let timeUtils: TimeUtilsService
+  //     let prismaService: PrismaService
+  //     let cleanupFuncs = []
+  //     let allTestProductsToCreate: CreateTestProductInput[]
+  //     let topXSReservable
+  //     let topSReservable
+  //     let topMReservable
+  //     let bottom30Reservable
+  //     let bottom31Reservable
+  //     let bottom35Reservable
+  //     let topXSNonReservable
+  //     let bottom31Stored
+  //     let bottom30OneReservableOneNonReservable
+  //     let testCustomer
 
-    beforeAll(async () => {
-      const app = await NestFactory.createApplicationContext(AppModule)
-      testUtils = app.get(TestUtilsService)
-      utils = app.get(UtilsService)
-      timeUtils = app.get(TimeUtilsService)
+  //     beforeAll(async () => {
+  //       const app = await NestFactory.createApplicationContext(AppModule)
+  //       testUtils = app.get(TestUtilsService)
+  //       utils = app.get(UtilsService)
+  //       timeUtils = app.get(TimeUtilsService)
 
-      // reservable products
-      topXSReservable = createTestProductCreateInput("Top", "XS", "Reservable")
-      topSReservable = createTestProductCreateInput("Top", "S", "Reservable")
-      topMReservable = createTestProductCreateInput("Top", "M", "Reservable")
-      bottom30Reservable = createTestProductCreateInput(
-        "Bottom",
-        "30",
-        "Reservable"
-      )
-      bottom31Reservable = createTestProductCreateInput(
-        "Bottom",
-        "31",
-        "Reservable"
-      )
-      bottom35Reservable = createTestProductCreateInput(
-        "Bottom",
-        "35",
-        "Reservable"
-      )
-      bottom30OneReservableOneNonReservable = {
-        type: "Bottom",
-        variants: [
-          {
-            displayShort: "30",
-            physicalProducts: [
-              { inventoryStatus: "Reservable" },
-              { inventoryStatus: "NonReservable" },
-            ],
-          },
-        ],
-      } as CreateTestProductInput
+  //       // reservable products
+  //       topXSReservable = createTestProductCreateInput("Top", "XS", "Reservable")
+  //       topSReservable = createTestProductCreateInput("Top", "S", "Reservable")
+  //       topMReservable = createTestProductCreateInput("Top", "M", "Reservable")
+  //       bottom30Reservable = createTestProductCreateInput(
+  //         "Bottom",
+  //         "30",
+  //         "Reservable"
+  //       )
+  //       bottom31Reservable = createTestProductCreateInput(
+  //         "Bottom",
+  //         "31",
+  //         "Reservable"
+  //       )
+  //       bottom35Reservable = createTestProductCreateInput(
+  //         "Bottom",
+  //         "35",
+  //         "Reservable"
+  //       )
+  //       bottom30OneReservableOneNonReservable = {
+  //         type: "Bottom",
+  //         variants: [
+  //           {
+  //             displayShort: "30",
+  //             physicalProducts: [
+  //               { inventoryStatus: "Reservable" },
+  //               { inventoryStatus: "NonReservable" },
+  //             ],
+  //           },
+  //         ],
+  //       } as CreateTestProductInput
 
-      // non reservable products
-      topXSNonReservable = createTestProductCreateInput(
-        "Top",
-        "XS",
-        "NonReservable"
-      )
-      bottom31Stored = createTestProductCreateInput("Bottom", "31", "Stored")
+  //       // non reservable products
+  //       topXSNonReservable = createTestProductCreateInput(
+  //         "Top",
+  //         "XS",
+  //         "NonReservable"
+  //       )
+  //       bottom31Stored = createTestProductCreateInput("Bottom", "31", "Stored")
 
-      // All the test products we create
-      allTestProductsToCreate = [
-        // 12 styles available for him. 11 are 100% reservable.
-        // 1 has 1 reserved unit, 1 nonreservable unit
-        ...fill(Array(4), topXSReservable),
-        ...fill(Array(4), topSReservable),
-        ...fill(Array(2), bottom30Reservable),
-        bottom31Reservable,
-        bottom30OneReservableOneNonReservable,
-        // some styles that are reservable but not in his size
-        ...fill(Array(4), bottom35Reservable),
-        ...fill(Array(4), topMReservable),
-        // some styles that are in his size but not reservable
-        ...fill(Array(2), topXSNonReservable),
-        ...fill(Array(2), bottom31Stored),
-      ]
-    })
+  //       // All the test products we create
+  //       allTestProductsToCreate = [
+  //         // 12 styles available for him. 11 are 100% reservable.
+  //         // 1 has 1 reserved unit, 1 nonreservable unit
+  //         ...fill(Array(4), topXSReservable),
+  //         ...fill(Array(4), topSReservable),
+  //         ...fill(Array(2), bottom30Reservable),
+  //         bottom31Reservable,
+  //         bottom30OneReservableOneNonReservable,
+  //         // some styles that are reservable but not in his size
+  //         ...fill(Array(4), bottom35Reservable),
+  //         ...fill(Array(4), topMReservable),
+  //         // some styles that are in his size but not reservable
+  //         ...fill(Array(2), topXSNonReservable),
+  //         ...fill(Array(2), bottom31Stored),
+  //       ]
+  //     })
 
-    beforeEach(async () => {
-      for (const testProdToCreate of allTestProductsToCreate) {
-        const { cleanupFunc } = await testUtils.createTestProduct(
-          testProdToCreate
-        )
-        cleanupFuncs.push(cleanupFunc)
-      }
+  //     beforeEach(async () => {
+  //       for (const testProdToCreate of allTestProductsToCreate) {
+  //         const { cleanupFunc } = await testUtils.createTestProduct(
+  //           testProdToCreate
+  //         )
+  //         cleanupFuncs.push(cleanupFunc)
+  //       }
 
-      // Create test user
-      const {
-        cleanupFunc: customerCleanUpFunc,
-        customer,
-      } = await testUtils.createTestCustomer({
-        detail: {
-          topSizes: ["XS", "S"],
-          waistSizes: [30, 31],
-          phoneOS: "iOS",
-        },
-      })
-      cleanupFuncs.push(customerCleanUpFunc)
-      testCustomer = customer
-    })
+  //       // Create test user
+  //       const {
+  //         cleanupFunc: customerCleanUpFunc,
+  //         customer,
+  //       } = await testUtils.createTestCustomer({
+  //         create: {
+  //           detail: {
+  //             topSizes: ["XS", "S"],
+  //             waistSizes: [30, 31],
+  //             phoneOS: "iOS",
+  //           },
+  //         },
+  //       })
+  //       cleanupFuncs.push(customerCleanUpFunc)
+  //       testCustomer = customer
+  //     })
 
-    afterEach(async () => {
-      for (const func of cleanupFuncs) {
-        await func()
-      }
-      cleanupFuncs = []
-    })
+  //     afterEach(async () => {
+  //       for (const func of cleanupFuncs) {
+  //         await func()
+  //       }
+  //       cleanupFuncs = []
+  //     })
 
-    it("correctly calculates the available inventory for a user with no competing users", async () => {
-      const {
-        reservableStyles,
-      } = await admissions.reservableInventoryForCustomer({
-        id: testCustomer.id,
-      })
-      expect(reservableStyles).toBe(12)
-    })
+  //     it("correctly calculates the available inventory for a user with no competing users", async () => {
+  //       const {
+  //         reservableStyles,
+  //       } = await admissions.reservableInventoryForCustomer({
+  //         id: testCustomer.id,
+  //       })
+  //       expect(reservableStyles).toBe(12)
+  //     })
 
-    it("correctly calculates the available inventory for a user with competing paused users", async () => {
-      const testCustomerInputs = [
-        // paused, but not resuming within the next week and therefore not competing
-        {
-          status: "Paused",
-          detail: { topSizes: ["XS"], waistSizes: [30, 31], phoneOS: "iOS" },
-          membership: {
-            pauseRequests: [
-              {
-                notified: false,
-                pausePending: false,
-                pauseDate: timeUtils.xDaysAgoISOString(22),
-                resumeDate: timeUtils.xDaysFromNowISOString(8),
-                pauseType: "WithItems",
-              },
-            ],
-          },
-        },
-        // paused, resuming in the next week, competing
-        {
-          status: "Paused",
-          detail: { topSizes: ["XS"], waistSizes: [30, 31], phoneOS: "iOS" },
-          membership: {
-            // put a few pause requests to test the code that retrieves the latest one
-            pauseRequests: [
-              {
-                notified: true,
-                pausePending: false,
-                pauseDate: timeUtils.xDaysAgoISOString(356),
-                resumeDate: timeUtils.xDaysAgoISOString(326),
-              },
-              {
-                notified: true,
-                pausePending: false,
-                pauseDate: timeUtils.xDaysAgoISOString(120),
-                resumeDate: timeUtils.xDaysAgoISOString(90),
-              },
-              {
-                notified: false,
-                pausePending: false,
-                pauseDate: timeUtils.xDaysAgoISOString(24),
-                resumeDate: timeUtils.xDaysFromNowISOString(6),
-              },
-            ],
-          },
-        },
-      ] as CreateTestCustomerInput[]
-      for (const input of testCustomerInputs) {
-        const { cleanupFunc } = await testUtils.createTestCustomer(input)
-        cleanupFuncs.push(cleanupFunc)
-      }
+  //     it("correctly calculates the available inventory for a user with competing paused users", async () => {
+  //       const testCustomerInputs = [
+  //         // paused, but not resuming within the next week and therefore not competing
+  //         {
+  //           status: "Paused",
+  //           detail: { topSizes: ["XS"], waistSizes: [30, 31], phoneOS: "iOS" },
+  //           membership: {
+  //             pauseRequests: [
+  //               {
+  //                 notified: false,
+  //                 pausePending: false,
+  //                 pauseDate: timeUtils.xDaysAgoISOString(22),
+  //                 resumeDate: timeUtils.xDaysFromNowISOString(8),
+  //                 pauseType: "WithItems",
+  //               },
+  //             ],
+  //           },
+  //         },
+  //         // paused, resuming in the next week, competing
+  //         {
+  //           status: "Paused",
+  //           detail: { topSizes: ["XS"], waistSizes: [30, 31], phoneOS: "iOS" },
+  //           membership: {
+  //             // put a few pause requests to test the code that retrieves the latest one
+  //             pauseRequests: [
+  //               {
+  //                 notified: true,
+  //                 pausePending: false,
+  //                 pauseDate: timeUtils.xDaysAgoISOString(356),
+  //                 resumeDate: timeUtils.xDaysAgoISOString(326),
+  //               },
+  //               {
+  //                 notified: true,
+  //                 pausePending: false,
+  //                 pauseDate: timeUtils.xDaysAgoISOString(120),
+  //                 resumeDate: timeUtils.xDaysAgoISOString(90),
+  //               },
+  //               {
+  //                 notified: false,
+  //                 pausePending: false,
+  //                 pauseDate: timeUtils.xDaysAgoISOString(24),
+  //                 resumeDate: timeUtils.xDaysFromNowISOString(6),
+  //               },
+  //             ],
+  //           },
+  //         },
+  //       ] as CreateTestCustomerInput[]
+  //       for (const input of testCustomerInputs) {
+  //         const { cleanupFunc } = await testUtils.createTestCustomer(input)
+  //         cleanupFuncs.push(cleanupFunc)
+  //       }
 
-      const {
-        reservableStyles,
-      } = await admissions.reservableInventoryForCustomer({
-        id: testCustomer.id,
-      })
-      expect(reservableStyles).toBe(9) // 6.5 available top styles, 2.5 available bottom styles
-    }, 20000)
+  //       const {
+  //         reservableStyles,
+  //       } = await admissions.reservableInventoryForCustomer({
+  //         id: testCustomer.id,
+  //       })
+  //       expect(reservableStyles).toBe(9) // 6.5 available top styles, 2.5 available bottom styles
+  //     }, 20000)
 
-    it("correctly calculates the available inventory for a user with competing active users", async () => {
-      const testCustomerInputs = [
-        // shares a top size, doesn't share a bottom size
-        { status: "Active", detail: { topSizes: ["S"], waistSizes: [33, 34] } },
-        // doesn't share a top size, shares a bottom size
-        { status: "Active", detail: { topSizes: ["M"], waistSizes: [30, 29] } },
-        // shares a top size, shares both bottom sizes
-        {
-          status: "Active",
-          detail: { topSizes: ["XS"], waistSizes: [30, 31] },
-        },
-      ] as CreateTestCustomerInput[]
+  //     it("correctly calculates the available inventory for a user with competing active users", async () => {
+  //       const testCustomerInputs = [
+  //         // shares a top size, doesn't share a bottom size
+  //         { status: "Active", detail: { topSizes: ["S"], waistSizes: [33, 34] } },
+  //         // doesn't share a top size, shares a bottom size
+  //         { status: "Active", detail: { topSizes: ["M"], waistSizes: [30, 29] } },
+  //         // shares a top size, shares both bottom sizes
+  //         {
+  //           status: "Active",
+  //           detail: { topSizes: ["XS"], waistSizes: [30, 31] },
+  //         },
+  //       ] as CreateTestCustomerInput[]
 
-      for (const input of testCustomerInputs) {
-        const { cleanupFunc } = await testUtils.createTestCustomer(input)
-        cleanupFuncs.push(cleanupFunc)
-      }
+  //       for (const input of testCustomerInputs) {
+  //         const { cleanupFunc } = await testUtils.createTestCustomer(input)
+  //         cleanupFuncs.push(cleanupFunc)
+  //       }
 
-      const {
-        reservableStyles,
-      } = await admissions.reservableInventoryForCustomer({
-        id: testCustomer.id,
-      })
-      expect(reservableStyles).toBe(6)
-    })
+  //       const {
+  //         reservableStyles,
+  //       } = await admissions.reservableInventoryForCustomer({
+  //         id: testCustomer.id,
+  //       })
+  //       expect(reservableStyles).toBe(6)
+  //     })
 
-    it("does not admit a user with insufficient available inventory", async () => {
-      process.env.MIN_RESERVABLE_INVENTORY_PER_CUSTOMER = "15"
+  //     it("does not admit a user with insufficient available inventory", async () => {
+  //       process.env.MIN_RESERVABLE_INVENTORY_PER_CUSTOMER = "15"
 
-      const {
-        pass,
-      } = await admissions.haveSufficientInventoryToServiceCustomer({
-        id: testCustomer.id,
-      })
-      expect(pass).toBe(false)
-    })
+  //       const {
+  //         pass,
+  //       } = await admissions.haveSufficientInventoryToServiceCustomer({
+  //         id: testCustomer.id,
+  //       })
+  //       expect(pass).toBe(false)
+  //     })
 
-    it("admits a user with sufficient inventory", async () => {
-      process.env.MIN_RESERVABLE_INVENTORY_PER_CUSTOMER = "11"
+  //     it("admits a user with sufficient inventory", async () => {
+  //       process.env.MIN_RESERVABLE_INVENTORY_PER_CUSTOMER = "11"
 
-      const {
-        pass,
-      } = await admissions.haveSufficientInventoryToServiceCustomer({
-        id: testCustomer.id,
-      })
-      expect(pass).toBe(true)
-    })
-  })
+  //       const {
+  //         pass,
+  //       } = await admissions.haveSufficientInventoryToServiceCustomer({
+  //         id: testCustomer.id,
+  //       })
+  //       expect(pass).toBe(true)
+  //     })
+  //   })
 })
 
 const createTestAdmissionsService = async (

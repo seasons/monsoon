@@ -14,6 +14,7 @@ import faker from "faker"
 import { head } from "lodash"
 import { DateTime } from "luxon"
 import { Command, Option, Positional } from "nestjs-command"
+import slugify from "slugify"
 
 import {
   EmailOption,
@@ -226,6 +227,7 @@ export class UserCommands {
       shippingAddress: {
         create: {
           name: `${firstName} ${lastName}`,
+          slug: slugify(`${firstName} ${lastName}`),
           address1: address.line1,
           city: address.city,
           state: address.state,
@@ -324,10 +326,6 @@ export class UserCommands {
             detail: { select: { shippingAddress: { select: { id: true } } } },
           },
         })
-        await this.customer.addCustomerLocationShippingOptions(
-          "NY",
-          cust.detail.shippingAddress.id
-        )
 
         await this.prisma.client.billingInfo.create({
           data: {
@@ -344,9 +342,7 @@ export class UserCommands {
           },
         })
 
-        if (["access-monthly", "access-yearly"].includes(planID)) {
-          await this.rental.initFirstRentalInvoice(customer.id)
-        }
+        await this.rental.initFirstRentalInvoice(customer.id)
       }
 
       // Give them a valid admissions record if appropriate
@@ -413,7 +409,7 @@ export class UserCommands {
     const fullName = `${firstName} ${lastName}`
     const slug = `${firstName}-${lastName}`.toLowerCase()
     email = email || `${slug}@seasons.nyc`
-    password = password || faker.random.alphaNumeric(6)
+    password = password || "Winter2021"
 
     return { firstName, lastName, fullName, email, password, slug }
   }

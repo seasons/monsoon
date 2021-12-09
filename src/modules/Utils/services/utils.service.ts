@@ -9,6 +9,7 @@ import {
   PauseRequest,
   Prisma,
   Product,
+  ReservationStatus,
   SyncTimingType,
 } from "@prisma/client"
 import { Location } from "@prisma/client"
@@ -51,6 +52,12 @@ type InfoStringPath = "user" | "customer"
 export class UtilsService {
   constructor(private readonly prisma: PrismaService) {}
 
+  wrapPrismaPromise(prismaPromise) {
+    return {
+      promise: prismaPromise,
+    }
+  }
+
   formatUTMForSegment = (utm: UTMData) => ({
     utm_source: utm?.source,
     utm_content: utm?.content,
@@ -84,6 +91,10 @@ export class UtilsService {
 
   randomString() {
     return Math.random().toString(36).slice(2)
+  }
+
+  async sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms))
   }
 
   dateSort(dateOne: DateTime, dateTwo: DateTime) {
@@ -392,44 +403,46 @@ export class UtilsService {
 
   async getLatestReservation(
     customerID: string,
-    status = undefined,
+    where: Prisma.ReservationWhereInput = {},
     select: Prisma.ReservationSelect = {}
   ) {
     const latestReservation = await this.prisma.client.reservation.findFirst({
-      where: {
-        customer: {
-          id: customerID,
+      where: merge(
+        {
+          customer: {
+            id: customerID,
+          },
         },
-        status,
-      },
+        where
+      ),
       orderBy: {
         createdAt: "desc",
       },
       select: merge(
-        {
+        Prisma.validator<Prisma.ReservationSelect>()({
           id: true,
-          products: {
+          reservationPhysicalProducts: {
             select: {
               id: true,
-              seasonsUID: true,
-              inventoryStatus: true,
-              productStatus: true,
-              productVariant: { select: { id: true } },
-              warehouseLocation: { select: { id: true } },
+              physicalProduct: {
+                select: {
+                  seasonsUID: true,
+                  inventoryStatus: true,
+                  productStatus: true,
+                  productVariant: { select: { id: true } },
+                  warehouseLocation: { select: { id: true } },
+                },
+              },
             },
           },
           receivedAt: true,
           status: true,
           reservationNumber: true,
           createdAt: true,
-        },
+        }),
         select
       ),
     })
-
-    if (latestReservation == null) {
-      return null
-    }
 
     return latestReservation
   }

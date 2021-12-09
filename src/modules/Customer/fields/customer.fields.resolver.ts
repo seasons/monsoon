@@ -1,6 +1,9 @@
 import { Customer, User } from "@app/decorators"
+import { Application } from "@app/decorators/application.decorator"
+import { Select } from "@app/decorators/select.decorator"
 import { PrismaGenerateParams } from "@app/modules/DataLoader/dataloader.types.d"
 import { TransactionsForCustomersLoader } from "@app/modules/Payment/loaders/transactionsForCustomers.loader"
+import { BagService } from "@app/modules/Product/services/bag.service"
 import { CustomerUtilsService } from "@app/modules/User/services/customer.utils.service"
 import { UtilsService } from "@app/modules/Utils/services/utils.service"
 import { PrismaDataLoader } from "@app/prisma/prisma.loader"
@@ -30,8 +33,17 @@ export class CustomerFieldsResolver {
     private readonly prisma: PrismaService,
     private readonly paymentService: PaymentService,
     private readonly utils: UtilsService,
-    private readonly customerUtils: CustomerUtilsService
+    private readonly customerUtils: CustomerUtilsService,
+    private readonly bagService: BagService
   ) {}
+
+  @ResolveField()
+  async bagSections(@Parent() customer, @Application() application) {
+    if (!customer) {
+      return null
+    }
+    return this.bagService.bagSections({ customer, application })
+  }
 
   @ResolveField()
   async iOSAppStatus(
@@ -350,7 +362,7 @@ export class CustomerFieldsResolver {
         user: { select: { verificationStatus: true } },
         detail: {
           select: {
-            height: true,
+            topSizes: true,
             stylePreferences: true,
             shippingAddress: { select: { address1: true } },
           },
@@ -360,7 +372,7 @@ export class CustomerFieldsResolver {
 
     const values = [
       custWithData?.user?.verificationStatus === "Approved",
-      custWithData?.detail?.height !== null,
+      custWithData?.detail?.topSizes?.length > 0,
       custWithData?.detail?.stylePreferences !== null,
       custWithData?.detail?.shippingAddress?.address1 !== null,
     ]

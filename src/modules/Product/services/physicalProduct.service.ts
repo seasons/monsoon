@@ -1,6 +1,7 @@
 import { PushNotificationService } from "@app/modules/PushNotification/services/pushNotification.service"
 import { StatementsService } from "@app/modules/Utils/services/statements.service"
 import { UtilsService } from "@app/modules/Utils/services/utils.service"
+import { EmailService } from "@modules/Email/services/email.service"
 import { Injectable } from "@nestjs/common"
 import {
   Brand,
@@ -32,13 +33,6 @@ interface OffloadPhysicalProductIfNeededInput {
   offloadNotes: string
 }
 
-interface ValidateWarehouseLocationStructureInput {
-  type: WarehouseLocationType
-  barcode: string
-  locationCode: string
-  itemCode: string
-}
-
 const unstoreErrorMessage =
   "Can not unstore a physical product directly. Must do so from parent product."
 
@@ -51,7 +45,8 @@ export class PhysicalProductService {
     private readonly productService: ProductService,
     private readonly physicalProductUtils: PhysicalProductUtilsService,
     private readonly utils: UtilsService,
-    private readonly statements: StatementsService
+    private readonly statements: StatementsService,
+    private readonly emails: EmailService
   ) {}
 
   async updatePhysicalProduct({
@@ -87,7 +82,19 @@ export class PhysicalProductService {
                   id: true,
                   slug: true,
                   name: true,
+                  images: {
+                    select: {
+                      url: true,
+                      id: true,
+                    },
+                  },
                   brand: { select: { id: true, name: true } },
+                  variants: {
+                    select: {
+                      id: true,
+                      displayShort: true,
+                    },
+                  },
                 },
               },
             },
@@ -139,7 +146,7 @@ export class PhysicalProductService {
         const emails = notifications.map(notif => notif.customer?.user?.email)
 
         // Send the notification
-        notifyUsersIfNeeded = async () =>
+        notifyUsersIfNeeded = async () => {
           await this.pushNotification.pushNotifyUsers({
             emails,
             pushNotifID: "ProductRestock",
@@ -150,6 +157,9 @@ export class PhysicalProductService {
               brandName: product?.brand?.name,
             },
           })
+
+          await this.emails.sendRestockNotificationEmails(emails, product)
+        }
       }
     } else if (
       !!physProdBeforeUpdate.warehouseLocation?.barcode &&
@@ -219,20 +229,190 @@ export class PhysicalProductService {
         where: {
           barcode: warehouseLocationBarcode,
         },
+        select: {
+          id: true,
+          barcode: true,
+          constraints: {
+            select: {
+              id: true,
+              limit: true,
+            },
+          },
+        },
       }
     )
+    if (warehouseLocation.constraints.length > 0) {
+      throw new Error(`
+      This warehouse location has a constraint, please use single item stow for it. 
+      `)
+    }
 
-    const stowedProducts = await this.prisma.client.physicalProduct.updateMany({
+    const location = await this.prisma.client.location.findUnique({
       where: {
-        id: {
-          in: ids,
-        },
+        slug:
+          process.env.SEASONS_CLEANER_LOCATION_SLUG ||
+          "seasons-cleaners-official",
       },
-      data: {
-        warehouseLocationId: warehouseLocation.id,
+      select: {
+        id: true,
       },
     })
+
+    const physProdsBeforeUpdate = await this.prisma.client.physicalProduct.findMany(
+      {
+        where: {
+          id: {
+            in: ids,
+          },
+        },
+        select: {
+          id: true,
+          seasonsUID: true,
+          inventoryStatus: true,
+          productStatus: true,
+          warehouseLocation: { select: { barcode: true } },
+          productVariant: {
+            select: {
+              id: true,
+              reservable: true,
+              reserved: true,
+              offloaded: true,
+              nonReservable: true,
+              stored: true,
+              product: {
+                select: {
+                  id: true,
+                  slug: true,
+                  name: true,
+                  images: {
+                    select: {
+                      url: true,
+                      id: true,
+                    },
+                  },
+                  brand: { select: { id: true, name: true } },
+                  variants: {
+                    select: {
+                      id: true,
+                      displayShort: true,
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      }
+    )
+    const storedPhysicalProducts = physProdsBeforeUpdate.filter(
+      a => a.inventoryStatus === "Stored"
+    )
+    if (storedPhysicalProducts.length > 0) {
+      const storedSUIDs = storedPhysicalProducts.map(a => a.seasonsUID)
+      throw `The following items are stored. Please use single item stow for them: ${storedSUIDs}`
+    }
+
+    let promises = []
+
+    const {
+      prodVariantPromises,
+      restockNotificationPromises,
+    } = await this.prodVariantUpdatesForMultiItemStow(physProdsBeforeUpdate)
+    promises.push(...prodVariantPromises)
+
+    for (let physicalProduct of physProdsBeforeUpdate) {
+      promises.push(
+        this.prisma.client.physicalProduct.update({
+          where: {
+            id: physicalProduct.id,
+          },
+          data: {
+            warehouseLocationId: warehouseLocation.id,
+            locationId: location.id,
+            productStatus:
+              physicalProduct.productStatus === "New" ? "New" : "Clean",
+            inventoryStatus: "Reservable",
+          },
+        })
+      )
+    }
+
+    const results = await this.prisma.client.$transaction(promises)
+    const stowedProducts = results.pop()
+    await Promise.all(restockNotificationPromises)
+
     return stowedProducts.count > 0
+  }
+
+  private async prodVariantUpdatesForMultiItemStow(physProdsBeforeUpdate) {
+    const prodVariantPromises = []
+    const restockNotificationPromises = []
+
+    for (const physicalProduct of physProdsBeforeUpdate) {
+      const prodVariant = physicalProduct.productVariant
+
+      const productVariantData = await this.productVariantService.getCountsForStatusChange(
+        {
+          productVariant: prodVariant,
+          oldInventoryStatus: physicalProduct.inventoryStatus,
+          newInventoryStatus: "Reservable",
+        }
+      )
+
+      prodVariantPromises.push(
+        this.prisma.client.productVariant.update({
+          where: {
+            id: prodVariant.id,
+          },
+          data: {
+            ...productVariantData,
+          },
+        })
+      )
+
+      // If there are currently no reservable units, notify users of the restock
+      if (prodVariant.reservable !== 0) {
+        continue
+      }
+      const product = prodVariant.product
+      const notifications = await this.prisma.client.productNotification.findMany(
+        {
+          where: {
+            productVariant: {
+              id: prodVariant.id,
+            },
+          },
+          select: {
+            id: true,
+            customer: {
+              select: {
+                id: true,
+                user: { select: { id: true, email: true } },
+              },
+            },
+          },
+        }
+      )
+
+      const emails = notifications.map(notif => notif.customer?.user?.email)
+      // Send the notification
+      restockNotificationPromises.push(() =>
+        this.pushNotification.pushNotifyUsers({
+          emails,
+          pushNotifID: "ProductRestock",
+          vars: {
+            id: product?.id,
+            slug: product?.slug,
+            productName: product?.name,
+            brandName: product?.brand?.name,
+          },
+        })
+      )
+      restockNotificationPromises.push(() =>
+        this.emails.sendRestockNotificationEmails(emails, product)
+      )
+    }
+    return { prodVariantPromises, restockNotificationPromises }
   }
 
   async activeReservationWithPhysicalProduct(id: string) {
@@ -341,97 +521,6 @@ export class PhysicalProductService {
     })
     return interpretedLogs
   }
-
-  /**
-   * Applies type-specific rules to validate a warehouse location
-   * Throws an error if invalid
-   */
-  async validateWarehouseLocationStructure({
-    type,
-    barcode,
-    locationCode,
-    itemCode,
-  }: ValidateWarehouseLocationStructureInput) {
-    if (!type) {
-      throw new Error("Must include warehouse location type")
-    }
-    if (!barcode) {
-      throw new Error("Must include barcode")
-    }
-
-    // Ensure locationCode and itemCode are what is implied by the barcode
-    const [typePrefix, barcodeLocationCode, barcodeItemCode] = barcode.split(
-      "-"
-    )
-    if (
-      !/^C$|^SR$|^DB$/.test(typePrefix) || // type prefix is C, SR, or DB
-      !/^\w{4}$/.test(barcodeLocationCode) || // locationCode is 4 alphanumeric chars
-      !/^[A-Za-z0-9.]{3,5}$/.test(barcodeItemCode) // barcode is 3-5 alphanumeric chars
-    ) {
-      throw new Error(
-        "Invalid barcode. Must be of form typeprefix-locationcode-itemcode e.g SR-A200-ABES"
-      )
-    }
-    if (barcodeLocationCode !== locationCode) {
-      throw new Error("locationCode must match barcode")
-    }
-    if (barcodeItemCode !== itemCode) {
-      throw new Error("itemCode must match barcode")
-    }
-
-    // Validate the location code
-    const modIndexErrorString =
-      "Must be of form xy where x is in [A-Z] and y is in [100, 110, ..., 990]"
-    if (!this.validModIndexLocationCode(locationCode)) {
-      throw new Error(`Invalid locationcode. ${modIndexErrorString}`)
-    }
-
-    // Validate type-specific details
-    switch (type) {
-      case "Conveyor":
-        if (typePrefix !== "C") {
-          throw new Error(
-            "Conveyer Warehouse Locations barcodes must begin with 'C'"
-          )
-        }
-        // 4 digit number
-        if (!/^\d\d\d\d$/.test(itemCode)) {
-          //
-          throw new Error(
-            "Invalid itemCode. Must be in [0001, 0002, ..., 9999]"
-          )
-        }
-        break
-      case "Rail":
-        if (typePrefix !== "SR") {
-          throw new Error(
-            "Rail Warehouse Locations barcodes must begin with 'SR'"
-          )
-        }
-        const value = parseInt(itemCode.substring(1))
-        if (value < 100 || value > 990) {
-          throw new Error(
-            `Invalid itemcode. Should be a value between A100 and A990`
-          )
-        }
-        break
-      case "Bin":
-        if (typePrefix !== "DB") {
-          throw new Error(
-            "Bin Warehouse Locations barcodes must begin with 'DB'"
-          )
-        }
-        if (!this.validModIndexLocationCode(itemCode)) {
-          throw new Error(`Ivalid itemcode. ${modIndexErrorString}`)
-        }
-        break
-      default:
-        throw new Error(`Invalid type: ${type}`)
-    }
-
-    return true
-  }
-
   /*
   Enforces a variety if rules that need to stay in place whenever we set
   a warehouse location on a physical product

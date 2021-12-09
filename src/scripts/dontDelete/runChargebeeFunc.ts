@@ -21,6 +21,9 @@ const handle = (err, result) => {
 const run = async () => {
   const ps = new PrismaService()
 
+  const invoice = await chargebee.invoice.retrieve("6237").request(handle)
+  console.log(invoice)
+
   console.log("func complete")
 }
 /*
