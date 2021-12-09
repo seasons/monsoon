@@ -552,9 +552,6 @@ export class ReservationPhysicalProductService {
         },
         reservationPhysicalProduct: {
           status: "Packed",
-          outboundPackage: {
-            is: null,
-          },
         },
       },
       select: {
