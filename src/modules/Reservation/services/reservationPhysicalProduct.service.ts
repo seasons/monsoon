@@ -620,6 +620,11 @@ export class ReservationPhysicalProductService {
                 },
               },
             }),
+            inboundPackage: {
+              connect: {
+                id: inboundPackageId,
+              },
+            },
             physicalProduct: {
               update: {
                 packages: {
