@@ -38,6 +38,9 @@ type Query {
   ): ReservationPhysicalProductConnection!
     @hasRole(roles: [Admin])
     @cacheControl(maxAge: 0)
+  reservationProcessingStats: ReservationProcessingStats!
+    @hasRole(roles: [Admin])
+    @cacheControl(maxAge: 0)
 }
 
 type Mutation {
@@ -401,6 +404,18 @@ type ReservationPhysicalProduct @cacheControl(maxAge: 0) {
   status: ReservationPhysicalProductStatus!
 
   createdAt: DateTime
+  updatedAt: DateTime
+}
+
+type ReservationProcessingStats @cacheControl(maxAge: 0) {
+  id: ID!
+  initialNumQueuedItems: Int!
+  initialNumQueuedReservations: Int!
+  currentNumQueuedItems: Int!
+  currentNumQueuedReservations: Int!
+  initialNumDeliveredToBusinessItems: Int!
+  currentNumDeliveredToBusinessItems: Int!
+  day: DateTime
   updatedAt: DateTime
 }
 
