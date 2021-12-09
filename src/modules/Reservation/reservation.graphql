@@ -35,9 +35,10 @@ type Query {
   outboundReservations(
     skip: Int!
     take: Int!
-  ): ReservationPhysicalProductConnection! @hasRole(roles: [Admin])
-  reservationProcessingStats: ReservationProcessingStats!
   ): ReservationPhysicalProductConnection!
+    @hasRole(roles: [Admin])
+    @cacheControl(maxAge: 0)
+  reservationProcessingStats: ReservationProcessingStats!
     @hasRole(roles: [Admin])
     @cacheControl(maxAge: 0)
 }

@@ -216,8 +216,6 @@ export class ReserveService {
       }),
     })) as any
 
-    await this.reservationUtils.updateOutboundResProcessingStats()
-
     // Send confirmation email
     // await this.emails.sendReservationConfirmationEmail(
     //   customerWithData.user,
@@ -228,6 +226,7 @@ export class ReserveService {
     // )
 
     try {
+      await this.reservationUtils.updateOutboundResProcessingStats()
       await this.productUtils.removeRestockNotifications(
         productVariantIDs,
         customer.id
