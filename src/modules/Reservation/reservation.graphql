@@ -37,6 +37,8 @@ type Query {
     take: Int!
   ): ReservationPhysicalProductConnection! @hasRole(roles: [Admin])
   reservationProcessingStats: ReservationProcessingStats!
+  ): ReservationPhysicalProductConnection!
+    @hasRole(roles: [Admin])
     @cacheControl(maxAge: 0)
 }
 
