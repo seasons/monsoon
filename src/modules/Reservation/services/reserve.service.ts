@@ -219,8 +219,6 @@ export class ReserveService {
       user: customerWithData.user,
       productsVariantIDs: newProductVariantIDs,
       reservation,
-      trackingNumber: seasonsToCustomerTransaction.tracking_number,
-      trackingUrl: seasonsToCustomerTransaction.tracking_url_provider,
     })
 
     try {

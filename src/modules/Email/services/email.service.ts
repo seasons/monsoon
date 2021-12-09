@@ -257,51 +257,21 @@ export class EmailService {
     customerWillPickup: boolean
     trackingNumber?: string
     trackingURL?: string
+    pickupTime?: {
+      date: string
+      timeWindowID: string
+    }
   }) {
     const payload = await RenderEmail.reservationProcessed({
       ...data,
     })
 
-    const { user } = data
+    const { pickupTime, user } = data
 
     await this.sendPreRenderedTransactionalEmail({
       user,
       payload,
       emailId: "ReservationProcessed",
-    })
-  }
-
-  async sendReservationConfirmationEmail({
-    user,
-    productsVariantIDs,
-    reservation,
-    trackingNumber,
-    trackingUrl,
-    shippingCode,
-    pickupTime,
-  }: {
-    user: EmailUser
-    productsVariantIDs: string[]
-    reservation: { reservationNumber: number }
-    trackingNumber?: string
-    trackingUrl?: string
-    shippingCode?: ShippingCode
-    pickupTime?: {
-      date: string
-      timeWindowID?: string
-    }
-  }) {
-    const gridPayload = await this.emailUtils.createGridPayloadWithProductVariants(
-      productsVariantIDs
-    )
-
-    const data = {
-      products: gridPayload,
-      orderNumber: `${reservation.reservationNumber}`,
-      trackingNumber,
-      trackingURL: trackingUrl,
-      id: user.id,
-      customerWillPickUp: shippingCode === ShippingCode.Pickup,
       ...(pickupTime && {
         pickup: {
           date: DateTime.fromISO(pickupTime?.date).toJSDate(),
@@ -310,6 +280,26 @@ export class EmailService {
           )?.display,
         },
       }),
+    })
+  }
+
+  async sendReservationConfirmationEmail({
+    user,
+    productsVariantIDs,
+    reservation,
+  }: {
+    user: EmailUser
+    productsVariantIDs: string[]
+    reservation: { reservationNumber: number }
+  }) {
+    const gridPayload = await this.emailUtils.createGridPayloadWithProductVariants(
+      productsVariantIDs
+    )
+
+    const data = {
+      products: gridPayload,
+      orderNumber: `${reservation.reservationNumber}`,
+      id: user.id,
     }
 
     const payload = await RenderEmail.reservationConfirmation(data)
