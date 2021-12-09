@@ -95,7 +95,9 @@ type OrderLineItem implements LineItemInterface {
 
 input CreateDraftedOrderInput {
   orderType: OrderType!
-  productVariantID: ID!
+  # FIXME: Can eventually remove productVariantID as it's deprecated
+  productVariantID: ID
+  productVariantIds: [ID!]
 }
 
 input SubmitOrderInput {

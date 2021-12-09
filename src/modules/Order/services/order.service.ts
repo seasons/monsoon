@@ -5,6 +5,7 @@ import { ProductVariantService } from "@app/modules/Product/services/productVari
 import { ShopifyService } from "@app/modules/Shopify/services/shopify.service"
 import { ProductUtilsService } from "@app/modules/Utils/services/product.utils.service"
 import { UtilsService } from "@app/modules/Utils/services/utils.service"
+import { OrderLineItemCreateInput } from "@app/prisma/prisma.binding"
 import { ShippingService } from "@modules/Shipping/services/shipping.service"
 import { Injectable } from "@nestjs/common"
 import {
@@ -14,6 +15,7 @@ import {
   OrderType,
   PhysicalProduct,
   PhysicalProductPrice,
+  Product,
 } from "@prisma/client"
 import {
   BillingInfo,
@@ -37,6 +39,15 @@ type InvoiceCharge = {
   description: string
   taxable: boolean
   avalara_tax_code: string
+}
+
+type BuyUsedOrderItem = {
+  physicalProduct: Pick<PhysicalProduct, "id"> & {
+    price: Pick<PhysicalProductPrice, "buyUsedEnabled" | "buyUsedPrice">
+  }
+  shippingRequired: boolean
+  name: string
+  productTaxCode: string
 }
 
 type InvoiceInput = {
@@ -79,11 +90,11 @@ export class OrderService {
   }
 
   async getBuyUsedMetadata({
-    productVariantID,
+    productVariantIds,
     customer,
     type,
   }: {
-    productVariantID: string
+    productVariantIds: string[]
     customer: Customer
     type: "draft" | "order"
   }): Promise<{
@@ -93,8 +104,12 @@ export class OrderService {
     shippingAddress: Location
     orderLineItems: OrderLineItem[]
   }> {
-    const productVariant = await this.prisma.client.productVariant.findUnique({
-      where: { id: productVariantID },
+    const productVariants = await this.prisma.client.productVariant.findMany({
+      where: {
+        id: {
+          in: productVariantIds,
+        },
+      },
       select: {
         id: true,
         physicalProducts: {
@@ -162,48 +177,29 @@ export class OrderService {
       },
     })
 
-    // FIXME: We're assuming that every physical product has the same price for a variant,
-    // so take the first valid result.
-    const bagItems = ((customerWithData as any)?.bagItems || []) as [
-      BagItem & {
-        productVariant: { id: string }
-      }
-    ]
-    const isProductVariantReserved = bagItems.some(
-      ({ status, productVariant: { id: productVariantId } }) =>
-        status === "Reserved" && productVariantId === productVariant.id
-    )
-    // Shipping is included only if user does not already have the product.
-    const packages = await (isProductVariantReserved
-      ? Promise.resolve(null)
-      : this.shipping.getBuyUsedShippingRate(productVariant.id, customer))
-
-    const shipping = packages?.sentRate
-
-    const physicalProduct = this.getPhysicalProductForOrder(
-      productVariant,
-      isProductVariantReserved,
+    const orderItems: BuyUsedOrderItem[] = await this.getPhysicalProductForOrder(
+      productVariants,
       customerWithData
     )
 
-    const productName = (productVariant?.product as any)?.name
+    const physicalProductsToShip =
+      orderItems.filter(x => x.shippingRequired).map(x => x.physicalProduct) ??
+      []
 
-    const productTaxCode = await this.getProductTaxCode(
-      (productVariant?.product as any)?.category?.id
-    )
+    const physicalProducts = orderItems.map(x => x.physicalProduct)
+
+    // Shipping is included on products the customer has reserved
+    const packages = await (physicalProductsToShip.length > 0
+      ? this.shipping.getBuyUsedShippingRate(
+          physicalProductsToShip.map(pv => pv.id),
+          customer
+        )
+      : Promise.resolve(null))
+
+    const shipping = packages?.sentRate
 
     const shippingAddress = customerWithData?.detail
       ?.shippingAddress as Location
-
-    if (
-      !physicalProduct ||
-      !physicalProduct?.price?.buyUsedEnabled ||
-      !physicalProduct?.price?.buyUsedPrice
-    ) {
-      throw new Error(
-        "ProductVariant is not enabled for Buy Used, is missing a price, or is unavailable for purchase."
-      )
-    }
 
     const purchaseCreditsApplied =
       customerWithData.membership.purchaseCredits ?? 0
@@ -213,32 +209,89 @@ export class OrderService {
     const hasCredits = creditsAvailable > 0
 
     const totalCreditsAvailable = creditsAvailable + purchaseCreditsApplied
-    const buyUsedPrice = physicalProduct.price.buyUsedPrice
+    const buyUsedPrices = physicalProducts.map(pp => pp.price.buyUsedPrice)
+    const buyUsedPriceSum = buyUsedPrices.reduce((acc, curVal) => {
+      return acc + curVal
+    }, 0)
+
     const totalCreditsApplied =
-      totalCreditsAvailable > buyUsedPrice
-        ? buyUsedPrice
+      totalCreditsAvailable > buyUsedPriceSum
+        ? buyUsedPriceSum
         : totalCreditsAvailable
 
     const creditsApplied = totalCreditsApplied - purchaseCreditsApplied
 
-    const orderLineItems = [
-      {
+    let totalCreditsToApply = purchaseCreditsApplied + creditsApplied
+
+    const getChargePrice = lineItemPrice => {
+      let chargePrice = lineItemPrice
+
+      if (type === "draft" && totalCreditsToApply > 0) {
+        if (chargePrice > totalCreditsToApply) {
+          chargePrice = chargePrice - totalCreditsToApply
+          totalCreditsToApply = 0
+        } else {
+          totalCreditsToApply = totalCreditsToApply - lineItemPrice
+          chargePrice = 0
+        }
+      }
+
+      return chargePrice
+    }
+
+    const productLineItems: OrderLineItemCreateInput[] = []
+    const charges = []
+    for (const orderItem of orderItems) {
+      const physicalProduct = orderItem.physicalProduct
+      const shippingRequired = orderItem.shippingRequired
+
+      if (
+        !physicalProduct ||
+        !physicalProduct?.price?.buyUsedEnabled ||
+        !physicalProduct?.price?.buyUsedPrice
+      ) {
+        throw new Error(
+          "ProductVariant is not enabled for Buy Used, is missing a price, or is unavailable for purchase."
+        )
+      }
+
+      charges.push({
+        amount: getChargePrice(physicalProduct.price.buyUsedPrice),
+        taxable: true,
+        description: orderItem.name,
+        avalara_tax_code: orderItem.productTaxCode,
+      })
+
+      productLineItems.push({
         recordID: physicalProduct.id,
         recordType: "PhysicalProduct",
-        needShipping: !isProductVariantReserved,
+        needShipping: shippingRequired,
         price: physicalProduct.price.buyUsedPrice,
         currencyCode: "USD",
-      },
-      !isProductVariantReserved
-        ? {
-            recordID: cuid(),
-            recordType: "Package",
-            price: shipping.amount,
-            currencyCode: "USD",
-            needShipping: false,
-          }
-        : null,
-      ,
+        name: orderItem.name,
+      })
+      if (shippingRequired) {
+        const shippingPrice = shipping.amount
+
+        charges.push({
+          amount: getChargePrice(shippingPrice),
+          taxable: true,
+          description: shipping?.rate?.servicelevel?.name || "Shipping",
+          avalara_tax_code: "FR020000",
+        })
+
+        productLineItems.push({
+          recordID: cuid(),
+          recordType: "Package",
+          price: shippingPrice,
+          currencyCode: "USD",
+          needShipping: false,
+        })
+      }
+    }
+
+    const orderLineItems = [
+      ...productLineItems,
       hasPurchaseCredits
         ? {
             name: "Membership discount",
@@ -259,32 +312,6 @@ export class OrderService {
         : null,
     ].filter(Boolean) as OrderLineItem[]
 
-    let totalCreditsToApply = purchaseCreditsApplied + creditsApplied
-
-    const charges = orderLineItems
-      ?.map(orderLineItem => {
-        let price = orderLineItem.price
-        // In draft mode we haven't applied the credits yet, so we have to mock them,
-        // otherwise the taxes won't be correct in the order estimate
-        if (type === "draft" && totalCreditsToApply > 0) {
-          if (price > totalCreditsToApply) {
-            price = price - totalCreditsToApply
-            totalCreditsToApply = 0
-          } else {
-            price = 0
-            totalCreditsToApply = totalCreditsToApply - orderLineItem.price
-          }
-        }
-        return this.getChargebeeChargeForOrderLineItem({
-          price,
-          recordType: orderLineItem.recordType,
-          productName,
-          productTaxCode,
-          shippingDescription: shipping?.rate?.servicelevel?.name || "Shipping",
-        })
-      })
-      .filter(Boolean)
-
     return {
       shippingAddress,
       orderLineItems,
@@ -294,7 +321,9 @@ export class OrderService {
         customer_id: customerWithData.user.id,
         // We used "Purchase Used" to ID a buy used invoice in chargebee webhooks. Change
         // with caution.
-        invoice_note: `Purchase Used ${productName}`,
+        invoice_note: `Purchase Used ${productVariants
+          .map(pv => pv.product.name)
+          .join(", ")}`,
         shipping_address: this.getChargebeeShippingAddress({
           location: shippingAddress,
           user: customerWithData.user,
@@ -699,11 +728,11 @@ export class OrderService {
   }
 
   async buyUsedCreateDraftedOrder({
-    productVariantID,
+    productVariantIds,
     customer,
     select,
   }: {
-    productVariantID: string
+    productVariantIds: string[]
     customer: Customer
     select: Prisma.OrderSelect
   }): Promise<Order> {
@@ -713,7 +742,7 @@ export class OrderService {
       purchaseCreditsApplied,
       creditsApplied,
     } = await this.getBuyUsedMetadata({
-      productVariantID,
+      productVariantIds,
       customer,
       type: "draft",
     })
@@ -781,29 +810,24 @@ export class OrderService {
         },
       },
     })
-    const physicalProductId = orderWithData.lineItems.find(
-      orderLineItem => orderLineItem.recordType === "PhysicalProduct"
-    ).recordID
-    const physicalProductWithVariant = await this.prisma.client.physicalProduct.findUnique(
-      {
-        where: { id: physicalProductId },
-        select: {
-          id: true,
-          productVariant: {
-            select: {
-              id: true,
-              reservable: true,
-              offloaded: true,
-              reserved: true,
-            },
+    const physicalProductIds = orderWithData.lineItems
+      .filter(lineItem => lineItem.recordType === "PhysicalProduct")
+      .map(lineItem => lineItem.recordID)
+
+    const physicalProducts = await this.prisma.client.physicalProduct.findMany({
+      where: { id: { in: physicalProductIds } },
+      select: {
+        id: true,
+        productVariant: {
+          select: {
+            id: true,
+            reservable: true,
+            offloaded: true,
+            reserved: true,
           },
         },
-      }
-    )
-    const productVariant = (physicalProductWithVariant.productVariant as unknown) as Pick<
-      ProductVariant,
-      "id" | "reservable" | "offloaded" | "reserved"
-    >
+      },
+    })
 
     const {
       invoice,
@@ -811,7 +835,9 @@ export class OrderService {
       purchaseCreditsApplied,
       creditsApplied,
     } = await this.getBuyUsedMetadata({
-      productVariantID: productVariant.id,
+      productVariantIds: physicalProducts.map(
+        physProd => physProd.productVariant.id
+      ),
       customer,
       type: "order",
     })
@@ -880,16 +906,29 @@ export class OrderService {
 
     const orderNeedsShipping = orderLineItemsWithShipping.length > 0
 
+    const physicalProductIdsToShip = orderLineItemsWithShipping.map(
+      o => o.recordID
+    )
+    const physicalProducsToShip = physicalProducts.filter(physProd =>
+      physicalProductIdsToShip.includes(physProd.id)
+    )
+    const variantsToShip = physicalProducsToShip.map(
+      physProd => physProd.productVariant
+    )
+    const variantIdsToShip = variantsToShip.map(variant => variant.id)
+    const variantsWithoutShipping =
+      physicalProducts
+        .filter(physProd => !physicalProductIdsToShip.includes(physProd.id))
+        ?.map(physProd => physProd.productVariant) ?? []
+
     const getOrderShippingUpdate = async () => {
       if (!orderNeedsShipping) {
         return {}
       }
 
       const [shippoTransaction, shipmentWeight] = await Promise.all([
-        this.shipping.createBuyUsedShippingLabel(productVariant.id, customer),
-        this.shipping.calcShipmentWeightFromProductVariantIDs([
-          productVariant.id,
-        ]),
+        this.shipping.createBuyUsedShippingLabel(variantIdsToShip, customer),
+        this.shipping.calcShipmentWeightFromProductVariantIDs(variantIdsToShip),
       ])
 
       return {
@@ -928,24 +967,46 @@ export class OrderService {
 
     const orderShippingUpdate = await getOrderShippingUpdate()
 
-    let updateProductVariantData
-    if (orderNeedsShipping) {
-      // Item is at the warehouse
-      updateProductVariantData = this.productVariant.getCountsForStatusChange({
-        productVariant,
-        oldInventoryStatus: "Reservable",
-        newInventoryStatus: "Offloaded",
-      })
-    } else {
-      // Item is with the customer.
-      // - Delete the bag item.
-      // - If this is the last item in their bag, mark the reservation as Completed
-      updateProductVariantData = this.productVariant.getCountsForStatusChange({
-        productVariant,
-        oldInventoryStatus: "Reserved",
-        newInventoryStatus: "Offloaded",
-      })
+    const productVariants = physicalProducts.map(
+      physProd => physProd.productVariant
+    )
+    const productVariantIds = productVariants.map(variant => variant.id)
 
+    for (const productVariant of variantsToShip) {
+      const updateProductVariantData = this.productVariant.getCountsForStatusChange(
+        {
+          productVariant,
+          oldInventoryStatus: "Reservable",
+          newInventoryStatus: "Offloaded",
+        }
+      )
+
+      promises.push(
+        this.prisma.client.productVariant.update({
+          where: { id: productVariant.id },
+          data: updateProductVariantData,
+        })
+      )
+    }
+
+    for (const productVariant of variantsWithoutShipping) {
+      const updateProductVariantData = this.productVariant.getCountsForStatusChange(
+        {
+          productVariant,
+          oldInventoryStatus: "Reserved",
+          newInventoryStatus: "Offloaded",
+        }
+      )
+
+      promises.push(
+        this.prisma.client.productVariant.update({
+          where: { id: productVariant.id },
+          data: updateProductVariantData,
+        })
+      )
+    }
+
+    if (variantsWithoutShipping?.length > 0) {
       const reservedBagItems = await this.prisma.client.bagItem.findMany({
         where: {
           customer: { id: customer.id },
@@ -953,30 +1014,41 @@ export class OrderService {
         },
         select: { id: true, productVariant: { select: { id: true } } },
       })
-      const bagItemToDelete = reservedBagItems.find(
-        a => a.productVariant.id === productVariant.id
+
+      const bagItemsToDelete = reservedBagItems.filter(a =>
+        productVariantIds.includes(a.productVariant.id)
       )
+
       promises.push(
-        this.prisma.client.bagItem.delete({ where: { id: bagItemToDelete.id } })
+        this.prisma.client.bagItem.deleteMany({
+          where: { id: { in: bagItemsToDelete.map(bagItem => bagItem.id) } },
+        })
       )
 
       const reservationToUpdate = await this.prisma.client.reservation.findFirst(
         {
           where: {
-            products: { some: { productVariant: { id: productVariant.id } } },
+            reservationPhysicalProducts: {
+              some: { physicalProduct: { id: physicalProductIds[0] } },
+            },
             customer: { id: customer.id },
           },
           orderBy: { createdAt: "desc" },
           select: { id: true, status: true },
         }
       )
+
       const shouldCompleteReservation =
-        reservedBagItems.length === 1 && !!bagItemToDelete
+        reservedBagItems.length === bagItemsToDelete.length
       promises.push(
         this.prisma.client.reservation.update({
           where: { id: reservationToUpdate.id },
           data: {
-            purchasedProducts: { connect: { id: physicalProductId } },
+            purchasedProducts: {
+              connect: physicalProductIds.map(id => {
+                return { id }
+              }),
+            },
             status: shouldCompleteReservation
               ? "Completed"
               : reservationToUpdate.status,
@@ -987,17 +1059,13 @@ export class OrderService {
 
     promises.push(
       ...[
-        this.prisma.client.physicalProduct.update({
-          where: { id: physicalProductId },
+        this.prisma.client.physicalProduct.updateMany({
+          where: { id: { in: physicalProductIds } },
           data: {
             inventoryStatus: "Offloaded",
             offloadMethod: "SoldToUser",
             offloadNotes: `Order Number: ${orderWithData.orderNumber}`,
           },
-        }),
-        this.prisma.client.productVariant.update({
-          where: { id: productVariant.id },
-          data: updateProductVariantData,
         }),
         this.prisma.client.order.update({
           where: { id: order.id },
@@ -1259,15 +1327,19 @@ export class OrderService {
       : "PC040000"
   }
 
-  private getPhysicalProductForOrder(
-    productVariant: Pick<ProductVariant, "id"> & {
-      physicalProducts: Array<
-        Pick<PhysicalProduct, "inventoryStatus" | "id"> & {
-          price: Pick<PhysicalProductPrice, "buyUsedEnabled" | "buyUsedPrice">
+  private async getPhysicalProductForOrder(
+    productVariants: Array<
+      Pick<ProductVariant, "id"> & {
+        product: Pick<Product, "name" | "id"> & {
+          category: Pick<Category, "id">
         }
-      >
-    },
-    isProductVariantReserved: boolean,
+        physicalProducts: Array<
+          Pick<PhysicalProduct, "inventoryStatus" | "id"> & {
+            price: Pick<PhysicalProductPrice, "buyUsedEnabled" | "buyUsedPrice">
+          }
+        >
+      }
+    >,
     customerWithData: {
       bagItems: Array<
         Pick<BagItem, "status"> & {
@@ -1280,25 +1352,73 @@ export class OrderService {
       >
     }
   ) {
-    if (isProductVariantReserved) {
-      const bagItem = customerWithData.bagItems.find(
-        a =>
-          a.productVariant.id === productVariant.id && a.status === "Reserved"
+    const physicalProductsWithShippingRequirements = []
+    for (const productVariant of productVariants) {
+      const productTaxCode = await this.getProductTaxCode(
+        productVariant?.product?.category?.id
       )
-      if (!bagItem) {
-        throw "Expected reserved bag item"
-      }
-      return bagItem.physicalProduct
-    } else {
-      const physicalProduct = productVariant.physicalProducts.find(
-        physicalProduct =>
-          physicalProduct?.price?.buyUsedEnabled &&
-          physicalProduct.inventoryStatus === "Reservable"
+      const name = productVariant.product.name
+      const isProductVariantReserved = this.isProductVariantReserved(
+        productVariant,
+        customerWithData
       )
-      if (!physicalProduct) {
-        throw "Could not find reservable unit to sell"
+      if (isProductVariantReserved) {
+        const bagItem = customerWithData.bagItems.find(
+          a =>
+            a.productVariant.id === productVariant.id && a.status === "Reserved"
+        )
+        if (!bagItem) {
+          throw "Expected reserved bag item"
+        }
+        physicalProductsWithShippingRequirements.push({
+          physicalProduct: bagItem.physicalProduct,
+          shippingRequired: false,
+          name,
+          productTaxCode,
+        })
+      } else {
+        const physicalProduct = productVariant.physicalProducts.find(
+          physicalProduct =>
+            physicalProduct?.price?.buyUsedEnabled &&
+            physicalProduct.inventoryStatus === "Reservable"
+        )
+        if (!physicalProduct) {
+          throw "Could not find reservable unit to sell"
+        }
+        physicalProductsWithShippingRequirements.push({
+          physicalProduct: physicalProduct,
+          shippingRequired: true,
+          name,
+          productTaxCode,
+        })
       }
-      return physicalProduct
     }
+    return physicalProductsWithShippingRequirements
+  }
+
+  private isProductVariantReserved(
+    productVariant: Pick<ProductVariant, "id"> & {
+      physicalProducts: Array<
+        Pick<PhysicalProduct, "inventoryStatus" | "id"> & {
+          price: Pick<PhysicalProductPrice, "buyUsedEnabled" | "buyUsedPrice">
+        }
+      >
+    },
+    customerWithData: {
+      bagItems: Array<
+        Pick<BagItem, "status"> & {
+          productVariant: Pick<ProductVariant, "id">
+        } & {
+          physicalProduct: Pick<PhysicalProduct, "id"> & {
+            price: Pick<PhysicalProductPrice, "buyUsedEnabled" | "buyUsedPrice">
+          }
+        }
+      >
+    }
+  ) {
+    return customerWithData.bagItems.some(
+      ({ status, productVariant: { id: productVariantId } }) =>
+        status === "Reserved" && productVariantId === productVariant.id
+    )
   }
 }
