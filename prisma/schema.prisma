@@ -919,6 +919,18 @@ model Location {
   Reservation                           Reservation[]
 }
 
+model ReservationProcessingStats {
+  id                                      String      @id @default(cuid()) @db.VarChar(30)
+  initialNumQueuedItems                   Int
+  initialNumQueuedReservations            Int
+  currentNumQueuedItems                   Int
+  currentNumQueuedReservations            Int
+  initialNumDeliveredToBusinessItems      Int
+  currentNumDeliveredToBusinessItems      Int
+  day                                     DateTime    @default(now())
+  updatedAt                               DateTime      @updatedAt
+}
+
 model Order {
   id            String             @id @default(cuid()) @db.VarChar(30)
   subTotal      Int?
@@ -1102,7 +1114,7 @@ model PhysicalProduct {
   locationId                   String?                        @map("location") @db.VarChar(30)
   offloadMethod                PhysicalProductOffloadMethod?
   offloadNotes                 String?
-  sequenceNumber               Int
+  sequenceNumber               Int                            @unique()
   warehouseLocationId          String?                        @map("warehouseLocation") @db.VarChar(30)
   dateOrdered                  DateTime?
   dateReceived                 DateTime?

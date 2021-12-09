@@ -25,7 +25,6 @@ type Query {
     @hasRole(roles: [Customer, Admin, Partner])
     @cacheControl(maxAge: 0)
   reservationFeedback: ReservationFeedback @cacheControl(maxAge: 0)
-
   inboundReservations(
     skip: Int!
     take: Int!
@@ -38,6 +37,7 @@ type Query {
   ): ReservationPhysicalProductConnection!
     @hasRole(roles: [Admin])
     @cacheControl(maxAge: 0)
+  reservationProcessingStats: ReservationProcessingStats!
 }
 
 type Mutation {
@@ -89,6 +89,7 @@ type Mutation {
   markAsLost(lostBagItemId: ID!): Boolean @hasRole(roles: [Admin])
   markAsPickedUp(bagItemIds: [ID]!): Boolean @hasRole(roles: [Admin])
   markNotReturned(bagItemIds: [ID]!): Boolean @hasRole(roles: [Admin])
+  markAsCancelled(bagItemIds: [ID]!): Boolean @hasRole(roles: [Admin])
 }
 
 type ReservationFeedback {
@@ -400,6 +401,18 @@ type ReservationPhysicalProduct @cacheControl(maxAge: 0) {
   status: ReservationPhysicalProductStatus!
 
   createdAt: DateTime
+  updatedAt: DateTime
+}
+
+type ReservationProcessingStats @cacheControl(maxAge: 0) {
+  id: ID!
+  initialNumQueuedItems: Int!
+  initialNumQueuedReservations: Int!
+  currentNumQueuedItems: Int!
+  currentNumQueuedReservations: Int!
+  initialNumDeliveredToBusinessItems: Int!
+  currentNumDeliveredToBusinessItems: Int!
+  day: DateTime
   updatedAt: DateTime
 }
 

@@ -1,6 +1,7 @@
 import { ErrorService } from "@app/modules/Error/services/error.service"
 import { ProductVariantService } from "@app/modules/Product/services/productVariant.service"
 import { ProductUtilsService } from "@app/modules/Utils/services/product.utils.service"
+import { ReservationUtilsService } from "@app/modules/Utils/services/reservation.utils.service"
 import { UtilsService } from "@app/modules/Utils/services/utils.service"
 import { EmailService } from "@modules/Email/services/email.service"
 import { ShippingService } from "@modules/Shipping/services/shipping.service"
@@ -42,7 +43,8 @@ export class ReserveService {
     private readonly emails: EmailService,
     private readonly error: ErrorService,
     private readonly utils: UtilsService,
-    private readonly productUtils: ProductUtilsService
+    private readonly productUtils: ProductUtilsService,
+    private readonly reservationUtils: ReservationUtilsService
   ) {}
 
   async reserveItems({
@@ -224,6 +226,7 @@ export class ReserveService {
     // )
 
     try {
+      await this.reservationUtils.updateOutboundResProcessingStats()
       await this.productUtils.removeRestockNotifications(
         productVariantIDs,
         customer.id
