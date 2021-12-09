@@ -226,11 +226,11 @@ export class ReserveService {
     // )
 
     try {
+      await this.reservationUtils.updateOutboundResProcessingStats()
       await this.productUtils.removeRestockNotifications(
         productVariantIDs,
         customer.id
       )
-      await this.reservationUtils.updateOutboundResProcessingStats()
     } catch (err) {
       this.error.setUserContext(customerWithData.user)
       this.error.setExtraContext({ productVariantIDs })
