@@ -1521,7 +1521,7 @@ model ReservationPhysicalProduct {
   pickupDate DateTime?
 
   // Minimum charge applied at reservation time, in cents.
-  minimumAmountApplied Int?
+  minimumAmountApplied Int? @default(0)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
