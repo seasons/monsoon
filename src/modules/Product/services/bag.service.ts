@@ -503,9 +503,11 @@ export class BagService {
     ].includes(lostResPhysProd.status)
 
     const lostInboundItemsResPhysProds = [
+      "AtHome",
       "ScannedOnInbound",
       "InTransitInbound",
       "DeliveredToBusiness",
+      "ReturnPending",
     ].includes(lostResPhysProd.status)
 
     if (lostOutboundResPhysProds) {
