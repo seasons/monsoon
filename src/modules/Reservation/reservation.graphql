@@ -25,7 +25,6 @@ type Query {
     @hasRole(roles: [Customer, Admin, Partner])
     @cacheControl(maxAge: 0)
   reservationFeedback: ReservationFeedback @cacheControl(maxAge: 0)
-
   inboundReservations(
     skip: Int!
     take: Int!
@@ -39,8 +38,6 @@ type Query {
     @hasRole(roles: [Admin])
     @cacheControl(maxAge: 0)
   reservationProcessingStats: ReservationProcessingStats!
-    @hasRole(roles: [Admin])
-    @cacheControl(maxAge: 0)
 }
 
 type Mutation {
