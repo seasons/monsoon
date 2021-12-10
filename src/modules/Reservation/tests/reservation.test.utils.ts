@@ -124,7 +124,7 @@ export class ReservationTestUtilsService {
     // Don't do the charge min in test code...
     const mock = jest
       .spyOn(this.reserve, "chargeMinimum")
-      .mockImplementation(async () => {})
+      .mockImplementation(async () => ({ invoice: {}, promises: [] }))
 
     const { shippingCode = "UPSGround", numDaysAgo = 0 } = options
 
