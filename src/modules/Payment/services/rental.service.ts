@@ -224,7 +224,9 @@ export class RentalService {
       // If we're retrying an invoice, we may have already created their line items.
       // So we don't want to recreate them.
       if (lineItems.length === 0) {
-        lineItems = await this.createRentalInvoiceLineItems(invoice)
+        lineItems = await this.createRentalInvoiceLineItems(invoice, {
+          upTo: null,
+        })
       } else {
         // If there are already line items, that means we may have tried to
         // process this before. So we clear out any added charges we may have on
@@ -754,7 +756,10 @@ export class RentalService {
     }
   }
 
-  async createRentalInvoiceLineItems(invoice: ProcessableRentalInvoice) {
+  async createRentalInvoiceLineItems(
+    invoice: ProcessableRentalInvoice,
+    options: { upTo?: "today" | "billingEnd" | null } = { upTo: null }
+  ) {
     const addLineItemBasics = input => ({
       ...input,
       rentalInvoice: { connect: { id: invoice.id } },
@@ -786,9 +791,13 @@ export class RentalService {
         data,
       })
     )
-    const lineItems = await this.prisma.client.$transaction(lineItemPromises)
+    let lineItems
 
-    return lineItems
+    if (!options.upTo) {
+      lineItems = await this.prisma.client.$transaction(lineItemPromises)
+    }
+
+    return lineItems || formattedLineItemDatas
   }
 
   async getRentalUsageLineItemDatas(invoice: ProcessableRentalInvoice) {

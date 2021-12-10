@@ -30,6 +30,68 @@ export class CustomerMembershipFieldsResolver {
   }
 
   @ResolveField()
+  async financeMetrics(
+    @Parent() customerMembership: CustomerMembership,
+    @Loader({
+      name: PrismaLoader.name,
+      params: {
+        model: "RentalInvoice",
+        formatWhere: keys =>
+          Prisma.validator<Prisma.RentalInvoiceWhereInput>()({
+            membership: {
+              id: {
+                in: keys,
+              },
+            },
+          }),
+        getKeys: a => {
+          return [a.membershipId]
+        },
+        orderBy: {
+          createdAt: "desc",
+        },
+        keyToDataRelationship: "OneToMany",
+        select: Prisma.validator<Prisma.RentalInvoiceSelect>()({
+          id: true,
+          billingStartAt: true,
+          billingEndAt: true,
+          status: true,
+          membership: true,
+          membershipId: true,
+          estimatedTotal: true,
+          lineItems: true,
+          reservationPhysicalProducts: {
+            select: {
+              id: true,
+              outboundPackage: true,
+              physicalProduct: true,
+            },
+          },
+        }),
+      },
+    })
+    rentalInvoiceLoader: PrismaDataLoader
+  ) {
+    const rentalInvoices = await rentalInvoiceLoader.load(customerMembership.id)
+
+    const currentInvoice = head(rentalInvoices)
+
+    const estimatedTotal = await this.rental.calculateCurrentBalance(
+      currentInvoice.membership.customerId,
+      {
+        upTo: "billingEnd",
+      }
+    )
+
+    const lineItems = await this.rental.createRentalInvoiceLineItems(
+      currentInvoice,
+      { upTo: "today" }
+    )
+
+    return currentInvoice
+  }
+
+  @ResolveField()
   async currentRentalInvoice(
     @Parent() parent: CustomerMembership,
     @Loader({

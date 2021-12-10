@@ -171,12 +171,19 @@ input NotificationBarReceiptUpdateInput {
   viewCount: Int
   clickCount: Int
 }
+type FinanceMetrics {
+  estimatedTotal: Int
+  estimatedTotalLineItems: [RentalInvoiceLineItem!]
+  currentBalance: Int
+  currentBalanceLintItems: [RentalInvoiceLineItem!]
+}
 
 type CustomerMembership {
   id: ID!
   subscriptionId: String!
   plan: PaymentPlan
   currentBalance: Int
+  financeMetrics: FinanceMetrics
   creditBalance: Int
   adjustedCreditBalance: Int
   currentRentalInvoice: RentalInvoice
