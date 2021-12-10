@@ -241,6 +241,7 @@ export class OrderService {
 
     const productLineItems: OrderLineItemCreateInput[] = []
     const charges = []
+    let totalShippingPrice = 0
     for (const orderItem of orderItems) {
       const physicalProduct = orderItem.physicalProduct
       const shippingRequired = orderItem.shippingRequired
@@ -280,14 +281,18 @@ export class OrderService {
           avalara_tax_code: "FR020000",
         })
 
-        productLineItems.push({
-          recordID: cuid(),
-          recordType: "Package",
-          price: shippingPrice,
-          currencyCode: "USD",
-          needShipping: false,
-        })
+        totalShippingPrice += shippingPrice
       }
+    }
+
+    if (totalShippingPrice > 0) {
+      productLineItems.push({
+        recordID: cuid(),
+        recordType: "Package",
+        price: totalShippingPrice,
+        currencyCode: "USD",
+        needShipping: false,
+      })
     }
 
     const orderLineItems = [
@@ -1053,6 +1058,24 @@ export class OrderService {
               ? "Completed"
               : reservationToUpdate.status,
           },
+        })
+      )
+    }
+
+    const bagItemsToDelete = await this.prisma.client.bagItem.findMany({
+      where: {
+        customer: { id: customer.id },
+        isInCart: true,
+      },
+      select: {
+        id: true,
+      },
+    })
+
+    if (bagItemsToDelete?.length > 0) {
+      promises.push(
+        this.prisma.client.bagItem.deleteMany({
+          where: { id: { in: bagItemsToDelete.map(item => item.id) } },
         })
       )
     }
