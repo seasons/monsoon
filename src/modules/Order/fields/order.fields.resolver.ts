@@ -10,4 +10,11 @@ export class OrderFieldsResolver {
       return sum + lineItem.taxPrice
     }, 0)
   }
+
+  @ResolveField()
+  async lineItems(@Parent() order) {
+    return order?.lineItems.sort((a, b) => {
+      return a.recordType === "Package" ? 1 : -1
+    })
+  }
 }
