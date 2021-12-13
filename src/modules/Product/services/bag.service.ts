@@ -246,13 +246,15 @@ export class BagService {
             id: true,
             productVariant: { select: { id: true } },
             saved: true,
+            isInCart: true,
           },
         },
       },
     })
 
-    const bag = custWithData.bagItems?.filter(a => a.saved === false)
-    const savedItems = custWithData.bagItems?.filter(a => a.saved === true)
+    const bag = custWithData.bagItems?.filter(
+      a => a.saved === false && !a.isInCart
+    )
     const customerPlanItemCount = custWithData.membership?.plan?.itemCount || 6
 
     const productVariant = await this.prisma.client.productVariant.findUnique({
@@ -280,11 +282,13 @@ export class BagService {
       throw new ApolloError("Bag is full", "514")
     }
 
-    const existingSavedItemForVariant = savedItems.find(
-      a => a.productVariant.id === itemId
+    // Existing bag item from saved or cart
+    const existingBagItem = custWithData.bagItems.find(
+      a => a.productVariant.id === itemId && (a.isInCart || a.saved)
     )
+
     const result = await this.prisma.client.bagItem.upsert({
-      where: { id: existingSavedItemForVariant?.id || "" },
+      where: { id: existingBagItem?.id || "" },
       create: {
         customer: {
           connect: {
@@ -301,7 +305,7 @@ export class BagService {
         isInCart: false,
         status: "Added",
       },
-      update: { saved: false },
+      update: { saved: false, isInCart: false },
       select,
     })
     return result
