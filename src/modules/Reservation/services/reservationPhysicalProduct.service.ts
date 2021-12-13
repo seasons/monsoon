@@ -541,8 +541,12 @@ export class ReservationPhysicalProductService {
   async generateShippingLabels({
     bagItemIds,
     select,
+    options = { includeLabelForPickups: false },
   }: {
     bagItemIds?: string[]
+    options?: {
+      includeLabelForPickups?: boolean
+    }
     select?: Prisma.PackageSelect
   }) {
     const bagItems = await this.prisma.client.bagItem.findMany({
@@ -583,16 +587,41 @@ export class ReservationPhysicalProductService {
                 },
               },
             },
+            outboundPackage: {
+              select: {
+                id: true,
+                transactionID: true,
+                shippingLabel: {
+                  select: {
+                    id: true,
+                    image: true,
+                    trackingNumber: true,
+                    trackingURL: true,
+                  },
+                },
+              },
+            },
+            potentialInboundPackage: {
+              select: {
+                id: true,
+                transactionID: true,
+                shippingLabel: {
+                  select: {
+                    id: true,
+                    image: true,
+                    trackingNumber: true,
+                    trackingURL: true,
+                  },
+                },
+              },
+            },
           },
         },
       },
     })
 
-    if (bagItems.length === 0) {
-      throw new Error("No bag items need labels")
-    }
-
     const customerID = bagItems?.[0].customerId
+    const promises = await this.removePreviousShippingLabels(bagItems)
 
     const {
       promises: packagePromises,
@@ -601,10 +630,9 @@ export class ReservationPhysicalProductService {
     } = await this.shippingService.createPackages({
       bagItems,
       customer: { id: customerID },
+      includeLabelForPickups: options?.includeLabelForPickups,
       select,
     })
-
-    const promises = []
 
     for (let bagItem of bagItems) {
       promises.push(
@@ -620,6 +648,11 @@ export class ReservationPhysicalProductService {
                 },
               },
             }),
+            potentialInboundPackage: {
+              connect: {
+                id: inboundPackageId,
+              },
+            },
             physicalProduct: {
               update: {
                 packages: {
@@ -632,22 +665,6 @@ export class ReservationPhysicalProductService {
                     }
                     return [{ id: inboundPackageId }]
                   })(),
-                },
-              },
-            },
-            reservation: {
-              update: {
-                ...(outboundPackageId && {
-                  sentPackage: {
-                    connect: {
-                      id: outboundPackageId,
-                    },
-                  },
-                }),
-                returnPackages: {
-                  connect: {
-                    id: inboundPackageId,
-                  },
                 },
               },
             },
@@ -672,6 +689,49 @@ export class ReservationPhysicalProductService {
     }
 
     return [outboundPackage, inboundPackage]
+  }
+
+  private async removePreviousShippingLabels(bagItems) {
+    const anyBagItemsWithPotentialInboundPackage = bagItems.some(
+      b => !!b.reservationPhysicalProduct.potentialInboundPackage
+    )
+    const promises = []
+    // Void labels for any bagItems that have a potential inbound package
+    if (anyBagItemsWithPotentialInboundPackage) {
+      const transactionIds = new Set<string>()
+      const packageIds = new Set<string>()
+
+      for (let bagItem of bagItems) {
+        const potentialInboundPackage =
+          bagItem.reservationPhysicalProduct.potentialInboundPackage
+        const outboundPackage =
+          bagItem.reservationPhysicalProduct.outboundPackage
+
+        if (potentialInboundPackage) {
+          packageIds.add(potentialInboundPackage.id)
+          transactionIds.add(potentialInboundPackage.transactionID)
+        }
+
+        if (outboundPackage) {
+          packageIds.add(outboundPackage.id)
+          transactionIds.add(outboundPackage.transactionID)
+        }
+      }
+
+      for (let transactionID of transactionIds) {
+        await this.shippingService.voidLabel({
+          transactionID,
+        })
+      }
+
+      for (let packageId of packageIds) {
+        promises.push(
+          this.prisma.client.package.delete({ where: { id: packageId } })
+        )
+      }
+    }
+
+    return promises
   }
 
   async markAsPickedUp(bagItemIds) {
