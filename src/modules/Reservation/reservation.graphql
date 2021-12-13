@@ -86,7 +86,7 @@ type Mutation {
     @hasRole(roles: [Admin])
   generateShippingLabels(
     bagItemIds: [ID!]!
-    options: GenerateShippingLabelOptions
+    options: GenerateShippingLabelOptionsInput
   ): [Package!] @hasRole(roles: [Admin])
   markAsLost(lostBagItemId: ID!): Boolean @hasRole(roles: [Admin])
   markAsPickedUp(bagItemIds: [ID]!): Boolean @hasRole(roles: [Admin])
@@ -94,7 +94,7 @@ type Mutation {
   markAsCancelled(bagItemIds: [ID]!): Boolean @hasRole(roles: [Admin])
 }
 
-input GenerateShippingLabelOptions {
+input GenerateShippingLabelOptionsInput {
   includeLabelForPickups: Boolean
 }
 

@@ -497,7 +497,9 @@ export class ReservationPhysicalProductService {
     })
 
     if (
-      !every(bagItems, b => b.reservationPhysicalProduct?.status === "Picked")
+      !every(bagItems, b =>
+        ["Queued", "Picked"].includes(b.reservationPhysicalProduct?.status)
+      )
     ) {
       throw new Error(
         "All reservation physical product statuses should be set to Picked"
