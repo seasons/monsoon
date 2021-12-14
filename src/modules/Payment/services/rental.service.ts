@@ -1171,7 +1171,7 @@ export class RentalService {
         return {
           price: this.calculateUnadjustedPriceForDaysRented(
             reservationPhysicalProduct.physicalProduct,
-            previousDaysRented
+            daysRented
           ),
           appliedMinimum,
           adjustedForPreviousMinimum,
@@ -1198,7 +1198,7 @@ export class RentalService {
       appliedMinimum = numDaysToCharge > daysRented
       const price = this.calculateUnadjustedPriceForDaysRented(
         reservationPhysicalProduct.physicalProduct,
-        daysRented
+        numDaysToCharge
       )
       return {
         price,
