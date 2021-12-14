@@ -622,6 +622,10 @@ export class ReservationPhysicalProductService {
       },
     })
 
+    if (bagItems.length === 0) {
+      throw new Error("No bag items need labels")
+    }
+
     const customerID = bagItems?.[0].customerId
     const promises = await this.removePreviousShippingLabels(bagItems)
 
@@ -660,12 +664,9 @@ export class ReservationPhysicalProductService {
                 packages: {
                   connect: (() => {
                     if (outboundPackageId) {
-                      return [
-                        { id: inboundPackageId },
-                        { id: outboundPackageId },
-                      ]
+                      return [{ id: outboundPackageId }]
                     }
-                    return [{ id: inboundPackageId }]
+                    return []
                   })(),
                 },
               },
