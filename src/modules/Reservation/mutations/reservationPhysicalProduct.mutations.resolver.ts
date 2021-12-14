@@ -42,9 +42,13 @@ export class ReservationPhysicalProductMutationsResolver {
   }
 
   @Mutation()
-  async generateShippingLabels(@Args() { bagItemIds }, @Select() select) {
+  async generateShippingLabels(
+    @Args() { bagItemIds, options },
+    @Select() select
+  ) {
     return this.reservationPhysicalProduct.generateShippingLabels({
       bagItemIds,
+      options,
       select,
     })
   }
@@ -65,5 +69,10 @@ export class ReservationPhysicalProductMutationsResolver {
   @Mutation()
   async markAsPickedUp(@Args() { bagItemIds }) {
     return await this.reservationPhysicalProduct.markAsPickedUp(bagItemIds)
+  }
+
+  @Mutation()
+  async markAsCancelled(@Args() { bagItemIds }) {
+    return await this.reservationPhysicalProduct.markAsCancelled({ bagItemIds })
   }
 }

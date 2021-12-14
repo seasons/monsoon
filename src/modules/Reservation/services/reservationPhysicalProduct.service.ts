@@ -183,6 +183,101 @@ export class ReservationPhysicalProductService {
     return promises
   }
 
+  async markAsCancelled({ bagItemIds }: { bagItemIds: [string] }) {
+    const cancelledBagItems = await this.prisma.client.bagItem.findMany({
+      where: {
+        id: {
+          in: bagItemIds,
+        },
+      },
+      select: {
+        reservationPhysicalProduct: {
+          select: {
+            id: true,
+            status: true,
+            physicalProduct: {
+              select: {
+                id: true,
+                inventoryStatus: true,
+                productVariant: {
+                  select: {
+                    id: true,
+                    reservable: true,
+                    reserved: true,
+                    nonReservable: true,
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    })
+
+    const promises = []
+
+    const cancelledRPPs = cancelledBagItems.map(
+      a => a.reservationPhysicalProduct
+    )
+
+    for (let cancelledRPP of cancelledRPPs) {
+      const cancelledPhysicalProductNewStatus =
+        cancelledRPP.status === "Queued" ? "Reservable" : "NonReservable"
+      const cancelledPhysicalProduct = cancelledRPP.physicalProduct
+      const cancelledProdVariant = cancelledPhysicalProduct.productVariant
+
+      const productVariantData = this.productVariantService.getCountsForStatusChange(
+        {
+          productVariant: cancelledProdVariant,
+          oldInventoryStatus: cancelledPhysicalProduct.inventoryStatus as InventoryStatus,
+          newInventoryStatus: cancelledPhysicalProductNewStatus,
+        }
+      )
+      promises.push(
+        this.prisma.client.physicalProduct.update({
+          where: {
+            id: cancelledPhysicalProduct.id,
+          },
+          data: {
+            inventoryStatus: cancelledPhysicalProductNewStatus,
+            productVariant: {
+              update: {
+                ...productVariantData,
+              },
+            },
+          },
+        })
+      )
+    }
+
+    promises.push(
+      this.prisma.client.bagItem.deleteMany({
+        where: {
+          id: {
+            in: bagItemIds,
+          },
+        },
+      })
+    )
+
+    promises.push(
+      this.prisma.client.reservationPhysicalProduct.updateMany({
+        where: {
+          id: {
+            in: cancelledRPPs.map(a => a.id),
+          },
+        },
+        data: {
+          status: "Cancelled",
+          cancelledAt: new Date(),
+        },
+      })
+    )
+
+    await this.prisma.client.$transaction(promises)
+    return true
+  }
+
   private async updateReservationsOnReturn(
     productStates: ProductState[],
     customerId: string
@@ -371,6 +466,8 @@ export class ReservationPhysicalProductService {
     }
 
     const results = await this.prisma.client.$transaction(promises)
+    await this.reservationUtils.updateOutboundResProcessingStats()
+
     return results
   }
 
@@ -400,7 +497,9 @@ export class ReservationPhysicalProductService {
     })
 
     if (
-      !every(bagItems, b => b.reservationPhysicalProduct?.status === "Picked")
+      !every(bagItems, b =>
+        ["Queued", "Picked"].includes(b.reservationPhysicalProduct?.status)
+      )
     ) {
       throw new Error(
         "All reservation physical product statuses should be set to Picked"
@@ -444,8 +543,12 @@ export class ReservationPhysicalProductService {
   async generateShippingLabels({
     bagItemIds,
     select,
+    options = { includeLabelForPickups: false },
   }: {
     bagItemIds?: string[]
+    options?: {
+      includeLabelForPickups?: boolean
+    }
     select?: Prisma.PackageSelect
   }) {
     const bagItems = await this.prisma.client.bagItem.findMany({
@@ -455,9 +558,6 @@ export class ReservationPhysicalProductService {
         },
         reservationPhysicalProduct: {
           status: "Packed",
-          outboundPackage: {
-            is: null,
-          },
         },
       },
       select: {
@@ -489,6 +589,34 @@ export class ReservationPhysicalProductService {
                 },
               },
             },
+            outboundPackage: {
+              select: {
+                id: true,
+                transactionID: true,
+                shippingLabel: {
+                  select: {
+                    id: true,
+                    image: true,
+                    trackingNumber: true,
+                    trackingURL: true,
+                  },
+                },
+              },
+            },
+            potentialInboundPackage: {
+              select: {
+                id: true,
+                transactionID: true,
+                shippingLabel: {
+                  select: {
+                    id: true,
+                    image: true,
+                    trackingNumber: true,
+                    trackingURL: true,
+                  },
+                },
+              },
+            },
           },
         },
       },
@@ -499,6 +627,7 @@ export class ReservationPhysicalProductService {
     }
 
     const customerID = bagItems?.[0].customerId
+    const promises = await this.removePreviousShippingLabels(bagItems)
 
     const {
       promises: packagePromises,
@@ -507,10 +636,9 @@ export class ReservationPhysicalProductService {
     } = await this.shippingService.createPackages({
       bagItems,
       customer: { id: customerID },
+      includeLabelForPickups: options?.includeLabelForPickups,
       select,
     })
-
-    const promises = []
 
     for (let bagItem of bagItems) {
       promises.push(
@@ -526,34 +654,20 @@ export class ReservationPhysicalProductService {
                 },
               },
             }),
+            potentialInboundPackage: {
+              connect: {
+                id: inboundPackageId,
+              },
+            },
             physicalProduct: {
               update: {
                 packages: {
                   connect: (() => {
                     if (outboundPackageId) {
-                      return [
-                        { id: inboundPackageId },
-                        { id: outboundPackageId },
-                      ]
+                      return [{ id: outboundPackageId }]
                     }
-                    return [{ id: inboundPackageId }]
+                    return []
                   })(),
-                },
-              },
-            },
-            reservation: {
-              update: {
-                ...(outboundPackageId && {
-                  sentPackage: {
-                    connect: {
-                      id: outboundPackageId,
-                    },
-                  },
-                }),
-                returnPackages: {
-                  connect: {
-                    id: inboundPackageId,
-                  },
                 },
               },
             },
@@ -578,6 +692,49 @@ export class ReservationPhysicalProductService {
     }
 
     return [outboundPackage, inboundPackage]
+  }
+
+  private async removePreviousShippingLabels(bagItems) {
+    const anyBagItemsWithPotentialInboundPackage = bagItems.some(
+      b => !!b.reservationPhysicalProduct.potentialInboundPackage
+    )
+    const promises = []
+    // Void labels for any bagItems that have a potential inbound package
+    if (anyBagItemsWithPotentialInboundPackage) {
+      const transactionIds = new Set<string>()
+      const packageIds = new Set<string>()
+
+      for (let bagItem of bagItems) {
+        const potentialInboundPackage =
+          bagItem.reservationPhysicalProduct.potentialInboundPackage
+        const outboundPackage =
+          bagItem.reservationPhysicalProduct.outboundPackage
+
+        if (potentialInboundPackage) {
+          packageIds.add(potentialInboundPackage.id)
+          transactionIds.add(potentialInboundPackage.transactionID)
+        }
+
+        if (outboundPackage) {
+          packageIds.add(outboundPackage.id)
+          transactionIds.add(outboundPackage.transactionID)
+        }
+      }
+
+      for (let transactionID of transactionIds) {
+        await this.shippingService.voidLabel({
+          transactionID,
+        })
+      }
+
+      for (let packageId of packageIds) {
+        promises.push(
+          this.prisma.client.package.delete({ where: { id: packageId } })
+        )
+      }
+    }
+
+    return promises
   }
 
   async markAsPickedUp(bagItemIds) {

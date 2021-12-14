@@ -1,31 +1,31 @@
-import { create } from "domain"
-
 import { BagService } from "@app/modules/Product/services/bag.service"
-import { ReservationService } from "@app/modules/Reservation"
 import { ReserveService } from "@app/modules/Reservation/services/reserve.service"
+import { ReservationTestUtilsService } from "@app/modules/Reservation/tests/reservation.test.utils"
 import { TestUtilsService } from "@app/modules/Test/services/test.service"
 import { USER_MODULE_DEF } from "@app/modules/User/user.module"
 import { TimeUtilsService } from "@app/modules/Utils/services/time.service"
 import { UtilsService } from "@app/modules/Utils/services/utils.service"
 import { PrismaService } from "@app/prisma/prisma.service"
-import { Res } from "@nestjs/common"
 import { Test } from "@nestjs/testing"
 import chargebee from "chargebee"
 
 import { CustomerService } from "../services/customer.service"
-import { ReservationStatus, prisma } from ".prisma/client"
 
-let timeUtils: TimeUtilsService
+/*
+Keep these in the global scope so helper funcs have access to them
+*/
 let testUtilsService: TestUtilsService
+let timeUtils: TimeUtilsService
 let prismaService: PrismaService
-let utilsService: UtilsService
 
 describe("Cancel Customer", () => {
   let testCustomer
 
+  let utilsService: UtilsService
   let customerService: CustomerService
   let bagService: BagService
   let reserveService: ReserveService
+  let reservationTestUtils: ReservationTestUtilsService
   let customerWithData
   let rentalInvoiceAfterCancellation
   let invoiceCreateSpy
@@ -40,6 +40,9 @@ describe("Cancel Customer", () => {
     utilsService = moduleRef.get<UtilsService>(UtilsService)
     bagService = moduleRef.get<BagService>(BagService)
     reserveService = moduleRef.get<ReserveService>(ReserveService)
+    reservationTestUtils = moduleRef.get<ReservationTestUtilsService>(
+      ReservationTestUtilsService
+    )
 
     cancelSubscriptionSpy = jest
       .spyOn(chargebee.subscription, "cancel")
@@ -73,34 +76,23 @@ describe("Cancel Customer", () => {
       )
       expect(numDaysToBillingEnd).toBeGreaterThan(0)
 
-      const reservableProductVariant = await prismaService.client.productVariant.findFirst(
-        {
-          where: {
-            reservable: { gte: 1 }, // want two because we want to ensure the correct one of two (or more) is picked
-          },
-          select: {
-            id: true,
-          },
-        }
-      )
-      const bagItem = await bagService.addToBag(
-        reservableProductVariant.id,
-        testCustomer,
-        {
-          id: true,
-        }
-      )
-      const reservationWithData = await reserveService.reserveItems({
-        shippingCode: "UPSGround",
+      const {
+        bagItems,
+        reservation,
+      } = await reservationTestUtils.addToBagAndReserveForCustomer({
+        numProductsToAdd: 1,
         customer: testCustomer,
-        select: { id: true, sentPackage: { select: { id: true } } },
+        options: { numDaysAgo: 25 },
       })
-      await setReservationCreatedAt(reservationWithData.id, 25)
-      await setPackageDeliveredAt(reservationWithData.sentPackage.id, 23)
-      await setReservationStatus(reservationWithData.id, "Delivered")
+      await prismaService.client.reservationPhysicalProduct.updateMany({
+        where: {
+          reservation: { id: reservation.id },
+        },
+        data: { status: "AtHome" },
+      })
 
       await prismaService.client.bagItem.delete({
-        where: { id: bagItem.id },
+        where: { id: bagItems[0].id },
       })
 
       await customerService.cancelCustomer(testCustomer.id)
@@ -143,6 +135,7 @@ describe("Cancel Customer", () => {
       expect(customerWithData.status).toBe("Deactivated")
     })
   })
+
   describe("If the invoice errors, we don't cancel the customer", () => {
     let expectedError
     let rentalInvoiceBeforeCancellation
@@ -163,35 +156,23 @@ describe("Cancel Customer", () => {
         new Date()
       )
       expect(numDaysToBillingEnd).toBeGreaterThan(0)
-
-      const reservableProductVariant = await prismaService.client.productVariant.findFirst(
-        {
-          where: {
-            reservable: { gte: 1 }, // want two because we want to ensure the correct one of two (or more) is picked
-          },
-          select: {
-            id: true,
-          },
-        }
-      )
-      const bagItem = await bagService.addToBag(
-        reservableProductVariant.id,
-        testCustomer,
-        {
-          id: true,
-        }
-      )
-      const reservationWithData = await reserveService.reserveItems({
-        shippingCode: "UPSGround",
+      const {
+        bagItems,
+        reservation,
+      } = await reservationTestUtils.addToBagAndReserveForCustomer({
+        numProductsToAdd: 1,
         customer: testCustomer,
-        select: { id: true, sentPackage: { select: { id: true } } },
+        options: { numDaysAgo: 25 },
       })
-      await setReservationCreatedAt(reservationWithData.id, 25)
-      await setPackageDeliveredAt(reservationWithData.sentPackage.id, 23)
-      await setReservationStatus(reservationWithData.id, "Delivered")
+      await prismaService.client.reservationPhysicalProduct.updateMany({
+        where: {
+          reservation: { id: reservation.id },
+        },
+        data: { status: "AtHome" },
+      })
 
       await prismaService.client.bagItem.delete({
-        where: { id: bagItem.id },
+        where: { id: bagItems[0].id },
       })
 
       try {
@@ -240,23 +221,10 @@ describe("Cancel Customer", () => {
       const { customer } = await createTestCustomer()
       testCustomer = customer
 
-      const reservableProductVariant = await prismaService.client.productVariant.findFirst(
-        {
-          where: {
-            reservable: { gte: 1 }, // want two because we want to ensure the correct one of two (or more) is picked
-          },
-          select: {
-            id: true,
-          },
-        }
-      )
-      await bagService.addToBag(reservableProductVariant.id, testCustomer, {
-        id: true,
-      })
-      const reservationWithData = await reserveService.reserveItems({
-        shippingCode: "UPSGround",
+      await reservationTestUtils.addToBagAndReserveForCustomer({
+        numProductsToAdd: 1,
         customer: testCustomer,
-        select: { id: true, sentPackage: { select: { id: true } } },
+        options: { numDaysAgo: 25 },
       })
 
       try {
@@ -314,31 +282,5 @@ const createTestCustomer = async () => {
         },
       },
     },
-  })
-}
-
-const setReservationCreatedAt = async (reservationId, numDaysAgo) => {
-  const date = timeUtils.xDaysAgoISOString(numDaysAgo)
-  await prismaService.client.reservation.update({
-    where: { id: reservationId },
-    data: { createdAt: date },
-  })
-}
-
-const setPackageDeliveredAt = async (packageId, numDaysAgo) => {
-  const eighteenDaysAgo = timeUtils.xDaysAgoISOString(numDaysAgo)
-  await prismaService.client.package.update({
-    where: { id: packageId },
-    data: { deliveredAt: eighteenDaysAgo },
-  })
-}
-
-const setReservationStatus = async (
-  reservationId,
-  status: ReservationStatus
-) => {
-  await prismaService.client.reservation.update({
-    where: { id: reservationId },
-    data: { status },
   })
 }

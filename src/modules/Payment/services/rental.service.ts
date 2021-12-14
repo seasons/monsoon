@@ -888,9 +888,9 @@ export class RentalService {
     // Collect all the outbound packages on the reservation physical products on the invoice
     // Filter for ones that entered the delivery system during the billing cycle
     // Apply relevant logic to create line items
-    const packages = invoice.reservationPhysicalProducts.map(
-      a => a.outboundPackage
-    )
+    const packages = invoice.reservationPhysicalProducts
+      .map(a => a.outboundPackage)
+      .filter(Boolean)
     const packagesCreatedThisBillingCycle = packages.filter(a =>
       this.timeUtils.isBetweenDates(
         a.createdAt,
@@ -1026,6 +1026,7 @@ export class RentalService {
 
     const shippedOutboundPackages = previousRentalInvoice.reservationPhysicalProducts
       .map(a => a.outboundPackage)
+      .filter(Boolean)
       .filter(b => !!b.enteredDeliverySystemAt)
     const uniqueShippedOutboundPackages = uniqBy(
       shippedOutboundPackages,
