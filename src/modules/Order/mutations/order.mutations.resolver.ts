@@ -20,7 +20,7 @@ export class OrderMutationsResolver {
 
   @Mutation()
   async createDraftedOrder(
-    @Args() { input: { orderType, productVariantID } },
+    @Args() { input: { orderType, productVariantID, productVariantIds } },
     @Customer() customer,
     @User() user,
     @Select() select
@@ -36,7 +36,10 @@ export class OrderMutationsResolver {
         })
       } else {
         draftOrder = await this.order.buyUsedCreateDraftedOrder({
-          productVariantID,
+          productVariantIds:
+            productVariantIds?.length > 0
+              ? productVariantIds
+              : [productVariantID],
           customer,
           select,
         })

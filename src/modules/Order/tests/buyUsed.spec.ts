@@ -116,7 +116,7 @@ describe("Buy Used", () => {
         purchaseCreditsApplied,
         creditsApplied,
       } = await order.getBuyUsedMetadata({
-        productVariantID: reservableProductVariant.id,
+        productVariantIds: [reservableProductVariant.id],
         customer: testCustomer,
         type: "draft",
       })
@@ -152,7 +152,7 @@ describe("Buy Used", () => {
         purchaseCreditsApplied,
         creditsApplied,
       } = await order.getBuyUsedMetadata({
-        productVariantID: reservableProductVariant.id,
+        productVariantIds: [reservableProductVariant.id],
         customer: testCustomer,
         type: "draft",
       })
@@ -198,7 +198,7 @@ describe("Buy Used", () => {
         purchaseCreditsApplied,
         creditsApplied,
       } = await order.getBuyUsedMetadata({
-        productVariantID: reservableProductVariant.id,
+        productVariantIds: [reservableProductVariant.id],
         customer: testCustomer,
         type: "order",
       })
@@ -234,7 +234,7 @@ describe("Buy Used", () => {
         purchaseCreditsApplied,
         creditsApplied,
       } = await order.getBuyUsedMetadata({
-        productVariantID: reservableProductVariant.id,
+        productVariantIds: [reservableProductVariant.id],
         customer: testCustomer,
         type: "order",
       })
@@ -274,16 +274,20 @@ describe("Buy Used", () => {
       const bagItem = await bag.addToBag(
         reservableProductVariant.id,
         testCustomer,
-        { id: true }
+        { id: true, status: true }
       )
       const reservationWithData = await reserve.reserveItems({
         shippingCode: "UPSGround",
         customer: testCustomer,
-        select: { products: { select: { seasonsUID: true, id: true } } },
+        select: {
+          reservationPhysicalProducts: {
+            select: { physicalProduct: { select: { id: true } } },
+          },
+        },
       })
 
       const draftOrder = await order.buyUsedCreateDraftedOrder({
-        productVariantID: reservableProductVariant.id,
+        productVariantIds: [reservableProductVariant.id],
         customer: testCustomer,
         select: {
           id: true,
@@ -299,15 +303,17 @@ describe("Buy Used", () => {
         },
       })) as any
 
-      const reservedPhysicalProduct = reservationWithData.products[0]
+      const reservedPhysicalProduct =
+        reservationWithData.reservationPhysicalProducts[0]
       const physicalProductOrderLineItem = submittedOrder.lineItems.find(
-        a => a.recordID === reservedPhysicalProduct.id
+        a => a.recordID === reservedPhysicalProduct.physicalProduct.id
       )
+
       expect(physicalProductOrderLineItem).toBeDefined()
 
       const reservedPhysicalProductAfterOrderWithData = await prisma.client.physicalProduct.findUnique(
         {
-          where: { id: reservedPhysicalProduct.id },
+          where: { id: reservedPhysicalProduct.physicalProduct.id },
           select: {
             inventoryStatus: true,
             offloadMethod: true,
@@ -348,7 +354,7 @@ describe("Buy Used", () => {
         }
       )
       const draftOrder = (await order.buyUsedCreateDraftedOrder({
-        productVariantID: reservableProductVariant.id,
+        productVariantIds: [reservableProductVariant.id],
         customer: testCustomer,
         select: {
           id: true,
