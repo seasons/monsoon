@@ -58,6 +58,7 @@ export const ProcessableReservationPhysicalProductArgs = Prisma.validator<
     hasBeenLost: true,
     resetEarlyByAdminAt: true,
     purchasedAt: true,
+    minimumAmountApplied: true,
     outboundPackage: {
       select: {
         id: true,
