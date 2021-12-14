@@ -986,6 +986,7 @@ model RentalInvoice {
   membership                  CustomerMembership           @relation(fields: [membershipId], references: [id])
   billingStartAt              DateTime
   billingEndAt                DateTime
+  billedAt                    DateTime?
   creditsApplied              Int?
   estimatedTotal              Int                          @default(0)
   status                      RentalInvoiceStatus          @default(Draft)

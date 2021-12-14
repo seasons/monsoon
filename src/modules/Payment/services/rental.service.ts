@@ -245,7 +245,7 @@ export class RentalService {
       promises.push(
         this.prisma.client.rentalInvoice.update({
           where: { id: invoice.id },
-          data: { status: "Billed" },
+          data: { status: "Billed", billedAt: new Date() },
         })
       )
     } catch (err) {
