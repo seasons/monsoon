@@ -615,11 +615,11 @@ export class ProductVariantFieldsResolver {
       )
 
       buyUsedPrice.buyUsedAvailableForSale = buyUsedAvailableForSale
-      const mostExpesiveBuyUsedPrice =
+      const mostExpensiveBuyUsedPrice =
         mostExpensiveUsedPhysicalProduct?.price?.buyUsedPrice
-      buyUsedPrice.buyUsedPrice = mostExpesiveBuyUsedPrice
+      buyUsedPrice.buyUsedPrice = mostExpensiveBuyUsedPrice
       // FIXME: Update buyUsedAdjustedPrice for rent to own
-      buyUsedPrice.buyUsedAdjustedPrice = mostExpesiveBuyUsedPrice
+      buyUsedPrice.buyUsedAdjustedPrice = mostExpensiveBuyUsedPrice
     }
 
     return {

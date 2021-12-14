@@ -210,10 +210,10 @@ type BagItem {
   reservationPhysicalProduct: ReservationPhysicalProduct
   position: Int
   saved: Boolean
-  hasBuyIntent: Boolean
   status: BagItemStatus!
   createdAt: DateTime!
   updatedAt: DateTime!
+  isInCart: Boolean!
 }
 
 type PublishProductsResponse {
