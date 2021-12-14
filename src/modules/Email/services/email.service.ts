@@ -297,6 +297,7 @@ export class EmailService {
 
     const payload = await RenderEmail.reservationProcessed({
       customerWillPickup: data.shippingCode === ShippingCode.Pickup,
+      orderNumber: data.reservation.id,
     })
 
     const { user } = data
