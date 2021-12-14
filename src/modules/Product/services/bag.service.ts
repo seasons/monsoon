@@ -7,7 +7,7 @@ import { BagItem, InventoryStatus, Prisma } from "@prisma/client"
 import { PrismaService } from "@prisma1/prisma.service"
 import { ApolloError } from "apollo-server"
 import cuid from "cuid"
-import { camelCase } from "lodash"
+import { camelCase, merge } from "lodash"
 
 import { ProductVariantService } from "../services/productVariant.service"
 
@@ -64,6 +64,7 @@ export class BagService {
         id: true,
         status: true,
         updatedAt: true,
+        isInCart: true,
         physicalProduct: {
           select: {
             id: true,
@@ -85,6 +86,77 @@ export class BagService {
     })
   }
 
+  async upsertCartItem({
+    customerId,
+    select,
+    productVariantId,
+    addToCart,
+  }: {
+    productVariantId: string
+    customerId: string
+    addToCart: boolean
+    select
+  }) {
+    const existingBagItem = await this.prisma.client.bagItem.findFirst({
+      where: {
+        customer: {
+          id: customerId,
+        },
+        productVariant: {
+          id: productVariantId,
+        },
+      },
+      select: merge(
+        {
+          saved: true,
+          isInCart: true,
+        },
+        select
+      ),
+    })
+
+    // 1. If we're switching a saved item or bag item to cart
+    if (existingBagItem && addToCart && !existingBagItem.isInCart) {
+      return await this.prisma.client.bagItem.update({
+        where: { id: existingBagItem.id },
+        data: {
+          isInCart: true,
+          saved: false,
+        },
+      })
+
+      // 2. If we're deleting a cart item from cart
+    } else if (existingBagItem && !addToCart && existingBagItem.isInCart) {
+      await this.prisma.client.bagItem.delete({
+        where: { id: existingBagItem.id },
+      })
+
+      // 3. If we're making a cart item for the first time
+    } else if (!existingBagItem && addToCart) {
+      return await this.prisma.client.bagItem.create({
+        data: {
+          customer: {
+            connect: {
+              id: customerId,
+            },
+          },
+          productVariant: {
+            connect: {
+              id: productVariantId,
+            },
+          },
+          position: 0,
+          isInCart: addToCart,
+          saved: false,
+          status: "Added",
+        },
+        select,
+      })
+    }
+
+    return null
+  }
+
   async bagSections({
     application,
     customer,
@@ -103,6 +175,7 @@ export class BagService {
         id: true,
         status: true,
         updatedAt: true,
+        isInCart: true,
         reservationPhysicalProduct: {
           select: {
             id: true,
@@ -174,13 +247,15 @@ export class BagService {
             id: true,
             productVariant: { select: { id: true } },
             saved: true,
+            isInCart: true,
           },
         },
       },
     })
 
-    const bag = custWithData.bagItems?.filter(a => a.saved === false)
-    const savedItems = custWithData.bagItems?.filter(a => a.saved === true)
+    const bag = custWithData.bagItems?.filter(
+      a => a.saved === false && !a.isInCart
+    )
     const customerPlanItemCount = custWithData.membership?.plan?.itemCount || 6
 
     const productVariant = await this.prisma.client.productVariant.findUnique({
@@ -208,11 +283,13 @@ export class BagService {
       throw new ApolloError("Bag is full", "514")
     }
 
-    const existingSavedItemForVariant = savedItems.find(
-      a => a.productVariant.id === itemId
+    // Existing bag item from saved or cart
+    const existingBagItem = custWithData.bagItems.find(
+      a => a.productVariant.id === itemId && (a.isInCart || a.saved)
     )
+
     const result = await this.prisma.client.bagItem.upsert({
-      where: { id: existingSavedItemForVariant?.id || "" },
+      where: { id: existingBagItem?.id || "" },
       create: {
         customer: {
           connect: {
@@ -226,9 +303,10 @@ export class BagService {
         },
         position: 0,
         saved: false,
+        isInCart: false,
         status: "Added",
       },
-      update: { saved: false },
+      update: { saved: false, isInCart: false },
       select,
     })
     return result
@@ -748,8 +826,10 @@ export class BagService {
         title = "Returning"
         break
       case "Added":
-        filteredBagItems = bagItems.filter(item => item.status === "Added")
-        title = "Reserving"
+        filteredBagItems = bagItems.filter(
+          item => item.status === "Added" && !item.isInCart
+        )
+        title = "Rent"
         break
       case "AtHome":
         title = "At home"

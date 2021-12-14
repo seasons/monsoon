@@ -43,8 +43,11 @@ export class ShippingService {
     private readonly utilsService: UtilsService
   ) {}
 
-  async getBuyUsedShippingRate(productVariantId: string, customer: Customer) {
-    return this.getShippingRateForVariantIDs([productVariantId], { customer })
+  async getBuyUsedShippingRate(
+    productVariantIds: string[],
+    customer: Customer
+  ) {
+    return this.getShippingRateForVariantIDs(productVariantIds, { customer })
   }
 
   async getShippingRateForVariantIDs(
@@ -100,14 +103,14 @@ export class ShippingService {
   }
 
   async createBuyUsedShippingLabel(
-    productVariantId: string,
+    productVariantIds: string[],
     customer: Customer
   ): Promise<ShippoTransaction> {
-    const shipmentWeight = await this.calcShipmentWeightFromProductVariantIDs([
-      productVariantId,
-    ] as string[])
+    const shipmentWeight = await this.calcShipmentWeightFromProductVariantIDs(
+      productVariantIds
+    )
     const insuranceAmount = await this.calcTotalRetailPriceFromProductVariantIDs(
-      [productVariantId] as string[]
+      productVariantIds
     )
 
     const [seasonsToShippoShipment] = await this.createShippoShipments({
