@@ -243,12 +243,9 @@ export class ChargebeeController {
     })
 
     if (custWithData?.status === "PaymentFailed") {
-      let newStatus: CustomerStatus = subscription.plan_id.includes("pause")
-        ? "Paused"
-        : "Active"
       await this.prisma.client.customer.update({
         where: { id: custWithData.id },
-        data: { status: newStatus },
+        data: { status: "Active" },
       })
       await this.email.sendReturnToGoodStandingEmail(custWithData.user)
     }
@@ -260,12 +257,6 @@ export class ChargebeeController {
       )
     }
 
-    let isRecurringSubscription =
-      !!subscription &&
-      !this.utils.isSameDay(
-        new Date(subscription.created_at * 1000),
-        new Date()
-      )
     this.segment.track(customer.id, "Completed Transaction", {
       ...pick(custWithData.user, ["firstName", "lastName", "email"]),
       transactionID: transaction.id,
@@ -278,9 +269,6 @@ export class ChargebeeController {
       amount: transaction.amount,
       currency: "USD",
       total: transaction.amount / 100,
-      impactId: custWithData.detail?.impactId,
-      impactCustomerStatus: isRecurringSubscription ? "Existing" : null,
-      text1: isRecurringSubscription ? "isRecurringSubscription" : "null",
       ...this.utils.formatUTMForSegment(custWithData.utm as any),
     })
   }
@@ -318,11 +306,7 @@ export class ChargebeeController {
         if (isFailureForSubscription) {
           await this.email.sendUnpaidMembershipEmail(cust.user)
         }
-        // TODO: Send email for other kinds of failures
       }
-    } else {
-      this.error.setExtraContext({ payload: content }, "chargebeePayload")
-      this.error.captureMessage(`Unable to locate customer for failed payment`)
     }
   }
 
