@@ -43,8 +43,11 @@ export class ShippingService {
     private readonly utilsService: UtilsService
   ) {}
 
-  async getBuyUsedShippingRate(productVariantId: string, customer: Customer) {
-    return this.getShippingRateForVariantIDs([productVariantId], { customer })
+  async getBuyUsedShippingRate(
+    productVariantIds: string[],
+    customer: Customer
+  ) {
+    return this.getShippingRateForVariantIDs(productVariantIds, { customer })
   }
 
   async getShippingRateForVariantIDs(
@@ -100,14 +103,14 @@ export class ShippingService {
   }
 
   async createBuyUsedShippingLabel(
-    productVariantId: string,
+    productVariantIds: string[],
     customer: Customer
   ): Promise<ShippoTransaction> {
-    const shipmentWeight = await this.calcShipmentWeightFromProductVariantIDs([
-      productVariantId,
-    ] as string[])
+    const shipmentWeight = await this.calcShipmentWeightFromProductVariantIDs(
+      productVariantIds
+    )
     const insuranceAmount = await this.calcTotalRetailPriceFromProductVariantIDs(
-      [productVariantId] as string[]
+      productVariantIds
     )
 
     const [seasonsToShippoShipment] = await this.createShippoShipments({
@@ -128,7 +131,8 @@ export class ShippingService {
   async createReservationShippingLabels(
     newProductVariantsBeingReserved: string[],
     customer: Pick<Customer, "id">,
-    shippingCode: ShippingCode
+    shippingCode: ShippingCode,
+    includeLabelForPickups: boolean
   ): Promise<ShippoTransaction[]> {
     const shipmentWeight = await this.calcShipmentWeightFromProductVariantIDs(
       newProductVariantsBeingReserved as string[]
@@ -152,7 +156,7 @@ export class ShippingService {
     }
 
     const seasonsToCustomerTransaction =
-      shippingCode === "Pickup"
+      shippingCode === "Pickup" && !includeLabelForPickups
         ? null
         : await this.createShippingLabel({
             shipment: seasonsToShippoShipment,
@@ -172,6 +176,7 @@ export class ShippingService {
   async createPackages({
     bagItems,
     customer,
+    includeLabelForPickups,
     select,
   }: {
     bagItems: {
@@ -191,6 +196,7 @@ export class ShippingService {
       }
     }[]
     customer: Pick<Customer, "id">
+    includeLabelForPickups?: boolean
     select?: Prisma.PackageSelect
   }): Promise<{
     promises: {
@@ -256,7 +262,8 @@ export class ShippingService {
     ] = await this.createReservationShippingLabels(
       productVariantIDs,
       customer,
-      shippingCode
+      shippingCode,
+      includeLabelForPickups
     )
 
     const outboundPackageId = outboundLabel ? cuid() : null
