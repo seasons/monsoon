@@ -40,6 +40,19 @@ type Query {
   reservationProcessingStats: ReservationProcessingStats!
 }
 
+enum ReturnReason {
+  DoneWearing
+  FitTooSmall
+  FitTooBig
+  WasDamaged
+  Other
+}
+
+input ReturnReasonInput {
+  reservationPhysicalProductId: ID!
+  reason: ReturnReason!
+}
+
 type Mutation {
   reserveItems(
     items: [ID!]
@@ -70,8 +83,10 @@ type Mutation {
     data: ReservationUpdateInput!
     where: ReservationWhereUniqueInput!
   ): Reservation @hasRole(roles: [Admin])
-  returnItems(items: [ID!]!): [ReservationPhysicalProduct!]
-    @hasRole(roles: [Customer])
+  returnItems(
+    items: [ID!]!
+    returnReasons: [ReturnReasonInput!]
+  ): [ReservationPhysicalProduct!] @hasRole(roles: [Customer])
   cancelReturn(bagItemId: ID): [ReservationPhysicalProduct!]
     @hasRole(roles: [Customer])
   processReturn(
@@ -441,6 +456,7 @@ input ReservationPhysicalProductUpdateInput {
   reservation: ReservationUpdateInput
   bagItem: BagItemUpdateInput
   isOnHold: Boolean
+  returnReason: String
 
   shippingMethod: ShippingMethodUpdateInput
   isNew: Boolean

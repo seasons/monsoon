@@ -19,7 +19,9 @@ import {
   Reservation,
   ReservationFeedback,
   ReservationStatus,
+  ReturnReason,
   ShippingCode,
+  WarehouseLocation,
 } from "@prisma/client"
 import { PrismaService } from "@prisma1/prisma.service"
 import chargebee from "chargebee"
@@ -41,6 +43,18 @@ export interface ReservationWithProductVariantData {
   status: ReservationStatus
   reservationNumber: number
   products: PhysicalProductWithProductVariant[]
+}
+
+interface ReturnReasonInput {
+  reservationPhysicalProductId: string
+  reason: ReturnReason
+}
+
+type ReserveItemsPhysicalProduct = Pick<
+  PhysicalProduct,
+  "seasonsUID" | "id"
+> & {
+  warehouseLocation: Pick<WarehouseLocation, "id">
 }
 
 @Injectable()
@@ -96,7 +110,7 @@ export class ReservationService {
             id: bagItem.reservationPhysicalProduct.id,
           },
           data: {
-            status: "DeliveredToCustomer",
+            status: "AtHome",
           },
           select: {
             id: true,
@@ -137,7 +151,7 @@ export class ReservationService {
           },
         },
         data: {
-          status: "DeliveredToCustomer",
+          status: "AtHome",
         },
       })
 
@@ -156,7 +170,12 @@ export class ReservationService {
     }
   }
 
-  async returnItems(items: string[], customer: Customer) {
+  async returnItems(
+    // items are rppIds
+    items: string[],
+    returnReasons: ReturnReasonInput[],
+    customer: Customer
+  ) {
     const bagItems = await this.prisma.client.bagItem.findMany({
       where: {
         customer: {
@@ -165,6 +184,7 @@ export class ReservationService {
         saved: false,
       },
       select: {
+        id: true,
         physicalProduct: {
           select: {
             id: true,
@@ -179,25 +199,46 @@ export class ReservationService {
     })
 
     const bagItemsToUpdate = bagItems.filter(bagItem => {
-      return items.includes(bagItem.physicalProduct.id)
+      return items.includes(bagItem.reservationPhysicalProduct.id)
     })
 
     const reservationPhysicalProductIds = bagItemsToUpdate.map(
       item => item.reservationPhysicalProduct.id
     )
 
-    await this.prisma.client.reservationPhysicalProduct.updateMany({
-      where: {
-        id: {
-          in: reservationPhysicalProductIds,
-        },
-      },
-      data: {
-        status: "ReturnPending",
-        hasCustomerReturnIntent: true,
-        customerReturnIntentAt: new Date(),
-      },
+    const updateData = Prisma.validator<
+      Prisma.ReservationPhysicalProductUpdateInput
+    >()({
+      status: "ReturnPending",
+      hasCustomerReturnIntent: true,
+      customerReturnIntentAt: new Date(),
     })
+
+    if (returnReasons?.length > 0) {
+      for (const rppId of reservationPhysicalProductIds) {
+        const matchingReturnReason = returnReasons.find(
+          rr => rr.reservationPhysicalProductId === rppId
+        )
+        await this.prisma.client.reservationPhysicalProduct.update({
+          where: { id: rppId },
+          data: {
+            ...updateData,
+            returnReason: matchingReturnReason?.reason,
+          },
+        })
+      }
+    } else {
+      await this.prisma.client.reservationPhysicalProduct.updateMany({
+        where: {
+          id: {
+            in: reservationPhysicalProductIds,
+          },
+        },
+        data: {
+          ...updateData,
+        },
+      })
+    }
 
     return this.prisma.client.reservationPhysicalProduct.findMany({
       where: {
@@ -207,50 +248,6 @@ export class ReservationService {
       },
       select: {
         id: true,
-      },
-    })
-  }
-
-  private async getReservation(reservationNumber: number) {
-    return await this.prisma.client.reservation.findUnique({
-      where: {
-        reservationNumber,
-      },
-      select: {
-        id: true,
-        status: true,
-        reservationNumber: true,
-        products: {
-          select: {
-            id: true,
-            productStatus: true,
-            inventoryStatus: true,
-            seasonsUID: true,
-            productVariant: { select: { id: true } },
-          },
-        },
-        customer: {
-          select: {
-            id: true,
-            user: { select: { email: true } },
-            detail: {
-              select: {
-                shippingAddress: {
-                  select: {
-                    slug: true,
-                  },
-                },
-              },
-            },
-          },
-        },
-        returnPackages: {
-          orderBy: { createdAt: "desc" },
-          select: {
-            id: true,
-            shippingLabel: { select: { trackingNumber: true } },
-          },
-        },
       },
     })
   }

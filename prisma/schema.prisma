@@ -1458,6 +1458,14 @@ enum ReservationPhysicalProductStatus {
   Purchased
 }
 
+enum ReturnReason {
+  DoneWearing
+  FitTooSmall
+  FitTooBig
+  WasDamaged
+  Other
+}
+
 model ReservationPhysicalProduct {
   id    String  @id @default(cuid()) @db.VarChar(30)
   isNew Boolean @default(false)
@@ -1539,6 +1547,8 @@ model ReservationPhysicalProduct {
 
   pickupWindowId String?
   pickupDate     DateTime?
+
+  returnReason        ReturnReason?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
