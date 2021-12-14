@@ -87,6 +87,14 @@ export class MeFieldsResolver {
   }
 
   @ResolveField()
+  async availableInboundPackage(@Customer() customer) {
+    if (!customer) {
+      return null
+    }
+    return null
+  }
+
+  @ResolveField()
   async activeReservation(
     @Customer() customer,
     @Select({ withFragment: `fragment EnsureStatus on Reservation {status}` })
