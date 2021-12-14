@@ -67,6 +67,11 @@ export class FAQService {
             text:
               "Please contact us within 48 hours of signing up and we'll be happy to help you cancel. After this window, it's a 3-month commitment.",
           },
+          {
+            title: "What happens if an item is lost or stolen on the way back?",
+            text:
+              "If we have no record of an item being shipped back to us, you will be held liable for the items lost. When shipping back, please obtain a shipment receipt from UPS. In the event that the package is lost and you have a shipment receipt, you will not be held liable.",
+          },
         ],
       },
     ]

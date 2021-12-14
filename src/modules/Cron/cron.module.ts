@@ -23,6 +23,7 @@ import { HerokuJobs } from "./services/heroku.job.service"
 import { LogsScheduledJobs } from "./services/logs.job.service"
 import { MarketingScheduledJobs } from "./services/marketing.job.service"
 import { ProductScheduledJobs } from "./services/product.job.service"
+import { ReservationProcessingStats } from "./services/reservationProcessingStats.job.service"
 import { ReservationScheduledJobs } from "./services/reservations.job.service"
 import { SearchScheduledJobs } from "./services/search.job.service"
 import { ShopifyScheduledJobs } from "./services/shopify.job.service"
@@ -59,6 +60,7 @@ import { SubscriptionsScheduledJobs } from "./services/subscriptions.job.service
     ProductScheduledJobs,
     BillingScheduledJobs,
     HerokuJobs,
+    ReservationProcessingStats,
   ],
   exports: [DataScheduledJobs, BillingScheduledJobs],
 })

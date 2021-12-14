@@ -1,5 +1,6 @@
 import "module-alias/register"
 
+import { WinstonLogger } from "@app/lib/logger"
 import { ErrorService } from "@app/modules/Error/services/error.service"
 import { UtilsService } from "@app/modules/Utils/services/utils.service"
 import { CustomerWhereInput } from "@app/prisma/prisma.binding"
@@ -14,7 +15,9 @@ import { DripService } from "./drip.service"
 
 @Injectable()
 export class DripSyncService {
-  private readonly logger = new Logger(DripSyncService.name)
+  private readonly logger = (new Logger(
+    DripSyncService.name
+  ) as unknown) as WinstonLogger
 
   constructor(
     private readonly drip: DripService,
@@ -91,10 +94,11 @@ export class DripSyncService {
         await this.drip.client.createUpdateSubscriber(sub)
         result.successes.push(cust.user.email)
       } catch (err) {
+        this.logger.error("Error syncing customer to Drip", {
+          cust,
+          payload: sub,
+        })
         result.errors.push(cust.user.email)
-        this.error.setUserContext(cust.user as User)
-        this.error.setExtraContext(sub, "payload")
-        this.error.captureError(err)
       }
     }
 
