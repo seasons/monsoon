@@ -371,6 +371,7 @@ export class ReserveService {
         })
       return { invoice, promises }
     } catch (err) {
+      // No need to set them to PaymentFailed here. It should happen in the Chargebee controller.
       throw new ApolloError("Unable to charge minimum for reservation")
     }
   }
@@ -555,6 +556,9 @@ export class ReserveService {
       },
       pickupDate: pickupTime?.date,
       pickupWindowId: pickupTime?.timeWindowID,
+      products: {
+        connect: physicalProductsBeingReserved.map(a => ({ id: a.id })),
+      },
       reservationNumber: uniqueReservationNumber,
       lastLocation: {
         connect: {
