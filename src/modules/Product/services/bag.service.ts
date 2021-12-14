@@ -121,6 +121,7 @@ export class BagService {
 
     if (application === "spring") {
       sections = [
+        BagSectionStatus.Added,
         BagSectionStatus.Queued,
         BagSectionStatus.Picked,
         BagSectionStatus.Packed,

@@ -42,9 +42,13 @@ export class ReservationPhysicalProductMutationsResolver {
   }
 
   @Mutation()
-  async generateShippingLabels(@Args() { bagItemIds }, @Select() select) {
+  async generateShippingLabels(
+    @Args() { bagItemIds, options },
+    @Select() select
+  ) {
     return this.reservationPhysicalProduct.generateShippingLabels({
       bagItemIds,
+      options,
       select,
     })
   }
