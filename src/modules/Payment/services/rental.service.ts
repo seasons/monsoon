@@ -88,6 +88,7 @@ export const ProcessableReservationPhysicalProductArgs = Prisma.validator<
             product: {
               select: {
                 id: true,
+                name: true,
                 rentalPriceOverride: true,
                 retailPrice: true,
                 wholesalePrice: true,
@@ -140,6 +141,7 @@ export const ProcessableRentalInvoiceArgs = Prisma.validator<
       select: {
         plan: { select: { planID: true } },
         subscriptionId: true,
+        customerId: true,
         customer: {
           select: {
             id: true,
@@ -170,7 +172,7 @@ export const ProcessableRentalInvoiceArgs = Prisma.validator<
   },
 })
 
-type ProcessableRentalInvoice = Prisma.RentalInvoiceGetPayload<
+export type ProcessableRentalInvoice = Prisma.RentalInvoiceGetPayload<
   typeof ProcessableRentalInvoiceArgs
 >
 
@@ -767,7 +769,8 @@ export class RentalService {
     })
 
     const rentalUsageLineItemDatas = await this.getRentalUsageLineItemDatas(
-      invoice
+      invoice,
+      options
     )
     const outboundPackagesFromPreviousBillingCycleLineItemDatas = await this.getOutboundPackageLineItemDatasFromPreviousBillingCycle(
       invoice
@@ -800,14 +803,21 @@ export class RentalService {
     return lineItems || formattedLineItemDatas
   }
 
-  async getRentalUsageLineItemDatas(invoice: ProcessableRentalInvoice) {
+  async getRentalUsageLineItemDatas(
+    invoice: ProcessableRentalInvoice,
+    options: { upTo?: "today" | "billingEnd" | null } = { upTo: null }
+  ) {
     const lineItemsForPhysicalProductDatas = (await Promise.all(
       invoice.reservationPhysicalProducts.map(
         async reservationPhysicalProduct => {
           const {
             daysRented,
             ...daysRentedMetadata
-          } = await this.calcDaysRented(invoice, reservationPhysicalProduct)
+          } = await this.calcDaysRented(
+            invoice,
+            reservationPhysicalProduct,
+            options
+          )
 
           const {
             price,
