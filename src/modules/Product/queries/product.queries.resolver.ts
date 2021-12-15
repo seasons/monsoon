@@ -237,9 +237,12 @@ export class ProductQueriesResolver {
 
   @Query()
   async returnReasons() {
-    const reasons = this.utils.parseJSONFile(
-      "src/modules/Product/returnReasons"
-    )
-    return reasons
+    return [
+      { display: "Done wearing", value: "DoneWearing" },
+      { display: "Fit too small", value: "FitTooSmall" },
+      { display: "Fit too big", value: "FitTooBig" },
+      { display: "Was damaged", value: "WasDamaged" },
+      { display: "Other", value: "Other" },
+    ]
   }
 }
