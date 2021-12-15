@@ -51,12 +51,14 @@ describe("Price for items", () => {
                 data: lines || [
                   {
                     id: previousInvoiceId,
+                    total: 0,
                     billingStartAt: timeUtils.xDaysAgoISOString(35),
                     billingEndAt: timeUtils.xDaysAgoISOString(5),
                     status: "Billed",
                   },
                   {
                     id: currentInvoiceId,
+                    total: 0,
                     billingStartAt: timeUtils.xDaysAgoISOString(4),
                     billingEndAt: new Date(),
                     status: "Draft",
@@ -97,6 +99,7 @@ describe("Price for items", () => {
     beforeEach(async () => {
       await createTestCustomerWithRentalInvoices([
         {
+          total: 0,
           billingStartAt: timeUtils.xDaysAgoISOString(15),
           billingEndAt: new Date(),
           status: "Draft",
@@ -443,6 +446,7 @@ describe("Price for items", () => {
   test("Return price of 0 for a Purchased item", async () => {
     await createTestCustomerWithRentalInvoices([
       {
+        total: 0,
         billingStartAt: timeUtils.xDaysAgoISOString(15),
         billingEndAt: new Date(),
         status: "Draft",
@@ -486,6 +490,7 @@ const addLineItemToInvoice = async ({
         createMany: {
           data: [
             {
+              type: "PhysicalProduct",
               physicalProductId: physicalProduct.id,
               daysRented: daysRented,
               price: rentalService.calculateUnadjustedPriceForDaysRented(

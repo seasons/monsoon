@@ -18,19 +18,32 @@ const run = async () => {
   const shipping = new ShippingService(ps, utils)
   const rs = new RentalService(ps, timeService, error, shipping)
 
-  const billedRentalInvoices = await ps.client.rentalInvoice.findMany({
-    where: {
-      status: "Billed",
-    },
-    select: {
-      id: true,
-    },
-  })
+  // const billedRentalInvoices = await ps.client.rentalInvoice.findMany({
+  //   where: {
+  //     status: "Billed",
+  //   },
+  //   select: {
+  //     id: true,
+  //   },
+  // })
 
-  const promises = []
+  // const promises = []
 
-  for (const rentalInvoice of billedRentalInvoices) {
-  }
+  // for (const rentalInvoice of billedRentalInvoices) {
+  // }
+  const rentalInvoiceLineItems = await ps.client.rentalInvoiceLineItem.findMany(
+    {
+      where: {
+        physicalProduct: null,
+      },
+      select: {
+        id: true,
+        type: true,
+        name: true,
+      },
+    }
+  )
+  console.log(rentalInvoiceLineItems)
 }
 
 run()

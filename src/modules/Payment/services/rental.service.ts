@@ -371,6 +371,7 @@ export class RentalService {
         connect: { id: membershipId },
       },
       billingStartAt: now,
+      total: 0,
       // during initial launch, billingEndAt could have been 1 day before now if the customer's next_billing_at was the same as launch day.
       // To clean that up a bit, we get the max of now and the calcualted billingEndAt
       billingEndAt: this.timeUtils.getLaterDate(now, billingEndAt),
@@ -887,6 +888,7 @@ export class RentalService {
           name: "InboundPackage-" + (idx + 1),
           price,
           comment: `Returning items: ${p.items.map(a => a.seasonsUID)}`,
+          type: "Package",
         }
       }
     )
@@ -958,6 +960,7 @@ export class RentalService {
         name,
         price,
         comment,
+        type: "Package",
       }
     })
 
@@ -1104,7 +1107,7 @@ export class RentalService {
       }
 
       firstShippedOutboundPackageOfCycle = false
-      return { name, price, comment }
+      return { name, price, comment, type: "Package" }
     })
 
     return datas.filter(Boolean)
