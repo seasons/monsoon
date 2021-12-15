@@ -985,6 +985,7 @@ model RentalInvoice {
   updatedAt                   DateTime                     @updatedAt
   membershipId                String                       @map("membership") @db.VarChar(30)
   membership                  CustomerMembership           @relation(fields: [membershipId], references: [id])
+  total                       Int
   billingStartAt              DateTime
   billingEndAt                DateTime
   creditsApplied              Int?
