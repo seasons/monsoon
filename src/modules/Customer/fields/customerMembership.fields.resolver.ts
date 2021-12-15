@@ -149,11 +149,12 @@ export class CustomerMembershipFieldsResolver {
       ? (financeMetric["name"] = "Current balance")
       : (financeMetric["name"] = "Estimated total")
 
-    const lineItems = (
-      await this.rental.createRentalInvoiceLineItems(currentInvoice, {
+    const lineItems = await this.rental.createRentalInvoiceLineItems(
+      currentInvoice,
+      {
         upTo,
-      })
-    ).filter(a => a.rentalStartedAt)
+      }
+    )
 
     const physicalProducts = currentInvoice.reservationPhysicalProducts.map(
       a => a.physicalProduct

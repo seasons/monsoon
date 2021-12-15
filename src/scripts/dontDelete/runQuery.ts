@@ -31,19 +31,53 @@ const run = async () => {
 
   // for (const rentalInvoice of billedRentalInvoices) {
   // }
-  const rentalInvoiceLineItems = await ps.client.rentalInvoiceLineItem.findMany(
-    {
-      where: {
-        physicalProduct: null,
+  // const rentalInvoiceLineItems = await ps.client.rentalInvoiceLineItem.findMany(
+  //   {
+  //     where: {
+  //       physicalProduct: null,
+  //     },
+  //     select: {
+  //       id: true,
+  //       type: true,
+  //       name: true,
+  //     },
+  //   }
+  // )
+  // console.log(rentalInvoiceLineItems)
+
+  const rppsWithWLID = await ps.client.reservationPhysicalProduct.findMany({
+    where: {
+      status: {
+        notIn: ["Queued", "Lost", "Cancelled", "ReturnProcessed"],
       },
-      select: {
-        id: true,
-        type: true,
-        name: true,
+      physicalProduct: {
+        warehouseLocation: {
+          isNot: null,
+        },
       },
-    }
-  )
-  console.log(rentalInvoiceLineItems)
+    },
+    select: {
+      id: true,
+      createdAt: true,
+      pickedAt: true,
+      status: true,
+      physicalProduct: {
+        select: {
+          id: true,
+          warehouseLocation: {
+            select: {
+              id: true,
+            },
+          },
+        },
+      },
+    },
+  })
+
+  // const filteredRPPs = rppsWithWLID.filter(a => !!a.physicalProduct.warehouseLocation)
+
+  console.dir(rppsWithWLID, { depth: null })
+  console.log(rppsWithWLID.length)
 }
 
 run()

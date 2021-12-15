@@ -198,6 +198,10 @@ enum LineItemIdentityType {
   Addon
   Adhoc
 }
+enum RentalInvoiceLineItemType {
+  PhysicalProduct
+  Package
+}
 
 type RentalInvoiceLineItem {
   id: ID!
@@ -205,8 +209,9 @@ type RentalInvoiceLineItem {
   name: String
   rentalInvoice: RentalInvoice
   daysRented: Int
-  rentalStartedAt: DateTime!
-  rentalEndedAt: DateTime!
+  rentalStartedAt: DateTime
+  rentalEndedAt: DateTime
+  type: RentalInvoiceLineItemType
   comment: String
   taxRate: Float
   taxName: String
