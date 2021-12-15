@@ -56,7 +56,6 @@ export class ChargebeeController {
   async handlePost(@Body() body: ChargebeeEvent) {
     this.logger.log("Chargebee event", (body as unknown) as string)
 
-    console.log(body.event_type)
     switch (body.event_type) {
       case CHARGEBEE_SUBSCRIPTION_CREATED:
         await this.chargebeeSubscriptionCreated(body.content)
