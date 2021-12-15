@@ -212,7 +212,7 @@ export class ReserveService {
       select: merge(select, {
         id: true,
         reservationNumber: true,
-        products: { select: { seasonsUID: true } },
+        products: { select: { seasonsUID: true, id: true } },
       }),
     })) as any
 
