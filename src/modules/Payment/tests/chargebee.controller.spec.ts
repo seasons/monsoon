@@ -7,6 +7,7 @@ import request from "supertest"
 
 import { PAYMENT_MODULE_DEF } from "../payment.module"
 import { getPromotionalCreditsAddedEvent } from "./data/creditsAdded"
+import { getPaymentSourceUpdatedEvent } from "./data/paymentSourceUpdated"
 import { getPaymentSucceededEvent } from "./data/paymentSucceeded"
 import { getSubscriptionCancelledEvent } from "./data/subscriptionCancelled"
 
@@ -412,6 +413,34 @@ describe("Chargebee Controller", () => {
       expect(latestCreditBalanceUpdateLog).toBeUndefined()
     })
   })
+
+  describe("Handles PaymentFailure actions correctly", () => {
+    beforeEach(async () => {
+      const { customer } = await testUtils.createTestCustomer({
+        select: {
+          id: true,
+          user: { select: { id: true } },
+          membership: { select: { id: true, purchaseCredits: true } },
+        },
+      })
+      testCustomer = customer
+    })
+    it("If a PaymentFailed customer updates their payment method, sets them to Active", async () => {
+      await prisma.client.customer.update({
+        where: { id: testCustomer.id },
+        data: { status: "PaymentFailed" },
+      })
+
+      customerWithData = await getCustWithData()
+      expect(customerWithData.status).toBe("PaymentFailed")
+
+      const event = getPaymentSourceUpdatedEvent(testCustomer.user.id)
+      await sendEvent(event)
+
+      customerWithData = await getCustWithData()
+      expect(customerWithData.status).toBe("Active")
+    })
+  })
 })
 
 const setGrandfatheredOnCustomer = async (grandfathered: boolean) => {
@@ -425,6 +454,7 @@ const getCustWithData = async () => {
   return await prisma.client.customer.findUnique({
     where: { id: testCustomer.id },
     select: {
+      status: true,
       membership: {
         select: {
           creditBalance: true,
