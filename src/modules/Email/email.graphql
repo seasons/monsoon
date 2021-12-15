@@ -1,0 +1,29 @@
+enum EmailId {
+  CompleteAccount
+  BuyUsedOrderConfirmation
+  DaySevenAuthorizationFollowup
+  DaySixAuthorizationFollowup
+  DayFiveAuthorizationFollowup
+  DayFourAuthorizationFollowup
+  DayThreeAuthorizationFollowup
+  DayTwoAuthorizationFollowup
+  FreeToReserve
+  Paused
+  PriorityAccess
+  ReferralConfirmation
+  ReservationConfirmation
+  ReservationProcessed
+  ReservationReturnConfirmation
+  ResumeConfirmation
+  ResumeReminder
+  ReturnReminder
+  Rewaitlisted
+  SubmittedEmail
+  TwentyFourHourAuthorizationFollowup
+  Waitlisted
+  WelcomeToSeasons
+  UnpaidMembership
+  ReturnToGoodStanding
+  RecommendedItemsNurture
+  RestockNotification
+}
