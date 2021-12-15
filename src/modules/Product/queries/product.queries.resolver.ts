@@ -141,10 +141,10 @@ export class ProductQueriesResolver {
     @Select({ withFragment: `fragment EnsureId on PhysicalProduct { id }` })
     select
   ) {
-    return await this.queryUtils.resolveFindUnique(
-      { where, select },
-      "PhysicalProduct"
-    )
+    return await this.prisma.client.physicalProduct.findUnique({
+      where,
+      select,
+    })
   }
 
   @Query()

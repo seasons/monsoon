@@ -184,6 +184,26 @@ export class MeFieldsResolver {
   }
 
   @ResolveField()
+  async cartItems(@Customer() customer, @Select() select) {
+    if (!customer) {
+      return null
+    }
+    const cartItems = await this.prisma.client.bagItem.findMany({
+      where: {
+        customer: {
+          id: customer.id,
+        },
+        isInCart: true,
+      },
+      orderBy: {
+        updatedAt: "desc",
+      },
+      select,
+    })
+    return cartItems
+  }
+
+  @ResolveField()
   async savedItems(@Customer() customer, @Select() select) {
     if (!customer) {
       return null

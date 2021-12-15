@@ -25,7 +25,6 @@ type Query {
     @hasRole(roles: [Customer, Admin, Partner])
     @cacheControl(maxAge: 0)
   reservationFeedback: ReservationFeedback @cacheControl(maxAge: 0)
-
   inboundReservations(
     skip: Int!
     take: Int!
@@ -38,6 +37,7 @@ type Query {
   ): ReservationPhysicalProductConnection!
     @hasRole(roles: [Admin])
     @cacheControl(maxAge: 0)
+  reservationProcessingStats: ReservationProcessingStats!
 }
 
 enum ReturnReason {
@@ -99,11 +99,18 @@ type Mutation {
     @hasRole(roles: [Admin])
   packItems(bagItemIds: [ID!]!): [ReservationPhysicalProduct!]
     @hasRole(roles: [Admin])
-  generateShippingLabels(bagItemIds: [ID!]!): [Package!]
-    @hasRole(roles: [Admin])
+  generateShippingLabels(
+    bagItemIds: [ID!]!
+    options: GenerateShippingLabelOptionsInput
+  ): [Package!] @hasRole(roles: [Admin])
   markAsLost(lostBagItemId: ID!): Boolean @hasRole(roles: [Admin])
   markAsPickedUp(bagItemIds: [ID]!): Boolean @hasRole(roles: [Admin])
   markNotReturned(bagItemIds: [ID]!): Boolean @hasRole(roles: [Admin])
+  markAsCancelled(bagItemIds: [ID]!): Boolean @hasRole(roles: [Admin])
+}
+
+input GenerateShippingLabelOptionsInput {
+  includeLabelForPickups: Boolean
 }
 
 type ReservationFeedback {
@@ -410,11 +417,24 @@ type ReservationPhysicalProduct @cacheControl(maxAge: 0) {
   scannedOnOutboundAt: DateTime
 
   outboundPackage: Package
-  inboundPackage: Package
+  potentialInboundPackage: Package
+  utilizedInboundPackage: Package
 
   status: ReservationPhysicalProductStatus!
 
   createdAt: DateTime
+  updatedAt: DateTime
+}
+
+type ReservationProcessingStats @cacheControl(maxAge: 0) {
+  id: ID!
+  initialNumQueuedItems: Int!
+  initialNumQueuedReservations: Int!
+  currentNumQueuedItems: Int!
+  currentNumQueuedReservations: Int!
+  initialNumDeliveredToBusinessItems: Int!
+  currentNumDeliveredToBusinessItems: Int!
+  day: DateTime
   updatedAt: DateTime
 }
 

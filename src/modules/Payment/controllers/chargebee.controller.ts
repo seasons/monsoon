@@ -59,9 +59,6 @@ export class ChargebeeController {
       case CHARGEBEE_SUBSCRIPTION_CREATED:
         await this.chargebeeSubscriptionCreated(body.content)
         break
-      case CHARGEBEE_SUBSCRIPTION_CANCELLED:
-        await this.chargebeeSubscriptionCancelled(body.content)
-        break
       case CHARGEBEE_CUSTOMER_CHANGED:
         await this.chargebeeCustomerChanged(body.content)
         break
@@ -338,50 +335,6 @@ export class ChargebeeController {
     await this.rental.initFirstRentalInvoice(prismaCustomer.id)
   }
 
-  private async chargebeeSubscriptionCancelled(content: any) {
-    const { customer } = content
-    const prismaCustomer = await this.prisma.client.customer.findFirst({
-      where: { user: { id: customer.id } },
-      orderBy: { createdAt: "desc" },
-      select: { id: true, membership: { select: { creditBalance: true } } },
-    })
-    const promises = [
-      this.prisma.client.customer.update({
-        where: { id: prismaCustomer.id },
-        data: { status: "Deactivated" },
-      }),
-    ]
-    if (prismaCustomer.membership.creditBalance > 0) {
-      promises.push(
-        this.prisma.client.customer.update({
-          where: { id: prismaCustomer.id },
-          data: {
-            membership: {
-              update: {
-                creditBalance: 0,
-                creditUpdateHistory: {
-                  create: {
-                    amount: prismaCustomer.membership.creditBalance,
-                    reason: "Customer cancelled. Remove outstanding credits",
-                  },
-                },
-              },
-            },
-          },
-        })
-      )
-    }
-    await this.prisma.client.$transaction(promises)
-    if (customer.promotional_credits > 0) {
-      await chargebee.promotional_credit
-        .deduct({
-          customer_id: customer.id,
-          amount: customer.promotional_credits,
-          description: "Customer cancelled. Remove outstanding credits",
-        })
-        .request()
-    }
-  }
   private async chargebeeCustomerChanged(content: any) {
     const {
       customer: { id },

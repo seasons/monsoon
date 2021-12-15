@@ -27,7 +27,7 @@ import {
 import { PrismaService } from "@prisma1/prisma.service"
 import { ApolloError } from "apollo-server"
 import { difference, flatten, head, isArray, pick, sum } from "lodash"
-import { isEmpty, isUndefined } from "lodash"
+import { isEmpty, merge } from "lodash"
 import { DateTime } from "luxon"
 
 import { UtilsService } from "../../Utils/services/utils.service"
@@ -357,7 +357,7 @@ export class ProductService {
   }
 
   async saveProduct(item, save, select, customer) {
-    let bagItem = await this.prisma.client.bagItem.findFirst({
+    const existingBagItem = await this.prisma.client.bagItem.findFirst({
       where: {
         customer: {
           id: customer.id,
@@ -365,17 +365,34 @@ export class ProductService {
         productVariant: {
           id: item,
         },
-        saved: true,
       },
-      select,
+      select: merge(
+        {
+          saved: true,
+        },
+        select
+      ),
     })
 
-    if (bagItem && !save) {
-      await this.prisma.client.bagItem.delete({
-        where: { id: (bagItem as BagItem).id },
+    // 1. If we're switching a cart item or bag item to saved list
+    if (existingBagItem && save && !existingBagItem.saved) {
+      return await this.prisma.client.bagItem.update({
+        where: { id: existingBagItem.id },
+        data: {
+          isInCart: false,
+          saved: true,
+        },
       })
-    } else if (!bagItem && save) {
-      bagItem = await this.prisma.client.bagItem.create({
+
+      // 2. If we're deleting a saved item from saved list
+    } else if (existingBagItem && !save && existingBagItem.saved) {
+      await this.prisma.client.bagItem.delete({
+        where: { id: existingBagItem.id },
+      })
+
+      // 3. If we're making a saved item for the first time
+    } else if (!existingBagItem && save) {
+      return await this.prisma.client.bagItem.create({
         data: {
           customer: {
             connect: {
@@ -388,6 +405,7 @@ export class ProductService {
             },
           },
           position: 0,
+          isInCart: false,
           saved: save,
           status: "Added",
         },
@@ -395,7 +413,7 @@ export class ProductService {
       })
     }
 
-    return bagItem ? bagItem : null
+    return null
   }
 
   async checkItemsAvailability(items, customer) {
