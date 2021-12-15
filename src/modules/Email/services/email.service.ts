@@ -512,9 +512,7 @@ export class EmailService {
       html,
     }
 
-    const nonMembershipSeasonsEmail =
-      to?.includes("seasons.nyc") && to !== process.env.OPERATIONS_ADMIN_EMAIL
-    if (process.env.NODE_ENV === "production" || nonMembershipSeasonsEmail) {
+    if (process.env.NODE_ENV === "production") {
       sgMail.send(msg)
     } else {
       await nodemailerTransport.sendMail({
