@@ -323,12 +323,18 @@ export class CustomerFieldsResolver {
     if (!customer) {
       return null
     }
-    const userId = await prismaLoader.load(customer.id)
-    return await this.paymentService.getCustomerInvoiceHistory(
-      userId,
-      invoicesLoader,
-      transactionsForCustomerLoader
-    )
+
+    try {
+      const userId = await prismaLoader.load(customer.id)
+      return await this.paymentService.getCustomerInvoiceHistory(
+        userId,
+        invoicesLoader,
+        transactionsForCustomerLoader
+      )
+    } catch (e) {
+      console.error(e)
+      return null
+    }
   }
 
   @ResolveField()
