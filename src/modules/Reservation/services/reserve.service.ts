@@ -217,13 +217,11 @@ export class ReserveService {
     })) as any
 
     // Send confirmation email
-    // await this.emails.sendReservationConfirmationEmail(
-    //   customerWithData.user,
-    //   newProductVariantIDs,
-    //   reservation,
-    //   seasonsToCustomerTransaction.tracking_number,
-    //   seasonsToCustomerTransaction.tracking_url_provider
-    // )
+    await this.emails.sendReservationConfirmationEmail({
+      user: customerWithData.user,
+      productsVariantIDs: newProductVariantIDs,
+      reservation,
+    })
 
     try {
       await this.reservationUtils.updateOutboundResProcessingStats()
