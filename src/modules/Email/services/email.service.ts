@@ -252,25 +252,72 @@ export class EmailService {
     })
   }
 
+  async sendReservationProcessedEmail(data: {
+    user: EmailUser
+    reservation: {
+      id: string
+    }
+    outboundPackage?: {
+      shippingLabel?: {
+        trackingNumber: string
+        trackingURL: string
+      }
+    }
+    shippingCode: ShippingCode
+  }) {
+    const reservation = await this.prisma.client.reservation.findFirst({
+      where: {
+        id: data.reservation.id,
+      },
+      select: {
+        shippingMethod: true,
+        pickupDate: true,
+        pickupWindowId: true,
+      },
+    })
+    const shippingLabel = data.outboundPackage.shippingLabel
+    const extraData =
+      data.shippingCode === ShippingCode.Pickup
+        ? {
+            pickup: {
+              // date: reservation.pickupDate,
+              // timeWindowID: reservation.pickupWindowId
+              date: reservation.pickupDate,
+              timeRange: ShippingMethodFieldsResolver.getTimeWindow(
+                reservation.pickupWindowId
+              )?.display,
+            },
+          }
+        : !!shippingLabel
+        ? {
+            trackingNumber: shippingLabel.trackingNumber,
+            trackingURL: shippingLabel.trackingURL,
+          }
+        : {}
+
+    const payload = await RenderEmail.reservationProcessed({
+      customerWillPickup: data.shippingCode === ShippingCode.Pickup,
+      orderNumber: data.reservation.id,
+    })
+
+    const { user } = data
+
+    await this.sendPreRenderedTransactionalEmail({
+      user,
+      payload,
+      emailId: "ReservationProcessed",
+      ...extraData,
+    })
+  }
+
   async sendReservationConfirmationEmail({
     user,
     productsVariantIDs,
     reservation,
-    trackingNumber,
-    trackingUrl,
-    shippingCode,
-    pickupTime,
   }: {
     user: EmailUser
     productsVariantIDs: string[]
     reservation: { reservationNumber: number }
-    trackingNumber?: string
-    trackingUrl?: string
-    shippingCode?: ShippingCode
-    pickupTime?: {
-      date: string
-      timeWindowID?: string
-    }
   }) {
     const gridPayload = await this.emailUtils.createGridPayloadWithProductVariants(
       productsVariantIDs
@@ -279,18 +326,7 @@ export class EmailService {
     const data = {
       products: gridPayload,
       orderNumber: `${reservation.reservationNumber}`,
-      trackingNumber,
-      trackingURL: trackingUrl,
       id: user.id,
-      customerWillPickUp: shippingCode === ShippingCode.Pickup,
-      ...(pickupTime && {
-        pickup: {
-          date: DateTime.fromISO(pickupTime?.date).toJSDate(),
-          timeRange: ShippingMethodFieldsResolver.getTimeWindow(
-            pickupTime?.timeWindowID
-          )?.display,
-        },
-      }),
     }
 
     const payload = await RenderEmail.reservationConfirmation(data)

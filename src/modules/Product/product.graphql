@@ -158,6 +158,12 @@ type Query {
     first: Int
     last: Int
   ): [Tag]! @cacheControl(maxAge: 0)
+  returnReasons: [ReturnReasonJson!]
+}
+
+type ReturnReasonJson {
+  value: String
+  display: String
 }
 
 enum ProductStatus {
@@ -197,6 +203,8 @@ type Mutation {
     status: PhysicalProductStatus
   ): PhysicalProduct
   createUsedOrder(physicalProductID: ID!): Order!
+  upsertCartItem(productVariantId: ID!, addToCart: Boolean!): BagItem
+    @hasRole(roles: [Customer])
 }
 
 type BagItem {
@@ -211,6 +219,7 @@ type BagItem {
   status: BagItemStatus!
   createdAt: DateTime!
   updatedAt: DateTime!
+  isInCart: Boolean!
 }
 
 type PublishProductsResponse {

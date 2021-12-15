@@ -3378,6 +3378,7 @@ export type EmailId =
   | "PriorityAccess"
   | "ReferralConfirmation"
   | "ReservationConfirmation"
+  | "ReservationProcessed"
   | "ReservationReturnConfirmation"
   | "ResumeConfirmation"
   | "ResumeReminder"

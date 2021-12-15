@@ -212,18 +212,16 @@ export class ReserveService {
       select: merge(select, {
         id: true,
         reservationNumber: true,
-        products: { select: { seasonsUID: true } },
+        products: { select: { seasonsUID: true, id: true } },
       }),
     })) as any
 
     // Send confirmation email
-    // await this.emails.sendReservationConfirmationEmail(
-    //   customerWithData.user,
-    //   newProductVariantIDs,
-    //   reservation,
-    //   seasonsToCustomerTransaction.tracking_number,
-    //   seasonsToCustomerTransaction.tracking_url_provider
-    // )
+    await this.emails.sendReservationConfirmationEmail({
+      user: customerWithData.user,
+      productsVariantIDs: newProductVariantIDs,
+      reservation,
+    })
 
     try {
       await this.reservationUtils.updateOutboundResProcessingStats()
