@@ -29,7 +29,8 @@ export type RentalInvoiceWithCustomerID = {
 // For a full list of webhook types, see https://apidocs.chargebee.com/docs/api/events#event_types
 const CHARGEBEE_CUSTOMER_CHANGED = "customer_changed"
 const CHARGEBEE_SUBSCRIPTION_CREATED = "subscription_created"
-const CHARGEBEE_SUBSCRIPTION_CANCELLED = "subscription_cancelled"
+const CHARGEBEE_PAYMENT_SOURCE_UPDATED = "payment_source_updated"
+const CHARGEBEE_PAYMENT_SOURCE_ADDED = "payment_source_added"
 const CHARGEBEE_PAYMENT_SUCCEEDED = "payment_succeeded"
 const CHARGEBEE_PAYMENT_FAILED = "payment_failed"
 const CHARGEBEE_PROMOTIONAL_CREDITS_ADDED = "promotional_credits_added"
@@ -55,6 +56,7 @@ export class ChargebeeController {
   async handlePost(@Body() body: ChargebeeEvent) {
     this.logger.log("Chargebee event", (body as unknown) as string)
 
+    console.log(body.event_type)
     switch (body.event_type) {
       case CHARGEBEE_SUBSCRIPTION_CREATED:
         await this.chargebeeSubscriptionCreated(body.content)
@@ -74,6 +76,29 @@ export class ChargebeeController {
       case CHARGEBEE_PROMOTIONAL_CREDITS_ADDED:
         await this.creditsAdded(body.content)
         break
+      case CHARGEBEE_PAYMENT_SOURCE_UPDATED:
+      case CHARGEBEE_PAYMENT_SOURCE_ADDED:
+        await this.updatedPaymentSource(body.content)
+        break
+    }
+  }
+
+  private async updatedPaymentSource(content: any) {
+    const { customer: chargebeeCustomer } = content
+    const prismaCustomer = await this.prisma.client.customer.findFirst({
+      where: { user: { id: chargebeeCustomer.id } },
+      select: {
+        id: true,
+        status: true,
+        user: { select: { id: true, email: true, firstName: true } },
+      },
+    })
+    if (prismaCustomer.status === "PaymentFailed") {
+      await this.prisma.client.customer.update({
+        where: { id: prismaCustomer.id },
+        data: { status: "Active" },
+      })
+      await this.email.sendReturnToGoodStandingEmail(prismaCustomer.user)
     }
   }
 
