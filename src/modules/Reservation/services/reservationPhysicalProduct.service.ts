@@ -702,6 +702,9 @@ export class ReservationPhysicalProductService {
     const result = await this.prisma.client.$transaction(filteredPromises)
     const [inboundPackage, outboundPackage] = result
 
+    const bagItem = bagItems[0]
+    const user = bagItem.customer.user
+
     await this.email.sendReservationProcessedEmail({
       user,
       reservation: {
