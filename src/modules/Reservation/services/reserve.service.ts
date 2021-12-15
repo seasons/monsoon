@@ -276,6 +276,12 @@ export class ReserveService {
     },
     productVariantIDs
   ) {
+    if (customerWithData.status === "PaymentFailed") {
+      throw new ApolloError(
+        "Customer with status PaymentFailed cannot reserve items",
+        "PAYMENT_FAILED_STATUS"
+      )
+    }
     if (customerWithData.status !== "Active") {
       throw new Error(`Only Active customers can place a reservation`)
     }
@@ -358,13 +364,11 @@ export class ReserveService {
         })
       )
     }
-    try {
-      const invoice = await chargebee.invoice
-        .create({
-          customer_id: prismaUserId,
-          currency_code: "USD",
-          charges,
-        })
+
+    // Note: No need to set them to PaymentFailed here. It should happen in the Chargebee controller.
+    const handleFailedCharge = async invoice => {
+      await chargebee.invoice
+        .void_invoice(invoice.id)
         .request((error, result) => {
           if (error) {
             // TODO: Add datadog log here
@@ -372,11 +376,38 @@ export class ReserveService {
           }
           return result
         })
-      return { invoice, promises }
-    } catch (err) {
-      // No need to set them to PaymentFailed here. It should happen in the Chargebee controller.
-      throw new ApolloError("Unable to charge minimum for reservation")
+
+      // Frontend relies on specific error message here to trigger UI
+      throw new ApolloError(
+        "Unable to charge minimum for reservation",
+        "PAYMENT_FAILED_RESERVE_MINIMUM"
+      )
     }
+
+    let invoice
+    try {
+      ;({ invoice } = await chargebee.invoice
+        .create({
+          customer_id: prismaUserId,
+          currency_code: "USD",
+          charges,
+        })
+        .request((error, result) => {
+          if (error) {
+            return error
+          }
+          return result
+        }))
+    } catch (err) {
+      // TODO: Add datadog log here
+      await handleFailedCharge(invoice)
+    }
+
+    if (invoice.status !== "paid") {
+      await handleFailedCharge(invoice)
+    }
+
+    return { invoice, promises }
   }
   private async updateBagItemsForReservation(
     activeBagItemsWithData: Array<
