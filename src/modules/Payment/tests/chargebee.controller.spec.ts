@@ -9,7 +9,6 @@ import { PAYMENT_MODULE_DEF } from "../payment.module"
 import { getPromotionalCreditsAddedEvent } from "./data/creditsAdded"
 import { getPaymentSourceUpdatedEvent } from "./data/paymentSourceUpdated"
 import { getPaymentSucceededEvent } from "./data/paymentSucceeded"
-import { getSubscriptionCancelledEvent } from "./data/subscriptionCancelled"
 
 let testCustomer: any
 let prisma: PrismaService
