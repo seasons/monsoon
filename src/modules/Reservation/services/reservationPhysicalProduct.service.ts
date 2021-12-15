@@ -1,3 +1,4 @@
+import { EmailService } from "@app/modules/Email/services/email.service"
 import { ProductVariantService } from "@app/modules/Product/services/productVariant.service"
 import { ShippingService } from "@app/modules/Shipping/services/shipping.service"
 import { UtilsService } from "@app/modules/Utils/services/utils.service"
@@ -58,7 +59,8 @@ export class ReservationPhysicalProductService {
     private readonly productVariantService: ProductVariantService,
     private readonly shippingService: ShippingService,
     private readonly utils: UtilsService,
-    private readonly reservationUtils: ReservationUtilsService
+    private readonly reservationUtils: ReservationUtilsService,
+    private readonly email: EmailService
   ) {}
 
   /*
@@ -563,6 +565,18 @@ export class ReservationPhysicalProductService {
       select: {
         id: true,
         customerId: true,
+        customer: {
+          select: {
+            id: true,
+            user: {
+              select: {
+                id: true,
+                email: true,
+                firstName: true,
+              },
+            },
+          },
+        },
         reservationPhysicalProduct: {
           select: {
             id: true,
@@ -633,6 +647,7 @@ export class ReservationPhysicalProductService {
       promises: packagePromises,
       inboundPackageId,
       outboundPackageId,
+      shippingCode,
     } = await this.shippingService.createPackages({
       bagItems,
       customer: { id: customerID },
@@ -686,6 +701,15 @@ export class ReservationPhysicalProductService {
 
     const result = await this.prisma.client.$transaction(filteredPromises)
     const [inboundPackage, outboundPackage] = result
+
+    await this.email.sendReservationProcessedEmail({
+      user,
+      reservation: {
+        id: bagItem.reservationPhysicalProduct.reservation.id,
+      },
+      outboundPackage,
+      shippingCode,
+    })
 
     if (outboundPackageId === null) {
       return [null, inboundPackage]
