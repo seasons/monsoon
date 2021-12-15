@@ -367,17 +367,18 @@ export class ReserveService {
 
     // Note: No need to set them to PaymentFailed here. It should happen in the Chargebee controller.
     const handleFailedCharge = async invoice => {
-      await chargebee.invoice
-        .void_invoice(invoice.id)
-        .request((error, result) => {
-          if (error) {
-            // TODO: Add datadog log here
-            return error
-          }
-          return result
-        })
+      if (!!invoice) {
+        await chargebee.invoice
+          .void_invoice(invoice.id)
+          .request((error, result) => {
+            if (error) {
+              // TODO: Add datadog log here
+              return error
+            }
+            return result
+          })
+      }
 
-      // Frontend relies on specific error message here to trigger UI
       throw new ApolloError(
         "Unable to charge minimum for reservation",
         "PAYMENT_FAILED_RESERVE_MINIMUM"

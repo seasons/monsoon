@@ -9,6 +9,7 @@ import { PrismaService } from "@app/prisma/prisma.service"
 import { Test } from "@nestjs/testing"
 import { Prisma } from "@prisma/client"
 import chargebee from "chargebee"
+import cuid from "cuid"
 import { head, merge } from "lodash"
 
 import { ProcessableRentalInvoiceArgs } from "../../Payment/services/rental.service"
@@ -23,9 +24,7 @@ class PaymentServiceMock {
 let prisma: PrismaService
 let reserveService: ReserveService
 let shippingService: ShippingService
-let utils: UtilsService
 let reservationTestUtils: ReservationTestUtilsService
-let timeUtils: TimeUtilsService
 let testUtils: TestUtilsService
 let bagService: BagService
 let testCustomer: any
@@ -75,8 +74,6 @@ describe("Reserve Items", () => {
     const moduleRef = await moduleBuilder.compile()
 
     prisma = moduleRef.get<PrismaService>(PrismaService)
-    utils = moduleRef.get<UtilsService>(UtilsService)
-    timeUtils = moduleRef.get<TimeUtilsService>(TimeUtilsService)
     reserveService = moduleRef.get<ReserveService>(ReserveService)
     shippingService = moduleRef.get<ShippingService>(ShippingService)
     testUtils = moduleRef.get<TestUtilsService>(TestUtilsService)
@@ -88,6 +85,15 @@ describe("Reserve Items", () => {
     jest
       .spyOn<any, any>(shippingService, "shippoValidateAddress")
       .mockReturnValue({ isValid: true, code: "", message: "" })
+    jest
+      .spyOn(chargebee.invoice, "create")
+      .mockImplementation(({ customer_id, currency_code, charges }) => {
+        return {
+          request: () => {
+            return { invoice: { status: "paid", id: "yoyo" } }
+          },
+        }
+      })
   })
 
   describe("Core functionality works", () => {
@@ -284,7 +290,11 @@ describe("Reserve Items", () => {
           .spyOn(chargebee.invoice, "create")
           .mockImplementation(({ customer_id, currency_code, charges }) => {
             billedCharges = charges
-            return { request: () => {} }
+            return {
+              request: () => {
+                return { invoice: { status: "paid", id: cuid() } }
+              },
+            }
           })
         const { customer } = await testUtils.createTestCustomer()
         const bagItems = await reservationTestUtils.addToBag(customer, 2)
@@ -373,7 +383,11 @@ describe("Reserve Items", () => {
           .spyOn(chargebee.invoice, "create")
           .mockImplementation(({ customer_id, currency_code, charges }) => {
             billedCharges = charges
-            return { request: () => {} }
+            return {
+              request: () => {
+                return { invoice: { status: "paid", id: cuid() } }
+              },
+            }
           })
         const { customer } = await testUtils.createTestCustomer()
         let keepLooping = true
@@ -454,8 +468,8 @@ describe("Reserve Items", () => {
         expect(rpp2.minimumAmountApplied).toBe(4000)
       })
     })
-    it("Throws the proper expected error", async () => {
-      const mock = jest
+    it("If it errors, we call the proper error", async () => {
+      const invoiceCreateMock = jest
         .spyOn(chargebee.invoice, "create")
         .mockImplementation(({ customer_id, currency_code, charges }) => {
           return {
@@ -463,6 +477,46 @@ describe("Reserve Items", () => {
               throw "Test Error"
             },
           }
+        })
+      const voidInvoiceMock = jest.spyOn(chargebee.invoice, "void_invoice")
+      const { customer } = await testUtils.createTestCustomer()
+      await reservationTestUtils.addToBag(customer, 2)
+
+      // Set the computed Rental prices on bag items so we can predict the charges
+      let expectedError
+      try {
+        await reserveService.reserveItems({
+          customer,
+          shippingCode: "UPSGround",
+          select: { id: true },
+        })
+      } catch (err) {
+        expectedError = err
+      }
+      expect(expectedError).toBeDefined()
+      expect(expectedError.message).toBe(
+        "Unable to charge minimum for reservation"
+      )
+      expect(voidInvoiceMock).toBeCalledTimes(0)
+
+      invoiceCreateMock.mockRestore()
+      voidInvoiceMock.mockRestore()
+    })
+
+    it("If creating the invoice doesn't return successful status, we throw the error and void the invoice", async () => {
+      const invoiceCreateMock = jest
+        .spyOn(chargebee.invoice, "create")
+        .mockImplementation(({ customer_id, currency_code, charges }) => {
+          return {
+            request: () => {
+              return { invoice: { status: "not_success", id: "yoyo" } }
+            },
+          }
+        })
+      const voidInvoiceMock = jest
+        .spyOn(chargebee.invoice, "void_invoice")
+        .mockImplementation(() => {
+          return { request: () => null }
         })
       const { customer } = await testUtils.createTestCustomer()
       await reservationTestUtils.addToBag(customer, 2)
@@ -482,8 +536,10 @@ describe("Reserve Items", () => {
       expect(expectedError.message).toBe(
         "Unable to charge minimum for reservation"
       )
+      expect(voidInvoiceMock).toBeCalledTimes(1)
 
-      mock.mockRestore()
+      invoiceCreateMock.mockRestore()
+      voidInvoiceMock.mockRestore()
     })
   })
 
