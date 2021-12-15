@@ -41,11 +41,15 @@ export class ReservationScheduledJobs {
     }
 
     for (const rpp of rpps) {
-      const updatedMoreThan24HoursAgo = this.checkIfDeliveredMoreThan24HoursAgo(
-        rpp
-      )
-      if (updatedMoreThan24HoursAgo) {
-        report.reservationPhysicalProductsUpdated.push(rpp.id)
+      try {
+        const updatedMoreThan24HoursAgo = this.checkIfDeliveredMoreThan24HoursAgo(
+          rpp
+        )
+        if (updatedMoreThan24HoursAgo) {
+          report.reservationPhysicalProductsUpdated.push(rpp.id)
+        }
+      } catch (err) {
+        console.error(err)
       }
     }
 
@@ -135,7 +139,11 @@ export class ReservationScheduledJobs {
   }
 
   private checkIfDeliveredMoreThan24HoursAgo = rpp => {
-    const date = rpp?.deliveredToCustomerAt.toISOString()
+    if (!rpp?.deliveredToCustomerAt) {
+      return false
+    }
+
+    const date = rpp?.deliveredToCustomerAt?.toISOString()
     return (
       // @ts-ignore
       DateTime.fromISO(date).diffNow("days")?.values?.days <= -1

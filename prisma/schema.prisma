@@ -217,6 +217,7 @@ enum EmailId {
   PriorityAccess
   ReferralConfirmation
   ReservationConfirmation
+  ReservationProcessed
   ReservationReturnConfirmation
   ResumeConfirmation
   ResumeReminder
@@ -848,7 +849,6 @@ model Image {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   url       String   @unique
-  position  Int?
   height    Int?
   width     Int?
   alt       String?
@@ -1459,6 +1459,14 @@ enum ReservationPhysicalProductStatus {
   Purchased
 }
 
+enum ReturnReason {
+  DoneWearing
+  FitTooSmall
+  FitTooBig
+  WasDamaged
+  Other
+}
+
 model ReservationPhysicalProduct {
   id    String  @id @default(cuid()) @db.VarChar(30)
   isNew Boolean @default(false)
@@ -1543,6 +1551,8 @@ model ReservationPhysicalProduct {
 
   // Minimum charge applied at reservation time, in cents.
   minimumAmountApplied Int? @default(0)
+  
+  returnReason        ReturnReason?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

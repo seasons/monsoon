@@ -205,6 +205,7 @@ export class ShippingService {
     }
     inboundPackageId: string
     outboundPackageId: string
+    shippingCode: ShippingCode
   }> {
     if (bagItems.length === 0) {
       throw new Error("No bag items provided, cannot create packages")
@@ -302,6 +303,7 @@ export class ShippingService {
       promises: { outboundPackagePromise, inboundPackagePromise },
       inboundPackageId,
       outboundPackageId,
+      shippingCode,
     }
   }
 

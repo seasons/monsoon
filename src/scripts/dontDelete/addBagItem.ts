@@ -5,8 +5,8 @@ import { PrismaService } from "../../prisma/prisma.service"
 const run = async () => {
   const ps = new PrismaService()
 
-  const physicalProductSUID = "WLSB-RED-SS-015-01"
-  const email = "larryrmilstein@gmail.com"
+  const physicalProductSUID = "RHUD-RED-MM-025-02"
+  const email = "brian.a.watson@gmail.com"
 
   const prodVar = await ps.client.productVariant.findFirst({
     where: { physicalProducts: { some: { seasonsUID: physicalProductSUID } } },
