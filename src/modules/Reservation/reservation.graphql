@@ -456,7 +456,7 @@ input ReservationPhysicalProductUpdateInput {
   reservation: ReservationUpdateInput
   bagItem: BagItemUpdateInput
   isOnHold: Boolean
-  returnReason: String
+  returnReason: ReturnReason
 
   shippingMethod: ShippingMethodUpdateInput
   isNew: Boolean

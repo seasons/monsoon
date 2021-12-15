@@ -176,6 +176,7 @@ export class ReservationService {
     returnReasons: ReturnReasonInput[],
     customer: Customer
   ) {
+    const promises = []
     const bagItems = await this.prisma.client.bagItem.findMany({
       where: {
         customer: {
@@ -219,28 +220,34 @@ export class ReservationService {
         const matchingReturnReason = returnReasons.find(
           rr => rr.reservationPhysicalProductId === rppId
         )
-        await this.prisma.client.reservationPhysicalProduct.update({
-          where: { id: rppId },
-          data: {
-            ...updateData,
-            returnReason: matchingReturnReason?.reason,
-          },
-        })
+        promises.push(
+          this.prisma.client.reservationPhysicalProduct.update({
+            where: { id: rppId },
+            data: {
+              ...updateData,
+              returnReason: matchingReturnReason?.reason,
+            },
+          })
+        )
       }
     } else {
-      await this.prisma.client.reservationPhysicalProduct.updateMany({
-        where: {
-          id: {
-            in: reservationPhysicalProductIds,
+      promises.push(
+        this.prisma.client.reservationPhysicalProduct.updateMany({
+          where: {
+            id: {
+              in: reservationPhysicalProductIds,
+            },
           },
-        },
-        data: {
-          ...updateData,
-        },
-      })
+          data: {
+            ...updateData,
+          },
+        })
+      )
     }
 
-    return this.prisma.client.reservationPhysicalProduct.findMany({
+    await this.prisma.client.$transaction(promises)
+
+    return await this.prisma.client.reservationPhysicalProduct.findMany({
       where: {
         id: {
           in: reservationPhysicalProductIds,
