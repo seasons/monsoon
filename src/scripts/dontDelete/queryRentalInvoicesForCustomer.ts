@@ -7,7 +7,7 @@ const run = async () => {
   const ps = new PrismaService()
   const timeUtils = new TimeUtilsService()
 
-  const email = "perla.trejo@live.com"
+  const email = "fritzvoneric@gmail.com"
   const c = await ps.client.customer.findMany({
     where: { user: { email } },
     select: {
@@ -21,6 +21,7 @@ const run = async () => {
               createdAt: true,
               billingEndAt: true,
               billingStartAt: true,
+              membershipId: true,
               reservations: { select: { reservationNumber: true } },
               products: {
                 select: { id: true, seasonsUID: true, productStatus: true },
@@ -39,21 +40,21 @@ const run = async () => {
                   },
                 },
               },
-              reservationPhysicalProducts: {
-                select: {
-                  hasBeenDeliveredToBusiness: true,
-                  deliveredToBusinessAt: true,
-                  hasBeenDeliveredToCustomer: true,
-                  deliveredToCustomerAt: true,
-                  hasBeenLost: true,
-                  hasBeenScannedOnInbound: true,
-                  scannedOnInboundAt: true,
-                  hasBeenScannedOnOutbound: true,
-                  scannedOnOutboundAt: true,
-                  status: true,
-                  shippingMethod: { select: { code: true } },
-                },
-              },
+              // reservationPhysicalProducts: {
+              //   select: {
+              //     hasBeenDeliveredToBusiness: true,
+              //     deliveredToBusinessAt: true,
+              //     hasBeenDeliveredToCustomer: true,
+              //     deliveredToCustomerAt: true,
+              //     hasBeenLost: true,
+              //     hasBeenScannedOnInbound: true,
+              //     scannedOnInboundAt: true,
+              //     hasBeenScannedOnOutbound: true,
+              //     scannedOnOutboundAt: true,
+              //     status: true,
+              //     shippingMethod: { select: { code: true } },
+              //   },
+              // },
             },
           },
         },
