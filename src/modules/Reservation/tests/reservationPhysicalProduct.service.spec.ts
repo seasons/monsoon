@@ -73,6 +73,60 @@ describe("Reservation Physical Product Service", () => {
       }
     })
 
+    it("Removes the warehouse location from the relevant physicalProduct", async () => {
+      const {
+        bagItems,
+      } = await reservationUtilsTestService.addToBagAndReserveForCustomer({
+        customer: testCustomer,
+        numProductsToAdd: 2,
+        options: {
+          bagItemSelect: {
+            id: true,
+            status: true,
+
+            reservationPhysicalProduct: {
+              select: {
+                id: true,
+                status: true,
+              },
+            },
+          },
+        },
+      })
+
+      const bagItemIds = bagItems.map(bagItem => bagItem.id)
+      await reservationPhysicalProductService.pickItems({
+        bagItemIds,
+        select: {
+          id: true,
+          status: true,
+        },
+      })
+
+      const physicalProducts = await prisma.client.physicalProduct.findMany({
+        where: {
+          bagItems: {
+            some: {
+              id: {
+                in: bagItemIds,
+              },
+            },
+          },
+        },
+        select: {
+          warehouseLocation: {
+            select: {
+              id: true,
+            },
+          },
+        },
+      })
+
+      for (let physProd of physicalProducts) {
+        expect(physProd.warehouseLocation).toBeNull()
+      }
+    })
+
     it("Throws an error if one of the items is not set to Queued status", async () => {
       const {
         bagItems,
@@ -195,6 +249,64 @@ describe("Reservation Physical Product Service", () => {
 
       for (let reservationPhysicalProduct of result) {
         expect(reservationPhysicalProduct.status).toBe("Packed")
+      }
+    })
+
+    it("Removes the warehouse location from the relevant physicalProduct if the bagItem is queued", async () => {
+      const {
+        bagItems,
+      } = await reservationUtilsTestService.addToBagAndReserveForCustomer({
+        customer: testCustomer,
+        numProductsToAdd: 2,
+        options: {
+          bagItemSelect: {
+            id: true,
+            status: true,
+
+            reservationPhysicalProduct: {
+              select: {
+                id: true,
+                status: true,
+              },
+            },
+          },
+        },
+      })
+
+      for (let bagItem of bagItems) {
+        expect(bagItem.reservationPhysicalProduct.status).toBe("Queued")
+      }
+
+      const bagItemIds = bagItems.map(bagItem => bagItem.id)
+      await reservationPhysicalProductService.packItems({
+        bagItemIds,
+        select: {
+          id: true,
+          status: true,
+        },
+      })
+
+      const physicalProducts = await prisma.client.physicalProduct.findMany({
+        where: {
+          bagItems: {
+            some: {
+              id: {
+                in: bagItemIds,
+              },
+            },
+          },
+        },
+        select: {
+          warehouseLocation: {
+            select: {
+              id: true,
+            },
+          },
+        },
+      })
+
+      for (let physProd of physicalProducts) {
+        expect(physProd.warehouseLocation).toBeNull()
       }
     })
 

@@ -523,16 +523,28 @@ export class ReservationPhysicalProductService {
 
     for (let bagItem of bagItems) {
       const reservationPhysicalProduct = bagItem.reservationPhysicalProduct
+      const data = <any>{
+        status: "Packed",
+        packedAt: new Date(),
+      }
+
+      if (reservationPhysicalProduct.status === "Queued") {
+        ;(data["pickedAt"] = new Date()),
+          (data["physicalProduct"] = {
+            update: {
+              warehouseLocation: {
+                disconnect: true,
+              },
+            },
+          })
+      }
 
       promises.push(
         this.prisma.client.reservationPhysicalProduct.update({
           where: {
             id: reservationPhysicalProduct.id,
           },
-          data: {
-            status: "Packed",
-            packedAt: new Date(),
-          },
+          data: data,
           select,
         })
       )
