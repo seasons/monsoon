@@ -196,6 +196,7 @@ export class ProductVariantFieldsResolver {
               id: ctx.customer.id,
             },
             saved: false,
+            isInCart: false,
           }),
         getKeys: a => [a.productVariant.id],
         fallbackValue: null,
