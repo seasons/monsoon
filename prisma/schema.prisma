@@ -1177,6 +1177,7 @@ model Product {
   wholesalePrice              Int?
   rentalPriceOverride         Int?
   computedRentalPrice         Int?
+  discountPercentage             Int?
   recoupment                  Float?
   status                      ProductStatus?
   createdAt                   DateTime                 @default(now())
