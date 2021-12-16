@@ -55,7 +55,7 @@ export class ReservationTestUtilsService {
       },
       select: {
         productVariant: {
-          select: { sku: true, product: { select: { id: true } } },
+          select: { sku: true, product: { select: { id: true, name: true } } },
         },
       },
     })
@@ -63,8 +63,13 @@ export class ReservationTestUtilsService {
     const reservedProductIds = reservedBagItems.map(
       b => b.productVariant.product.id
     )
+    const reservedProductNames = reservedBagItems.map(
+      a => a.productVariant.product.name
+    )
+
     let reservableProdVars = []
     let reservableProductIds = []
+    let reservableProductNames = []
     for (let i = 0; i < numProductsToAdd; i++) {
       const nextProdVar = await this.prisma.client.productVariant.findFirst({
         where: {
@@ -73,6 +78,9 @@ export class ReservationTestUtilsService {
           // Ensure we reserve diff products each time. Needed for some tests
           product: {
             id: { notIn: [...reservedProductIds, ...reservableProductIds] },
+            name: {
+              notIn: [...reservedProductNames, ...reservableProductNames],
+            },
           },
           // We shouldn't need to check this since we're checking counts,
           // but there's some corrupt data so we do this to circumvent that.
@@ -82,10 +90,12 @@ export class ReservationTestUtilsService {
         select: {
           id: true,
           productId: true,
+          product: { select: { id: true, name: true } },
         },
       })
       reservableProdVars.push(nextProdVar)
       reservableProductIds.push(nextProdVar.productId)
+      reservedProductNames.push(nextProdVar.product.name)
     }
 
     let createdBagItems = []
