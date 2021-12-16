@@ -51,7 +51,6 @@ const addSaleDiscount = async () => {
     },
   })
 
-  const promises = []
   for (let physicalProduct of physicalProducts) {
     const product = physicalProduct.productVariant.product
 
@@ -85,17 +84,13 @@ const addSaleDiscount = async () => {
           id: product.id,
         },
         data: {
-          salesPercentage: discount,
+          discountPercentage: discount,
         },
       })
     } catch (e) {
       console.log(physicalProduct.seasonsUID, ": ", e)
     }
-
-    // console.log(physicalProduct.seasonsUID, ": ", retailPrice)
   }
-
-  const result = await ps.client.$transaction(promises)
 }
 
 addSaleDiscount()
