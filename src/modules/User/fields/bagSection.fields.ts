@@ -47,7 +47,7 @@ export class BagSectionFieldsResolver {
       return await this.getSyntheticBagItemsFor({
         statuses: [
           ReservationPhysicalProductStatus.DeliveredToBusiness,
-          ReservationPhysicalProductStatus.ReturnProcessed,
+          // ReservationPhysicalProductStatus.ReturnProcessed,
         ],
         customer,
         select,
