@@ -186,8 +186,6 @@ export class OrderService {
       orderItems.filter(x => x.shippingRequired).map(x => x.physicalProduct) ??
       []
 
-    const physicalProducts = orderItems.map(x => x.physicalProduct)
-
     // Shipping is included on products the customer has reserved
     const packages = await (physicalProductsToShip.length > 0
       ? this.shipping.getBuyUsedShippingRate(
@@ -201,37 +199,30 @@ export class OrderService {
     const shippingAddress = customerWithData?.detail
       ?.shippingAddress as Location
 
-    const purchaseCreditsApplied =
+    const purchaseCreditsAvailable =
       customerWithData.membership.purchaseCredits ?? 0
-    const hasPurchaseCredits = purchaseCreditsApplied > 0
 
     const creditsAvailable = customerWithData.membership.creditBalance ?? 0
     const hasCredits = creditsAvailable > 0
 
-    const totalCreditsAvailable = creditsAvailable + purchaseCreditsApplied
-    const buyUsedPrices = physicalProducts.map(pp => pp.price.buyUsedPrice)
-    const buyUsedPriceSum = buyUsedPrices.reduce((acc, curVal) => {
-      return acc + curVal
-    }, 0)
+    const totalCreditsAvailable = creditsAvailable + purchaseCreditsAvailable
 
-    const totalCreditsApplied =
-      totalCreditsAvailable > buyUsedPriceSum
-        ? buyUsedPriceSum
-        : totalCreditsAvailable
-
-    const creditsApplied = totalCreditsApplied - purchaseCreditsApplied
-
-    let totalCreditsToApply = purchaseCreditsApplied + creditsApplied
+    let creditsAvailableAccumulator = totalCreditsAvailable
+    let totalCreditsUsed = 0
 
     const getChargePrice = lineItemPrice => {
       let chargePrice = lineItemPrice
+      const creditsStillAvailable = creditsAvailableAccumulator > 0
 
-      if (type === "draft" && totalCreditsToApply > 0) {
-        if (chargePrice > totalCreditsToApply) {
-          chargePrice = chargePrice - totalCreditsToApply
-          totalCreditsToApply = 0
+      if (type === "draft" && creditsStillAvailable) {
+        if (chargePrice > creditsAvailableAccumulator) {
+          chargePrice = chargePrice - creditsAvailableAccumulator
+          totalCreditsUsed = totalCreditsUsed + creditsAvailableAccumulator
+          creditsAvailableAccumulator = 0
         } else {
-          totalCreditsToApply = totalCreditsToApply - lineItemPrice
+          creditsAvailableAccumulator =
+            creditsAvailableAccumulator - lineItemPrice
+          totalCreditsUsed = totalCreditsUsed + lineItemPrice
           chargePrice = 0
         }
       }
@@ -242,9 +233,10 @@ export class OrderService {
     const productLineItems: OrderLineItemCreateInput[] = []
     const charges = []
     let totalShippingPrice = 0
+    let shippingRequired = false
     for (const orderItem of orderItems) {
       const physicalProduct = orderItem.physicalProduct
-      const shippingRequired = orderItem.shippingRequired
+      const itemRequiresShipping = orderItem.shippingRequired
 
       if (
         !physicalProduct ||
@@ -256,36 +248,43 @@ export class OrderService {
         )
       }
 
-      charges.push({
-        amount: getChargePrice(physicalProduct.price.buyUsedPrice),
-        taxable: true,
-        description: orderItem.name,
-        avalara_tax_code: orderItem.productTaxCode,
-      })
+      const chargeAmount = getChargePrice(physicalProduct.price.buyUsedPrice)
+      if (chargeAmount > 0) {
+        charges.push({
+          amount: chargeAmount,
+          taxable: true,
+          description: orderItem.name,
+          avalara_tax_code: orderItem.productTaxCode,
+        })
+      }
 
       productLineItems.push({
         recordID: physicalProduct.id,
         recordType: "PhysicalProduct",
-        needShipping: shippingRequired,
+        needShipping: itemRequiresShipping,
         price: physicalProduct.price.buyUsedPrice,
         currencyCode: "USD",
         name: orderItem.name,
       })
-      if (shippingRequired) {
+      if (itemRequiresShipping) {
+        shippingRequired = true
         const shippingPrice = shipping.amount
+        const shippingCharge = getChargePrice(shippingPrice)
 
-        charges.push({
-          amount: getChargePrice(shippingPrice),
-          taxable: true,
-          description: shipping?.rate?.servicelevel?.name || "Shipping",
-          avalara_tax_code: "FR020000",
-        })
+        if (shippingCharge > 0) {
+          charges.push({
+            amount: shippingCharge,
+            taxable: true,
+            description: shipping?.rate?.servicelevel?.name || "Shipping",
+            avalara_tax_code: "FR020000",
+          })
+        }
 
         totalShippingPrice += shippingPrice
       }
     }
 
-    if (totalShippingPrice > 0) {
+    if (shippingRequired) {
       productLineItems.push({
         recordID: cuid(),
         recordType: "Package",
@@ -295,27 +294,34 @@ export class OrderService {
       })
     }
 
-    const orderLineItems = [
-      ...productLineItems,
-      hasPurchaseCredits
-        ? {
-            name: "Membership discount",
-            recordID: customerWithData.membership.id,
-            recordType: "PurchaseCredit",
-            currencyCode: "USD",
-            price: -purchaseCreditsApplied,
-          }
-        : null,
-      hasCredits
-        ? {
-            name: "Promotional credits",
-            recordID: customerWithData.membership.id,
-            recordType: "Credit",
-            currencyCode: "USD",
-            price: -creditsApplied,
-          }
-        : null,
-    ].filter(Boolean) as OrderLineItem[]
+    const orderLineItems = productLineItems.filter(Boolean) as OrderLineItem[]
+
+    const purchaseCreditsApplied =
+      purchaseCreditsAvailable > totalCreditsUsed
+        ? purchaseCreditsAvailable - totalCreditsUsed
+        : purchaseCreditsAvailable
+
+    if (purchaseCreditsApplied > 0) {
+      orderLineItems.push({
+        name: "Membership discount",
+        recordID: customerWithData.membership.id,
+        recordType: "PurchaseCredit",
+        currencyCode: "USD",
+        price: -purchaseCreditsApplied,
+      } as OrderLineItem)
+    }
+
+    const creditsApplied = totalCreditsUsed - purchaseCreditsApplied
+
+    if (creditsApplied > 0) {
+      orderLineItems.push({
+        name: "Promotional credits",
+        recordID: customerWithData.membership.id,
+        recordType: "Credit",
+        currencyCode: "USD",
+        price: -creditsApplied,
+      } as OrderLineItem)
+    }
 
     return {
       shippingAddress,
@@ -752,15 +758,24 @@ export class OrderService {
       type: "draft",
     })
 
-    const chargebeeResult = await chargebee.estimate
-      .create_invoice({
-        invoice: pick(invoice, ["customer_id"]),
-        ...pick(invoice, ["charges", "shipping_address"]),
-      })
-      .request()
-    const {
-      estimate: { invoice_estimate },
-    } = chargebeeResult
+    let invoiceEstimate = {
+      sub_total: 0,
+      total: 0,
+      line_items: [],
+    }
+
+    if (invoice.charges.length > 0) {
+      const chargebeeResult = await chargebee.estimate
+        .create_invoice({
+          invoice: pick(invoice, ["customer_id"]),
+          ...pick(invoice, ["charges", "shipping_address"]),
+        })
+        .request()
+      const {
+        estimate: { invoice_estimate },
+      } = chargebeeResult
+      invoiceEstimate = invoice_estimate
+    }
 
     const createData = {
       customer: { connect: { id: customer.id } },
@@ -768,16 +783,16 @@ export class OrderService {
       type: "Used" as OrderType,
       status: "Drafted" as OrderStatus,
       subTotal:
-        invoice_estimate.sub_total +
+        invoiceEstimate.sub_total +
         // Because we removed the credits manually early, add them back here
         purchaseCreditsApplied +
         creditsApplied,
-      total: invoice_estimate.total,
+      total: invoiceEstimate.total,
       lineItems: {
         create: orderLineItems.map((orderLineItem, idx) => ({
           ...orderLineItem,
-          taxRate: invoice_estimate?.line_items?.[idx]?.tax_rate || 0,
-          taxPrice: invoice_estimate?.line_items?.[idx]?.tax_amount || 0,
+          taxRate: invoiceEstimate?.line_items?.[idx]?.tax_rate || 0,
+          taxPrice: invoiceEstimate?.line_items?.[idx]?.tax_amount || 0,
         })),
       },
       paymentStatus: "Complete" as OrderPaymentStatus,
