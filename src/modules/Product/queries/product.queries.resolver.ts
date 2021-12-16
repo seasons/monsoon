@@ -3,6 +3,7 @@ import { Application } from "@app/decorators/application.decorator"
 import { FindManyArgs } from "@app/decorators/findManyArgs.decorator"
 import { Select } from "@app/decorators/select.decorator"
 import { QueryUtilsService } from "@app/modules/Utils/services/queryUtils.service"
+import { UtilsService } from "@app/modules/Utils/services/utils.service"
 import { PrismaService } from "@app/prisma/prisma.service"
 import { Logger } from "@nestjs/common"
 import { Args, Info, Query, Resolver } from "@nestjs/graphql"
@@ -17,7 +18,8 @@ export class ProductQueriesResolver {
   constructor(
     private readonly productService: ProductService,
     private readonly queryUtils: QueryUtilsService,
-    private readonly prisma: PrismaService
+    private readonly prisma: PrismaService,
+    private readonly utils: UtilsService
   ) {}
 
   @Query()
@@ -231,5 +233,16 @@ export class ProductQueriesResolver {
   async newestBrandProducts(@Args() args, @Select() select) {
     // Returns products from the most recent brand to be added
     return this.productService.newestBrandProducts(args, select)
+  }
+
+  @Query()
+  async returnReasons() {
+    return [
+      { display: "Done wearing", value: "DoneWearing" },
+      { display: "Fit too small", value: "FitTooSmall" },
+      { display: "Fit too big", value: "FitTooBig" },
+      { display: "Was damaged", value: "WasDamaged" },
+      { display: "Other", value: "Other" },
+    ]
   }
 }

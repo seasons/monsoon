@@ -60,14 +60,33 @@ describe("Return Items", () => {
       },
     })
     physicalProductIdsToReturn = bagItemsToReturn.map(a => a.physicalProductId)
-    await reservationService.returnItems(
-      physicalProductIdsToReturn,
-      testCustomer
-    )
   })
 
-  it("sets customerReturnIntentAt and hasCustomerReturnIntent on reservationPhysicalProducts", async () => {
-    let returnPendingResPhysProds = await prisma.client.reservationPhysicalProduct.findMany(
+  it("sets customerReturnIntentAt and hasCustomerReturnIntent on reservationPhysicalProducts, without return reasons", async () => {
+    const returnPendingResPhysProds = await prisma.client.reservationPhysicalProduct.findMany(
+      {
+        where: {
+          physicalProduct: {
+            id: {
+              in: physicalProductIdsToReturn,
+            },
+          },
+        },
+        select: {
+          id: true,
+          status: true,
+          hasCustomerReturnIntent: true,
+          customerReturnIntentAt: true,
+        },
+      }
+    )
+
+    await reservationService.returnItems(
+      returnPendingResPhysProds.map(rpp => rpp.id),
+      [],
+      testCustomer
+    )
+    const postReturnRpps = await prisma.client.reservationPhysicalProduct.findMany(
       {
         where: {
           physicalProduct: {
@@ -84,10 +103,66 @@ describe("Return Items", () => {
       }
     )
 
-    returnPendingResPhysProds.forEach(resPhysProd => {
+    postReturnRpps.forEach(resPhysProd => {
       expect(resPhysProd.status).toBe("ReturnPending")
       expectTimeToEqual(resPhysProd.customerReturnIntentAt, new Date())
       expect(resPhysProd.hasCustomerReturnIntent).toBe(true)
+    })
+  })
+
+  it("sets return reason if included in payload", async () => {
+    const returnPendingResPhysProds = await prisma.client.reservationPhysicalProduct.findMany(
+      {
+        where: {
+          physicalProduct: {
+            id: {
+              in: physicalProductIdsToReturn,
+            },
+          },
+        },
+        select: {
+          id: true,
+          status: true,
+          hasCustomerReturnIntent: true,
+          customerReturnIntentAt: true,
+        },
+      }
+    )
+
+    await reservationService.returnItems(
+      returnPendingResPhysProds.map(rpp => rpp.id),
+      returnPendingResPhysProds.map(rpp => {
+        return {
+          reservationPhysicalProductId: rpp.id,
+          reason: "FitTooBig",
+        }
+      }),
+      testCustomer
+    )
+
+    const postReturnRpps = await prisma.client.reservationPhysicalProduct.findMany(
+      {
+        where: {
+          physicalProduct: {
+            id: {
+              in: physicalProductIdsToReturn,
+            },
+          },
+        },
+        select: {
+          status: true,
+          hasCustomerReturnIntent: true,
+          customerReturnIntentAt: true,
+          returnReason: true,
+        },
+      }
+    )
+
+    postReturnRpps.forEach(resPhysProd => {
+      expect(resPhysProd.status).toBe("ReturnPending")
+      expectTimeToEqual(resPhysProd.customerReturnIntentAt, new Date())
+      expect(resPhysProd.hasCustomerReturnIntent).toBe(true)
+      expect(resPhysProd.returnReason).toBe("FitTooBig")
     })
   })
 })
