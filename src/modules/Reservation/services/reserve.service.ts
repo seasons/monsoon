@@ -99,6 +99,7 @@ export class ReserveService {
         customer: { id: customer.id },
         status: { in: ["Reserved", "Added"] },
         saved: false,
+        isInCart: false,
       },
       select: {
         id: true,
