@@ -237,7 +237,7 @@ export class RentalService {
         }
       }
 
-      const chargeResult = await this.chargebeeChargeTab(planID, lineItems, {
+      const chargeResult = await this.chargebeeChargeTab(lineItems, {
         forceImmediateCharge,
       })
       ;[chargePromises, chargebeeInvoices] = chargeResult
@@ -1415,10 +1415,9 @@ export class RentalService {
     return result
   }
 
-  private async chargebeeChargeTab(
-    planID: string,
+  async chargebeeChargeTab(
     lineItems: { id: string }[],
-    { forceImmediateCharge = false }
+    { forceImmediateCharge } = { forceImmediateCharge: false }
   ) {
     const promises = []
     const invoicesCreated = []
@@ -1493,10 +1492,11 @@ export class RentalService {
       lineItemsWithData[0].rentalInvoice.id
     )
 
-    const shouldChargeImmediately =
-      ["non_renewing", "cancelled"].includes(subscriptionStatus) ||
-      this.timeUtils.isXOrMoreDaysFromNow(nextBillingAt.toISOString(), 2) ||
+    const shouldChargeImmediately = this.shouldChargeImmediately(
+      subscriptionStatus,
+      nextBillingAt,
       forceImmediateCharge
+    )
 
     if (shouldChargeImmediately) {
       const result = await chargebee.invoice
@@ -1539,6 +1539,18 @@ export class RentalService {
     }
 
     return [promises, invoicesCreated]
+  }
+
+  shouldChargeImmediately(
+    subscriptionStatus: string,
+    nextBillingAt: Date,
+    forceImmediateCharge: boolean
+  ) {
+    return (
+      ["non_renewing", "cancelled"].includes(subscriptionStatus) ||
+      this.timeUtils.isXOrMoreDaysFromNow(nextBillingAt.toISOString(), 2) ||
+      forceImmediateCharge
+    )
   }
 
   async addPromotionalCredits(prismaUserId, totalInvoiceCharges, invoiceId) {
