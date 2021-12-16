@@ -235,6 +235,7 @@ type RentalInvoice {
   membership: CustomerMembership
   status: RentalInvoiceStatus
   reservations: [Reservation!]
+  total: Int
 }
 
 type ChargebeeLineItem implements LineItemInterface {

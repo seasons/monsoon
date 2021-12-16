@@ -837,6 +837,7 @@ export class RentalService {
             physicalProduct: {
               connect: { id: reservationPhysicalProduct.physicalProduct.id },
             },
+            type: "PhysicalProduct",
             price,
             appliedMinimum,
             adjustedForPreviousMinimum,
