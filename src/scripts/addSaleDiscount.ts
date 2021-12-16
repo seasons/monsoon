@@ -4,9 +4,9 @@ import csvsync from "csvsync"
 
 import { PrismaService } from "../prisma/prisma.service"
 
-const addSaleDiscount = async () => {
-  const ps = new PrismaService()
+const ps = new PrismaService()
 
+const addSaleDiscount = async () => {
   const exportFile = fs.readFileSync(`archive-sales.csv`)
   const products = csvsync.parse(exportFile, {
     returnObject: true,
@@ -85,6 +85,7 @@ const addSaleDiscount = async () => {
         },
         data: {
           discountPercentage: discount,
+          discountedPrice,
         },
       })
     } catch (e) {
@@ -93,4 +94,87 @@ const addSaleDiscount = async () => {
   }
 }
 
+const createCollections = async () => {
+  const groups = {
+    under100: [],
+    under200: [],
+    under500: [],
+    under1000: [],
+  }
+
+  const products = await ps.client.product.findMany({})
+
+  for (let product of products) {
+    const retailPrice = product.retailPrice
+    const discountPercentage = product.discountPercentage
+    const discountedPrice = Math.ceil(
+      retailPrice * (1 - discountPercentage / 100)
+    )
+
+    if (discountedPrice < 100) {
+      groups.under100.push(product)
+    } else if (discountedPrice < 200) {
+      groups.under200.push(product)
+    } else if (discountedPrice < 500) {
+      groups.under500.push(product)
+    } else if (discountedPrice < 1000) {
+      groups.under1000.push(product)
+    }
+  }
+
+  const under100 = await ps.client.collection.create({
+    data: {
+      title: "Under $100",
+      slug: "under-100",
+      published: false,
+      displayTextOverlay: false,
+      products: {
+        connect: groups.under100.map(product => ({ id: product.id })),
+      },
+    },
+  })
+
+  const under200 = await ps.client.collection.create({
+    data: {
+      title: "Under $200",
+      slug: "under-200",
+      published: false,
+      displayTextOverlay: false,
+      products: {
+        connect: groups.under200.map(product => ({ id: product.id })),
+      },
+    },
+  })
+
+  const under500 = await ps.client.collection.create({
+    data: {
+      title: "Under $500",
+      slug: "under-500",
+      published: false,
+      displayTextOverlay: false,
+      products: {
+        connect: groups.under500.map(product => ({ id: product.id })),
+      },
+    },
+  })
+
+  const under1000 = await ps.client.collection.create({
+    data: {
+      title: "Under $1000",
+      slug: "under-1000",
+      published: false,
+      displayTextOverlay: false,
+      products: {
+        connect: groups.under1000.map(product => ({ id: product.id })),
+      },
+    },
+  })
+
+  console.log(under100)
+  console.log(under200)
+  console.log(under500)
+  console.log(under1000)
+}
+
 addSaleDiscount()
+// createCollections()`
