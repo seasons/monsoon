@@ -497,6 +497,7 @@ export class ProductVariantFieldsResolver {
             select: {
               id: true,
               buyNewEnabled: true,
+              discountedPrice: true,
               brand: {
                 select: {
                   id: true,
@@ -528,7 +529,7 @@ export class ProductVariantFieldsResolver {
         price: Pick<PhysicalProductPrice, "buyUsedPrice" | "buyUsedEnabled">
         inventoryStatus: InventoryStatus
       }>
-      product: Pick<Product, "buyNewEnabled"> & {
+      product: Pick<Product, "buyNewEnabled" | "discountedPrice"> & {
         brand: {
           shopifyShop?: Pick<
             ShopifyShop,
@@ -620,7 +621,7 @@ export class ProductVariantFieldsResolver {
         mostExpensiveUsedPhysicalProduct?.price?.buyUsedPrice
       buyUsedPrice.buyUsedPrice = mostExpensiveBuyUsedPrice
       // FIXME: Update buyUsedAdjustedPrice for rent to own
-      buyUsedPrice.buyUsedAdjustedPrice = mostExpensiveBuyUsedPrice
+      buyUsedPrice.buyUsedAdjustedPrice = product.discountedPrice
     }
 
     return {
