@@ -22,11 +22,6 @@ const addSaleDiscount = async () => {
   }, {})
 
   const physicalProducts = await ps.client.physicalProduct.findMany({
-    where: {
-      seasonsUID: {
-        in: productSUIDs,
-      },
-    },
     select: {
       id: true,
       seasonsUID: true,
@@ -53,30 +48,46 @@ const addSaleDiscount = async () => {
 
   for (let physicalProduct of physicalProducts) {
     const product = physicalProduct.productVariant.product
-
     const retailPrice = product.retailPrice
 
     const csvData = suidsToProducts[physicalProduct.seasonsUID]
-    const discountStr = csvData.Discount
-    const discount = parseFloat(discountStr) * 100
+    let amount = retailPrice
 
-    const discountedPrice = Math.ceil(retailPrice * (1 - discount / 100))
+    if (csvData) {
+      const discountStr = csvData.Discount
+      const discount = parseFloat(discountStr) * 100
 
-    console.log(`
+      const discountedPrice = Math.ceil(retailPrice * (1 - discount / 100))
+
+      console.log(`
+          ${physicalProduct.seasonsUID}:
+
+          Computed Price
+          - Retail Cost: ${retailPrice}
+          - Archive Price: ${discountedPrice}
+          - Discount: ${discount}
+
+      `)
+
+      amount = discountedPrice
+
+      await ps.client.product.update({
+        where: {
+          id: product.id,
+        },
+        data: {
+          discountPercentage: discount,
+          discountedPrice,
+        },
+      })
+    } else {
+      console.log(`
         ${physicalProduct.seasonsUID}:
 
-        CSV Data
-         - Retail Cost: ${csvData[" Retail Cost "]}
-         - Archive Price: ${csvData[" Archive Price "]}
-         - Discount: ${discountStr}
-
-        Computed Price
         - Retail Cost: ${retailPrice}
-        - Archive Price: ${discountedPrice}
-        - Discount: ${discount}
-
-
-    `)
+        - No Discount
+      `)
+    }
 
     try {
       await ps.client.physicalProduct.update({
@@ -87,18 +98,9 @@ const addSaleDiscount = async () => {
           price: {
             update: {
               buyUsedEnabled: true,
+              buyUsedPrice: amount * 100,
             },
           },
-        },
-      })
-
-      await ps.client.product.update({
-        where: {
-          id: product.id,
-        },
-        data: {
-          discountPercentage: discount,
-          discountedPrice,
         },
       })
     } catch (e) {
@@ -191,5 +193,16 @@ const createCollections = async () => {
   console.log(under1000)
 }
 
+const updatePhysicalProducts = async () => {
+  await ps.client.physicalProductPrice.updateMany({
+    data: {
+      buyUsedEnabled: true,
+    },
+  })
+  console.log("Done")
+}
+
 addSaleDiscount()
 // createCollections()
+
+// updatePhysicalProducts()
