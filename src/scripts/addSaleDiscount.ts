@@ -79,6 +79,19 @@ const addSaleDiscount = async () => {
     `)
 
     try {
+      await ps.client.physicalProduct.update({
+        where: {
+          id: physicalProduct.id,
+        },
+        data: {
+          price: {
+            update: {
+              buyUsedEnabled: true,
+            },
+          },
+        },
+      })
+
       await ps.client.product.update({
         where: {
           id: product.id,
@@ -92,6 +105,8 @@ const addSaleDiscount = async () => {
       console.log(physicalProduct.seasonsUID, ": ", e)
     }
   }
+
+  console.log("Done")
 }
 
 const createCollections = async () => {
@@ -176,5 +191,5 @@ const createCollections = async () => {
   console.log(under1000)
 }
 
-// addSaleDiscount()
-createCollections()
+addSaleDiscount()
+// createCollections()

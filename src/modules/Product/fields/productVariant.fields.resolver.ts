@@ -621,7 +621,8 @@ export class ProductVariantFieldsResolver {
         mostExpensiveUsedPhysicalProduct?.price?.buyUsedPrice
       buyUsedPrice.buyUsedPrice = mostExpensiveBuyUsedPrice
       // FIXME: Update buyUsedAdjustedPrice for rent to own
-      buyUsedPrice.buyUsedAdjustedPrice = product.discountedPrice
+      buyUsedPrice.buyUsedAdjustedPrice =
+        product.discountedPrice * 100 || mostExpensiveBuyUsedPrice
     }
 
     return {
