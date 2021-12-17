@@ -408,6 +408,8 @@ describe("Reservation Physical Product Service", () => {
           id: true,
           outboundPackage: true,
           inboundPackage: true,
+          potentialInboundPackage: { select: { id: true } },
+          utilizedInboundPackage: { select: { id: true } },
           physicalProduct: {
             select: {
               packages: {
@@ -430,13 +432,17 @@ describe("Reservation Physical Product Service", () => {
                   id: true,
                 },
               },
+              returnedPackage: { select: { id: true } },
             },
           },
         },
       },
     }
 
-    const getShippingLabelsForShippingCode = async shippingCode => {
+    const getShippingLabelsForShippingCode = async (
+      shippingCode,
+      includeLabelForPickups = false
+    ) => {
       const {
         bagItems,
       } = await reservationUtilsTestService.addToBagAndReserveForCustomer({
@@ -475,6 +481,7 @@ describe("Reservation Physical Product Service", () => {
             shippingMethod: true,
             items: { select: { id: true } },
           },
+          options: { includeLabelForPickups },
         }),
       ]
     }
@@ -498,14 +505,24 @@ describe("Reservation Physical Product Service", () => {
         const rpp = bagItem.reservationPhysicalProduct
 
         expect(rpp.outboundPackage.id).toEqual(outboundPackage.id)
-        expect(rpp.inboundPackage).toBeNull()
-        expect(rpp.reservation.sentPackage.id).toEqual(outboundPackage.id)
+        expect(rpp.potentialInboundPackage.id).toEqual(inboundPackage.id)
         expect(
-          rpp.reservation.returnPackages
+          rpp.physicalProduct.packages
+            .map(a => a.id)
+            .includes(outboundPackage.id)
+        ).toBeTruthy()
+        expect(
+          rpp.physicalProduct.packages
             .map(a => a.id)
             .includes(inboundPackage.id)
-        ).toBe(true)
-        expect(rpp.physicalProduct.packages.length).toBeGreaterThanOrEqual(1)
+        ).toBe(false)
+        expect(rpp.utilizedInboundPackage).toBeNull()
+
+        // sentPackage, returnPackages, sentPackages emtpy on the reservation
+        const resy = rpp.reservation
+        expect(resy.sentPackage).toBeNull()
+        expect(resy.returnPackages.length).toBe(0)
+        expect(resy.returnedPackage).toBeNull()
       }
 
       // Should only set items on outbound package
@@ -534,15 +551,31 @@ describe("Reservation Physical Product Service", () => {
       for (let bagItem of updatedBagItems) {
         const rpp = bagItem.reservationPhysicalProduct
 
+        // Connect the outbound package and the potential inbound package
         expect(rpp.outboundPackage.id).toEqual(outboundPackage.id)
-        expect(rpp.inboundPackage).toBeNull()
-        expect(rpp.reservation.sentPackage.id).toEqual(outboundPackage.id)
+        expect(rpp.potentialInboundPackage.id).toEqual(inboundPackage.id)
+        expect(rpp.utilizedInboundPackage).toBeNull()
+
+        // No packages connected to reservation
+        expect(rpp.reservation.sentPackage).toBeNull()
         expect(
           rpp.reservation.returnPackages
             .map(a => a.id)
             .includes(inboundPackage.id)
+        ).toBe(false)
+        expect(rpp.reservation.returnedPackage).toBeNull()
+
+        // Items populated on outbound package, not inbound package
+        expect(
+          rpp.physicalProduct.packages
+            .map(a => a.id)
+            .includes(outboundPackage.id)
         ).toBe(true)
-        expect(rpp.physicalProduct.packages.length).toBeGreaterThanOrEqual(2)
+        expect(
+          rpp.physicalProduct.packages
+            .map(a => a.id)
+            .includes(inboundPackage.id)
+        ).toBe(false)
       }
       expect(outboundPackage.items.length).toBeGreaterThan(0)
       expect(inboundPackage.items.length).toBe(0)
@@ -551,7 +584,7 @@ describe("Reservation Physical Product Service", () => {
       expect(inboundPackage.shippingMethod.code).toEqual("UPSSelect")
     })
 
-    it("Creates only an outbound label if the shipping method is Pickup", async () => {
+    it("Creates only an inbound label if the shipping method is Pickup and they don't explicitly ask for an outbound label", async () => {
       const [bagItems, packages] = await getShippingLabelsForShippingCode(
         "Pickup"
       )
@@ -566,19 +599,38 @@ describe("Reservation Physical Product Service", () => {
         select: bagItemsSelect,
       })
 
-      for (let bagItem of updatedBagItems) {
+      expect(outboundPackage).toBeNull()
+      for (const bagItem of updatedBagItems) {
         const rpp = bagItem.reservationPhysicalProduct
 
-        expect(rpp.inboundPackage).toBeNull()
-        expect(
-          rpp.reservation.returnPackages
-            .map(a => a.id)
-            .includes(inboundPackage.id)
-        ).toBe(true)
-        expect(rpp.physicalProduct.packages.length).toBeGreaterThanOrEqual(2)
+        expect(rpp.potentialInboundPackage.id).toEqual(inboundPackage.id)
+        expect(rpp.outboundPackage).toBeNull()
       }
-      expect(outboundPackage).toBeNull()
-      expect(inboundPackage.shippingMethod.code).toEqual("Pickup")
+    })
+
+    it("Creates both an inbound and outbound label if the shipping method is Pickup and they explicitly ask for an outbound label", async () => {
+      const [bagItems, packages] = await getShippingLabelsForShippingCode(
+        "Pickup",
+        true
+      )
+      const [outboundPackage, inboundPackage] = packages
+
+      const updatedBagItems = await prisma.client.bagItem.findMany({
+        where: {
+          id: {
+            in: bagItems.map(bagItem => bagItem.id),
+          },
+        },
+        select: bagItemsSelect,
+      })
+
+      expect(outboundPackage).toBeDefined()
+      for (const bagItem of updatedBagItems) {
+        const rpp = bagItem.reservationPhysicalProduct
+
+        expect(rpp.potentialInboundPackage.id).toEqual(inboundPackage.id)
+        expect(rpp.outboundPackage.id).toBe(outboundPackage.id)
+      }
     })
   })
 })

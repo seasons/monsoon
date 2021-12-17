@@ -1551,6 +1551,9 @@ model ReservationPhysicalProduct {
   pickupWindowId String?
   pickupDate     DateTime?
 
+  // Minimum charge applied at reservation time, in cents.
+  minimumAmountApplied Int? @default(0)
+  
   returnReason        ReturnReason?
 
   createdAt DateTime @default(now())

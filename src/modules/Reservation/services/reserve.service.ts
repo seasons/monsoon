@@ -1,4 +1,5 @@
 import { ErrorService } from "@app/modules/Error/services/error.service"
+import { PhysicalProductWithReservationSpecificData } from "@app/modules/Product/services/physicalProduct.utils.service"
 import { ProductVariantService } from "@app/modules/Product/services/productVariant.service"
 import { ProductUtilsService } from "@app/modules/Utils/services/product.utils.service"
 import { ReservationUtilsService } from "@app/modules/Utils/services/reservation.utils.service"
@@ -16,6 +17,7 @@ import {
   PhysicalProduct,
   Prisma,
   PrismaPromise,
+  Product,
   RentalInvoice,
   Reservation,
   ReservationPhysicalProduct,
@@ -24,6 +26,7 @@ import {
 } from "@prisma/client"
 import { PrismaService } from "@prisma1/prisma.service"
 import { ApolloError } from "apollo-server"
+import chargebee from "chargebee"
 import cuid from "cuid"
 import { merge } from "lodash"
 
@@ -32,6 +35,11 @@ type ReserveItemsPhysicalProduct = Pick<
   "seasonsUID" | "id"
 > & {
   warehouseLocation: Pick<WarehouseLocation, "id">
+}
+
+type ReservationPhysicalProductCreateData = {
+  id: string
+  physicalProductId: string
 }
 
 @Injectable()
@@ -107,6 +115,9 @@ export class ReserveService {
         productVariant: {
           select: {
             id: true,
+            product: {
+              select: { id: true, name: true, computedRentalPrice: true },
+            },
             physicalProducts: { select: { id: true } },
           },
         },
@@ -206,6 +217,15 @@ export class ReserveService {
     )
     promises.push(...bagItemPromises)
 
+    const { promises: rppMinAMountAppliedPromises } = await this.chargeMinimum(
+      customerWithData.user.id,
+      activeBagItemsWithData
+        .filter(a => a.status === "Added")
+        .map(a => a.productVariant.product),
+      physicalProductsBeingReserved,
+      reservationPhysicalProductCreateDatas
+    )
+    promises.push(...rppMinAMountAppliedPromises)
     await this.prisma.client.$transaction(promises.flat())
 
     const reservation = (await this.prisma.client.reservation.findUnique({
@@ -255,6 +275,12 @@ export class ReserveService {
     },
     productVariantIDs
   ) {
+    if (customerWithData.status === "PaymentFailed") {
+      throw new ApolloError(
+        "Customer with status PaymentFailed cannot reserve items",
+        "PAYMENT_FAILED_STATUS"
+      )
+    }
     if (customerWithData.status !== "Active") {
       throw new Error(`Only Active customers can place a reservation`)
     }
@@ -299,6 +325,90 @@ export class ReserveService {
     }
   }
 
+  async chargeMinimum(
+    prismaUserId: string,
+    newProducts: Pick<Product, "computedRentalPrice" | "name" | "id">[],
+    physicalProductsBeingReserved: PhysicalProductWithReservationSpecificData[],
+    reservationPhysicalProductCreateDatas: ReservationPhysicalProductCreateData[]
+  ) {
+    let promises = []
+    let charges = []
+    for (const p of newProducts) {
+      const amount = Math.round(p.computedRentalPrice * 100 * 0.4)
+      charges.push({
+        amount,
+        description: `${p.name}: 40% of 30-Day Rental Price`,
+        date_from: new Date(),
+      })
+      const physProds = physicalProductsBeingReserved.filter(
+        a => a.productVariant.product.id === p.id
+      )
+      if (!physProds) {
+        throw new Error(
+          `Could not find physical product(s) for product ${p.name}`
+        )
+      }
+      const rpps = reservationPhysicalProductCreateDatas.filter(a =>
+        physProds.map(a => a.id).includes(a.physicalProductId)
+      )
+      if (!rpps) {
+        throw new Error(
+          `Could not find reservation physical product(s) for product ${p.name}`
+        )
+      }
+      promises.push(
+        this.prisma.client.reservationPhysicalProduct.updateMany({
+          where: { id: { in: rpps.map(a => a.id) } },
+          data: { minimumAmountApplied: amount },
+        })
+      )
+    }
+
+    // Note: No need to set them to PaymentFailed here. It should happen in the Chargebee controller.
+    const handleFailedCharge = async invoice => {
+      if (!!invoice) {
+        await chargebee.invoice
+          .void_invoice(invoice.id)
+          .request((error, result) => {
+            if (error) {
+              // TODO: Add datadog log here
+              return error
+            }
+            return result
+          })
+      }
+
+      throw new ApolloError(
+        "Unable to charge minimum for reservation",
+        "PAYMENT_FAILED_RESERVE_MINIMUM"
+      )
+    }
+
+    let invoice
+    try {
+      ;({ invoice } = await chargebee.invoice
+        .create({
+          customer_id: prismaUserId,
+          currency_code: "USD",
+          charges,
+        })
+        .request((error, result) => {
+          if (error) {
+            return error
+          }
+          return result
+        }))
+    } catch (err) {
+      // TODO: Add datadog log here
+      await handleFailedCharge(invoice)
+    }
+
+    if (invoice.status !== "paid") {
+      await handleFailedCharge(invoice)
+    }
+
+    return { invoice, promises }
+  }
   private async updateBagItemsForReservation(
     activeBagItemsWithData: Array<
       Pick<BagItem, "status" | "id"> & {
@@ -428,10 +538,7 @@ export class ReserveService {
     promises: PrismaPromise<Reservation | ReservationPhysicalProduct[]>[]
     datas: {
       reservationId: string
-      reservationPhysicalProductCreateDatas: {
-        id: string
-        physicalProductId: string
-      }[]
+      reservationPhysicalProductCreateDatas: ReservationPhysicalProductCreateData[]
     }
   }> {
     const promises = []
@@ -483,6 +590,9 @@ export class ReserveService {
       },
       pickupDate: pickupTime?.date,
       pickupWindowId: pickupTime?.timeWindowID,
+      products: {
+        connect: physicalProductsBeingReserved.map(a => ({ id: a.id })),
+      },
       reservationNumber: uniqueReservationNumber,
       lastLocation: {
         connect: {

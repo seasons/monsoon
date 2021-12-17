@@ -26,6 +26,29 @@ export class TestUtilsService {
     private readonly timeUtils: TimeUtilsService
   ) {}
 
+  overridePrices = async (seasonsUIDs, prices) => {
+    if (seasonsUIDs.length !== prices.length) {
+      throw "must pass in same length arrays"
+    }
+    for (const [i, overridePrice] of prices.entries()) {
+      const prodToUpdate = await this.prisma.client.product.findFirst({
+        where: {
+          variants: {
+            some: {
+              physicalProducts: {
+                some: { seasonsUID: seasonsUIDs[i] },
+              },
+            },
+          },
+        },
+      })
+      await this.prisma.client.product.update({
+        where: { id: prodToUpdate.id },
+        data: { computedRentalPrice: overridePrice },
+      })
+    }
+  }
+
   async createTestProduct(
     { variants, type = "Top" }: CreateTestProductInput,
     info = `{id}`
