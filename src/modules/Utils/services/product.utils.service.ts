@@ -178,6 +178,7 @@ export class ProductUtilsService {
     let categoryFilter = { where: {} }
     let variantsFilter = { where: {} }
     let colorsFilter = { where: {} }
+    let priceFilter = { where: {} }
 
     if (args.brand && args.brand !== "all") {
       brandFilter = {
@@ -197,6 +198,17 @@ export class ProductUtilsService {
 
     if (args.colors?.length > 0) {
       colorsFilter = { where: { color: { slug_in: args.colors } } }
+    }
+
+    if (args.priceRange?.length > 1) {
+      priceFilter = {
+        where: {
+          discountedPrice: {
+            gte: args.priceRange[0],
+            lt: args.priceRange[1],
+          },
+        },
+      }
     }
 
     const productVariantWhereArray = []
@@ -305,11 +317,13 @@ export class ProductUtilsService {
               ...categoryFilter.where,
               ...colorsFilter.where,
               ...variantsFilter.where,
+              ...priceFilter.where,
             },
             {
               ...brandFilter.where,
               ...categoryFilter.where,
               ...colorsFilter.where,
+              ...priceFilter.where,
               variants_some: {
                 AND: [
                   ...productVariantWhereArray,
@@ -329,6 +343,7 @@ export class ProductUtilsService {
           ...categoryFilter.where,
           ...colorsFilter.where,
           ...variantsFilter.where,
+          ...priceFilter.where,
         },
       }
     }

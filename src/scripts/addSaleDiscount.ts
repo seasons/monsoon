@@ -58,7 +58,7 @@ const addSaleDiscount = async () => {
 
     const csvData = suidsToProducts[physicalProduct.seasonsUID]
     const discountStr = csvData.Discount
-    const discount = parseFloat(discountStr)
+    const discount = parseFloat(discountStr) * 100
 
     const discountedPrice = Math.ceil(retailPrice * (1 - discount / 100))
 
@@ -176,5 +176,5 @@ const createCollections = async () => {
   console.log(under1000)
 }
 
-addSaleDiscount()
-// createCollections()`
+// addSaleDiscount()
+createCollections()
