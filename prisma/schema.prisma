@@ -1176,6 +1176,8 @@ model Product {
   wholesalePrice              Int?
   rentalPriceOverride         Int?
   computedRentalPrice         Int?
+  discountPercentage          Int?                     @default(value: 0)
+  discountedPrice             Int?
   recoupment                  Float?
   status                      ProductStatus?
   createdAt                   DateTime                 @default(now())
@@ -1549,6 +1551,9 @@ model ReservationPhysicalProduct {
   pickupWindowId String?
   pickupDate     DateTime?
 
+  // Minimum charge applied at reservation time, in cents.
+  minimumAmountApplied Int? @default(0)
+  
   returnReason        ReturnReason?
 
   createdAt DateTime @default(now())

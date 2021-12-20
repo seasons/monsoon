@@ -1,11 +1,20 @@
 import { ProductUtilsService } from "@app/modules/Utils/services/product.utils.service"
 import { Injectable } from "@nestjs/common"
-import { InventoryStatus, Prisma, ProductVariant } from "@prisma/client"
+import {
+  InventoryStatus,
+  Prisma,
+  PrismaPromise,
+  Product,
+  ProductVariant,
+} from "@prisma/client"
 import { PrismaService } from "@prisma1/prisma.service"
 import { ApolloError } from "apollo-server"
 import { head, lowerFirst, omit, pick, uniq, uniqBy } from "lodash"
 
-import { PhysicalProductUtilsService } from "./physicalProduct.utils.service"
+import {
+  PhysicalProductUtilsService,
+  PhysicalProductWithReservationSpecificData,
+} from "./physicalProduct.utils.service"
 
 @Injectable()
 export class ProductVariantService {
@@ -78,7 +87,13 @@ export class ProductVariantService {
     items: string[],
     customerId: string,
     { dryRun } = { dryRun: false }
-  ) {
+  ): Promise<
+    [
+      PrismaPromise<any>[],
+      PhysicalProductWithReservationSpecificData[],
+      Product[]
+    ]
+  > {
     const productVariants = await this.prisma.client.productVariant.findMany({
       where: {
         id: {

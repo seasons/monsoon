@@ -41,6 +41,80 @@ export class ReservationTestUtilsService {
       data: { createdAt: date },
     })
   }
+
+  async addToBag(
+    customer: Pick<Customer, "id">,
+    numProductsToAdd: number,
+    bagItemSelect: Prisma.BagItemSelect = null
+  ) {
+    const reservedBagItems = await this.prisma.client.bagItem.findMany({
+      where: {
+        customer: { id: customer.id },
+        status: "Reserved",
+        saved: false,
+      },
+      select: {
+        productVariant: {
+          select: { sku: true, product: { select: { id: true, name: true } } },
+        },
+      },
+    })
+    const reservedSKUs = reservedBagItems.map(a => a.productVariant.sku)
+    const reservedProductIds = reservedBagItems.map(
+      b => b.productVariant.product.id
+    )
+    const reservedProductNames = reservedBagItems.map(
+      a => a.productVariant.product.name
+    )
+
+    let reservableProdVars = []
+    let reservableProductIds = []
+    let reservableProductNames = []
+    for (let i = 0; i < numProductsToAdd; i++) {
+      const nextProdVar = await this.prisma.client.productVariant.findFirst({
+        where: {
+          reservable: { gte: 1 },
+          sku: { notIn: reservedSKUs },
+          // Ensure we reserve diff products each time. Needed for some tests
+          product: {
+            id: { notIn: [...reservedProductIds, ...reservableProductIds] },
+            name: {
+              notIn: [...reservedProductNames, ...reservableProductNames],
+            },
+          },
+          // We shouldn't need to check this since we're checking counts,
+          // but there's some corrupt data so we do this to circumvent that.
+          physicalProducts: { some: { inventoryStatus: "Reservable" } },
+        },
+        take: numProductsToAdd,
+        select: {
+          id: true,
+          productId: true,
+          product: { select: { id: true, name: true } },
+        },
+      })
+      reservableProdVars.push(nextProdVar)
+      reservableProductIds.push(nextProdVar.productId)
+      reservedProductNames.push(nextProdVar.product.name)
+    }
+
+    let createdBagItems = []
+    for (const prodVar of reservableProdVars) {
+      createdBagItems.push(
+        await this.prisma.client.bagItem.create({
+          data: {
+            customer: { connect: { id: customer.id } },
+            productVariant: { connect: { id: prodVar.id } },
+            status: "Added",
+            saved: false,
+          },
+          select: bagItemSelect,
+        })
+      )
+    }
+
+    return createdBagItems
+  }
   async addToBagAndReserveForCustomer({
     customer,
     numProductsToAdd,
@@ -57,61 +131,14 @@ export class ReservationTestUtilsService {
     reservation: TestReservation
     bagItems: (BagItem & { [key: string]: any })[]
   }> {
-    const { shippingCode = "UPSGround", numDaysAgo = 0 } = options
-    const reservedBagItems = await this.prisma.client.bagItem.findMany({
-      where: {
-        customer: { id: customer.id },
-        status: "Reserved",
-        saved: false,
-      },
-      select: {
-        productVariant: {
-          select: { sku: true, product: { select: { id: true } } },
-        },
-      },
-    })
-    const reservedSKUs = reservedBagItems.map(a => a.productVariant.sku)
-    const reservedProductIds = reservedBagItems.map(
-      b => b.productVariant.product.id
-    )
-    let reservableProdVars = []
-    let reservableProductIds = []
-    for (let i = 0; i < numProductsToAdd; i++) {
-      const nextProdVar = await this.prisma.client.productVariant.findFirst({
-        where: {
-          reservable: { gte: 1 },
-          sku: { notIn: reservedSKUs },
-          // Ensure we reserve diff products each time. Needed for some tests
-          product: {
-            id: { notIn: [...reservedProductIds, ...reservableProductIds] },
-          },
-          // We shouldn't need to check this since we're checking counts,
-          // but there's some corrupt data so we do this to circumvent that.
-          physicalProducts: { some: { inventoryStatus: "Reservable" } },
-        },
-        take: numProductsToAdd,
-        select: {
-          id: true,
-          productId: true,
-        },
-      })
-      reservableProdVars.push(nextProdVar)
-      reservableProductIds.push(nextProdVar.productId)
-    }
+    // Don't do the charge min in test code...
+    const mock = jest
+      .spyOn(this.reserve, "chargeMinimum")
+      .mockImplementation(async () => ({ invoice: {}, promises: [] }))
 
-    let createdBagItems = []
-    for (const prodVar of reservableProdVars) {
-      createdBagItems.push(
-        await this.prisma.client.bagItem.create({
-          data: {
-            customer: { connect: { id: customer.id } },
-            productVariant: { connect: { id: prodVar.id } },
-            status: "Added",
-            saved: false,
-          },
-        })
-      )
-    }
+    const { shippingCode = "UPSGround", numDaysAgo = 0 } = options
+
+    const createdBagItems = await this.addToBag(customer, numProductsToAdd)
 
     const r = await this.reserve.reserveItems({
       shippingCode,
@@ -159,6 +186,7 @@ export class ReservationTestUtilsService {
       ),
     })) as unknown) as (BagItem & { [key: string]: any })[]
 
+    mock.mockRestore()
     return {
       reservation: r,
       bagItems: updatedBagItems,

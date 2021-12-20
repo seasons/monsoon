@@ -1,13 +1,13 @@
 {
   "PastDueInvoice": {
     "web": {
-      "title": "You have a past due invoice",
-      "detail": "Update your billing info in order to avoid having your membership cancelled",
+      "title": "You have a failed payment",
+      "detail": "Update your billing info in order to be able to continue reserving.",
       "route": { "drawerView": "editPaymentMethod" }
     },
     "mobile": {
-      "title": "You have a past due invoice",
-      "detail": "Update your billing info in order to avoid having your membership cancelled",
+      "title": "You have a failed payment",
+      "detail": "Update your billing info in order to be able to continue reserving.",
       "route": { "route": "AccountStack", "screen": "EditCreditCard" }
     },
     "underlinedCTAText": "",

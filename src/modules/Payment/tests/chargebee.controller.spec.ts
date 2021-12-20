@@ -7,8 +7,8 @@ import request from "supertest"
 
 import { PAYMENT_MODULE_DEF } from "../payment.module"
 import { getPromotionalCreditsAddedEvent } from "./data/creditsAdded"
+import { getPaymentSourceUpdatedEvent } from "./data/paymentSourceUpdated"
 import { getPaymentSucceededEvent } from "./data/paymentSucceeded"
-import { getSubscriptionCancelledEvent } from "./data/subscriptionCancelled"
 
 let testCustomer: any
 let prisma: PrismaService
@@ -413,71 +413,31 @@ describe("Chargebee Controller", () => {
     })
   })
 
-  describe("Subscription Cancelled Handler", () => {
-    let chargebeeDeductCreditsSpy
-    let customerAfterWebhook
-
-    beforeAll(async () => {
+  describe("Handles PaymentFailure actions correctly", () => {
+    beforeEach(async () => {
       const { customer } = await testUtils.createTestCustomer({
         select: {
           id: true,
           user: { select: { id: true } },
-          membership: { select: { creditBalance: true } },
+          membership: { select: { id: true, purchaseCredits: true } },
         },
       })
       testCustomer = customer
-      const custAfterUpdate = await prisma.client.customer.update({
+    })
+    it("If a PaymentFailed customer updates their payment method, sets them to Active", async () => {
+      await prisma.client.customer.update({
         where: { id: testCustomer.id },
-        data: { membership: { update: { creditBalance: 3000 } } },
-        select: { membership: { select: { creditBalance: true } } },
+        data: { status: "PaymentFailed" },
       })
-      expect(custAfterUpdate.membership.creditBalance).toBe(3000)
 
-      chargebeeDeductCreditsSpy = jest
-        .spyOn<any, any>(chargebee.promotional_credit, "deduct")
-        .mockReturnValue({
-          request: () => null,
-        })
+      customerWithData = await getCustWithData()
+      expect(customerWithData.status).toBe("PaymentFailed")
 
-      const event = getSubscriptionCancelledEvent(testCustomer.user.id, 45.67)
+      const event = getPaymentSourceUpdatedEvent(testCustomer.user.id)
       await sendEvent(event)
 
-      customerAfterWebhook = await prisma.client.customer.findUnique({
-        where: { id: testCustomer.id },
-        select: {
-          status: true,
-          membership: {
-            select: {
-              creditBalance: true,
-              creditUpdateHistory: {
-                select: { id: true, reason: true, amount: true },
-              },
-            },
-          },
-        },
-      })
-    })
-
-    // Don't want test customers created before each one here
-    // Send payload for customer.
-    it("Customer is marked as Deactivated", () => {
-      expect(customerAfterWebhook.status).toBe("Deactivated")
-    })
-
-    it("Internal credit balance is set to 0", () => {
-      expect(customerAfterWebhook.membership.creditBalance).toBe(0)
-    })
-
-    it("Credit balance update log created", () => {
-      const log = customerAfterWebhook.membership.creditUpdateHistory.find(
-        a => a.reason === "Customer cancelled. Remove outstanding credits"
-      )
-      expect(log).toBeDefined()
-      expect(log.amount).toBe(3000)
-    })
-
-    it("Chargebee credit balance is set to 0", () => {
-      expect(chargebeeDeductCreditsSpy).toBeCalledTimes(1)
+      customerWithData = await getCustWithData()
+      expect(customerWithData.status).toBe("Active")
     })
   })
 })
@@ -493,6 +453,7 @@ const getCustWithData = async () => {
   return await prisma.client.customer.findUnique({
     where: { id: testCustomer.id },
     select: {
+      status: true,
       membership: {
         select: {
           creditBalance: true,

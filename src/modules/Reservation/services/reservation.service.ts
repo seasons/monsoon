@@ -395,6 +395,7 @@ export class ReservationService {
               id: customer.id,
             },
             saved: false,
+            isInCart: false,
             ...(filterBy === ReservationLineItemsFilter.NewItems
               ? { status: "Added" }
               : {}),

@@ -20,8 +20,7 @@ describe("Return Items", () => {
 
   let testCustomer: Customer
   let reservation
-  let bagItemsToReturn
-  let physicalProductIdsToReturn
+  let rppIdsToReturn
 
   beforeAll(async () => {
     const moduleRef = await Test.createTestingModule(
@@ -33,7 +32,9 @@ describe("Return Items", () => {
     reservationTestService = moduleRef.get<ReservationTestUtilsService>(
       ReservationTestUtilsService
     )
+  })
 
+  beforeEach(async () => {
     const { customer } = await testService.createTestCustomer()
 
     testCustomer = customer
@@ -49,51 +50,25 @@ describe("Return Items", () => {
 
     reservation = _reservation
     await setReservationStatus(reservation.id, "Delivered", { prisma: prisma })
-    bagItemsToReturn = await prisma.client.bagItem.findMany({
+    const bagItemsToReturn = await prisma.client.bagItem.findMany({
       where: {
         id: {
           in: bagItems.map(a => a.id),
         },
       },
       select: {
-        physicalProductId: true,
+        reservationPhysicalProductId: true,
       },
     })
-    physicalProductIdsToReturn = bagItemsToReturn.map(a => a.physicalProductId)
+    rppIdsToReturn = bagItemsToReturn.map(a => a.reservationPhysicalProductId)
   })
 
   it("sets customerReturnIntentAt and hasCustomerReturnIntent on reservationPhysicalProducts, without return reasons", async () => {
-    const returnPendingResPhysProds = await prisma.client.reservationPhysicalProduct.findMany(
-      {
-        where: {
-          physicalProduct: {
-            id: {
-              in: physicalProductIdsToReturn,
-            },
-          },
-        },
-        select: {
-          id: true,
-          status: true,
-          hasCustomerReturnIntent: true,
-          customerReturnIntentAt: true,
-        },
-      }
-    )
-
-    await reservationService.returnItems(
-      returnPendingResPhysProds.map(rpp => rpp.id),
-      [],
-      testCustomer
-    )
+    await reservationService.returnItems(rppIdsToReturn, [], testCustomer)
     const postReturnRpps = await prisma.client.reservationPhysicalProduct.findMany(
       {
         where: {
-          physicalProduct: {
-            id: {
-              in: physicalProductIdsToReturn,
-            },
-          },
+          id: { in: rppIdsToReturn },
         },
         select: {
           status: true,
@@ -111,29 +86,11 @@ describe("Return Items", () => {
   })
 
   it("sets return reason if included in payload", async () => {
-    const returnPendingResPhysProds = await prisma.client.reservationPhysicalProduct.findMany(
-      {
-        where: {
-          physicalProduct: {
-            id: {
-              in: physicalProductIdsToReturn,
-            },
-          },
-        },
-        select: {
-          id: true,
-          status: true,
-          hasCustomerReturnIntent: true,
-          customerReturnIntentAt: true,
-        },
-      }
-    )
-
     await reservationService.returnItems(
-      returnPendingResPhysProds.map(rpp => rpp.id),
-      returnPendingResPhysProds.map(rpp => {
+      rppIdsToReturn,
+      rppIdsToReturn.map(id => {
         return {
-          reservationPhysicalProductId: rpp.id,
+          reservationPhysicalProductId: id,
           reason: "FitTooBig",
         }
       }),
@@ -143,11 +100,7 @@ describe("Return Items", () => {
     const postReturnRpps = await prisma.client.reservationPhysicalProduct.findMany(
       {
         where: {
-          physicalProduct: {
-            id: {
-              in: physicalProductIdsToReturn,
-            },
-          },
+          id: { in: rppIdsToReturn },
         },
         select: {
           status: true,

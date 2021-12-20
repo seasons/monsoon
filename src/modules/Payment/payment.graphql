@@ -203,7 +203,7 @@ type RentalInvoiceLineItem {
   id: ID!
   physicalProduct: PhysicalProduct
   rentalInvoice: RentalInvoice
-  daysRented: Int
+  daysRented: Int!
   rentalStartedAt: DateTime!
   rentalEndedAt: DateTime!
   comment: String

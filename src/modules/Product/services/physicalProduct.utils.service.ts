@@ -1,14 +1,26 @@
 import { ProductUtilsService } from "@app/modules/Utils/services/product.utils.service"
 import { Injectable } from "@nestjs/common"
-import { Category, PhysicalProduct, ProductVariant } from "@prisma/client"
+import { Category, PhysicalProduct, Prisma } from "@prisma/client"
 import { PrismaService } from "@prisma1/prisma.service"
-import { head, uniqBy } from "lodash"
+import { uniqBy } from "lodash"
 
-export interface PhysicalProductWithReservationSpecificData
-  extends PhysicalProduct {
-  productVariant: Pick<ProductVariant, "id">
-}
+const PhysicalProductWithReservationSpecificDataArgs = Prisma.validator<
+  Prisma.PhysicalProductFindManyArgs
+>()({
+  select: {
+    id: true,
+    seasonsUID: true,
+    sequenceNumber: true,
+    inventoryStatus: true,
+    productStatus: true,
+    productVariant: { select: { id: true, product: { select: { id: true } } } },
+    warehouseLocation: true,
+  },
+})
 
+export type PhysicalProductWithReservationSpecificData = Prisma.PhysicalProductGetPayload<
+  typeof PhysicalProductWithReservationSpecificDataArgs
+>
 @Injectable()
 export class PhysicalProductUtilsService {
   constructor(
@@ -16,7 +28,9 @@ export class PhysicalProductUtilsService {
     private readonly productUtils: ProductUtilsService
   ) {}
 
-  async getPhysicalProductsWithReservationSpecificData(items: string[]) {
+  async getPhysicalProductsWithReservationSpecificData(
+    items: string[]
+  ): Promise<PhysicalProductWithReservationSpecificData[]> {
     return await this.prisma.client.physicalProduct.findMany({
       where: {
         productVariant: {
@@ -25,15 +39,7 @@ export class PhysicalProductUtilsService {
           },
         },
       },
-      select: {
-        id: true,
-        seasonsUID: true,
-        sequenceNumber: true,
-        inventoryStatus: true,
-        productStatus: true,
-        productVariant: true,
-        warehouseLocation: true,
-      },
+      select: PhysicalProductWithReservationSpecificDataArgs.select,
     })
   }
 

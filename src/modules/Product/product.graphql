@@ -94,6 +94,7 @@ type Query {
     category: String
     brand: String
     brands: [String]
+    priceRange: [Int]
     where: ProductWhereInput
     orderBy: ProductOrderByInput
     skip: Int
@@ -250,6 +251,8 @@ type Product @cacheControl(maxAge: 200) {
   photographyStatus: PhotographyStatus
   productFit: ProductFit
   retailPrice: Int
+  discountPercentage: Int
+  discountedPrice: Int
   color: Color!
   season: ProductSeason
   secondaryColor: Color
