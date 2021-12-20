@@ -130,33 +130,6 @@ export const setPackageEnteredSystemAt = async (
   })
 }
 
-export const overridePrices = async (
-  seasonsUIDs,
-  prices,
-  { prisma }: PrismaOption
-) => {
-  if (seasonsUIDs.length !== prices.length) {
-    throw "must pass in same length arrays"
-  }
-  for (const [i, overridePrice] of prices.entries()) {
-    const prodToUpdate = await prisma.client.product.findFirst({
-      where: {
-        variants: {
-          some: {
-            physicalProducts: {
-              some: { seasonsUID: seasonsUIDs[i] },
-            },
-          },
-        },
-      },
-    })
-    await prisma.client.product.update({
-      where: { id: prodToUpdate.id },
-      data: { computedRentalPrice: overridePrice },
-    })
-  }
-}
-
 export const setCustomerPlanType = async (
   testCustomer: TestCustomerWithId,
   planID: "access-monthly" | "access-yearly",

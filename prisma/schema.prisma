@@ -988,6 +988,7 @@ model RentalInvoice {
   total                       Int                           @default(0)
   billingStartAt              DateTime
   billingEndAt                DateTime
+  billedAt                    DateTime?
   creditsApplied              Int?
   estimatedTotal              Int                          @default(0)
   status                      RentalInvoiceStatus          @default(Draft)
@@ -1184,6 +1185,8 @@ model Product {
   wholesalePrice              Int?
   rentalPriceOverride         Int?
   computedRentalPrice         Int?
+  discountPercentage          Int?                     @default(value: 0)
+  discountedPrice             Int?
   recoupment                  Float?
   status                      ProductStatus?
   createdAt                   DateTime                 @default(now())
@@ -1557,6 +1560,9 @@ model ReservationPhysicalProduct {
   pickupWindowId String?
   pickupDate     DateTime?
 
+  // Minimum charge applied at reservation time, in cents.
+  minimumAmountApplied Int? @default(0)
+  
   returnReason        ReturnReason?
 
   createdAt DateTime @default(now())

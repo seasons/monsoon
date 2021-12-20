@@ -850,7 +850,7 @@ export class BagService {
         break
       case "DeliveredToBusiness":
         // 3. Inbound step 3
-        title = "Order returned"
+        title = isAdmin ? "Needs Processing" : "Order returned"
         deliveryStep = 3
         deliveryStatusText = "Shipped"
         deliveryTrackingUrl = this.getTrackingUrl(filteredBagItems, "inbound")

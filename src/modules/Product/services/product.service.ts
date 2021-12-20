@@ -417,19 +417,6 @@ export class ProductService {
   }
 
   async checkItemsAvailability(items, customer) {
-    const status =
-      customer.status ||
-      (
-        await this.prisma.client.customer.findUnique({
-          where: { id: customer.id },
-          select: { status: true },
-        })
-      ).status
-
-    if (status !== "Active") {
-      throw new Error("Your account must be active to reserve items.")
-    }
-
     const reservedBagItems = await this.prisma.client.bagItem.findMany({
       where: {
         customer: {

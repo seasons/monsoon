@@ -58,6 +58,7 @@ export const ProcessableReservationPhysicalProductArgs = Prisma.validator<
     hasBeenLost: true,
     resetEarlyByAdminAt: true,
     purchasedAt: true,
+    minimumAmountApplied: true,
     outboundPackage: {
       select: {
         id: true,
@@ -249,7 +250,7 @@ export class RentalService {
       promises.push(
         this.prisma.client.rentalInvoice.update({
           where: { id: invoice.id },
-          data: { status: "Billed" },
+          data: { status: "Billed", billedAt: new Date() },
         })
       )
     } catch (err) {
@@ -333,7 +334,11 @@ export class RentalService {
     const lastInvoice = await this.prisma.client.rentalInvoice.findFirst({
       where: { membershipId },
       orderBy: { createdAt: "desc" },
-      select: { reservations: { select: { id: true } }, billingEndAt: true },
+      select: {
+        reservations: { select: { id: true } },
+        billingEndAt: true,
+        reservationPhysicalProducts: { select: { id: true } },
+      },
     })
     if (!!lastInvoice) {
       reservationWhereInputFromLastInvoice = {
@@ -352,15 +357,19 @@ export class RentalService {
           },
           select: { id: true },
         },
-        bagItems: {
-          where: { status: "Reserved" },
-          select: { physicalProductId: true },
+        reservationPhysicalProducts: {
+          select: { id: true },
+          where: {
+            status: {
+              notIn: ["Lost", "Cancelled", "Purchased", "ReturnProcessed"],
+            },
+          },
         },
       },
     })
 
     const reservationIds = customer.reservations.map(a => a.id)
-    const physicalProductIds = customer.bagItems.map(b => b.physicalProductId)
+    const rppIds = customer.reservationPhysicalProducts.map(a => a.id)
     const now = new Date()
     const billingEndAt = await this.getRentalInvoiceBillingEndAt(
       membershipId,
@@ -381,11 +390,7 @@ export class RentalService {
           id: a,
         })),
       },
-      products: {
-        connect: physicalProductIds.map(b => ({
-          id: b,
-        })),
-      },
+      reservationPhysicalProducts: { connect: rppIds.map(a => ({ id: a })) },
     })
 
     const promise = this.prisma.client.rentalInvoice.create({
@@ -1124,7 +1129,7 @@ export class RentalService {
     customer: Pick<Customer, "id">
     reservationPhysicalProduct: Pick<
       ReservationPhysicalProduct,
-      "id" | "status"
+      "id" | "status" | "minimumAmountApplied"
     > & {
       physicalProduct: Pick<PhysicalProduct, "id"> & {
         productVariant: {
@@ -1187,61 +1192,60 @@ export class RentalService {
       l => l.physicalProductId === reservationPhysicalProduct.physicalProduct.id
     )
 
-    // Apply minimum if needed
-    if (
-      !previousInvoice ||
-      (previousInvoice && !previousLineItem) ||
-      previousLineItem?.price === 0
-    ) {
-      const adjustedDaysRented = Math.max(
-        daysNeededForMinimumCharge,
-        daysRented
-      )
-
-      appliedMinimum = daysRented < daysNeededForMinimumCharge
-
-      return {
-        price: this.calculateUnadjustedPriceForDaysRented(
-          reservationPhysicalProduct.physicalProduct,
-          adjustedDaysRented
-        ),
-        appliedMinimum,
-        adjustedForPreviousMinimum,
-      }
-    }
-
     // Adjust daysRented to account for previous invoice
     if (previousLineItem) {
       const previousDaysRented = previousLineItem.daysRented
-      const totalDaysBetweenPreviousAndCurrentInvoice =
-        previousDaysRented + daysRented
-
-      if (previousDaysRented <= daysNeededForMinimumCharge) {
-        const countedDaysForCurrentInvoice = Math.max(
-          0,
-          totalDaysBetweenPreviousAndCurrentInvoice - daysNeededForMinimumCharge
-        )
-
-        adjustedForPreviousMinimum = countedDaysForCurrentInvoice < daysRented
-
+      if (previousDaysRented >= daysNeededForMinimumCharge) {
         return {
           price: this.calculateUnadjustedPriceForDaysRented(
             reservationPhysicalProduct.physicalProduct,
-            countedDaysForCurrentInvoice
+            daysRented
+          ),
+          appliedMinimum,
+          adjustedForPreviousMinimum,
+        }
+      } else {
+        const totalDaysBetweenPreviousAndCurrentInvoice =
+          previousDaysRented + daysRented
+        const adjustedDaysRentedForCurrentInvoice = Math.max(
+          0,
+          totalDaysBetweenPreviousAndCurrentInvoice - daysNeededForMinimumCharge
+        )
+        adjustedForPreviousMinimum = true
+        return {
+          price: this.calculateUnadjustedPriceForDaysRented(
+            reservationPhysicalProduct.physicalProduct,
+            adjustedDaysRentedForCurrentInvoice
           ),
           appliedMinimum,
           adjustedForPreviousMinimum,
         }
       }
-    }
-
-    return {
-      price: this.calculateUnadjustedPriceForDaysRented(
+    } else if (reservationPhysicalProduct.minimumAmountApplied === 0) {
+      const numDaysToCharge = Math.max(daysRented, 12)
+      appliedMinimum = numDaysToCharge > daysRented
+      const price = this.calculateUnadjustedPriceForDaysRented(
+        reservationPhysicalProduct.physicalProduct,
+        numDaysToCharge
+      )
+      return {
+        price,
+        appliedMinimum,
+        adjustedForPreviousMinimum,
+      }
+    } else {
+      const unadjustedPrice = this.calculateUnadjustedPriceForDaysRented(
         reservationPhysicalProduct.physicalProduct,
         daysRented
-      ),
-      appliedMinimum,
-      adjustedForPreviousMinimum,
+      )
+      const price =
+        unadjustedPrice - reservationPhysicalProduct.minimumAmountApplied
+      adjustedForPreviousMinimum = true
+      return {
+        price,
+        appliedMinimum,
+        adjustedForPreviousMinimum,
+      }
     }
   }
 
