@@ -12,16 +12,17 @@ const addSaleDiscount = async () => {
     returnObject: true,
   })
 
-  const productSUIDs = products
-    .map(product => product.SUID)
-    .filter(a => a !== "")
-
   const suidsToProducts = products.reduce((acc, product) => {
     acc[product.SUID] = product
     return acc
   }, {})
 
   const physicalProducts = await ps.client.physicalProduct.findMany({
+    where: {
+      price: {
+        is: null,
+      },
+    },
     select: {
       id: true,
       seasonsUID: true,
@@ -80,6 +81,22 @@ const addSaleDiscount = async () => {
           discountedPrice,
         },
       })
+
+      if (physicalProduct.price === null) {
+        await ps.client.physicalProduct.update({
+          where: {
+            id: physicalProduct.id,
+          },
+          data: {
+            price: {
+              create: {
+                buyUsedPrice: amount,
+                buyUsedEnabled: true,
+              },
+            },
+          },
+        })
+      }
     } else {
       console.log(`
         ${physicalProduct.seasonsUID}:
