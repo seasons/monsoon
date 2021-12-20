@@ -694,6 +694,7 @@ model Customer {
   impactSyncTimings           SyncTiming[]
   emailedProducts             Product[]                        @relation("CustomerToEmailedProducts")
   hasBeenMigrated             Boolean                          @default(false)
+  ProductCustomerPrice        ProductCustomerPrice[]
 }
 
 model CustomerAdmissionsData {
@@ -985,7 +986,7 @@ model RentalInvoice {
   updatedAt                   DateTime                     @updatedAt
   membershipId                String                       @map("membership") @db.VarChar(30)
   membership                  CustomerMembership           @relation(fields: [membershipId], references: [id])
-  total                       Int                           @default(0)
+  total                       Int                          @default(0)
   billingStartAt              DateTime
   billingEndAt                DateTime
   billedAt                    DateTime?
@@ -995,7 +996,7 @@ model RentalInvoice {
   reservations                Reservation[]                @relation("RentalInvoiceToReservations")
   products                    PhysicalProduct[]            @relation("RentalInvoiceToProducts")
   lineItems                   RentalInvoiceLineItem[]
-  comment                     String?                        
+  comment                     String?
   reservationPhysicalProducts ReservationPhysicalProduct[] @relation("RentalInvoiceToReservationPhysicalProducts")
 }
 
@@ -1006,11 +1007,11 @@ enum RentalInvoiceLineItemType {
 }
 
 model RentalInvoiceLineItem {
-  id                         String           @id @default(cuid()) @db.VarChar(30)
-  physicalProductId          String?          @map("physicalProduct") @db.VarChar(30)
-  physicalProduct            PhysicalProduct? @relation(fields: [physicalProductId], references: [id])
-  rentalInvoiceId            String           @map("rentalInvoice") @db.VarChar(30)
-  rentalInvoice              RentalInvoice    @relation(fields: [rentalInvoiceId], references: [id])
+  id                         String                    @id @default(cuid()) @db.VarChar(30)
+  physicalProductId          String?                   @map("physicalProduct") @db.VarChar(30)
+  physicalProduct            PhysicalProduct?          @relation(fields: [physicalProductId], references: [id])
+  rentalInvoiceId            String                    @map("rentalInvoice") @db.VarChar(30)
+  rentalInvoice              RentalInvoice             @relation(fields: [rentalInvoiceId], references: [id])
   daysRented                 Int?
   type                       RentalInvoiceLineItemType @default(PhysicalProduct)
   rentalStartedAt            DateTime?
@@ -1023,8 +1024,8 @@ model RentalInvoiceLineItem {
   taxPrice                   Int?
   price                      Int
   currencyCode               String
-  appliedMinimum             Boolean?         @default(false)
-  adjustedForPreviousMinimum Boolean?         @default(false)
+  appliedMinimum             Boolean?                  @default(false)
+  adjustedForPreviousMinimum Boolean?                  @default(false)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -1160,6 +1161,16 @@ model PhysicalProductPrice {
   physicalProduct PhysicalProduct?
 }
 
+model ProductCustomerPrice {
+  id                   String   @id @default(cuid()) @db.VarChar(30)
+  customerId           String   @db.VarChar(30)
+  productId            String   @db.VarChar(30)
+  buyUsedCustomerPrice Int?
+  amountBilled         Int?
+  customer             Customer @relation(fields: [customerId], references: [id])
+  product              Product  @relation(fields: [productId], references: [id])
+}
+
 model PhysicalProductQualityReport {
   id                String                      @id @default(cuid()) @db.VarChar(30)
   damageType        PhysicalProductDamageType?
@@ -1207,6 +1218,7 @@ model Product {
   tierId                      String?                  @map("tier") @db.VarChar(30)
   outerMaterials              String[]
   innerMaterials              String[]
+  customerPrices              ProductCustomerPrice[]
   styles                      CustomerStyle[]
   materialCategoryId          String?                  @map("materialCategory") @db.VarChar(30)
   modelId                     String?                  @map("model") @db.VarChar(30)
@@ -1562,8 +1574,8 @@ model ReservationPhysicalProduct {
 
   // Minimum charge applied at reservation time, in cents.
   minimumAmountApplied Int? @default(0)
-  
-  returnReason        ReturnReason?
+
+  returnReason ReturnReason?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
