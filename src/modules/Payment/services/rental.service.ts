@@ -330,7 +330,11 @@ export class RentalService {
     const lastInvoice = await this.prisma.client.rentalInvoice.findFirst({
       where: { membershipId },
       orderBy: { createdAt: "desc" },
-      select: { reservations: { select: { id: true } }, billingEndAt: true },
+      select: {
+        reservations: { select: { id: true } },
+        billingEndAt: true,
+        reservationPhysicalProducts: { select: { id: true } },
+      },
     })
     if (!!lastInvoice) {
       reservationWhereInputFromLastInvoice = {
@@ -349,15 +353,19 @@ export class RentalService {
           },
           select: { id: true },
         },
-        bagItems: {
-          where: { status: "Reserved" },
-          select: { physicalProductId: true },
+        reservationPhysicalProducts: {
+          select: { id: true },
+          where: {
+            status: {
+              notIn: ["Lost", "Cancelled", "Purchased", "ReturnProcessed"],
+            },
+          },
         },
       },
     })
 
     const reservationIds = customer.reservations.map(a => a.id)
-    const physicalProductIds = customer.bagItems.map(b => b.physicalProductId)
+    const rppIds = customer.reservationPhysicalProducts.map(a => a.id)
     const now = new Date()
     const billingEndAt = await this.getRentalInvoiceBillingEndAt(
       membershipId,
@@ -377,11 +385,7 @@ export class RentalService {
           id: a,
         })),
       },
-      products: {
-        connect: physicalProductIds.map(b => ({
-          id: b,
-        })),
-      },
+      reservationPhysicalProducts: { connect: rppIds.map(a => ({ id: a })) },
     })
 
     const promise = this.prisma.client.rentalInvoice.create({
