@@ -617,9 +617,7 @@ export class RentalService {
         if (reservationPhysicalProduct.hasBeenScannedOnInbound) {
           rentalEndedAt = reservationPhysicalProduct.scannedOnInboundAt
         } else {
-          rentalEndedAt = applyReturnPackageCushion(
-            reservationPhysicalProduct.resetEarlyByAdminAt
-          )
+          reservationPhysicalProduct.resetEarlyByAdminAt
         }
         throwErrorIfRentalEndedAtUndefined()
         break
