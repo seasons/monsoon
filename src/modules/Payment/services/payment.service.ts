@@ -87,6 +87,20 @@ export class PaymentService {
     })
     const user = customerWithUserData?.user
 
+    const existingSubscriptionsForCustomer = await chargebee.subscription
+      .list({
+        customer_id: { is: user.id },
+      })
+      .request()
+
+    const existingSubscription = existingSubscriptionsForCustomer.length > 0
+
+    if (existingSubscription) {
+      throw new Error(
+        `Customer has an existing subscription, can not create a new subsciption`
+      )
+    }
+
     const intent = await stripe.paymentIntents.retrieve(paymentIntentID)
     await stripe.paymentIntents.confirm(intent.id)
 
