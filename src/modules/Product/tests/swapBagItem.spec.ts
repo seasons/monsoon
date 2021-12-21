@@ -1,5 +1,4 @@
 import { ProcessableReservationPhysicalProductArgs } from "@app/modules/Payment/services/rental.service"
-import { ReserveService } from "@app/modules/Reservation/services/reserve.service"
 import { ReservationTestUtilsService } from "@app/modules/Reservation/tests/reservation.test.utils"
 import { TestUtilsService } from "@app/modules/Test/services/test.service"
 import { PrismaService } from "@app/prisma/prisma.service"
@@ -14,7 +13,6 @@ describe("Swap Bag Item", () => {
   let testUtils: TestUtilsService
   let testCustomer: any
   let reservationTestUtils: ReservationTestUtilsService
-  let reserveService: ReserveService
 
   beforeAll(async () => {
     const moduleRef = await Test.createTestingModule(ProductModuleDef).compile()
@@ -24,7 +22,6 @@ describe("Swap Bag Item", () => {
     reservationTestUtils = moduleRef.get<ReservationTestUtilsService>(
       ReservationTestUtilsService
     )
-    reserveService = moduleRef.get<ReserveService>(ReserveService)
     const { cleanupFunc, customer } = await testUtils.createTestCustomer({
       select: {
         id: true,
@@ -612,7 +609,7 @@ describe("Swap Bag Item", () => {
           },
         }
       )
-      const r = await reserveService.reserveItems({
+      const r = await reservationTestUtils.reserveItems({
         shippingCode: "UPSGround",
         customer: testCustomer,
         select: {

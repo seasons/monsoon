@@ -795,14 +795,14 @@ export class RentalService {
       ...inboundPackagesLineItemDatas,
     ]
     const formattedLineItemDatas = lineItemDatas.map(addLineItemBasics)
-    const lineItemPromises = formattedLineItemDatas.map(data =>
-      this.prisma.client.rentalInvoiceLineItem.create({
-        data,
-      })
-    )
-    let lineItems
 
+    let lineItems
     if (!options.upTo) {
+      const lineItemPromises = formattedLineItemDatas.map(data =>
+        this.prisma.client.rentalInvoiceLineItem.create({
+          data,
+        })
+      )
       lineItems = await this.prisma.client.$transaction(lineItemPromises)
     }
 

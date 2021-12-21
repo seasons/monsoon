@@ -161,7 +161,10 @@ export class CustomerMembershipFieldsResolver {
     )
 
     for (const lineItem of lineItems) {
-      const physicalProductID = lineItem.physicalProduct.connect.id
+      const physicalProductID = lineItem.physicalProduct?.connect?.id
+      if (!physicalProductID) {
+        continue
+      }
 
       const matchPhysicalProduct = physicalProducts.find(
         a => a.id === physicalProductID
