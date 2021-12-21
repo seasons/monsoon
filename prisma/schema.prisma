@@ -977,6 +977,7 @@ enum RentalInvoiceStatus {
   Billed
   ChargeFailed
   Cancelled
+  ChargePending
 }
 
 enum ChargebeeInvoiceStatus {
@@ -1008,6 +1009,7 @@ model RentalInvoice {
   total                       Int                          @default(0)
   billingStartAt              DateTime
   billingEndAt                DateTime
+  processedAt                 DateTime?
   billedAt                    DateTime?
   creditsApplied              Int?
   estimatedTotal              Int                          @default(0)
