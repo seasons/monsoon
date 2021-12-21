@@ -593,10 +593,8 @@ export class RentalService {
     switch (logicCase) {
       case "Outbound":
       case "Cancelled":
-        rentalStartedAt = undefined
-        break
       case "Purchased":
-        rentalEndedAt = reservationPhysicalProduct.purchasedAt
+        rentalStartedAt = undefined
         break
       case "Inbound":
         rentalEndedAt =
