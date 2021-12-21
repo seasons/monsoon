@@ -107,13 +107,21 @@ export class BagService {
         },
       },
       select: merge(
-        {
+        Prisma.validator<Prisma.BagItemSelect>()({
           saved: true,
           isInCart: true,
-        },
+          reservationPhysicalProduct: {
+            select: {
+              id: true,
+            },
+          },
+        }),
         select
       ),
     })
+
+    // @ts-ignore
+    const rppAttached = existingBagItem?.reservationPhysicalProduct?.id
 
     // 1. If we're switching a saved item or bag item to cart
     if (existingBagItem && addToCart && !existingBagItem.isInCart) {
@@ -127,9 +135,19 @@ export class BagService {
 
       // 2. If we're deleting a cart item from cart
     } else if (existingBagItem && !addToCart && existingBagItem.isInCart) {
-      await this.prisma.client.bagItem.delete({
-        where: { id: existingBagItem.id },
-      })
+      if (rppAttached) {
+        // Don't delete a bag item if it's attached to an rpp
+        return await this.prisma.client.bagItem.update({
+          where: { id: existingBagItem.id },
+          data: {
+            isInCart: false,
+          },
+        })
+      } else {
+        await this.prisma.client.bagItem.delete({
+          where: { id: existingBagItem.id },
+        })
+      }
 
       // 3. If we're making a cart item for the first time
     } else if (!existingBagItem && addToCart) {
