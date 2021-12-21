@@ -210,8 +210,10 @@ export class OrderService {
     let totalCreditsUsed = 0
 
     const getChargePrice = lineItemPrice => {
-      // During draft mode we remove the price from the charge to show the total price
-      // In order mode we charge the full price but apply promotional credits to credit the account
+      // During draft mode we remove the credit totals from the charges to show the total price, since we're not applying
+      // actual promotion credits.
+      // In order mode we charge the full price but apply promotional credits to credit the account, which will result
+      // in the same total price as in draft with the credit total removed the price.
       let draftPrice = lineItemPrice
       const creditsStillAvailable = creditsAvailableAccumulator > 0
 
