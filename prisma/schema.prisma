@@ -979,6 +979,26 @@ enum RentalInvoiceStatus {
   Cancelled
 }
 
+enum ChargebeeInvoiceStatus {
+  Paid
+  PaymentDue
+  NotPaid
+  Pending
+  Voided
+  Posted
+}
+
+model ChargebeeInvoice {
+  chargebeeId      String                 @id @db.VarChar(30)
+  total            Int
+  status           ChargebeeInvoiceStatus
+  invoiceCreatedAt DateTime
+  url              String
+  createdAt        DateTime               @default(now())
+  updatedAt        DateTime               @updatedAt
+  rentalInvoice    RentalInvoice?
+}
+
 model RentalInvoice {
   id                          String                       @id @default(cuid()) @db.VarChar(30)
   createdAt                   DateTime                     @default(now())
@@ -995,8 +1015,10 @@ model RentalInvoice {
   reservations                Reservation[]                @relation("RentalInvoiceToReservations")
   products                    PhysicalProduct[]            @relation("RentalInvoiceToProducts")
   lineItems                   RentalInvoiceLineItem[]
-  comment                     String?                        
+  comment                     String?
   reservationPhysicalProducts ReservationPhysicalProduct[] @relation("RentalInvoiceToReservationPhysicalProducts")
+  chargebeeInvoiceId          String?                      @map("chargebeeInvoice") @db.VarChar(30)
+  chargebeeInvoice            ChargebeeInvoice?            @relation(fields: [chargebeeInvoiceId], references: [chargebeeId])
 }
 
 enum RentalInvoiceLineItemType {
@@ -1006,11 +1028,11 @@ enum RentalInvoiceLineItemType {
 }
 
 model RentalInvoiceLineItem {
-  id                         String           @id @default(cuid()) @db.VarChar(30)
-  physicalProductId          String?          @map("physicalProduct") @db.VarChar(30)
-  physicalProduct            PhysicalProduct? @relation(fields: [physicalProductId], references: [id])
-  rentalInvoiceId            String           @map("rentalInvoice") @db.VarChar(30)
-  rentalInvoice              RentalInvoice    @relation(fields: [rentalInvoiceId], references: [id])
+  id                         String                    @id @default(cuid()) @db.VarChar(30)
+  physicalProductId          String?                   @map("physicalProduct") @db.VarChar(30)
+  physicalProduct            PhysicalProduct?          @relation(fields: [physicalProductId], references: [id])
+  rentalInvoiceId            String                    @map("rentalInvoice") @db.VarChar(30)
+  rentalInvoice              RentalInvoice             @relation(fields: [rentalInvoiceId], references: [id])
   daysRented                 Int?
   type                       RentalInvoiceLineItemType
   rentalStartedAt            DateTime?
@@ -1023,8 +1045,8 @@ model RentalInvoiceLineItem {
   taxPrice                   Int?
   price                      Int
   currencyCode               String
-  appliedMinimum             Boolean?         @default(false)
-  adjustedForPreviousMinimum Boolean?         @default(false)
+  appliedMinimum             Boolean?                  @default(false)
+  adjustedForPreviousMinimum Boolean?                  @default(false)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -1562,8 +1584,8 @@ model ReservationPhysicalProduct {
 
   // Minimum charge applied at reservation time, in cents.
   minimumAmountApplied Int? @default(0)
-  
-  returnReason        ReturnReason?
+
+  returnReason ReturnReason?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
