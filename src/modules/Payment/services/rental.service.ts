@@ -221,7 +221,7 @@ export class RentalService {
       createNextInvoice = true,
     } = {}
   ) {
-    let chargebeeInvoices, chargePromises, chargeResultType
+    let chargebeeRecords, chargePromises, chargeResultType
     let promises = []
     let lineItems = invoice.lineItems
     try {
@@ -250,7 +250,7 @@ export class RentalService {
       })
       ;({
         promises: chargePromises,
-        chargebeeRecords: chargebeeInvoices,
+        chargebeeRecords: chargebeeRecords,
         resultType: chargeResultType,
       } = chargeResult)
       promises.push(...chargePromises)
@@ -260,6 +260,11 @@ export class RentalService {
       } else {
         data["status"] = "Billed"
         data["billedAt"] = new Date()
+        if (chargeResultType === "ChargedNow") {
+          data["chargebeeInvoice"] = {
+            connect: { id: chargebeeRecords.invoice.id },
+          }
+        }
       }
       promises.push(
         this.prisma.client.rentalInvoice.update({
@@ -293,7 +298,7 @@ export class RentalService {
       await this.prisma.client.$transaction(promises)
     }
 
-    return { lineItems, charges: chargebeeInvoices }
+    return { lineItems, charges: chargebeeRecords }
   }
 
   async deleteUnbilledCharges(customerId) {
@@ -1553,6 +1558,7 @@ export class RentalService {
             .map(this.prismaLineItemToChargebeeChargeInput),
         })
         .request(this.handleChargebeeRequestResult)
+
       const chargebeeLineItems = result?.invoice?.line_items
       for (const prismaLineItem of lineItemsWithData) {
         const taxPromise = this.getLineItemTaxUpdatePromise(
@@ -1561,7 +1567,23 @@ export class RentalService {
         )
         promises.push(taxPromise)
       }
+
       invoicesCreated.push(result)
+
+      // Create invoice here
+      const { invoice: chargebeeInvoice } = result
+      const data = {
+        chargebeeId: chargebeeInvoice.id,
+        total: chargebeeInvoice.total,
+        status: chargebeeInvoice.status, // TODO: Transform to upper camel case
+        invoiceCreatedAt: new Date(),
+        url: "", // TODO:
+      }
+      promises.push(
+        this.prisma.client.chargebeeInvoice.create({
+          data,
+        })
+      )
       resultType = "ChargedNow"
     } else {
       for (const lineItem of lineItemsWithData) {
