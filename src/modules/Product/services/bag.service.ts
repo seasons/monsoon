@@ -413,7 +413,11 @@ export class BagService {
       customerID
     )) as any
 
-    if (!["Queued", "Picked"].includes(oldReservationPhysicalProduct.status)) {
+    if (
+      !["Queued", "Picked", "Packed"].includes(
+        oldReservationPhysicalProduct.status
+      )
+    ) {
       throw Error("Only bag items with status Picked, or Queued can be swapped")
     }
 
@@ -421,7 +425,11 @@ export class BagService {
       throw Error("Only Reserved bag items can be swapped")
     }
 
-    if (newItemAlreadyInBag && itemInBag?.status === "Reserved") {
+    if (
+      newItemAlreadyInBag &&
+      itemInBag?.status === "Reserved" &&
+      itemInBag.physicalProductId === newPhysicalProduct.id
+    ) {
       throw Error("This item is in the customer's bag and has been reserved")
     }
 
@@ -431,13 +439,27 @@ export class BagService {
       ? "Reservable"
       : "NonReservable"
 
-    const oldProductVariantData = this.productVariantService.getCountsForStatusChange(
-      {
-        productVariant,
-        oldInventoryStatus: oldPhysicalProduct.inventoryStatus as InventoryStatus,
-        newInventoryStatus: oldPhysicalProductNewInventoryStatus,
-      }
-    )
+    const newProductVariantID = newPhysicalProduct.productVariant.id
+    let oldProductVariantData = {}
+
+    //if we are swapping for the same item, just a different physicalProduct, then we dont need to change the productVariant counts
+    if (oldBagItem.productVariant.id !== newProductVariantID) {
+      oldProductVariantData = this.productVariantService.getCountsForStatusChange(
+        {
+          productVariant,
+          oldInventoryStatus: oldPhysicalProduct.inventoryStatus as InventoryStatus,
+          newInventoryStatus: oldPhysicalProductNewInventoryStatus,
+        }
+      )
+
+      const [
+        productVariantsCountsUpdatePromises,
+      ] = await this.productVariantService.updateProductVariantCounts(
+        [newProductVariantID],
+        customerID
+      )
+      promises.push(productVariantsCountsUpdatePromises)
+    }
 
     promises.push(
       this.prisma.client.physicalProduct.update({
@@ -464,15 +486,6 @@ export class BagService {
         },
       })
     )
-
-    const newProductVariantID = newPhysicalProduct.productVariant.id
-    const [
-      productVariantsCountsUpdatePromises,
-    ] = await this.productVariantService.updateProductVariantCounts(
-      [newProductVariantID],
-      customerID
-    )
-    promises.push(productVariantsCountsUpdatePromises)
 
     const newPhysicalProductID = newPhysicalProduct.id
     const newPhysicalProductIDConnect = {
