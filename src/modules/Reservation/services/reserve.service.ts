@@ -8,7 +8,6 @@ import { EmailService } from "@modules/Email/services/email.service"
 import { ShippingService } from "@modules/Shipping/services/shipping.service"
 import { Injectable } from "@nestjs/common"
 import {
-  AdminActionLog,
   BagItem,
   Customer,
   Location,
@@ -42,6 +41,16 @@ type ReservationPhysicalProductCreateData = {
   physicalProductId: string
 }
 
+export type ReserveItemsInput = {
+  shippingCode: ShippingCode
+  customer: Pick<Customer, "id">
+  select: Prisma.ReservationSelect
+  pickupTime?: {
+    date: string
+    timeWindowID?: string
+  }
+}
+
 @Injectable()
 export class ReserveService {
   constructor(
@@ -60,15 +69,7 @@ export class ReserveService {
     customer,
     select,
     pickupTime,
-  }: {
-    shippingCode: ShippingCode
-    customer: Pick<Customer, "id">
-    select: Prisma.ReservationSelect
-    pickupTime?: {
-      date: string
-      timeWindowID?: string
-    }
-  }) {
+  }: ReserveItemsInput) {
     const promises = []
     const customerWithData = await this.prisma.client.customer.findUnique({
       where: { id: customer.id },

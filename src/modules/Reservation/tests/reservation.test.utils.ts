@@ -4,7 +4,7 @@ import { PrismaService } from "@app/prisma/prisma.service"
 import { Injectable } from "@nestjs/common"
 import { merge } from "lodash"
 
-import { ReserveService } from "../services/reserve.service"
+import { ReserveItemsInput, ReserveService } from "../services/reserve.service"
 import { BagItem, Customer, Prisma, ShippingCode, prisma } from ".prisma/client"
 
 export const UPS_GROUND_FEE = 1000
@@ -115,6 +115,19 @@ export class ReservationTestUtilsService {
 
     return createdBagItems
   }
+
+  reserveItems = async (params: ReserveItemsInput) => {
+    // Don't do the charge min in test code...
+    const mock = jest
+      .spyOn(this.reserve, "chargeMinimum")
+      .mockImplementation(async () => ({ invoice: {}, promises: [] }))
+
+    const r = await this.reserve.reserveItems(params)
+    mock.mockRestore()
+
+    return r
+  }
+
   async addToBagAndReserveForCustomer({
     customer,
     numProductsToAdd,

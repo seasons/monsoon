@@ -985,7 +985,7 @@ model RentalInvoice {
   updatedAt                   DateTime                     @updatedAt
   membershipId                String                       @map("membership") @db.VarChar(30)
   membership                  CustomerMembership           @relation(fields: [membershipId], references: [id])
-  total                       Int                           @default(0)
+  total                       Int                          @default(0)
   billingStartAt              DateTime
   billingEndAt                DateTime
   billedAt                    DateTime?
@@ -1012,7 +1012,7 @@ model RentalInvoiceLineItem {
   rentalInvoiceId            String           @map("rentalInvoice") @db.VarChar(30)
   rentalInvoice              RentalInvoice    @relation(fields: [rentalInvoiceId], references: [id])
   daysRented                 Int?
-  type                       RentalInvoiceLineItemType @default(PhysicalProduct)
+  type                       RentalInvoiceLineItemType
   rentalStartedAt            DateTime?
   rentalEndedAt              DateTime?
   name                       String?

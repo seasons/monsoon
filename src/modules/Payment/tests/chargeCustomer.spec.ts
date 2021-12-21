@@ -66,16 +66,19 @@ describe("Charge Customer", () => {
             price: 0,
             currencyCode: "USD",
             rentalInvoiceId: customer.membership.rentalInvoices[0].id,
+            type: "Package",
           },
           {
             price: 0,
             currencyCode: "USD",
             rentalInvoiceId: customer.membership.rentalInvoices[0].id,
+            type: "Package",
           },
           {
             price: 0,
             currencyCode: "USD",
             rentalInvoiceId: customer.membership.rentalInvoices[0].id,
+            type: "Package",
           },
         ],
       })
@@ -123,18 +126,21 @@ describe("Charge Customer", () => {
             currencyCode: "USD",
             rentalInvoiceId: customer.membership.rentalInvoices[0].id,
             physicalProductId: physicalProducts[0].id,
+            type: "PhysicalProduct",
           },
           {
             price: 200,
             currencyCode: "USD",
             rentalInvoiceId: customer.membership.rentalInvoices[0].id,
             physicalProductId: physicalProducts[1].id,
+            type: "PhysicalProduct",
           },
           {
             price: 300,
             currencyCode: "USD",
             rentalInvoiceId: customer.membership.rentalInvoices[0].id,
             physicalProductId: physicalProducts[2].id,
+            type: "PhysicalProduct",
           },
         ],
       })

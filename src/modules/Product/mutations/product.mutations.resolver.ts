@@ -38,7 +38,47 @@ export class ProductMutationsResolver {
 
   @Mutation()
   async deleteBagItem(@Args() { itemID, type }) {
-    await this.prisma.client.bagItem.delete({ where: { id: itemID } })
+    const bagItem = await this.prisma.client.bagItem.findUnique({
+      where: {
+        id: itemID,
+      },
+      select: {
+        isInCart: true,
+        saved: true,
+        reservationPhysicalProduct: {
+          select: {
+            id: true,
+          },
+        },
+      },
+    })
+
+    const hasRpp = bagItem.reservationPhysicalProduct?.id
+
+    if (bagItem.isInCart && hasRpp) {
+      await this.prisma.client.bagItem.update({
+        where: {
+          id: itemID,
+        },
+        data: {
+          isInCart: false,
+        },
+      })
+    } else if (bagItem.saved && hasRpp) {
+      await this.prisma.client.bagItem.update({
+        where: {
+          id: itemID,
+        },
+        data: {
+          saved: false,
+        },
+      })
+    } else if (!hasRpp) {
+      await this.prisma.client.bagItem.delete({ where: { id: itemID } })
+    } else {
+      throw new Error(`Can not delete a bag item with a rpp`)
+    }
+
     return true
   }
 
