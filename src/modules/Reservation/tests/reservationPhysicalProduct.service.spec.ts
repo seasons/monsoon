@@ -73,7 +73,7 @@ describe("Reservation Physical Product Service", () => {
       }
     })
 
-    it("Removes the warehouse location from the relevant physicalProduct", async () => {
+    it("Removes the warehouse location from the relevant physical product", async () => {
       const {
         bagItems,
       } = await reservationUtilsTestService.addToBagAndReserveForCustomer({
@@ -114,6 +114,7 @@ describe("Reservation Physical Product Service", () => {
           },
         },
         select: {
+          id: true,
           warehouseLocation: {
             select: {
               id: true,

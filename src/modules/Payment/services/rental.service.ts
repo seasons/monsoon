@@ -89,6 +89,7 @@ export const ProcessableReservationPhysicalProductArgs = Prisma.validator<
             product: {
               select: {
                 id: true,
+                name: true,
                 rentalPriceOverride: true,
                 retailPrice: true,
                 wholesalePrice: true,
@@ -141,6 +142,7 @@ export const ProcessableRentalInvoiceArgs = Prisma.validator<
       select: {
         plan: { select: { planID: true } },
         subscriptionId: true,
+        customerId: true,
         customer: {
           select: {
             id: true,
@@ -171,7 +173,7 @@ export const ProcessableRentalInvoiceArgs = Prisma.validator<
   },
 })
 
-type ProcessableRentalInvoice = Prisma.RentalInvoiceGetPayload<
+export type ProcessableRentalInvoice = Prisma.RentalInvoiceGetPayload<
   typeof ProcessableRentalInvoiceArgs
 >
 
@@ -225,7 +227,9 @@ export class RentalService {
       // If we're retrying an invoice, we may have already created their line items.
       // So we don't want to recreate them.
       if (lineItems.length === 0) {
-        lineItems = await this.createRentalInvoiceLineItems(invoice)
+        lineItems = await this.createRentalInvoiceLineItems(invoice, {
+          upTo: null,
+        })
       } else {
         // If there are already line items, that means we may have tried to
         // process this before. So we clear out any added charges we may have on
@@ -238,7 +242,7 @@ export class RentalService {
         }
       }
 
-      const chargeResult = await this.chargebeeChargeTab(planID, lineItems, {
+      const chargeResult = await this.chargebeeChargeTab(lineItems, {
         forceImmediateCharge,
       })
       ;[chargePromises, chargebeeInvoices] = chargeResult
@@ -246,7 +250,7 @@ export class RentalService {
       promises.push(
         this.prisma.client.rentalInvoice.update({
           where: { id: invoice.id },
-          data: { status: "Billed" },
+          data: { status: "Billed", billedAt: new Date() },
         })
       )
     } catch (err) {
@@ -330,7 +334,11 @@ export class RentalService {
     const lastInvoice = await this.prisma.client.rentalInvoice.findFirst({
       where: { membershipId },
       orderBy: { createdAt: "desc" },
-      select: { reservations: { select: { id: true } }, billingEndAt: true },
+      select: {
+        reservations: { select: { id: true } },
+        billingEndAt: true,
+        reservationPhysicalProducts: { select: { id: true } },
+      },
     })
     if (!!lastInvoice) {
       reservationWhereInputFromLastInvoice = {
@@ -349,15 +357,19 @@ export class RentalService {
           },
           select: { id: true },
         },
-        bagItems: {
-          where: { status: "Reserved" },
-          select: { physicalProductId: true },
+        reservationPhysicalProducts: {
+          select: { id: true },
+          where: {
+            status: {
+              notIn: ["Lost", "Cancelled", "Purchased", "ReturnProcessed"],
+            },
+          },
         },
       },
     })
 
     const reservationIds = customer.reservations.map(a => a.id)
-    const physicalProductIds = customer.bagItems.map(b => b.physicalProductId)
+    const rppIds = customer.reservationPhysicalProducts.map(a => a.id)
     const now = new Date()
     const billingEndAt = await this.getRentalInvoiceBillingEndAt(
       membershipId,
@@ -368,6 +380,7 @@ export class RentalService {
         connect: { id: membershipId },
       },
       billingStartAt: now,
+      total: 0,
       // during initial launch, billingEndAt could have been 1 day before now if the customer's next_billing_at was the same as launch day.
       // To clean that up a bit, we get the max of now and the calcualted billingEndAt
       billingEndAt: this.timeUtils.getLaterDate(now, billingEndAt),
@@ -377,11 +390,7 @@ export class RentalService {
           id: a,
         })),
       },
-      products: {
-        connect: physicalProductIds.map(b => ({
-          id: b,
-        })),
-      },
+      reservationPhysicalProducts: { connect: rppIds.map(a => ({ id: a })) },
     })
 
     const promise = this.prisma.client.rentalInvoice.create({
@@ -755,7 +764,10 @@ export class RentalService {
     }
   }
 
-  async createRentalInvoiceLineItems(invoice: ProcessableRentalInvoice) {
+  async createRentalInvoiceLineItems(
+    invoice: ProcessableRentalInvoice,
+    options: { upTo?: "today" | "billingEnd" | null } = { upTo: null }
+  ) {
     const addLineItemBasics = input => ({
       ...input,
       rentalInvoice: { connect: { id: invoice.id } },
@@ -763,7 +775,8 @@ export class RentalService {
     })
 
     const rentalUsageLineItemDatas = await this.getRentalUsageLineItemDatas(
-      invoice
+      invoice,
+      options
     )
     const outboundPackagesFromPreviousBillingCycleLineItemDatas = await this.getOutboundPackageLineItemDatasFromPreviousBillingCycle(
       invoice
@@ -787,19 +800,30 @@ export class RentalService {
         data,
       })
     )
-    const lineItems = await this.prisma.client.$transaction(lineItemPromises)
+    let lineItems
 
-    return lineItems
+    if (!options.upTo) {
+      lineItems = await this.prisma.client.$transaction(lineItemPromises)
+    }
+
+    return lineItems || formattedLineItemDatas
   }
 
-  async getRentalUsageLineItemDatas(invoice: ProcessableRentalInvoice) {
+  async getRentalUsageLineItemDatas(
+    invoice: ProcessableRentalInvoice,
+    options: { upTo?: "today" | "billingEnd" | null } = { upTo: null }
+  ) {
     const lineItemsForPhysicalProductDatas = (await Promise.all(
       invoice.reservationPhysicalProducts.map(
         async reservationPhysicalProduct => {
           const {
             daysRented,
             ...daysRentedMetadata
-          } = await this.calcDaysRented(invoice, reservationPhysicalProduct)
+          } = await this.calcDaysRented(
+            invoice,
+            reservationPhysicalProduct,
+            options
+          )
 
           const {
             price,
@@ -818,6 +842,7 @@ export class RentalService {
             physicalProduct: {
               connect: { id: reservationPhysicalProduct.physicalProduct.id },
             },
+            type: "PhysicalProduct",
             price,
             appliedMinimum,
             adjustedForPreviousMinimum,
@@ -869,6 +894,7 @@ export class RentalService {
           name: "InboundPackage-" + (idx + 1),
           price,
           comment: `Returning items: ${p.items.map(a => a.seasonsUID)}`,
+          type: "Package",
         }
       }
     )
@@ -940,6 +966,7 @@ export class RentalService {
         name,
         price,
         comment,
+        type: "Package",
       }
     })
 
@@ -1086,7 +1113,7 @@ export class RentalService {
       }
 
       firstShippedOutboundPackageOfCycle = false
-      return { name, price, comment }
+      return { name, price, comment, type: "Package" }
     })
 
     return datas.filter(Boolean)
@@ -1415,10 +1442,9 @@ export class RentalService {
     return result
   }
 
-  private async chargebeeChargeTab(
-    planID: string,
+  async chargebeeChargeTab(
     lineItems: { id: string }[],
-    { forceImmediateCharge = false }
+    { forceImmediateCharge } = { forceImmediateCharge: false }
   ) {
     const promises = []
     const invoicesCreated = []
@@ -1493,10 +1519,11 @@ export class RentalService {
       lineItemsWithData[0].rentalInvoice.id
     )
 
-    const shouldChargeImmediately =
-      ["non_renewing", "cancelled"].includes(subscriptionStatus) ||
-      this.timeUtils.isXOrMoreDaysFromNow(nextBillingAt.toISOString(), 2) ||
+    const shouldChargeImmediately = this.shouldChargeImmediately(
+      subscriptionStatus,
+      nextBillingAt,
       forceImmediateCharge
+    )
 
     if (shouldChargeImmediately) {
       const result = await chargebee.invoice
@@ -1539,6 +1566,18 @@ export class RentalService {
     }
 
     return [promises, invoicesCreated]
+  }
+
+  shouldChargeImmediately(
+    subscriptionStatus: string,
+    nextBillingAt: Date,
+    forceImmediateCharge: boolean
+  ) {
+    return (
+      ["non_renewing", "cancelled"].includes(subscriptionStatus) ||
+      this.timeUtils.isXOrMoreDaysFromNow(nextBillingAt.toISOString(), 2) ||
+      forceImmediateCharge
+    )
   }
 
   async addPromotionalCredits(prismaUserId, totalInvoiceCharges, invoiceId) {

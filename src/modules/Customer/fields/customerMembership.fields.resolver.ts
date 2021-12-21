@@ -1,9 +1,14 @@
 import { Customer } from "@app/decorators"
 import { Loader } from "@app/modules/DataLoader/decorators/dataloader.decorator"
-import { RentalService } from "@app/modules/Payment/services/rental.service"
+import {
+  ProcessableRentalInvoice,
+  ProcessableReservationPhysicalProductArgs,
+  RentalService,
+} from "@app/modules/Payment/services/rental.service"
 import { PrismaDataLoader, PrismaLoader } from "@app/prisma/prisma.loader"
 import { Parent, ResolveField, Resolver } from "@nestjs/graphql"
 import { CustomerMembership, Prisma } from "@prisma/client"
+import cuid from "cuid"
 import { head } from "lodash"
 
 @Resolver("CustomerMembership")
@@ -27,6 +32,68 @@ export class CustomerMembershipFieldsResolver {
     // FIXME: update the logic in this field resolver to be their creditBalance - thirtyDayRentalFee ( from previous rentals )
     const membership = await prismaLoader.load(parent.id)
     return membership.creditBalance || 0
+  }
+
+  @ResolveField()
+  async financeMetrics(
+    @Parent() customerMembership: CustomerMembership,
+    @Loader({
+      name: PrismaLoader.name,
+      params: {
+        model: "RentalInvoice",
+        formatWhere: keys =>
+          Prisma.validator<Prisma.RentalInvoiceWhereInput>()({
+            membership: {
+              id: {
+                in: keys,
+              },
+            },
+          }),
+        getKeys: a => {
+          return [a.membershipId]
+        },
+        orderBy: {
+          createdAt: "desc",
+        },
+        keyToDataRelationship: "OneToMany",
+        select: Prisma.validator<Prisma.RentalInvoiceSelect>()({
+          id: true,
+          billingStartAt: true,
+          billingEndAt: true,
+          status: true,
+          membership: {
+            select: {
+              id: true,
+              customer: true,
+              customerId: true,
+            },
+          },
+          membershipId: true,
+          estimatedTotal: true,
+          lineItems: true,
+          reservationPhysicalProducts: {
+            select: ProcessableReservationPhysicalProductArgs.select,
+          },
+        }),
+      },
+    })
+    rentalInvoiceLoader: PrismaDataLoader
+  ) {
+    const financeMetrics = []
+    const rentalInvoices = await rentalInvoiceLoader.load(customerMembership.id)
+
+    if (rentalInvoices.length > 0) {
+      const currentInvoice = head(rentalInvoices)
+
+      financeMetrics.push(
+        await this.createFinanceMetric(currentInvoice, "today")
+      )
+      financeMetrics.push(
+        await this.createFinanceMetric(currentInvoice, "billingEnd")
+      )
+    }
+
+    return financeMetrics
   }
 
   @ResolveField()
@@ -70,5 +137,48 @@ export class CustomerMembershipFieldsResolver {
       { upTo: "today" }
     )
     return currentBalance
+  }
+
+  private async createFinanceMetric(
+    currentInvoice: ProcessableRentalInvoice,
+    upTo: "today" | "billingEnd"
+  ) {
+    const financeMetric = {}
+    financeMetric["id"] = cuid()
+    upTo === "today"
+      ? (financeMetric["name"] = "Current balance")
+      : (financeMetric["name"] = "Estimated total")
+
+    const lineItems = await this.rental.createRentalInvoiceLineItems(
+      currentInvoice,
+      {
+        upTo,
+      }
+    )
+
+    const physicalProducts = currentInvoice.reservationPhysicalProducts.map(
+      a => a.physicalProduct
+    )
+
+    for (const lineItem of lineItems) {
+      const physicalProductID = lineItem.physicalProduct.connect.id
+
+      const matchPhysicalProduct = physicalProducts.find(
+        a => a.id === physicalProductID
+      )
+
+      lineItem.name = matchPhysicalProduct.productVariant.product.name
+    }
+
+    financeMetric["lineItems"] = lineItems
+
+    financeMetric["amount"] = await this.rental.calculateCurrentBalance(
+      currentInvoice.membership.customerId,
+      {
+        upTo,
+      }
+    )
+
+    return financeMetric
   }
 }

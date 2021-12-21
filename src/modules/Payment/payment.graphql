@@ -198,14 +198,20 @@ enum LineItemIdentityType {
   Addon
   Adhoc
 }
+enum RentalInvoiceLineItemType {
+  PhysicalProduct
+  Package
+}
 
 type RentalInvoiceLineItem {
   id: ID!
   physicalProduct: PhysicalProduct
+  name: String
   rentalInvoice: RentalInvoice
-  daysRented: Int!
-  rentalStartedAt: DateTime!
-  rentalEndedAt: DateTime!
+  daysRented: Int
+  rentalStartedAt: DateTime
+  rentalEndedAt: DateTime
+  type: RentalInvoiceLineItemType
   comment: String
   taxRate: Float
   taxName: String
@@ -229,6 +235,7 @@ type RentalInvoice {
   membership: CustomerMembership
   status: RentalInvoiceStatus
   reservations: [Reservation!]
+  total: Int
 }
 
 type ChargebeeLineItem implements LineItemInterface {

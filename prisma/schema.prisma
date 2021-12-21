@@ -985,16 +985,24 @@ model RentalInvoice {
   updatedAt                   DateTime                     @updatedAt
   membershipId                String                       @map("membership") @db.VarChar(30)
   membership                  CustomerMembership           @relation(fields: [membershipId], references: [id])
+  total                       Int                           @default(0)
   billingStartAt              DateTime
   billingEndAt                DateTime
+  billedAt                    DateTime?
   creditsApplied              Int?
   estimatedTotal              Int                          @default(0)
   status                      RentalInvoiceStatus          @default(Draft)
   reservations                Reservation[]                @relation("RentalInvoiceToReservations")
   products                    PhysicalProduct[]            @relation("RentalInvoiceToProducts")
   lineItems                   RentalInvoiceLineItem[]
-  comment                     String?
+  comment                     String?                        
   reservationPhysicalProducts ReservationPhysicalProduct[] @relation("RentalInvoiceToReservationPhysicalProducts")
+}
+
+enum RentalInvoiceLineItemType {
+  PhysicalProduct
+  Package
+  ProcessingFee
 }
 
 model RentalInvoiceLineItem {
@@ -1004,6 +1012,7 @@ model RentalInvoiceLineItem {
   rentalInvoiceId            String           @map("rentalInvoice") @db.VarChar(30)
   rentalInvoice              RentalInvoice    @relation(fields: [rentalInvoiceId], references: [id])
   daysRented                 Int?
+  type                       RentalInvoiceLineItemType @default(PhysicalProduct)
   rentalStartedAt            DateTime?
   rentalEndedAt              DateTime?
   name                       String?

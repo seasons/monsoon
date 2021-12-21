@@ -203,7 +203,6 @@ export class OrderService {
       customerWithData.membership.purchaseCredits ?? 0
 
     const creditsAvailable = customerWithData.membership.creditBalance ?? 0
-    const hasCredits = creditsAvailable > 0
 
     const totalCreditsAvailable = creditsAvailable + purchaseCreditsAvailable
 
@@ -211,23 +210,27 @@ export class OrderService {
     let totalCreditsUsed = 0
 
     const getChargePrice = lineItemPrice => {
-      let chargePrice = lineItemPrice
+      // During draft mode we remove the credit totals from the charges to show the total price, since we're not applying
+      // actual chargebee promotional credits.
+      // In order mode we charge the full price but add chargebee promotional credits to credit the account, which will result
+      // in the same total price in both draft and order types.
+      let draftPrice = lineItemPrice
       const creditsStillAvailable = creditsAvailableAccumulator > 0
 
-      if (type === "draft" && creditsStillAvailable) {
-        if (chargePrice > creditsAvailableAccumulator) {
-          chargePrice = chargePrice - creditsAvailableAccumulator
+      if (creditsStillAvailable) {
+        if (lineItemPrice > creditsAvailableAccumulator) {
+          draftPrice = draftPrice - creditsAvailableAccumulator
           totalCreditsUsed = totalCreditsUsed + creditsAvailableAccumulator
           creditsAvailableAccumulator = 0
         } else {
           creditsAvailableAccumulator =
             creditsAvailableAccumulator - lineItemPrice
           totalCreditsUsed = totalCreditsUsed + lineItemPrice
-          chargePrice = 0
+          draftPrice = 0
         }
       }
 
-      return chargePrice
+      return type === "draft" ? draftPrice : lineItemPrice
     }
 
     const productLineItems: OrderLineItemCreateInput[] = []
@@ -315,7 +318,7 @@ export class OrderService {
 
     if (creditsApplied > 0) {
       orderLineItems.push({
-        name: "Promotional credits",
+        name: "Credits",
         recordID: customerWithData.membership.id,
         recordType: "Credit",
         currencyCode: "USD",
