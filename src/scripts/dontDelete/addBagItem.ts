@@ -10,6 +10,7 @@ const run = async () => {
   const physicalProductSUID = "CSBA-WTE-SS-033-01"
   const email = "rishi0928+1@gmail.com"
   const rppStatus = "Packed"
+  const bagItemStatus = "Reserved"
 
   const prodVar = await ps.client.productVariant.findFirst({
     where: { physicalProducts: { some: { seasonsUID: physicalProductSUID } } },
@@ -23,7 +24,7 @@ const run = async () => {
       saved: false,
       productVariant: { connect: { id: prodVar.id } },
       physicalProduct: { connect: { seasonsUID: physicalProductSUID } },
-      status: "Added",
+      status: bagItemStatus,
       customer: {
         connect: { id: customer.id },
       },
