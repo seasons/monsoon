@@ -273,6 +273,7 @@ export class EmailService {
         shippingMethod: true,
         pickupDate: true,
         pickupWindowId: true,
+        reservationNumber: true,
       },
     })
     const shippingLabel = data.outboundPackage.shippingLabel
@@ -296,7 +297,7 @@ export class EmailService {
     const payload = await RenderEmail.reservationProcessed({
       ...extraData,
       customerWillPickup: data.shippingCode === ShippingCode.Pickup,
-      orderNumber: data.reservation.id,
+      orderNumber: `${reservation.reservationNumber}`,
     })
 
     const { user } = data
