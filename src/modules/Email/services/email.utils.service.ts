@@ -44,6 +44,7 @@ export class EmailUtilsService {
     name: true,
     brand: { select: { name: true } },
     retailPrice: true,
+    computedRentalPrice: true,
     variants: {
       select: {
         displayShort: true,
@@ -239,6 +240,7 @@ export class EmailUtilsService {
 
     const payload = {
       ...pick(product, ["id", "name", "retailPrice", "slug"]),
+      rentalPrice: product.computedRentalPrice,
       sizes: `${sizes}`.replace(/,/g, " "),
       // @ts-ignore
       smallImageSrc,

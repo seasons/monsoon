@@ -280,8 +280,6 @@ export class EmailService {
       data.shippingCode === ShippingCode.Pickup
         ? {
             pickup: {
-              // date: reservation.pickupDate,
-              // timeWindowID: reservation.pickupWindowId
               date: reservation.pickupDate,
               timeRange: ShippingMethodFieldsResolver.getTimeWindow(
                 reservation.pickupWindowId
@@ -296,6 +294,7 @@ export class EmailService {
         : {}
 
     const payload = await RenderEmail.reservationProcessed({
+      ...extraData,
       customerWillPickup: data.shippingCode === ShippingCode.Pickup,
       orderNumber: data.reservation.id,
     })
