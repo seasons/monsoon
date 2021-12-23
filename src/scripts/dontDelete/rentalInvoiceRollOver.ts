@@ -117,12 +117,14 @@ const run = async () => {
       a => a.id
     )
     for (let rpp of previousRpps) {
-      if (
-        !["Lost", "Cancelled", "Purchased", "ReturnProcessed"].includes(
-          rpp.status
-        ) &&
-        !currentRppIds.includes(rpp.id)
-      ) {
+      const lifecycleEnded = [
+        "Lost",
+        "Cancelled",
+        "Purchased",
+        "ReturnProcessed",
+      ].includes(rpp.status)
+      const onCurrentRentalInvoice = currentRppIds.includes(rpp.id)
+      if (!lifecycleEnded && !onCurrentRentalInvoice) {
         const order = await ps.client.order.findFirst({
           where: {
             status: {
