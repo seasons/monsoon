@@ -994,7 +994,6 @@ model ChargebeeInvoice {
   total            Int
   status           ChargebeeInvoiceStatus
   invoiceCreatedAt DateTime
-  url              String
   createdAt        DateTime               @default(now())
   updatedAt        DateTime               @updatedAt
   rentalInvoice    RentalInvoice?
