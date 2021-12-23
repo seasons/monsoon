@@ -130,6 +130,7 @@ const run = async () => {
             status: {
               in: ["Fulfilled", "Submitted"],
             },
+            customer: { id: rentalInvoice.membership.customer.id },
             lineItems: {
               some: {
                 recordType: "PhysicalProduct",
