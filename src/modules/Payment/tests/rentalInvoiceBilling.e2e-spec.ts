@@ -25,6 +25,7 @@ const mockChargebeeInvoiceCreate = () =>
       }
     },
   })
+
 describe("Rental Invoice Billing", () => {
   let testUtils: TestUtilsService
   let rentalService: RentalService

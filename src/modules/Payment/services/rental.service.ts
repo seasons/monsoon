@@ -1585,17 +1585,10 @@ export class RentalService {
 
       // Create invoice here
       const { invoice: chargebeeInvoice } = result
-      const data = {
-        chargebeeId: chargebeeInvoice.id,
-        total: chargebeeInvoice.total,
-        status: upperFirst(camelCase(chargebeeInvoice.status)), // TODO: Transform to upper camel case
-        invoiceCreatedAt: new Date(),
-      }
-      promises.push(
-        this.prisma.client.chargebeeInvoice.create({
-          data,
-        })
-      )
+      const {
+        promise: localChargebeeInvoicePromise,
+      } = this.createLocalCopyOfChargebeeInvoice(chargebeeInvoice)
+      promises.push(localChargebeeInvoicePromise)
       resultType = "ChargedNow"
     } else {
       for (const lineItem of lineItemsWithData) {
@@ -1622,6 +1615,20 @@ export class RentalService {
     return { promises, chargebeeRecords: invoicesCreated, resultType }
   }
 
+  createLocalCopyOfChargebeeInvoice = chargebeeInvoice => {
+    const data = {
+      chargebeeId: chargebeeInvoice.id,
+      total: chargebeeInvoice.total,
+      status: upperFirst(camelCase(chargebeeInvoice.status)),
+      invoiceCreatedAt: new Date(),
+    }
+
+    return this.utils.wrapPrismaPromise(
+      this.prisma.client.chargebeeInvoice.create({
+        data,
+      })
+    )
+  }
   shouldChargeImmediately(
     subscriptionStatus: string,
     nextBillingAt: Date,
