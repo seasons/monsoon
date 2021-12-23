@@ -248,6 +248,13 @@ export class SubscriptionService {
       throw new Error(`Could not find customer with user id: ${userID}`)
     }
 
+    const firstName = customer.user.firstName
+    const lastName = customer.user.lastName
+
+    shippingAddress[
+      "slug"
+    ] = `${firstName}-${lastName}-shipping-${customer.user.id}`.toLowerCase()
+
     const updateData = await this.createCustomerSubscriptionInputData({
       subscription,
       card,
