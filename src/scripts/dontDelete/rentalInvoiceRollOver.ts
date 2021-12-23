@@ -32,6 +32,7 @@ const run = async () => {
       membership: {
         select: {
           id: true,
+          rentalInvoices: { select: { id: true } },
           customer: {
             select: {
               id: true,
@@ -52,10 +53,13 @@ const run = async () => {
     console.log("no rental invoices")
     return
   }
+  const rentalInvoicesForCustomersWithAtLeastTwoRentalInvoices = rentalInvoices.filter(
+    a => a.membership.rentalInvoices.length > 1
+  )
   const promises = []
   let count = 0
 
-  for (const rentalInvoice of rentalInvoices) {
+  for (const rentalInvoice of rentalInvoicesForCustomersWithAtLeastTwoRentalInvoices) {
     // console.log(rentalInvoice.membership.customer.status)
     const previousRentalInvoice = await ps.client.rentalInvoice.findFirst({
       where: {
@@ -75,6 +79,8 @@ const run = async () => {
       },
       select: {
         createdAt: true,
+        billingEndAt: true,
+        billingStartAt: true,
         status: true,
         reservationPhysicalProducts: {
           select: {
