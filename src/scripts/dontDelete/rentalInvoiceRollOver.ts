@@ -68,7 +68,7 @@ const run = async () => {
         createdAt: {
           lt: new Date(Date.parse("2021-12-08 00:00:00.000")),
         },
-        status: "Billed",
+        status: { in: ["Billed", "ChargeFailed"] },
       },
       orderBy: {
         createdAt: "desc",
