@@ -369,10 +369,18 @@ export class ProductService {
       select: merge(
         {
           saved: true,
+          reservationPhysicalProduct: {
+            select: {
+              id: true,
+            },
+          },
         },
         select
       ),
     })
+
+    // @ts-ignore
+    const rppAttached = existingBagItem?.reservationPhysicalProduct?.id
 
     // 1. If we're switching a cart item or bag item to saved list
     if (existingBagItem && save && !existingBagItem.saved) {
@@ -386,9 +394,19 @@ export class ProductService {
 
       // 2. If we're deleting a saved item from saved list
     } else if (existingBagItem && !save && existingBagItem.saved) {
-      await this.prisma.client.bagItem.delete({
-        where: { id: existingBagItem.id },
-      })
+      if (rppAttached) {
+        // Don't delete a bag item if it's attached to an rpp
+        return await this.prisma.client.bagItem.update({
+          where: { id: existingBagItem.id },
+          data: {
+            saved: false,
+          },
+        })
+      } else {
+        await this.prisma.client.bagItem.delete({
+          where: { id: existingBagItem.id },
+        })
+      }
 
       // 3. If we're making a saved item for the first time
     } else if (!existingBagItem && save) {
