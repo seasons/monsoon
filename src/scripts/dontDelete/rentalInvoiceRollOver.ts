@@ -1,9 +1,11 @@
 import "module-alias/register"
 
+import { TimeUtilsService } from "../../modules/Utils/services/time.service"
 import { PrismaService } from "../../prisma/prisma.service"
 
 const run = async () => {
   const ps = new PrismaService()
+  const timeService = new TimeUtilsService()
 
   const rentalInvoices = await ps.client.rentalInvoice.findMany({
     where: {
@@ -111,11 +113,27 @@ const run = async () => {
       a => a.id
     )
     for (let rpp of previousRpps) {
+      const includesRPP = currentRppIds.includes(rpp.id)
+      if (["Lost", "ReturnProcessed"].includes(rpp.status) && !includesRPP) {
+        const relevantTimeStamps = {
+          Lost: rpp.lostAt,
+          ReturnProcessed: rpp.returnProcessedAt,
+        }
+
+        const wasHandledDuringCurrentRentalInvoice = timeService.isLaterDate(
+          relevantTimeStamps[rpp.status],
+          rentalInvoice.createdAt
+        )
+        if (wasHandledDuringCurrentRentalInvoice) {
+          missingRpps.push(rpp)
+          continue
+        }
+      }
       if (
         !["Lost", "Cancelled", "Purchased", "ReturnProcessed"].includes(
           rpp.status
         ) &&
-        !currentRppIds.includes(rpp.id)
+        !includesRPP
       ) {
         const order = await ps.client.order.findFirst({
           where: {

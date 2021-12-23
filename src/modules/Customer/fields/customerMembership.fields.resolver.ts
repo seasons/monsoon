@@ -84,7 +84,9 @@ export class CustomerMembershipFieldsResolver {
 
     if (rentalInvoices.length > 0) {
       const currentInvoice = head(rentalInvoices)
-
+      if (currentInvoice.status !== "Draft") {
+        return financeMetrics
+      }
       financeMetrics.push(
         await this.createFinanceMetric(currentInvoice, "today")
       )
