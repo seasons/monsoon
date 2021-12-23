@@ -1,16 +1,15 @@
-import { ReserveService } from "@app/modules/Reservation/services/reserve.service"
 import { TestUtilsService } from "@app/modules/Test/services/test.service"
 import { TimeUtilsService } from "@app/modules/Utils/services/time.service"
 import { PrismaService } from "@app/prisma/prisma.service"
 import { Test } from "@nestjs/testing"
 import chargebee from "chargebee"
+import cuid from "cuid"
 
 import { PAYMENT_MODULE_DEF } from "../payment.module"
 import { RentalService } from "../services/rental.service"
 
 describe("Charge Customer", () => {
   let timeUtils: TimeUtilsService
-  let reserveService: ReserveService
   let testUtils: TestUtilsService
   let prisma: PrismaService
   let rentalService: RentalService
@@ -30,7 +29,6 @@ describe("Charge Customer", () => {
     prisma = moduleRef.get<PrismaService>(PrismaService)
     rentalService = moduleRef.get<RentalService>(RentalService)
     timeUtils = moduleRef.get<TimeUtilsService>(TimeUtilsService)
-    reserveService = moduleRef.get<ReserveService>(ReserveService)
   })
 
   describe("Edge Cases", () => {
@@ -43,13 +41,15 @@ describe("Charge Customer", () => {
       mocksToRestore.push(invoiceCreateMock)
       mocksToRestore.push(subscriptionAddChargeAtTermEndMock)
 
-      const [
+      const {
         promises,
-        invoicesCreated,
-      ] = await rentalService.chargebeeChargeTab([])
+        chargebeeRecords,
+        resultType,
+      } = await rentalService.chargebeeChargeTab([])
 
       expect(promises).toHaveLength(0)
-      expect(invoicesCreated).toHaveLength(0)
+      expect(chargebeeRecords).toHaveLength(0)
+      expect(resultType).toBe("NoCharges")
       expect(invoiceCreateMock).not.toHaveBeenCalled()
       expect(subscriptionAddChargeAtTermEndMock).not.toHaveBeenCalled()
     })
@@ -95,13 +95,15 @@ describe("Charge Customer", () => {
       mocksToRestore.push(invoiceCreateMock)
       mocksToRestore.push(subscriptionAddChargeAtTermEndMock)
 
-      const [
+      const {
         promises,
-        invoicesCreated,
-      ] = await rentalService.chargebeeChargeTab(lineItemIds)
+        chargebeeRecords,
+        resultType,
+      } = await rentalService.chargebeeChargeTab(lineItemIds)
 
       expect(promises).toHaveLength(0)
-      expect(invoicesCreated).toHaveLength(0)
+      expect(chargebeeRecords).toHaveLength(0)
+      expect(resultType).toBe("NoCharges")
       expect(invoiceCreateMock).not.toHaveBeenCalled()
       expect(subscriptionAddChargeAtTermEndMock).not.toHaveBeenCalled()
     })
@@ -151,12 +153,20 @@ describe("Charge Customer", () => {
       })
       lineItemIds = lineItems.map(lineItem => ({ id: lineItem.id }))
     })
-    test("If shouldChargeImmediately is true, charges immediately and sets taxes on line items", async () => {
+    test("If shouldChargeImmediately is true, Handles it properly", async () => {
+      /*
+      Charges immediately
+      Adds taxes
+      Creates a local copy of the chargebee invoice
+      connects
+
+      */
       const shouldChargeImmediatelyMock = jest
         .spyOn(rentalService, "shouldChargeImmediately")
         .mockImplementation(() => true)
       mocksToRestore.push(shouldChargeImmediatelyMock)
 
+      const chargebeeInvoiceId = cuid()
       const invoiceCreateMock = jest
         .spyOn(chargebee.invoice, "create")
         .mockImplementation(({ customer_id, currency_code, charges }) => {
@@ -164,6 +174,9 @@ describe("Charge Customer", () => {
             request: () => {
               return {
                 invoice: {
+                  id: chargebeeInvoiceId,
+                  status: "paid",
+                  total: 600,
                   line_items: charges.map(charge => ({
                     amount: charge.amount,
                     tax_amount: charge.amount * 0.08,
@@ -175,13 +188,17 @@ describe("Charge Customer", () => {
           }
         })
       mocksToRestore.push(invoiceCreateMock)
-      const [promises, invoice] = await rentalService.chargebeeChargeTab(
-        lineItemIds
-      )
+      const {
+        promises,
+        chargebeeRecords,
+        resultType,
+      } = await rentalService.chargebeeChargeTab(lineItemIds)
 
-      expect(promises).toHaveLength(3)
-      expect(invoice).toBeDefined()
+      expect(promises).toHaveLength(4)
+      expect(chargebeeRecords).toHaveLength(1)
+      expect(chargebeeRecords[0].invoice).toBeDefined()
       expect(invoiceCreateMock).toHaveBeenCalled()
+      expect(resultType).toBe("ChargedNow")
 
       await prisma.client.$transaction(promises)
 
@@ -197,9 +214,24 @@ describe("Charge Customer", () => {
       expect(lineItemsAfter[1].taxPrice).toBe(16)
       expect(lineItemsAfter[2].taxPrice).toBe(24)
       expect(lineItemsAfter.every(a => a.taxRate === 0.08)).toBe(true)
+
+      const createdChargebeeInvoiceRecord = await prisma.client.chargebeeInvoice.findUnique(
+        { where: { chargebeeId: chargebeeInvoiceId } }
+      )
+
+      expect(createdChargebeeInvoiceRecord).toBeDefined()
+      expect(createdChargebeeInvoiceRecord.total).toBe(600)
+      expect(createdChargebeeInvoiceRecord.status).toBe("Paid")
     })
 
-    test("If shouldChargeImmediately is false, charges at term end and adds taxes", async () => {
+    test("If shouldChargeImmediately is false, handles it properly", async () => {
+      /*
+      Adds pending charges
+      Adds taxes
+      Does not create a chargebee invoice (No way to test this)
+      Result Type is proper
+      */
+
       const shouldChargeImmediatelyMock = jest
         .spyOn(rentalService, "shouldChargeImmediately")
         .mockImplementation(() => false)
@@ -228,13 +260,16 @@ describe("Charge Customer", () => {
         })
       mocksToRestore.push(addChargeToTermEndMock)
 
-      const [promises, invoice] = await rentalService.chargebeeChargeTab(
-        lineItemIds
-      )
+      const {
+        promises,
+        chargebeeRecords,
+        resultType,
+      } = await rentalService.chargebeeChargeTab(lineItemIds)
 
       expect(promises).toHaveLength(3)
-      expect(invoice).toBeDefined()
+      expect(chargebeeRecords).toHaveLength(3)
       expect(addChargeToTermEndMock).toHaveBeenCalled()
+      expect(resultType).toBe("PendingCharges")
 
       await prisma.client.$transaction(promises)
 

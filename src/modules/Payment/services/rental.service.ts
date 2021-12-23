@@ -14,7 +14,6 @@ import {
   RentalInvoice,
   RentalInvoiceLineItem,
   RentalInvoiceStatus,
-  Reservation,
   ReservationPhysicalProduct,
   ReservationPhysicalProductStatus,
   ShippingMethod,
@@ -22,7 +21,7 @@ import {
 import { Prisma } from "@prisma/client"
 import { PrismaService } from "@prisma1/prisma.service"
 import chargebee from "chargebee"
-import { orderBy, uniqBy } from "lodash"
+import { camelCase, orderBy, uniqBy, upperFirst } from "lodash"
 import { DateTime } from "luxon"
 
 export const RETURN_PACKAGE_CUSHION = 3 // TODO: Set as an env var
@@ -1464,7 +1463,7 @@ export class RentalService {
     { forceImmediateCharge } = { forceImmediateCharge: false }
   ): Promise<{
     promises: PrismaPromise<any>[]
-    chargebeeRecords: any[]
+    chargebeeRecords: any
     resultType: ChargeTabResultType
   }> {
     const promises = []
@@ -1575,7 +1574,7 @@ export class RentalService {
       const data = {
         chargebeeId: chargebeeInvoice.id,
         total: chargebeeInvoice.total,
-        status: chargebeeInvoice.status, // TODO: Transform to upper camel case
+        status: upperFirst(camelCase(chargebeeInvoice.status)), // TODO: Transform to upper camel case
         invoiceCreatedAt: new Date(),
         url: "", // TODO:
       }
