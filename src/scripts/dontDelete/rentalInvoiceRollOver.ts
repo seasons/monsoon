@@ -34,6 +34,7 @@ const run = async () => {
       membership: {
         select: {
           id: true,
+          rentalInvoices: { select: { id: true } },
           customer: {
             select: {
               id: true,
@@ -54,10 +55,13 @@ const run = async () => {
     console.log("no rental invoices")
     return
   }
+  const rentalInvoicesForCustomersWithAtLeastTwoRentalInvoices = rentalInvoices.filter(
+    a => a.membership.rentalInvoices.length > 1
+  )
   const promises = []
   let count = 0
 
-  for (const rentalInvoice of rentalInvoices) {
+  for (const rentalInvoice of rentalInvoicesForCustomersWithAtLeastTwoRentalInvoices) {
     // console.log(rentalInvoice.membership.customer.status)
     const previousRentalInvoice = await ps.client.rentalInvoice.findFirst({
       where: {
@@ -70,13 +74,15 @@ const run = async () => {
         createdAt: {
           lt: new Date(Date.parse("2021-12-08 00:00:00.000")),
         },
-        status: "Billed",
+        status: { in: ["Billed", "ChargeFailed"] },
       },
       orderBy: {
         createdAt: "desc",
       },
       select: {
         createdAt: true,
+        billingEndAt: true,
+        billingStartAt: true,
         status: true,
         reservationPhysicalProducts: {
           select: {
@@ -113,8 +119,18 @@ const run = async () => {
       a => a.id
     )
     for (let rpp of previousRpps) {
-      const includesRPP = currentRppIds.includes(rpp.id)
-      if (["Lost", "ReturnProcessed"].includes(rpp.status) && !includesRPP) {
+      const lifecycleEnded = [
+        "Lost",
+        "Cancelled",
+        "Purchased",
+        "ReturnProcessed",
+      ].includes(rpp.status)
+      const onCurrentRentalInvoice = currentRppIds.includes(rpp.id)
+
+      if (
+        ["Lost", "ReturnProcessed"].includes(rpp.status) &&
+        !onCurrentRentalInvoice
+      ) {
         const relevantTimeStamps = {
           Lost: rpp.lostAt,
           ReturnProcessed: rpp.returnProcessedAt,
@@ -129,17 +145,14 @@ const run = async () => {
           continue
         }
       }
-      if (
-        !["Lost", "Cancelled", "Purchased", "ReturnProcessed"].includes(
-          rpp.status
-        ) &&
-        !includesRPP
-      ) {
+
+      if (!lifecycleEnded && !onCurrentRentalInvoice) {
         const order = await ps.client.order.findFirst({
           where: {
             status: {
               in: ["Fulfilled", "Submitted"],
             },
+            customer: { id: rentalInvoice.membership.customer.id },
             lineItems: {
               some: {
                 recordType: "PhysicalProduct",
