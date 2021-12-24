@@ -477,8 +477,8 @@ describe("Calculate Days Rented", () => {
         )
 
         expect(daysRented).toBe(0)
-        expectTimeToEqual(rentalStartedAt, twentyThreeDaysAgo)
-        expectTimeToEqual(rentalEndedAt, timeUtils.xDaysAgo(10))
+        expect(rentalStartedAt).toBeUndefined()
+        expect(rentalEndedAt).toBeUndefined()
         expect(comment).toBe("") // TODO:
       })
       describe("On the way back", () => {
