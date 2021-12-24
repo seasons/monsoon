@@ -220,7 +220,7 @@ describe("Charge Customer", () => {
       )
 
       expect(createdChargebeeInvoiceRecord).toBeDefined()
-      expect(createdChargebeeInvoiceRecord.total).toBe(600)
+      expect(createdChargebeeInvoiceRecord.subtotal).toBe(600)
       expect(createdChargebeeInvoiceRecord.status).toBe("Paid")
     })
 

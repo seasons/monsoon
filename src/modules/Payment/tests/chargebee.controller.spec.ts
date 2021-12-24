@@ -489,7 +489,7 @@ describe("Chargebee Controller", () => {
             chargebeeInvoice: {
               select: {
                 chargebeeId: true,
-                total: true,
+                subtotal: true,
                 status: true,
                 invoiceCreatedAt: true,
               },
@@ -501,7 +501,7 @@ describe("Chargebee Controller", () => {
       testUtils.expectTimeToEqual(rentalInvoiceAfterEvent.billedAt, new Date())
       expect(rentalInvoiceAfterEvent.chargebeeInvoice).toBeDefined()
       expect(rentalInvoiceAfterEvent.chargebeeInvoice.chargebeeId).toBeDefined()
-      expect(rentalInvoiceAfterEvent.chargebeeInvoice.total).toBe(700)
+      expect(rentalInvoiceAfterEvent.chargebeeInvoice.subtotal).toBe(700)
       expect(rentalInvoiceAfterEvent.chargebeeInvoice.status).toBe("Paid")
       testUtils.expectTimeToEqual(
         rentalInvoiceAfterEvent.chargebeeInvoice.invoiceCreatedAt,
@@ -543,9 +543,6 @@ describe("Chargebee Controller", () => {
             chargebeeInvoice: {
               select: {
                 chargebeeId: true,
-                total: true,
-                status: true,
-                invoiceCreatedAt: true,
               },
             },
           },

@@ -16,7 +16,7 @@ export const getInvoiceGeneratedEvent = (
         customer_id: customerId,
         status: "paid",
         date: Math.round(new Date().getTime() / 1000), // seconds since epoch
-        total: lineItems.reduce((acc, item) => acc + item.amount, 0),
+        sub_total: lineItems.reduce((acc, item) => acc + item.amount, 0),
         line_items: lineItems.map(a => ({ id: cuid(), amount: a.amount })),
       },
     },

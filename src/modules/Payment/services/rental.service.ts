@@ -1618,7 +1618,7 @@ export class RentalService {
   createLocalCopyOfChargebeeInvoice = chargebeeInvoice => {
     const data = {
       chargebeeId: chargebeeInvoice.id,
-      total: chargebeeInvoice.total,
+      subtotal: chargebeeInvoice.sub_total,
       status: upperFirst(camelCase(chargebeeInvoice.status)),
       invoiceCreatedAt: this.timeUtils.dateFromUTCTimestamp(
         chargebeeInvoice.date,
