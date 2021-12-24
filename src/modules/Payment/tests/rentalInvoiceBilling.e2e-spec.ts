@@ -12,6 +12,7 @@ import { PrismaService } from "@app/prisma/prisma.service"
 import { INestApplication } from "@nestjs/common"
 import { Test } from "@nestjs/testing"
 import chargebee from "chargebee"
+import cuid from "cuid"
 import Mockdate from "mockdate"
 import request from "supertest"
 
@@ -20,6 +21,9 @@ const mockChargebeeInvoiceCreate = () =>
     request: () => {
       return {
         invoice: {
+          id: cuid(),
+          total: 1000,
+          status: "paid",
           line_items: [{}],
         },
       }
@@ -127,6 +131,7 @@ describe("Rental Invoice Billing", () => {
           where: { id: rentalInvoiceToBill.id },
           select: {
             status: true,
+            chargebeeInvoice: { select: { chargebeeId: true } },
             lineItems: {
               select: {
                 name: true,
@@ -174,6 +179,10 @@ describe("Rental Invoice Billing", () => {
 
     it("Calls the chargebee charge func", () => {
       expect(chargebeeChargeMock).toHaveBeenCalledTimes(1)
+    })
+
+    it("Creates a chargebee invoice record and connects it to the rental invoice", () => {
+      expect(rentalInvoiceAfterProcessing.chargebeeInvoice).toBeDefined()
     })
   })
 
@@ -297,6 +306,7 @@ describe("Rental Invoice Billing", () => {
           where: { id: rentalInvoiceToBill.id },
           select: {
             status: true,
+            chargebeeInvoice: { select: { chargebeeId: true } },
             lineItems: {
               select: {
                 name: true,
@@ -364,6 +374,10 @@ describe("Rental Invoice Billing", () => {
 
     it("Calls the chargebee charge func", () => {
       expect(chargebeeChargeMock).toHaveBeenCalledTimes(1)
+    })
+
+    it("Creates a chargebee invoice record and connects it to the rental invoice", () => {
+      expect(rentalInvoiceAfterProcessing.chargebeeInvoice).toBeDefined()
     })
   })
 
