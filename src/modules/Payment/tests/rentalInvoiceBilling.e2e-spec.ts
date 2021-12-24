@@ -23,7 +23,7 @@ const mockChargebeeInvoiceCreate = () =>
         invoice: {
           id: cuid(),
           date: Math.round(new Date().getTime() / 1000),
-          subtotal: 1000,
+          sub_total: 1000,
           status: "paid",
           line_items: [{}],
         },
