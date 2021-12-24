@@ -1620,8 +1620,6 @@ export class RentalService {
       chargebeeId: chargebeeInvoice.id,
       total: chargebeeInvoice.total,
       status: upperFirst(camelCase(chargebeeInvoice.status)),
-      // TODO: Make this use invoice.date, convert from utc timestamp in seconds
-      // to a datetime.
       invoiceCreatedAt: this.timeUtils.dateFromUTCTimestamp(
         chargebeeInvoice.date,
         "seconds"
