@@ -453,7 +453,7 @@ describe("Chargebee Controller", () => {
       })
       testCustomer = customer
     })
-    xit("If a chargebee invoice is created for a ChargePending rental invoice, connects it appropriately", async () => {
+    it("If a chargebee invoice is created for a ChargePending rental invoice, connects it appropriately", async () => {
       const rentalInvoice = testCustomer.membership.rentalInvoices[0]
       await prisma.client.rentalInvoice.update({
         where: { id: rentalInvoice.id },
