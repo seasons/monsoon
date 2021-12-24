@@ -58,7 +58,7 @@ describe("Update Rental Invoice After Charge", () => {
     await prisma.client.chargebeeInvoice.create({
       data: {
         chargebeeId: chargebeeInvoiceId,
-        total: 500,
+        subtotal: 500,
         status: "Paid",
         invoiceCreatedAt: new Date(),
       },
