@@ -176,6 +176,7 @@ describe("Charge Customer", () => {
                 invoice: {
                   id: chargebeeInvoiceId,
                   status: "paid",
+                  sub_total: 600,
                   total: 600,
                   line_items: charges.map(charge => ({
                     amount: charge.amount,
