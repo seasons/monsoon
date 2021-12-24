@@ -1622,7 +1622,10 @@ export class RentalService {
       status: upperFirst(camelCase(chargebeeInvoice.status)),
       // TODO: Make this use invoice.date, convert from utc timestamp in seconds
       // to a datetime.
-      invoiceCreatedAt: new Date(),
+      invoiceCreatedAt: this.timeUtils.dateFromUTCTimestamp(
+        chargebeeInvoice.date,
+        "seconds"
+      ),
     }
 
     return this.utils.wrapPrismaPromise(
