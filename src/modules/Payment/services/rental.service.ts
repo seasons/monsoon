@@ -1640,6 +1640,7 @@ export class RentalService {
     return (
       ["non_renewing", "cancelled"].includes(subscriptionStatus) ||
       this.timeUtils.isXOrMoreDaysFromNow(nextBillingAt.toISOString(), 2) ||
+      this.timeUtils.isLaterDate(new Date(), nextBillingAt) ||
       forceImmediateCharge
     )
   }
