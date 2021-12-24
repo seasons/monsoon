@@ -476,7 +476,7 @@ describe("Calculate Days Rented", () => {
           reservationPhysicalProductWithData
         )
 
-        expect(daysRented).toBe(13)
+        expect(daysRented).toBe(0)
         expectTimeToEqual(rentalStartedAt, twentyThreeDaysAgo)
         expectTimeToEqual(rentalEndedAt, timeUtils.xDaysAgo(10))
         expect(comment).toBe("") // TODO:
