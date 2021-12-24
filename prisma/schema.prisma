@@ -991,7 +991,7 @@ enum ChargebeeInvoiceStatus {
 
 model ChargebeeInvoice {
   chargebeeId      String                 @id @db.VarChar(30)
-  total            Int
+  subtotal            Int
   status           ChargebeeInvoiceStatus
   invoiceCreatedAt DateTime
   createdAt        DateTime               @default(now())
