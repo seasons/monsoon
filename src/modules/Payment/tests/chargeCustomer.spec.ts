@@ -178,6 +178,7 @@ describe("Charge Customer", () => {
                   status: "paid",
                   sub_total: 600,
                   total: 600,
+                  date: Math.round(Date.now() / 1000),
                   line_items: charges.map(charge => ({
                     amount: charge.amount,
                     tax_amount: charge.amount * 0.08,
