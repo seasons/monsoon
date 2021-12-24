@@ -8,6 +8,7 @@ import { UtilsService } from "@app/modules/Utils/services/utils.service"
 import { PrismaService } from "@app/prisma/prisma.service"
 import { Test } from "@nestjs/testing"
 import chargebee from "chargebee"
+import cuid from "cuid"
 
 import { CustomerService } from "../services/customer.service"
 
@@ -60,7 +61,10 @@ describe("Cancel Customer", () => {
         .mockReturnValue({
           request: async () => ({
             invoice: {
+              id: cuid(),
+              date: Math.round(new Date().getTime() / 1000),
               status: "paid",
+              sub_total: 0,
               line_items: [],
             },
           }),
