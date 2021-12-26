@@ -7,6 +7,7 @@ import request from "supertest"
 
 import { PAYMENT_MODULE_DEF } from "../payment.module"
 import { getPromotionalCreditsAddedEvent } from "./data/creditsAdded"
+import { getInvoiceGeneratedEvent } from "./data/invoiceGenerated"
 import { getPaymentSourceUpdatedEvent } from "./data/paymentSourceUpdated"
 import { getPaymentSucceededEvent } from "./data/paymentSucceeded"
 
@@ -438,6 +439,117 @@ describe("Chargebee Controller", () => {
 
       customerWithData = await getCustWithData()
       expect(customerWithData.status).toBe("Active")
+    })
+  })
+
+  describe("Connects Chargebee Invoices to Rental Invoices appropriately", () => {
+    beforeEach(async () => {
+      const { customer } = await testUtils.createTestCustomer({
+        select: {
+          id: true,
+          user: { select: { id: true } },
+          membership: { select: { rentalInvoices: { select: { id: true } } } },
+        },
+      })
+      testCustomer = customer
+    })
+    it("If a chargebee invoice is created for a ChargePending rental invoice, connects it appropriately", async () => {
+      const rentalInvoice = testCustomer.membership.rentalInvoices[0]
+      await prisma.client.rentalInvoice.update({
+        where: { id: rentalInvoice.id },
+        data: {
+          status: "ChargePending",
+          lineItems: {
+            createMany: {
+              data: [
+                { price: 0, type: "PhysicalProduct", currencyCode: "USD" },
+                { price: 100, type: "PhysicalProduct", currencyCode: "USD" },
+                { price: 100, type: "Package", currencyCode: "USD" },
+                { price: 200, type: "PhysicalProduct", currencyCode: "USD" },
+                { price: 300, type: "PhysicalProduct", currencyCode: "USD" },
+              ],
+            },
+          },
+        },
+      })
+      const event = getInvoiceGeneratedEvent(testCustomer.user.id, [
+        { amount: 100 },
+        { amount: 100 },
+        { amount: 200 },
+        { amount: 300 },
+      ])
+      await sendEvent(event)
+
+      const rentalInvoiceAfterEvent = await prisma.client.rentalInvoice.findUnique(
+        {
+          where: { id: rentalInvoice.id },
+          select: {
+            status: true,
+            billedAt: true,
+            chargebeeInvoice: {
+              select: {
+                chargebeeId: true,
+                subtotal: true,
+                status: true,
+                invoiceCreatedAt: true,
+              },
+            },
+          },
+        }
+      )
+      expect(rentalInvoiceAfterEvent.status).toBe("Billed")
+      testUtils.expectTimeToEqual(rentalInvoiceAfterEvent.billedAt, new Date())
+      expect(rentalInvoiceAfterEvent.chargebeeInvoice).toBeDefined()
+      expect(rentalInvoiceAfterEvent.chargebeeInvoice.chargebeeId).toBeDefined()
+      expect(rentalInvoiceAfterEvent.chargebeeInvoice.subtotal).toBe(700)
+      expect(rentalInvoiceAfterEvent.chargebeeInvoice.status).toBe("Paid")
+      testUtils.expectTimeToEqual(
+        rentalInvoiceAfterEvent.chargebeeInvoice.invoiceCreatedAt,
+        new Date()
+      )
+    })
+
+    it("If a chargebee invoice is created with line items that don't match the customer's ChargePending rental invoice, do nothing", async () => {
+      const rentalInvoice = testCustomer.membership.rentalInvoices[0]
+      await prisma.client.rentalInvoice.update({
+        where: { id: rentalInvoice.id },
+        data: {
+          status: "ChargePending",
+          lineItems: {
+            createMany: {
+              data: [
+                { price: 100, type: "PhysicalProduct", currencyCode: "USD" },
+                { price: 100, type: "Package", currencyCode: "USD" },
+                { price: 200, type: "PhysicalProduct", currencyCode: "USD" },
+                { price: 300, type: "PhysicalProduct", currencyCode: "USD" },
+              ],
+            },
+          },
+        },
+      })
+      const event = getInvoiceGeneratedEvent(testCustomer.user.id, [
+        { amount: 100 },
+        { amount: 100 },
+        { amount: 200 },
+      ])
+      await sendEvent(event)
+
+      const rentalInvoiceAfterEvent = await prisma.client.rentalInvoice.findUnique(
+        {
+          where: { id: rentalInvoice.id },
+          select: {
+            status: true,
+            billedAt: true,
+            chargebeeInvoice: {
+              select: {
+                chargebeeId: true,
+              },
+            },
+          },
+        }
+      )
+      expect(rentalInvoiceAfterEvent.status).toBe("ChargePending")
+      expect(rentalInvoiceAfterEvent.chargebeeInvoice).toBeNull()
     })
   })
 })

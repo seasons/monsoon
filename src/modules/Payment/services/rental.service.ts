@@ -3,17 +3,18 @@ import { ErrorService } from "@app/modules/Error/services/error.service"
 import { ShippingService } from "@app/modules/Shipping/services/shipping.service"
 import { GRANDFATHERED_PLAN_IDS } from "@app/modules/Utils/constants"
 import { TimeUtilsService } from "@app/modules/Utils/services/time.service"
+import { UtilsService } from "@app/modules/Utils/services/utils.service"
 import { Injectable, Logger } from "@nestjs/common"
 import {
   Customer,
   CustomerMembershipSubscriptionData,
   Package,
   PhysicalProduct,
+  PrismaPromise,
   Product,
   RentalInvoice,
   RentalInvoiceLineItem,
   RentalInvoiceStatus,
-  Reservation,
   ReservationPhysicalProduct,
   ReservationPhysicalProductStatus,
   ShippingMethod,
@@ -21,7 +22,7 @@ import {
 import { Prisma } from "@prisma/client"
 import { PrismaService } from "@prisma1/prisma.service"
 import chargebee from "chargebee"
-import { orderBy, uniqBy } from "lodash"
+import { camelCase, orderBy, uniqBy, upperFirst } from "lodash"
 import { DateTime } from "luxon"
 
 export const RETURN_PACKAGE_CUSHION = 3 // TODO: Set as an env var
@@ -177,6 +178,8 @@ export type ProcessableRentalInvoice = Prisma.RentalInvoiceGetPayload<
   typeof ProcessableRentalInvoiceArgs
 >
 
+type ChargeTabResultType = "NoCharges" | "ChargedNow" | "PendingCharges"
+
 @Injectable()
 export class RentalService {
   private readonly logger = (new Logger(
@@ -187,7 +190,8 @@ export class RentalService {
     private readonly prisma: PrismaService,
     private readonly timeUtils: TimeUtilsService,
     private readonly error: ErrorService,
-    private readonly shipping: ShippingService
+    private readonly shipping: ShippingService,
+    private readonly utils: UtilsService
   ) {}
 
   private rentalReservationSelect = Prisma.validator<
@@ -218,12 +222,10 @@ export class RentalService {
       createNextInvoice = true,
     } = {}
   ) {
-    let chargebeeInvoices, chargePromises
+    let chargebeeRecords, chargePromises, chargeResultType
     let promises = []
     let lineItems = invoice.lineItems
     try {
-      const planID = invoice.membership.plan.planID
-
       // If we're retrying an invoice, we may have already created their line items.
       // So we don't want to recreate them.
       if (lineItems.length === 0) {
@@ -245,14 +247,20 @@ export class RentalService {
       const chargeResult = await this.chargebeeChargeTab(lineItems, {
         forceImmediateCharge,
       })
-      ;[chargePromises, chargebeeInvoices] = chargeResult
+      ;({
+        promises: chargePromises,
+        chargebeeRecords: chargebeeRecords,
+        resultType: chargeResultType,
+      } = chargeResult)
       promises.push(...chargePromises)
-      promises.push(
-        this.prisma.client.rentalInvoice.update({
-          where: { id: invoice.id },
-          data: { status: "Billed", billedAt: new Date() },
-        })
+      const {
+        promise: rentalInvoiceUpdatePromise,
+      } = this.updateRentalInvoiceAfterCharge(
+        invoice.id,
+        chargebeeRecords,
+        chargeResultType
       )
+      promises.push(rentalInvoiceUpdatePromise)
     } catch (err) {
       promises.push(
         this.prisma.client.rentalInvoice.update({
@@ -279,7 +287,7 @@ export class RentalService {
       await this.prisma.client.$transaction(promises)
     }
 
-    return { lineItems, charges: chargebeeInvoices }
+    return { lineItems, charges: chargebeeRecords }
   }
 
   async deleteUnbilledCharges(customerId) {
@@ -296,6 +304,30 @@ export class RentalService {
     }
   }
 
+  updateRentalInvoiceAfterCharge = (
+    invoiceId: string,
+    chargebeeRecords: any,
+    resultType: ChargeTabResultType
+  ) => {
+    const data = { processedAt: new Date() }
+    if (resultType === "PendingCharges") {
+      data["status"] = "ChargePending"
+    } else {
+      data["status"] = "Billed"
+      data["billedAt"] = new Date()
+      if (resultType === "ChargedNow") {
+        data["chargebeeInvoice"] = {
+          connect: { chargebeeId: chargebeeRecords[0].invoice.id },
+        }
+      }
+    }
+    return this.utils.wrapPrismaPromise(
+      this.prisma.client.rentalInvoice.update({
+        where: { id: invoiceId },
+        data,
+      })
+    )
+  }
   async initFirstRentalInvoice(
     customerId,
     mode: "promise" | "execute" = "execute"
@@ -593,10 +625,8 @@ export class RentalService {
     switch (logicCase) {
       case "Outbound":
       case "Cancelled":
-        rentalStartedAt = undefined
-        break
       case "Purchased":
-        rentalEndedAt = reservationPhysicalProduct.purchasedAt
+        rentalStartedAt = undefined
         break
       case "Inbound":
         rentalEndedAt =
@@ -1445,11 +1475,17 @@ export class RentalService {
   async chargebeeChargeTab(
     lineItems: { id: string }[],
     { forceImmediateCharge } = { forceImmediateCharge: false }
-  ) {
+  ): Promise<{
+    promises: PrismaPromise<any>[]
+    chargebeeRecords: any
+    resultType: ChargeTabResultType
+  }> {
     const promises = []
     const invoicesCreated = []
+    let resultType: ChargeTabResultType = "NoCharges"
+
     if (lineItems.length === 0) {
-      return [promises, invoicesCreated]
+      return { promises, chargebeeRecords: invoicesCreated, resultType }
     }
 
     const lineItemsWithData = await this.prisma.client.rentalInvoiceLineItem.findMany(
@@ -1505,7 +1541,7 @@ export class RentalService {
       0
     )
     if (totalInvoiceCharges === 0) {
-      return [promises, invoicesCreated]
+      return { promises, chargebeeRecords: invoicesCreated, resultType }
     }
     const prismaUserId =
       lineItemsWithData[0].rentalInvoice.membership.customer.user.id
@@ -1535,6 +1571,7 @@ export class RentalService {
             .map(this.prismaLineItemToChargebeeChargeInput),
         })
         .request(this.handleChargebeeRequestResult)
+
       const chargebeeLineItems = result?.invoice?.line_items
       for (const prismaLineItem of lineItemsWithData) {
         const taxPromise = this.getLineItemTaxUpdatePromise(
@@ -1543,7 +1580,16 @@ export class RentalService {
         )
         promises.push(taxPromise)
       }
+
       invoicesCreated.push(result)
+
+      // Create invoice here
+      const { invoice: chargebeeInvoice } = result
+      const {
+        promise: localChargebeeInvoicePromise,
+      } = this.createLocalCopyOfChargebeeInvoice(chargebeeInvoice)
+      promises.push(localChargebeeInvoicePromise)
+      resultType = "ChargedNow"
     } else {
       for (const lineItem of lineItemsWithData) {
         if (lineItem.price === 0) {
@@ -1562,12 +1608,30 @@ export class RentalService {
         )
         promises.push(taxPromise)
         invoicesCreated.push(result)
+        resultType = "PendingCharges"
       }
     }
 
-    return [promises, invoicesCreated]
+    return { promises, chargebeeRecords: invoicesCreated, resultType }
   }
 
+  createLocalCopyOfChargebeeInvoice = chargebeeInvoice => {
+    const data = {
+      chargebeeId: chargebeeInvoice.id,
+      subtotal: chargebeeInvoice.sub_total,
+      status: upperFirst(camelCase(chargebeeInvoice.status)),
+      invoiceCreatedAt: this.timeUtils.dateFromUTCTimestamp(
+        chargebeeInvoice.date,
+        "seconds"
+      ),
+    }
+
+    return this.utils.wrapPrismaPromise(
+      this.prisma.client.chargebeeInvoice.create({
+        data,
+      })
+    )
+  }
   shouldChargeImmediately(
     subscriptionStatus: string,
     nextBillingAt: Date,
@@ -1576,6 +1640,7 @@ export class RentalService {
     return (
       ["non_renewing", "cancelled"].includes(subscriptionStatus) ||
       this.timeUtils.isXOrMoreDaysFromNow(nextBillingAt.toISOString(), 2) ||
+      this.timeUtils.isLaterDate(new Date(), nextBillingAt) ||
       forceImmediateCharge
     )
   }

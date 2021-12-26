@@ -34,6 +34,7 @@ const CHARGEBEE_PAYMENT_SOURCE_ADDED = "payment_source_added"
 const CHARGEBEE_PAYMENT_SUCCEEDED = "payment_succeeded"
 const CHARGEBEE_PAYMENT_FAILED = "payment_failed"
 const CHARGEBEE_PROMOTIONAL_CREDITS_ADDED = "promotional_credits_added"
+const CHARGEBEE_INVOICE_GENERATED = "invoice_generated"
 
 @Controller("chargebee_events")
 export class ChargebeeController {
@@ -79,7 +80,77 @@ export class ChargebeeController {
       case CHARGEBEE_PAYMENT_SOURCE_ADDED:
         await this.updatedPaymentSource(body.content)
         break
+      case CHARGEBEE_INVOICE_GENERATED:
+        await this.connectInvoiceToRentalInvoice(body.content)
+        break
     }
+  }
+
+  private async connectInvoiceToRentalInvoice(content: any) {
+    const { invoice } = content
+    const chargebeeCustomerId = invoice.customer_id
+    const chargebeeLineItems = invoice.line_items
+
+    const chargePendingRentalInvoiceForCustomer = await this.prisma.client.rentalInvoice.findFirst(
+      {
+        where: {
+          status: "ChargePending",
+          membership: { customer: { user: { id: chargebeeCustomerId } } },
+        },
+        select: {
+          id: true,
+          lineItems: { select: { price: true } },
+        },
+      }
+    )
+    if (!chargePendingRentalInvoiceForCustomer) {
+      return
+    }
+
+    const lineItemsToCheck = chargePendingRentalInvoiceForCustomer.lineItems.filter(
+      a => a.price > 0
+    )
+    let allRentalInvoiceLineItemsOnChargebeeInvoice = true
+    let remainingChargebeeLineItems = chargebeeLineItems
+    for (const li of lineItemsToCheck) {
+      if (remainingChargebeeLineItems.length === 0) {
+        allRentalInvoiceLineItemsOnChargebeeInvoice = false
+        break
+      }
+
+      const matchingChargebeeLineItem = remainingChargebeeLineItems.find(
+        a => a.amount === li.price
+      )
+      if (!matchingChargebeeLineItem) {
+        allRentalInvoiceLineItemsOnChargebeeInvoice = false
+        break
+      }
+
+      remainingChargebeeLineItems = remainingChargebeeLineItems.filter(
+        a => a.id !== matchingChargebeeLineItem.id
+      )
+    }
+
+    if (!allRentalInvoiceLineItemsOnChargebeeInvoice) {
+      return
+    }
+
+    const promises = []
+    promises.push(
+      this.rental.createLocalCopyOfChargebeeInvoice(invoice).promise
+    )
+    promises.push(
+      this.prisma.client.rentalInvoice.update({
+        where: { id: chargePendingRentalInvoiceForCustomer.id },
+        data: {
+          status: "Billed",
+          billedAt: new Date(),
+          chargebeeInvoice: { connect: { chargebeeId: invoice.id } },
+        },
+      })
+    )
+
+    await this.prisma.client.$transaction(promises)
   }
 
   private async updatedPaymentSource(content: any) {
