@@ -136,10 +136,14 @@ const run = async () => {
           ReturnProcessed: rpp.returnProcessedAt,
         }
 
-        const wasHandledDuringCurrentRentalInvoice = timeService.isLaterDate(
-          relevantTimeStamps[rpp.status],
-          rentalInvoice.createdAt
-        )
+        const wasHandledDuringCurrentRentalInvoice = !!relevantTimeStamps[
+          rpp.status
+        ]
+          ? timeService.isLaterDate(
+              relevantTimeStamps[rpp.status],
+              rentalInvoice.createdAt
+            )
+          : false
         if (wasHandledDuringCurrentRentalInvoice) {
           missingRpps.push(rpp)
           continue
@@ -185,23 +189,22 @@ const run = async () => {
       console.dir(previousRentalInvoice, { depth: null })
       count++
 
-      promises.push(
-        ps.client.rentalInvoice.update({
-          where: {
-            id: rentalInvoice.id,
-          },
-          data: {
-            reservationPhysicalProducts: {
-              connect: missingRpps.map(a => {
-                return { id: a.id }
-              }),
-            },
-          },
-        })
-      )
+      console.log("DO NOT DO UPDATE")
+      // await ps.client.rentalInvoice.update({
+      //   where: {
+      //     id: rentalInvoice.id,
+      //   },
+      //   data: {
+      //     reservationPhysicalProducts: {
+      //       connect: missingRpps.map(a => {
+      //         return { id: a.id }
+      //       }),
+      //     },
+      //   },
+      // })
     }
   }
-  await ps.client.$transaction(promises)
+  // await ps.client.$transaction(promises)
   console.log(count)
   console.log("script end")
 }
