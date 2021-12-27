@@ -367,6 +367,19 @@ export class ReserveService {
       )
     }
 
+    const addPromoCredits = async (
+      prismaUserId,
+      charges,
+      activeRentalInvoice
+    ) =>
+      await this.rentalService.addPromotionalCredits(
+        prismaUserId,
+        charges.reduce((acc, currVal) => {
+          acc += currVal
+        }, 0),
+        activeRentalInvoice.id
+      )
+
     const activeRentalInvoice = await this.prisma.client.rentalInvoice.findFirst(
       {
         where: {
@@ -405,6 +418,7 @@ export class ReserveService {
 
     let invoice
     try {
+      addPromoCredits(prismaUserId, charges, activeRentalInvoice)
       ;({ invoice } = await chargebee.invoice
         .create({
           customer_id: prismaUserId,
@@ -417,13 +431,6 @@ export class ReserveService {
           }
           return result
         }))
-      await this.rentalService.addPromotionalCredits(
-        prismaUserId,
-        charges.reduce((acc, currVal) => {
-          acc += currVal
-        }, 0),
-        activeRentalInvoice.id
-      )
     } catch (err) {
       // TODO: Add datadog log here
       await handleFailedCharge(invoice)
