@@ -1,36 +1,11 @@
 import "module-alias/register"
 
-import { UniqueArgumentNames } from "graphql/validation/rules/UniqueArgumentNames"
-import { uniq } from "lodash"
-import { DateTime } from "luxon"
-
-import { ErrorService } from "../../modules//Error/services/error.service"
-import {
-  ProcessableReservationPhysicalProductArgs,
-  RentalService,
-} from "../../modules/Payment/services/rental.service"
-import { ShippingService } from "../../modules/Shipping/services/shipping.service"
 import { TimeUtilsService } from "../../modules/Utils/services/time.service"
-import { UtilsService } from "../../modules/Utils/services/utils.service"
 import { PrismaService } from "../../prisma/prisma.service"
 
 const run = async () => {
   const ps = new PrismaService()
   const timeService = new TimeUtilsService()
-  const error = new ErrorService()
-  const utils = new UtilsService(ps)
-  const shipping = new ShippingService(ps, utils)
-  const rs = new RentalService(ps, timeService, error, shipping)
-  const date = new Date()
-
-  // const rentalInvoiceLineItems = ps.client.rentalInvoiceLineItem.findMany({
-  //   select:{
-  //     id: true,
-  //     comment: true,
-  //     physicalProduct: true,
-  //     name: true,
-  //   }
-  // })
 
   const rentalInvoices = await ps.client.rentalInvoice.findMany({
     where: {
@@ -42,7 +17,7 @@ const run = async () => {
           status: "Active",
         },
       },
-      status: "Billed",
+      // status: "Billed",
     },
     select: {
       id: true,
@@ -59,6 +34,7 @@ const run = async () => {
       membership: {
         select: {
           id: true,
+          rentalInvoices: { select: { id: true } },
           customer: {
             select: {
               id: true,
@@ -79,26 +55,40 @@ const run = async () => {
     console.log("no rental invoices")
     return
   }
+  const rentalInvoicesForCustomersWithAtLeastTwoRentalInvoices = rentalInvoices.filter(
+    a => a.membership.rentalInvoices.length > 1
+  )
   const promises = []
-  for (const rentalInvoice of rentalInvoices) {
-    console.log(rentalInvoice.membership.customer.status)
+  let count = 0
+
+  for (const rentalInvoice of rentalInvoicesForCustomersWithAtLeastTwoRentalInvoices) {
+    // console.log(rentalInvoice.membership.customer.status)
     const previousRentalInvoice = await ps.client.rentalInvoice.findFirst({
       where: {
+        id: {
+          not: {
+            equals: rentalInvoice.id,
+          },
+        },
         membershipId: rentalInvoice.membership.id,
         createdAt: {
           lt: new Date(Date.parse("2021-12-08 00:00:00.000")),
         },
-        status: "Billed",
+        status: { in: ["Billed", "ChargeFailed"] },
       },
       orderBy: {
         createdAt: "desc",
       },
       select: {
         createdAt: true,
+        billingEndAt: true,
+        billingStartAt: true,
         status: true,
         reservationPhysicalProducts: {
           select: {
             id: true,
+            reservationId: true,
+            physicalProductId: true,
             status: true,
             createdAt: true,
             pickedAt: true,
@@ -129,39 +119,90 @@ const run = async () => {
       a => a.id
     )
     for (let rpp of previousRpps) {
+      const lifecycleEnded = [
+        "Lost",
+        "Cancelled",
+        "Purchased",
+        "ReturnProcessed",
+      ].includes(rpp.status)
+      const onCurrentRentalInvoice = currentRppIds.includes(rpp.id)
+
       if (
-        !["Lost", "Cancelled", "Purchased", "ReturnProcessed"].includes(
-          rpp.status
-        ) &&
-        !currentRppIds.includes(rpp.id)
+        ["Lost", "ReturnProcessed"].includes(rpp.status) &&
+        !onCurrentRentalInvoice
       ) {
+        const relevantTimeStamps = {
+          Lost: rpp.lostAt,
+          ReturnProcessed: rpp.returnProcessedAt,
+        }
+
+        const wasHandledDuringCurrentRentalInvoice = timeService.isLaterDate(
+          relevantTimeStamps[rpp.status],
+          rentalInvoice.createdAt
+        )
+        if (wasHandledDuringCurrentRentalInvoice) {
+          missingRpps.push(rpp)
+          continue
+        }
+      }
+
+      if (!lifecycleEnded && !onCurrentRentalInvoice) {
+        const order = await ps.client.order.findFirst({
+          where: {
+            status: {
+              in: ["Fulfilled", "Submitted"],
+            },
+            customer: { id: rentalInvoice.membership.customer.id },
+            lineItems: {
+              some: {
+                recordType: "PhysicalProduct",
+                recordID: rpp.physicalProductId,
+              },
+            },
+          },
+          select: {
+            id: true,
+          },
+        })
+        // console.log('order',order)
+        if (order) {
+          continue
+        }
         missingRpps.push(rpp)
       }
     }
     if (missingRpps.length > 0) {
+      console.log(
+        "\n\n",
+        rentalInvoice.membership.customer.user.email,
+        "'s rental invoice"
+      )
       console.log("current rental invoice")
       console.dir(rentalInvoice, { depth: null })
       console.log("missing reservation physical products")
       console.dir(missingRpps, { depth: null })
       console.log("previous rental invoice")
       console.dir(previousRentalInvoice, { depth: null })
+      count++
 
-      // promises.push(
-      //   ps.client.rentalInvoice.update({
-      //     where:{
-      //       id: rentalInvoice.id
-      //     },
-      //     data:{
-      //       reservationPhysicalProducts: {
-      //         connect:
-      //           missingRpps.map(a => {return {id: a.id}})
-      //       }
-      //     }
-      //   })
-      // )
+      promises.push(
+        ps.client.rentalInvoice.update({
+          where: {
+            id: rentalInvoice.id,
+          },
+          data: {
+            reservationPhysicalProducts: {
+              connect: missingRpps.map(a => {
+                return { id: a.id }
+              }),
+            },
+          },
+        })
+      )
     }
   }
-  ps.client.$transaction(promises)
+  await ps.client.$transaction(promises)
+  console.log(count)
   console.log("script end")
 }
 

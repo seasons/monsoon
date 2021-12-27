@@ -201,6 +201,7 @@ enum LineItemIdentityType {
 enum RentalInvoiceLineItemType {
   PhysicalProduct
   Package
+  ProcessingFee
 }
 
 type RentalInvoiceLineItem {
