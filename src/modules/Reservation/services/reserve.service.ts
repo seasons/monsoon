@@ -375,6 +375,7 @@ export class ReserveService {
               userId: prismaUserId,
             },
           },
+          status: "Draft",
         },
         select: {
           id: true,
