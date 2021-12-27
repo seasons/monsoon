@@ -1,4 +1,5 @@
 import { ErrorService } from "@app/modules/Error/services/error.service"
+import { RentalService } from "@app/modules/Payment/services/rental.service"
 import { PhysicalProductWithReservationSpecificData } from "@app/modules/Product/services/physicalProduct.utils.service"
 import { ProductVariantService } from "@app/modules/Product/services/productVariant.service"
 import { ProductUtilsService } from "@app/modules/Utils/services/product.utils.service"
@@ -61,7 +62,8 @@ export class ReserveService {
     private readonly error: ErrorService,
     private readonly utils: UtilsService,
     private readonly productUtils: ProductUtilsService,
-    private readonly reservationUtils: ReservationUtilsService
+    private readonly reservationUtils: ReservationUtilsService,
+    private readonly rentalService: RentalService
   ) {}
 
   async reserveItems({
@@ -365,6 +367,21 @@ export class ReserveService {
       )
     }
 
+    const activeRentalInvoice = await this.prisma.client.rentalInvoice.findFirst(
+      {
+        where: {
+          membership: {
+            customer: {
+              userId: prismaUserId,
+            },
+          },
+        },
+        select: {
+          id: true,
+        },
+      }
+    )
+
     // Note: No need to set them to PaymentFailed here. It should happen in the Chargebee controller.
     const handleFailedCharge = async invoice => {
       if (!!invoice) {
@@ -399,6 +416,13 @@ export class ReserveService {
           }
           return result
         }))
+      await this.rentalService.addPromotionalCredits(
+        prismaUserId,
+        charges.reduce((acc, currVal) => {
+          acc += currVal
+        }, 0),
+        activeRentalInvoice.id
+      )
     } catch (err) {
       // TODO: Add datadog log here
       await handleFailedCharge(invoice)
