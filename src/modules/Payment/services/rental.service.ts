@@ -2,6 +2,7 @@ import { WinstonLogger } from "@app/lib/logger/logger/winston.logger"
 import { ErrorService } from "@app/modules/Error/services/error.service"
 import { ShippingService } from "@app/modules/Shipping/services/shipping.service"
 import { GRANDFATHERED_PLAN_IDS } from "@app/modules/Utils/constants"
+import { PaymentUtilsService } from "@app/modules/Utils/services/paymentUtils.service"
 import { TimeUtilsService } from "@app/modules/Utils/services/time.service"
 import { UtilsService } from "@app/modules/Utils/services/utils.service"
 import { Injectable, Logger } from "@nestjs/common"
@@ -191,7 +192,8 @@ export class RentalService {
     private readonly timeUtils: TimeUtilsService,
     private readonly error: ErrorService,
     private readonly shipping: ShippingService,
-    private readonly utils: UtilsService
+    private readonly utils: UtilsService,
+    private readonly paymentUtils: PaymentUtilsService
   ) {}
 
   private rentalReservationSelect = Prisma.validator<
@@ -1549,10 +1551,11 @@ export class RentalService {
       lineItemsWithData[0].rentalInvoice.membership.subscription.status
     const nextBillingAt =
       lineItemsWithData[0].rentalInvoice.membership.subscription.nextBillingAt
-    await this.addPromotionalCredits(
+    await this.paymentUtils.movePromotionalCreditsToChargebee(
       prismaUserId,
       totalInvoiceCharges,
-      lineItemsWithData[0].rentalInvoice.id
+      "Rental",
+      { rentalInvoiceId: lineItemsWithData[0].rentalInvoice.id }
     )
 
     const shouldChargeImmediately = this.shouldChargeImmediately(
@@ -1643,83 +1646,6 @@ export class RentalService {
       this.timeUtils.isLaterDate(new Date(), nextBillingAt) ||
       forceImmediateCharge
     )
-  }
-
-  async addPromotionalCredits(prismaUserId, totalInvoiceCharges, invoiceId) {
-    if (!totalInvoiceCharges) {
-      return
-    }
-
-    const rentalInvoice = await this.prisma.client.rentalInvoice.findUnique({
-      where: { id: invoiceId },
-      select: {
-        creditsApplied: true,
-      },
-    })
-
-    if (rentalInvoice.creditsApplied) {
-      // If we've already applied credits to this invoice, early return
-      return
-    }
-
-    const prismaCustomer = await this.prisma.client.customer.findFirst({
-      where: { user: { id: prismaUserId } },
-      select: {
-        membership: {
-          select: {
-            id: true,
-            creditBalance: true,
-            plan: {
-              select: {
-                planID: true,
-              },
-            },
-          },
-        },
-      },
-    })
-
-    const existingCreditBalance = prismaCustomer.membership.creditBalance
-    if (existingCreditBalance === 0) {
-      return
-    }
-
-    let totalCreditsApplied
-
-    if (totalInvoiceCharges > existingCreditBalance) {
-      totalCreditsApplied = existingCreditBalance
-    } else {
-      totalCreditsApplied = totalInvoiceCharges
-    }
-
-    await chargebee.promotional_credit
-      .add({
-        customer_id: prismaUserId,
-        amount: totalCreditsApplied,
-        // (MONSOON_IGNORE) tells the chargebee webhook to not automatically move these credits to prisma.
-        description: `(MONSOON_IGNORE) Grandfathered ${prismaCustomer.membership.plan.planID} credits applied towards rental charges`,
-      })
-      .request()
-
-    await this.prisma.client.customerMembership.update({
-      where: { id: prismaCustomer.membership.id },
-      data: {
-        creditBalance: { decrement: totalCreditsApplied },
-        creditUpdateHistory: {
-          create: {
-            amount: -1 * totalCreditsApplied,
-            reason: "Transferred to chargebee to apply towards rental charges",
-          },
-        },
-      },
-    })
-
-    await this.prisma.client.rentalInvoice.update({
-      where: { id: invoiceId },
-      data: {
-        creditsApplied: totalCreditsApplied,
-      },
-    })
   }
 
   private getLineItemTaxUpdatePromise(

@@ -1,7 +1,7 @@
 import { ErrorService } from "@app/modules/Error/services/error.service"
-import { RentalService } from "@app/modules/Payment/services/rental.service"
 import { PhysicalProductWithReservationSpecificData } from "@app/modules/Product/services/physicalProduct.utils.service"
 import { ProductVariantService } from "@app/modules/Product/services/productVariant.service"
+import { PaymentUtilsService } from "@app/modules/Utils/services/paymentUtils.service"
 import { ProductUtilsService } from "@app/modules/Utils/services/product.utils.service"
 import { ReservationUtilsService } from "@app/modules/Utils/services/reservation.utils.service"
 import { UtilsService } from "@app/modules/Utils/services/utils.service"
@@ -63,7 +63,7 @@ export class ReserveService {
     private readonly utils: UtilsService,
     private readonly productUtils: ProductUtilsService,
     private readonly reservationUtils: ReservationUtilsService,
-    private readonly rentalService: RentalService
+    private readonly paymentUtils: PaymentUtilsService
   ) {}
 
   async reserveItems({
@@ -367,34 +367,10 @@ export class ReserveService {
       )
     }
 
-    const addPromoCredits = async (
-      prismaUserId,
-      charges,
-      activeRentalInvoice
-    ) =>
-      await this.rentalService.addPromotionalCredits(
-        prismaUserId,
-        charges.reduce((acc, currVal) => {
-          acc += currVal
-        }, 0),
-        activeRentalInvoice.id
-      )
-
-    const activeRentalInvoice = await this.prisma.client.rentalInvoice.findFirst(
-      {
-        where: {
-          membership: {
-            customer: {
-              userId: prismaUserId,
-            },
-          },
-          status: "Draft",
-        },
-        select: {
-          id: true,
-        },
-      }
-    )
+    const numCreditsToMove = charges.reduce((acc, currVal) => {
+      acc += currVal.amount
+      return acc
+    }, 0)
 
     // Note: No need to set them to PaymentFailed here. It should happen in the Chargebee controller.
     const handleFailedCharge = async invoice => {
@@ -418,7 +394,11 @@ export class ReserveService {
 
     let invoice
     try {
-      addPromoCredits(prismaUserId, charges, activeRentalInvoice)
+      await this.paymentUtils.movePromotionalCreditsToChargebee(
+        prismaUserId,
+        numCreditsToMove,
+        "Reservation"
+      )
       ;({ invoice } = await chargebee.invoice
         .create({
           customer_id: prismaUserId,
