@@ -753,6 +753,7 @@ export class RentalService {
         // transit event for it
         rentalEndedAt = invoiceBillingEndAt
         break
+      case "Purchased":
       case "Inbound":
       case "ResetEarly":
       case "ReturnProcessed":
