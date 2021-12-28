@@ -190,6 +190,8 @@ enum RentalInvoiceStatus {
   Draft
   Billed
   ChargeFailed
+  Cancelled
+  ChargePending
 }
 
 enum LineItemIdentityType {
