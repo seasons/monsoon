@@ -669,6 +669,7 @@ model Customer {
   userId                      String?                          @map("user") @db.VarChar(30)
   plan                        Plan?
   billingInfoId               String?                          @map("billingInfo") @db.VarChar(30)
+  customerPrices              ProductCustomerPrice[]
   createdAt                   DateTime                         @default(now())
   updatedAt                   DateTime                         @updatedAt
   authorizedAt                DateTime?
@@ -991,7 +992,7 @@ enum ChargebeeInvoiceStatus {
 
 model ChargebeeInvoice {
   chargebeeId      String                 @id @db.VarChar(30)
-  subtotal            Int
+  subtotal         Int
   status           ChargebeeInvoiceStatus
   invoiceCreatedAt DateTime
   createdAt        DateTime               @default(now())
@@ -1235,6 +1236,7 @@ model Product {
   modelId                     String?                  @map("model") @db.VarChar(30)
   brand                       Brand?                   @relation(fields: [brandId], references: [id])
   customerDetails             CustomerDetail[]         @relation(fields: [customerDetailId], references: [id])
+  customerPrices               ProductCustomerPrice[]
   category                    Category?                @relation(fields: [categoryId], references: [id])
   color                       Color?                   @relation("ColorToProduct_color", fields: [colorId], references: [id])
   materialCategory            ProductMaterialCategory? @relation(fields: [materialCategoryId], references: [id])
@@ -1251,6 +1253,16 @@ model Product {
   images                      Image[]
   functions                   ProductFunction[]
   tags                        Tag[]
+}
+
+model ProductCustomerPrice {
+  id                   String   @id @default(cuid()) @db.VarChar(30)
+  customerId           String   @db.VarChar(30)
+  productId            String   @db.VarChar(30)
+  buyUsedCustomerPrice Int?
+  amountBilled         Int?
+  customer             Customer @relation(fields: [customerId], references: [id])
+  product              Product  @relation(fields: [productId], references: [id])
 }
 
 model ProductFunction {
