@@ -1,12 +1,16 @@
 import "module-alias/register"
 
+import { head } from "lodash"
+
 import { PrismaService } from "../../prisma/prisma.service"
 
 const run = async () => {
   const ps = new PrismaService()
 
-  const physicalProductSUID = "RHUD-RED-MM-025-02"
-  const email = "brian.a.watson@gmail.com"
+  const physicalProductSUID = "CSBA-WTE-SS-033-01"
+  const email = "rishi0928+1@gmail.com"
+  const rppStatus = "Packed"
+  const bagItemStatus = "Reserved"
 
   const prodVar = await ps.client.productVariant.findFirst({
     where: { physicalProducts: { some: { seasonsUID: physicalProductSUID } } },
@@ -15,18 +19,56 @@ const run = async () => {
     where: { user: { email } },
   })
 
-  await ps.client.bagItem.create({
+  const bagItem = await ps.client.bagItem.create({
     data: {
       saved: false,
       productVariant: { connect: { id: prodVar.id } },
       physicalProduct: { connect: { seasonsUID: physicalProductSUID } },
-      status: "Reserved",
+      status: bagItemStatus,
       customer: {
         connect: { id: customer.id },
       },
     },
   })
-  console.log("bag item added")
+
+  const reservations = await ps.client.reservation.findMany({
+    where: {
+      customer: {
+        id: customer.id,
+      },
+    },
+    orderBy: {
+      createdAt: "desc",
+    },
+    select: {
+      id: true,
+    },
+  })
+  const reservation = head(reservations)
+
+  await ps.client.reservationPhysicalProduct.create({
+    data: {
+      status: rppStatus,
+      physicalProduct: {
+        connect: { seasonsUID: physicalProductSUID },
+      },
+      customer: {
+        connect: {
+          id: customer.id,
+        },
+      },
+      bagItem: {
+        connect: {
+          id: bagItem.id,
+        },
+      },
+      reservation: {
+        connect: {
+          id: reservation.id,
+        },
+      },
+    },
+  })
 
   const activeRentalInvoice = await ps.client.rentalInvoice.findFirst({
     where: { membership: { customer: { user: { email } } }, status: "Draft" },
