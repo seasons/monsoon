@@ -37,13 +37,17 @@ describe("Update Rental Invoice After Charge", () => {
         status: true,
         billedAt: true,
         processedAt: true,
+        total: true,
       },
     })
   test("PendingCharges", async () => {
-    const { promise } = rentalService.updateRentalInvoiceAfterCharge(
+    const {
+      promise,
+    } = rentalService.updateRentalInvoiceAfterCharge(
       rentalInvoice.id,
       [],
-      "PendingCharges"
+      "PendingCharges",
+      [{ price: 100 }]
     )
     await prisma.client.$transaction([promise])
     const updatedInvoice = await getUpdatedInvoiceWithData()
@@ -51,6 +55,7 @@ describe("Update Rental Invoice After Charge", () => {
     expect(updatedInvoice.chargebeeInvoice).toBeNull()
     testUtils.expectTimeToEqual(updatedInvoice.processedAt, new Date())
     expect(updatedInvoice.billedAt).toBeNull()
+    expect(updatedInvoice.total).toBe(100)
   })
 
   test("ChargedNow", async () => {
@@ -63,10 +68,13 @@ describe("Update Rental Invoice After Charge", () => {
         invoiceCreatedAt: new Date(),
       },
     })
-    const { promise } = rentalService.updateRentalInvoiceAfterCharge(
+    const {
+      promise,
+    } = rentalService.updateRentalInvoiceAfterCharge(
       rentalInvoice.id,
       [{ invoice: { id: chargebeeInvoiceId } }],
-      "ChargedNow"
+      "ChargedNow",
+      [{ price: 100 }, { price: 200 }]
     )
     await prisma.client.$transaction([promise])
     const updatedInvoice = await getUpdatedInvoiceWithData()
@@ -76,13 +84,15 @@ describe("Update Rental Invoice After Charge", () => {
     expect(updatedInvoice.chargebeeInvoice.chargebeeId).toBe(chargebeeInvoiceId)
     testUtils.expectTimeToEqual(updatedInvoice.processedAt, new Date())
     testUtils.expectTimeToEqual(updatedInvoice.billedAt, new Date())
+    expect(updatedInvoice.total).toBe(300)
   })
 
   test("NoCharges", async () => {
     const { promise } = rentalService.updateRentalInvoiceAfterCharge(
       rentalInvoice.id,
       [],
-      "NoCharges"
+      "NoCharges",
+      []
     )
     await prisma.client.$transaction([promise])
     const updatedInvoice = await getUpdatedInvoiceWithData()
@@ -91,5 +101,6 @@ describe("Update Rental Invoice After Charge", () => {
     expect(updatedInvoice.chargebeeInvoice).toBeNull()
     testUtils.expectTimeToEqual(updatedInvoice.processedAt, new Date())
     testUtils.expectTimeToEqual(updatedInvoice.billedAt, new Date())
+    expect(updatedInvoice.total).toBe(0)
   })
 })

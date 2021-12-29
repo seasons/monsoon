@@ -260,7 +260,8 @@ export class RentalService {
       } = this.updateRentalInvoiceAfterCharge(
         invoice.id,
         chargebeeRecords,
-        chargeResultType
+        chargeResultType,
+        lineItems
       )
       promises.push(rentalInvoiceUpdatePromise)
     } catch (err) {
@@ -309,9 +310,11 @@ export class RentalService {
   updateRentalInvoiceAfterCharge = (
     invoiceId: string,
     chargebeeRecords: any,
-    resultType: ChargeTabResultType
+    resultType: ChargeTabResultType,
+    lineItems: Pick<RentalInvoiceLineItem, "price">[]
   ) => {
-    const data = { processedAt: new Date() }
+    const total = lineItems.reduce((acc, lineItem) => acc + lineItem.price, 0)
+    const data = { processedAt: new Date(), total }
     if (resultType === "PendingCharges") {
       data["status"] = "ChargePending"
     } else {
@@ -752,6 +755,7 @@ export class RentalService {
         // transit event for it
         rentalEndedAt = invoiceBillingEndAt
         break
+      case "Purchased":
       case "Inbound":
       case "ResetEarly":
       case "ReturnProcessed":
