@@ -261,6 +261,10 @@ export class RentalService {
         chargeResultType,
         lineItems
       )
+      await this.upsertProductCustomerPrices(
+        invoice.membership.customerId,
+        lineItems
+      )
       promises.push(rentalInvoiceUpdatePromise)
     } catch (err) {
       promises.push(
@@ -291,6 +295,63 @@ export class RentalService {
     return { lineItems, charges: chargebeeRecords }
   }
 
+  private async upsertProductCustomerPrices(
+    customerId: string,
+    lineItems: RentalInvoiceLineItem[]
+  ) {
+    const promises = []
+    for (const lineItem of lineItems) {
+      const phyiscalProductId = lineItem.physicalProductId
+      const rentalCharges = lineItem.price
+
+      const currentProduct = await this.prisma.client.product.findFirst({
+        where: {
+          variants: {
+            some: {
+              physicalProducts: {
+                some: {
+                  id: phyiscalProductId,
+                },
+              },
+            },
+          },
+        },
+        select: {
+          id: true,
+        },
+      })
+
+      const currentProductCustomerPrice = await this.prisma.client.productCustomerPrice.findFirst(
+        {
+          where: {
+            productId: currentProduct.id,
+            customerId,
+          },
+          select: {
+            id: true,
+          },
+        }
+      )
+
+      promises.push(
+        this.prisma.client.productCustomerPrice.upsert({
+          where: {
+            id: currentProductCustomerPrice.id || "",
+          },
+          create: {
+            customerId: customerId,
+            productId: currentProduct.id,
+            amountBilled: rentalCharges,
+          },
+          update: {
+            amountBilled: {
+              increment: rentalCharges,
+            },
+          },
+        })
+      )
+    }
+  }
   async deleteUnbilledCharges(customerId) {
     const result = await chargebee.unbilled_charge
       .list({

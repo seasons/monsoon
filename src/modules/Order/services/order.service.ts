@@ -240,7 +240,6 @@ export class OrderService {
     for (const orderItem of orderItems) {
       const physicalProduct = orderItem.physicalProduct
       const itemRequiresShipping = orderItem.shippingRequired
-
       if (
         !physicalProduct ||
         !physicalProduct?.price?.buyUsedEnabled ||
@@ -251,7 +250,16 @@ export class OrderService {
         )
       }
 
-      const chargeAmount = getChargePrice(physicalProduct.price.buyUsedPrice)
+      const productCustomerPrice = await this.productCustomerPrice(
+        customer.id,
+        physicalProduct.id
+      )
+      const buyUsedPrice = physicalProduct.price.buyUsedPrice
+      const lineItemPrice = productCustomerPrice
+        ? productCustomerPrice.amountBilled
+        : buyUsedPrice
+
+      const chargeAmount = getChargePrice(lineItemPrice)
       if (chargeAmount > 0) {
         charges.push({
           amount: chargeAmount,
@@ -265,7 +273,7 @@ export class OrderService {
         recordID: physicalProduct.id,
         recordType: "PhysicalProduct",
         needShipping: itemRequiresShipping,
-        price: physicalProduct.price.buyUsedPrice,
+        price: lineItemPrice,
         currencyCode: "USD",
         name: orderItem.name,
       })
@@ -345,6 +353,39 @@ export class OrderService {
         charges,
       },
     }
+  }
+
+  async productCustomerPrice(customerId, physicalProductId) {
+    const product = await this.prisma.client.product.findFirst({
+      where: {
+        variants: {
+          some: {
+            physicalProducts: {
+              some: {
+                id: physicalProductId,
+              },
+            },
+          },
+        },
+      },
+      select: {
+        id: true,
+      },
+    })
+
+    const productCustomerPrice = await this.prisma.client.productCustomerPrice.findFirst(
+      {
+        where: {
+          productId: product.id,
+          customerId: customerId,
+        },
+        select: {
+          amountBilled: true,
+        },
+      }
+    )
+
+    return productCustomerPrice
   }
 
   async getBuyNewMetadata({

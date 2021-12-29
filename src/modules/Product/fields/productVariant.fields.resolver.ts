@@ -1,6 +1,7 @@
 import { Customer, User } from "@app/decorators"
 import { Loader } from "@app/modules/DataLoader/decorators/dataloader.decorator"
 import { ErrorService } from "@app/modules/Error/services/error.service"
+import { OrderService } from "@app/modules/Order/services/order.service"
 import { ShopifyService } from "@app/modules/Shopify/services/shopify.service"
 import { UtilsService } from "@app/modules/Utils/services/utils.service"
 import { Order, ProductVariant } from "@app/prisma/prisma.binding"
@@ -35,7 +36,8 @@ export class ProductVariantFieldsResolver {
   constructor(
     private readonly utils: UtilsService,
     private readonly error: ErrorService,
-    private readonly shopify: ShopifyService
+    private readonly shopify: ShopifyService,
+    private readonly order: OrderService
   ) {
     this.sizeConversion = this.utils.parseJSONFile(
       "src/modules/Product/sizeConversion"
@@ -621,8 +623,14 @@ export class ProductVariantFieldsResolver {
         mostExpensiveUsedPhysicalProduct?.price?.buyUsedPrice
       buyUsedPrice.buyUsedPrice = mostExpensiveBuyUsedPrice
       // FIXME: Update buyUsedAdjustedPrice for rent to own
-      buyUsedPrice.buyUsedAdjustedPrice =
-        product.discountedPrice * 100 || mostExpensiveBuyUsedPrice
+
+      const productCustomerPrice = await this.order.productCustomerPrice(
+        customer.id,
+        mostExpensiveUsedPhysicalProduct.id
+      )
+      buyUsedPrice.buyUsedAdjustedPrice = productCustomerPrice
+        ? mostExpensiveBuyUsedPrice - productCustomerPrice.amountBilled
+        : product.discountedPrice * 100 || mostExpensiveBuyUsedPrice
     }
 
     return {
