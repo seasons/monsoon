@@ -166,6 +166,103 @@ export class PaymentUtilsService {
     planID: subscription.plan_id.replace("-gift", ""),
   })
 
+  async movePromotionalCreditsToChargebee(
+    prismaUserId: string,
+    numCreditsToMove: number,
+    mode: "Rental" | "Reservation",
+    options: { rentalInvoiceId?: string } = {}
+  ) {
+    if (!numCreditsToMove) {
+      return
+    }
+
+    let description
+    let reason
+    const rentalInvoiceId = options.rentalInvoiceId
+
+    const prismaCustomer = await this.prisma.client.customer.findFirst({
+      where: { user: { id: prismaUserId } },
+      select: {
+        membership: {
+          select: {
+            id: true,
+            creditBalance: true,
+            plan: {
+              select: {
+                planID: true,
+              },
+            },
+          },
+        },
+      },
+    })
+
+    const existingCreditBalance = prismaCustomer.membership.creditBalance
+    if (existingCreditBalance === 0) {
+      return
+    }
+
+    if (mode === "Rental") {
+      if (!rentalInvoiceId) {
+        throw new Error("Must pass rental invoice if mode is rental")
+      }
+      const rentalInvoice = await this.prisma.client.rentalInvoice.findUnique({
+        where: { id: rentalInvoiceId },
+        select: {
+          creditsApplied: true,
+        },
+      })
+
+      if (rentalInvoice.creditsApplied) {
+        return
+      }
+      description = `(MONSOON_IGNORE) Grandfathered ${prismaCustomer.membership.plan.planID} credits applied towards rental charges`
+      reason = "Transferred to chargebee to apply towards rental charges"
+    } else if (mode === "Reservation") {
+      description = `(MONSOON_IGNORE) ${prismaCustomer.membership.plan.planID} credits applied towards initial minimum charges`
+      reason =
+        "Transferred to chargebee to apply towards initial minimum charges"
+    }
+
+    let totalCreditsApplied
+
+    if (numCreditsToMove > existingCreditBalance) {
+      totalCreditsApplied = existingCreditBalance
+    } else {
+      totalCreditsApplied = numCreditsToMove
+    }
+
+    await chargebee.promotional_credit
+      .add({
+        customer_id: prismaUserId,
+        amount: totalCreditsApplied,
+        description,
+      })
+      .request()
+
+    await this.prisma.client.customerMembership.update({
+      where: { id: prismaCustomer.membership.id },
+      data: {
+        creditBalance: { decrement: totalCreditsApplied },
+        creditUpdateHistory: {
+          create: {
+            amount: -1 * totalCreditsApplied,
+            reason,
+          },
+        },
+      },
+    })
+
+    if (rentalInvoiceId) {
+      await this.prisma.client.rentalInvoice.update({
+        where: { id: rentalInvoiceId },
+        data: {
+          creditsApplied: totalCreditsApplied,
+        },
+      })
+    }
+  }
+
   async getChargebeePaymentSource(userID: string) {
     const cardInfo: any = await new Promise((resolve, reject) => {
       // Get user's payment information from chargebee
