@@ -204,7 +204,7 @@ export class PaymentUtilsService {
 
     if (mode === "Rental") {
       if (!rentalInvoiceId) {
-        throw new Error("Must pass rental invoice is if mode is rental")
+        throw new Error("Must pass rental invoice if mode is rental")
       }
       const rentalInvoice = await this.prisma.client.rentalInvoice.findUnique({
         where: { id: rentalInvoiceId },
