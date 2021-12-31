@@ -830,6 +830,12 @@ export class RentalService {
     ]
     const formattedLineItemDatas = lineItemDatas.map(addLineItemBasics)
 
+    if (formattedLineItemDatas.some(a => a.price < 0)) {
+      throw new Error(
+        `Trying to create line item with negative price on invoice: ${invoice.id}`
+      )
+    }
+
     let lineItems
     if (!options.upTo) {
       const lineItemPromises = formattedLineItemDatas.map(data =>
