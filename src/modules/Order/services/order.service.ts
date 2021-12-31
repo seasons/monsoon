@@ -1221,6 +1221,32 @@ export class OrderService {
           data: { warehouseLocation: { disconnect: true } },
         })
       )
+
+      const rpp = await this.prisma.client.reservationPhysicalProduct.findFirst(
+        {
+          where: {
+            physicalProductId: physicalProduct.recordID,
+            customerId: order.customer.id,
+          },
+          select: {
+            id: true,
+          },
+        }
+      )
+
+      if (!!rpp) {
+        promises.push(
+          this.prisma.client.reservationPhysicalProduct.update({
+            where: {
+              id: rpp.id,
+            },
+            data: {
+              purchasedAt: new Date(),
+              status: "Purchased",
+            },
+          })
+        )
+      }
     }
 
     const finalPromises = promises.filter(a => !!a)
