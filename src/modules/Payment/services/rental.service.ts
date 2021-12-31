@@ -1285,8 +1285,10 @@ export class RentalService {
         reservationPhysicalProduct.physicalProduct,
         daysRented
       )
-      const price =
-        unadjustedPrice - reservationPhysicalProduct.minimumAmountApplied
+      const price = Math.max(
+        unadjustedPrice - reservationPhysicalProduct.minimumAmountApplied,
+        0
+      )
       adjustedForPreviousMinimum = true
       return {
         price,
