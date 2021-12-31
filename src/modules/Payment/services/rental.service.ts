@@ -109,6 +109,10 @@ export type ProcessableReservationPhysicalProduct = Prisma.ReservationPhysicalPr
   typeof ProcessableReservationPhysicalProductArgs
 >
 
+const ProcessableLineItemSelect = Prisma.validator<
+  Prisma.RentalInvoiceLineItemSelect
+>()({ id: true, price: true })
+
 export const ProcessableRentalInvoiceArgs = Prisma.validator<
   Prisma.RentalInvoiceArgs
 >()({
@@ -170,7 +174,7 @@ export const ProcessableRentalInvoiceArgs = Prisma.validator<
       },
     },
     status: true,
-    lineItems: { select: { id: true } },
+    lineItems: { select: ProcessableLineItemSelect },
   },
 })
 
@@ -215,7 +219,7 @@ export class RentalService {
   })
 
   async processInvoice(
-    invoice,
+    invoice: ProcessableRentalInvoice,
     {
       onError = err => null,
       forceImmediateCharge = false,
@@ -841,6 +845,7 @@ export class RentalService {
       const lineItemPromises = formattedLineItemDatas.map(data =>
         this.prisma.client.rentalInvoiceLineItem.create({
           data,
+          select: ProcessableLineItemSelect,
         })
       )
       lineItems = await this.prisma.client.$transaction(lineItemPromises)
