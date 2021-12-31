@@ -318,7 +318,11 @@ export class RentalService {
     lineItems: Pick<RentalInvoiceLineItem, "price">[]
   ) => {
     const total = lineItems.reduce((acc, lineItem) => acc + lineItem.price, 0)
-    const data = { processedAt: new Date(), total }
+    const data = {
+      processedAt: new Date(),
+      total,
+      comment: `ChargeTabResultType: ${resultType}`,
+    }
     if (resultType === "PendingCharges") {
       data["status"] = "ChargePending"
     } else {
