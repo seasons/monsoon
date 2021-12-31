@@ -37,6 +37,7 @@ const RENTAL_INVOICE_ARGS = Prisma.validator<
     chargebeeInvoice: {
       select: { chargebeeId: true },
     },
+    comment: true,
   },
 })
 
@@ -57,10 +58,11 @@ const run = async () => {
     {
       where: {
         status: "Billed",
-        membership: {
-          customer: { status: { in: ["Active", "PaymentFailed"] } },
-        },
+        // membership: {
+        //   customer: { status: { in: ["Active", "PaymentFailed"] } },
+        // },
         total: { gt: 0 },
+        comment: { contains: "invoice" },
       },
       select: RENTAL_INVOICE_ARGS.select,
       orderBy: { createdAt: "asc" },
@@ -104,6 +106,39 @@ const run = async () => {
     )
 
     for (const rentalInvoice of invoicesInDescendingOrderTotal) {
+      if (
+        rentalInvoice.comment.includes(
+          "Rebilled items reserved before migration day (9.20) on invoice"
+        )
+      ) {
+        const invoiceId = rentalInvoice.comment
+          .split("invoice:")[1]
+          .split(".")[0]
+          .replace(" ", "")
+        const chargebeeinvoice = remainingChargebeeInvoicesForCustomer.find(
+          a => a.id === invoiceId
+        )
+        if (!!chargebeeinvoice) {
+          remainingChargebeeInvoicesForCustomer = remainingChargebeeInvoicesForCustomer.filter(
+            a => a.id !== chargebeeinvoice.id
+          )
+          const promises = []
+          promises.push(
+            rental.createLocalCopyOfChargebeeInvoice(chargebeeinvoice).promise
+          )
+          promises.push(
+            ps.client.rentalInvoice.update({
+              where: { id: rentalInvoice.id },
+              data: {
+                chargebeeInvoice: {
+                  connect: { chargebeeId: chargebeeinvoice.id },
+                },
+              },
+            })
+          )
+          await ps.client.$transaction(promises)
+        }
+      }
       console.log(`processing ${i++}/${invoicesWithoutChargebeeInvoice.length}`)
       // const totalOnLineItems = rentalInvoice.lineItems.reduce(
       //   (acc, curval) => acc + curval.price,
@@ -120,33 +155,34 @@ const run = async () => {
       //   continue
       // }
 
-      const chargebeeInvoiceForRentalInvoice = findChargebeeInvoiceForRentalInvoice(
-        rentalInvoice,
-        remainingChargebeeInvoicesForCustomer
-      )
+      //   const chargebeeInvoiceForRentalInvoice = findChargebeeInvoiceForRentalInvoice(
+      //     rentalInvoice,
+      //     remainingChargebeeInvoicesForCustomer
+      //   )
 
-      if (!!chargebeeInvoiceForRentalInvoice) {
-        remainingChargebeeInvoicesForCustomer = remainingChargebeeInvoicesForCustomer.filter(
-          a => a.id !== chargebeeInvoiceForRentalInvoice.id
-        )
-        const promises = []
-        promises.push(
-          rental.createLocalCopyOfChargebeeInvoice(
-            chargebeeInvoiceForRentalInvoice
-          ).promise
-        )
-        promises.push(
-          ps.client.rentalInvoice.update({
-            where: { id: rentalInvoice.id },
-            data: {
-              chargebeeInvoice: {
-                connect: { chargebeeId: chargebeeInvoiceForRentalInvoice.id },
-              },
-            },
-          })
-        )
-        await ps.client.$transaction(promises)
-      }
+      //   if (!!chargebeeInvoiceForRentalInvoice) {
+      //     remainingChargebeeInvoicesForCustomer = remainingChargebeeInvoicesForCustomer.filter(
+      //       a => a.id !== chargebeeInvoiceForRentalInvoice.id
+      //     )
+      //     const promises = []
+      //     promises.push(
+      //       rental.createLocalCopyOfChargebeeInvoice(
+      //         chargebeeInvoiceForRentalInvoice
+      //       ).promise
+      //     )
+      //     promises.push(
+      //       ps.client.rentalInvoice.update({
+      //         where: { id: rentalInvoice.id },
+      //         data: {
+      //           chargebeeInvoice: {
+      //             connect: { chargebeeId: chargebeeInvoiceForRentalInvoice.id },
+      //           },
+      //         },
+      //       })
+      //     )
+      //     await ps.client.$transaction(promises)
+      //   }
+      // }
     }
   }
 }
