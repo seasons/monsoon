@@ -6,7 +6,7 @@
       "Rent to own — Any monthly rental fees goes towards purchase.",
       "Discounts — Get $20 off any purchase each month"
     ],
-    "excluded": ["Priority — Early bag resets, 24/7 customer service"]
+    "excluded": []
   },
   "access-yearly": {
     "included": [
