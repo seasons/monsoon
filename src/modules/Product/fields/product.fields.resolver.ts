@@ -313,4 +313,33 @@ export class ProductFieldsResolver {
       }
     })
   }
+
+  @ResolveField()
+  async customerPrice(
+    @Parent() parent,
+    @Customer() customer,
+    @Loader({
+      params: {
+        model: "Product",
+        select: Prisma.validator<Prisma.ProductSelect>()({
+          id: true,
+          customerPrices: {
+            select: {
+              amountBilled: true,
+              customerId: true,
+            },
+          },
+        }),
+      },
+    })
+    productLoader
+  ) {
+    const product = await productLoader.load(parent.id)
+
+    const customerPrice = product.customerPrices.filter(a => {
+      a.customerId === customer.id
+    })
+
+    return customerPrice.amountBilled
+  }
 }

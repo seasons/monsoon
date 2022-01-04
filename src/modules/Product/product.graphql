@@ -300,6 +300,7 @@ type Product @cacheControl(maxAge: 200) {
   wholesalePrice: Int
   rentalPriceOverride: Int
   recoupment: Float
+  customerPrice: Int
 }
 
 type Brand @cacheControl(maxAge: 1000) {
