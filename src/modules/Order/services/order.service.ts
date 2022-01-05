@@ -272,7 +272,7 @@ export class OrderService {
           amount: chargeAmount,
           taxable: true,
           description: orderItem.name,
-          // avalara_tax_code: orderItem.productTaxCode,
+          avalara_tax_code: orderItem.productTaxCode,
         })
       }
 
@@ -294,7 +294,7 @@ export class OrderService {
             amount: shippingCharge,
             taxable: true,
             description: shipping?.rate?.servicelevel?.name || "Shipping",
-            // avalara_tax_code: "FR020000",
+            avalara_tax_code: "FR020000",
           })
         }
 
