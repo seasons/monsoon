@@ -172,7 +172,6 @@ export class OrderService {
             productVariant: {
               select: {
                 id: true,
-                // product: { select: { discountedPrice: true } },
               },
             },
             physicalProduct: {
