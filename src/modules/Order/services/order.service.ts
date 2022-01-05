@@ -44,6 +44,7 @@ type InvoiceCharge = {
 type BuyUsedOrderItem = {
   physicalProduct: Pick<PhysicalProduct, "id"> & {
     price: Pick<PhysicalProductPrice, "buyUsedEnabled" | "buyUsedPrice">
+    productVariant: { product: Pick<Product, "discountedPrice"> }
   }
   shippingRequired: boolean
   name: string
@@ -117,6 +118,9 @@ export class OrderService {
             id: true,
             price: { select: { buyUsedEnabled: true, buyUsedPrice: true } },
             inventoryStatus: true,
+            productVariant: {
+              select: { product: { select: { discountedPrice: true } } },
+            },
           },
         },
         product: {
@@ -165,11 +169,18 @@ export class OrderService {
           select: {
             id: true,
             status: true,
-            productVariant: { select: { id: true } },
+            productVariant: {
+              select: {
+                id: true,
+              },
+            },
             physicalProduct: {
               select: {
                 id: true,
                 price: { select: { buyUsedEnabled: true, buyUsedPrice: true } },
+                productVariant: {
+                  select: { product: { select: { discountedPrice: true } } },
+                },
               },
             },
           },
@@ -251,7 +262,10 @@ export class OrderService {
         )
       }
 
-      const chargeAmount = getChargePrice(physicalProduct.price.buyUsedPrice)
+      const priceToCharge =
+        physicalProduct.productVariant.product.discountedPrice * 100 ||
+        physicalProduct.price.buyUsedPrice
+      const chargeAmount = getChargePrice(priceToCharge)
       if (chargeAmount > 0) {
         charges.push({
           amount: chargeAmount,
@@ -265,7 +279,7 @@ export class OrderService {
         recordID: physicalProduct.id,
         recordType: "PhysicalProduct",
         needShipping: itemRequiresShipping,
-        price: physicalProduct.price.buyUsedPrice,
+        price: priceToCharge,
         currencyCode: "USD",
         name: orderItem.name,
       })
@@ -1403,6 +1417,7 @@ export class OrderService {
         physicalProducts: Array<
           Pick<PhysicalProduct, "inventoryStatus" | "id"> & {
             price: Pick<PhysicalProductPrice, "buyUsedEnabled" | "buyUsedPrice">
+            productVariant: { product: Pick<Product, "discountedPrice"> }
           }
         >
       }
@@ -1414,6 +1429,7 @@ export class OrderService {
         } & {
           physicalProduct: Pick<PhysicalProduct, "id"> & {
             price: Pick<PhysicalProductPrice, "buyUsedEnabled" | "buyUsedPrice">
+            productVariant: { product: Pick<Product, "discountedPrice"> }
           }
         }
       >
