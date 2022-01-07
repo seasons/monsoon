@@ -1,8 +1,11 @@
 import "module-alias/register"
 
+import { NestFactory } from "@nestjs/core"
 import chargebee from "chargebee"
 
+import { AppModule } from "../../app.module"
 import { RentalService } from "../../modules/Payment/services/rental.service"
+import { ReservationService } from "../../modules/Reservation/services/reservation.service"
 import { TimeUtilsService } from "../../modules/Utils/services/time.service"
 import { PrismaService } from "../../prisma/prisma.service"
 
@@ -12,15 +15,48 @@ chargebee.configure({
 })
 
 const run = async () => {
-  const ps = new PrismaService()
-  const timeUtils = new TimeUtilsService()
-  const r = new RentalService(ps, timeUtils, null)
+  const app = await NestFactory.createApplicationContext(AppModule)
+  const r = app.get(RentalService)
+  const ps = app.get(PrismaService)
+  const timeUtils = app.get(TimeUtilsService)
 
-  const email = "j@jasonlbaptiste.com"
-  const c = await ps.client.customer.findFirst({
+  const custSelect = { id: true, membership: { select: { id: true } } }
+
+  // TODO: Fill in email
+  const email = null
+  let c = await ps.client.customer.findFirst({
     where: { user: { email } },
-    select: { membership: { select: { id: true } } },
+    select: custSelect,
   })
+  if (!c.membership) {
+    // TODO: Fill in these nulls
+    const subscriptionId = null
+    const currentTermEnd = new Date(null)
+    const currentTermStart = new Date(null)
+
+    c = await ps.client.customer.update({
+      where: { id: c.id },
+      data: {
+        membership: {
+          create: {
+            subscriptionId,
+            plan: { connect: { planID: "access-monthly" } },
+            subscription: {
+              create: {
+                planID: "access-monthly",
+                subscriptionId,
+                currentTermStart,
+                currentTermEnd,
+                status: "active",
+                planPrice: 2000,
+              },
+            },
+          },
+        },
+      },
+      select: custSelect,
+    })
+  }
   await r.initDraftRentalInvoice(c.membership.id, "execute")
   console.log("rental invoice created")
   console.dir(
