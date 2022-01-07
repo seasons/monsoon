@@ -246,7 +246,6 @@ export class OrderService {
 
     const productLineItems: OrderLineItemCreateInput[] = []
     const charges = []
-    let totalShippingPrice = 0
     let shippingRequired = false
     for (const orderItem of orderItems) {
       const physicalProduct = orderItem.physicalProduct
@@ -285,27 +284,25 @@ export class OrderService {
       })
       if (itemRequiresShipping) {
         shippingRequired = true
-        const shippingPrice = shipping.amount
-        const shippingCharge = getChargePrice(shippingPrice)
-
-        if (shippingCharge > 0) {
-          charges.push({
-            amount: shippingCharge,
-            taxable: true,
-            description: shipping?.rate?.servicelevel?.name || "Shipping",
-            avalara_tax_code: "FR020000",
-          })
-        }
-
-        totalShippingPrice += shippingPrice
       }
     }
 
     if (shippingRequired) {
+      const shippingCharge = getChargePrice(shipping.amount)
+
+      if (shippingCharge > 0) {
+        charges.push({
+          amount: shippingCharge,
+          taxable: true,
+          description: shipping?.rate?.servicelevel?.name || "Shipping",
+          avalara_tax_code: "FR020000",
+        })
+      }
+
       productLineItems.push({
         recordID: cuid(),
         recordType: "Package",
-        price: totalShippingPrice,
+        price: shippingCharge,
         currencyCode: "USD",
         needShipping: false,
       })
