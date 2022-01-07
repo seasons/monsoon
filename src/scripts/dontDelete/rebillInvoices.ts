@@ -24,19 +24,7 @@ const run = async () => {
   const ps = app.get(PrismaService)
   const timeUtils = app.get(TimeUtilsService)
 
-  const ids = [
-    "ckwjwnnrr1012214xtfh3lk5sku",
-    "ckwjwndkv1005464xtf8lzqi2eu",
-    "ckwl8z5g815277854vumtzijsbkp",
-    "ckwjwnd7m1005084xtfvr521qgh",
-    "ckwk7cy6z97874vztp1psjmgu",
-    "ckwk3ha5t3710564xxd1cpcreaa",
-    "ckwlimcbt2556744vvt8m596p4j",
-    "ckwlku12h5622494v0tqy86swgp",
-    "ckwm8pay213321964vvt8dvwfr08",
-    "ckwkiycmo9125404xxdlr904fn5",
-    "ckwjwnc9j1002604xtfvijg4an7",
-  ]
+  const ids = []
   const invoices = await ps.client.rentalInvoice.findMany({
     where: { id: { in: ids } },
     select: {
@@ -102,18 +90,28 @@ const run = async () => {
       a => a.id === ri.membership.customer.user.id
     )
 
+    const latestInvoice = chargebeeInvoicesForCustomer[0]
     const latestInvoiceDate = timeUtils.dateFromUTCTimestamp(
-      chargebeeInvoicesForCustomer[0].date,
+      latestInvoice.date,
       "seconds"
     )
     const rentalInvoiceBilledAfterLatestInvoice = timeUtils.isLaterDate(
       ri.billingEndAt,
       latestInvoiceDate
     )
+    const lastInvoiceWasOnlyAPlanCharge =
+      latestInvoice.line_items.length === 1 &&
+      latestInvoice.line_items[0].entity_type === "plan"
 
-    let shouldProceed =
+    const rentalInvoiceBilledAfterLatestInvoiceWithNoBilledCharges =
       rentalInvoiceBilledAfterLatestInvoice &&
       chargebeeCustomer.unbilled_charges === 0
+    const lastInvoiceWasPurePlanChargeWithNoBilledCharges =
+      lastInvoiceWasOnlyAPlanCharge && chargebeeCustomer.unbilled_charges === 0
+
+    let shouldProceed =
+      rentalInvoiceBilledAfterLatestInvoiceWithNoBilledCharges ||
+      lastInvoiceWasPurePlanChargeWithNoBilledCharges
 
     if (!shouldProceed) {
       console.dir(ri, { depth: null })
@@ -131,9 +129,15 @@ const run = async () => {
 
       shouldProceed = readlineSync.keyInYN("Rebill the invoice?")
     } else {
-      console.log(
-        "Rental invoice billed after latest invoice and no unbilled charges. Rebilling."
-      )
+      if (lastInvoiceWasPurePlanChargeWithNoBilledCharges) {
+        console.log(
+          "Last invoice was a plan charge with no unbilled charges. Rebilling."
+        )
+      } else if (rentalInvoiceBilledAfterLatestInvoiceWithNoBilledCharges) {
+        console.log(
+          "Rental invoice billed after latest invoice with no unbilled charges. Rebilling"
+        )
+      }
     }
 
     if (shouldProceed) {
@@ -154,6 +158,8 @@ const run = async () => {
       console.log(`DID NOT RECONCILE INVOICE WITH ID: ${ri.id}`)
     }
   }
+
+  console.log("Done")
 }
 
 run()
