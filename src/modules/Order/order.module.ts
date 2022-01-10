@@ -25,7 +25,6 @@ export const ORDER_MODULE_DEF = {
     EmailModule,
     AnalyticsModule,
     UtilsModule,
-    PaymentModule,
   ],
   providers: [
     OrderQueriesResolver,

@@ -84,8 +84,7 @@ export class OrderService {
     private readonly bag: BagService,
     private readonly productUtils: ProductUtilsService,
     private readonly productVariant: ProductVariantService,
-    private readonly utils: UtilsService,
-    private readonly payment: PaymentService
+    private readonly utils: UtilsService
   ) {
     this.outerwearCategories = this.productUtils.getCategoryAndAllChildren(
       { slug: "outerwear" },
