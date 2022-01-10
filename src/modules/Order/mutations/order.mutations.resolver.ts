@@ -55,9 +55,15 @@ export class OrderMutationsResolver {
       const existingGuestCustomer = await this.prisma.client.customer.findFirst(
         {
           where: { user: { email } },
-          select: { id: true, user: { select: { id: true } } },
+          select: { id: true, status: true, user: { select: { id: true } } },
         }
       )
+      if (existingGuestCustomer.status !== "Guest") {
+        throw new Error(
+          "Customer is not a guest but guest params have been passed"
+        )
+      }
+
       if (!!existingGuestCustomer) {
         user = existingGuestCustomer.user
         customer = existingGuestCustomer
@@ -140,11 +146,43 @@ export class OrderMutationsResolver {
 
   @Mutation()
   async submitOrder(
-    @Args() { input: { orderID } },
-    @Customer() customer,
-    @User() user,
+    @Args()
+    {
+      input: {
+        orderID,
+        guest: { paymentMethodID, email } = {
+          paymentMethodID: null,
+          email: null,
+        },
+      },
+    },
+    @Customer() _customer,
+    @User() _user,
     @Select() select
   ) {
+    let user = _user
+    let customer = _customer
+
+    if (!!email) {
+      if (!!user) {
+        throw new Error("Do not pass guest input if user is logged in")
+      }
+      if (!paymentMethodID) {
+        throw new Error("Must pass paymentMethodID if doing guest checkout")
+      }
+      const existingGuestCustomer = await this.prisma.client.customer.findFirst(
+        {
+          where: { user: { email }, status: "Guest" },
+          select: { id: true, user: { select: { id: true } } },
+        }
+      )
+      if (!existingGuestCustomer) {
+        throw new Error("Guest customer not found")
+      }
+      user = existingGuestCustomer.user
+      customer = existingGuestCustomer
+    }
+
     try {
       const order = await this.prisma.client.order.findUnique({
         where: { id: orderID },
@@ -162,6 +200,7 @@ export class OrderMutationsResolver {
           order,
           customer,
           select,
+          paymentMethodID,
         })
       }
 

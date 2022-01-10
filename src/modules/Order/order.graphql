@@ -97,6 +97,11 @@ input CreateDraftedOrderGuestInput {
   email: String!
   shippingAddress: AddressInput!
 }
+
+input SubmitOrderGuestInput {
+  paymentMethodID: String!
+  # billing: AddressInput!
+}
 input CreateDraftedOrderInput {
   orderType: OrderType!
   # FIXME: Can eventually remove productVariantID as it's deprecated
@@ -107,4 +112,5 @@ input CreateDraftedOrderInput {
 
 input SubmitOrderInput {
   orderID: ID!
+  guest: SubmitOrderGuestInput
 }

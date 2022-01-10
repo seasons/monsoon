@@ -38,6 +38,25 @@ export class PaymentService {
     private readonly paymentUtils: PaymentUtilsService
   ) {}
 
+  async processAndConfirmBuyUsedPayment({ paymentMethodID, orderID }) {
+    /*
+    QUery the amount from the order
+    Create payment intent
+    */
+
+    const orderWithData = await this.prisma.client.order.findUnique({
+      where: { id: orderID },
+      select: {
+        total: true,
+      },
+    })
+    const intent = await this.paymentUtils.createPaymentIntent(
+      paymentMethodID,
+      orderWithData.total
+    )
+    await stripe.paymentIntents.confirm(intent.id)
+  }
+
   async processPayment({ planID, paymentMethodID, billing }) {
     const billingAddress = {
       first_name: billing.user.firstName || "",

@@ -7,6 +7,7 @@ import { PrismaModule } from "@prisma1/prisma.module"
 
 import { AnalyticsModule } from "../Analytics/analytics.module"
 import { EmailModule } from "../Email/email.module"
+import { PaymentModule } from "../Payment/payment.module"
 import { UtilsModule } from "../Utils/utils.module"
 import { OrderFieldsResolver } from "./fields/order.fields.resolver"
 import { OrderLineItemFieldsResolver } from "./fields/orderLineItem.fields.resolver"
@@ -24,6 +25,7 @@ export const ORDER_MODULE_DEF = {
     EmailModule,
     AnalyticsModule,
     UtilsModule,
+    PaymentModule,
   ],
   providers: [
     OrderQueriesResolver,
