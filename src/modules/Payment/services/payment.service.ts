@@ -33,17 +33,12 @@ export class PaymentService {
     private readonly prisma: PrismaService,
     private readonly utils: UtilsService,
     private readonly segment: SegmentService,
-    private readonly error: ErrorService,
     private readonly subscription: SubscriptionService,
     private readonly paymentUtils: PaymentUtilsService
   ) {}
 
+  // TODO: If we don't end up using this, delete the func
   async processAndConfirmBuyUsedPayment({ paymentMethodID, orderID }) {
-    /*
-    QUery the amount from the order
-    Create payment intent
-    */
-
     const orderWithData = await this.prisma.client.order.findUnique({
       where: { id: orderID },
       select: {
