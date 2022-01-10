@@ -49,6 +49,7 @@ enum MeasurementType {
 }
 
 enum CustomerStatus {
+  Guest
   Invited
   Created
   Waitlisted
@@ -662,7 +663,7 @@ model Color {
   productVariants        ProductVariant[]
 }
 
-model Customer {
+  model Customer {
   id                          String                           @id @default(cuid()) @db.VarChar(30)
   status                      CustomerStatus?
   detailId                    String?                          @map("detail") @db.VarChar(30)
@@ -1744,10 +1745,10 @@ model TopSize {
 
 model User {
   id                            String                         @id @default(cuid()) @db.VarChar(30)
-  auth0Id                       String                         @unique
+  auth0Id                       String?                         @unique
   email                         String                         @unique
-  firstName                     String
-  lastName                      String
+  firstName                     String?
+  lastName                      String?
   role                          UserRole                       @default(Customer)
   createdAt                     DateTime                       @default(now())
   updatedAt                     DateTime                       @updatedAt

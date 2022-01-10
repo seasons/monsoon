@@ -96,7 +96,7 @@ export class OrderService {
     type,
   }: {
     productVariantIds: string[]
-    customer: Customer
+    customer: Pick<Customer, "id">
     type: "draft" | "order"
   }): Promise<{
     purchaseCreditsApplied: number
@@ -211,9 +211,9 @@ export class OrderService {
       ?.shippingAddress as Location
 
     const purchaseCreditsAvailable =
-      customerWithData.membership.purchaseCredits ?? 0
+      customerWithData.membership?.purchaseCredits ?? 0
 
-    const creditsAvailable = customerWithData.membership.creditBalance ?? 0
+    const creditsAvailable = customerWithData.membership?.creditBalance ?? 0
 
     const totalCreditsAvailable = creditsAvailable + purchaseCreditsAvailable
 
@@ -270,7 +270,7 @@ export class OrderService {
           amount: chargeAmount,
           taxable: true,
           description: orderItem.name,
-          avalara_tax_code: orderItem.productTaxCode,
+          // avalara_tax_code: orderItem.productTaxCode,
         })
       }
 
@@ -295,7 +295,7 @@ export class OrderService {
           amount: shippingCharge,
           taxable: true,
           description: shipping?.rate?.servicelevel?.name || "Shipping",
-          avalara_tax_code: "FR020000",
+          // avalara_tax_code: "FR020000",
         })
       }
 

@@ -45,7 +45,7 @@ export class ShippingService {
 
   async getBuyUsedShippingRate(
     productVariantIds: string[],
-    customer: Customer
+    customer: Pick<Customer, "id">
   ) {
     return this.getShippingRateForVariantIDs(productVariantIds, { customer })
   }

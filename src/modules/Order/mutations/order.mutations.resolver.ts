@@ -5,6 +5,7 @@ import { ErrorService } from "@app/modules/Error/services/error.service"
 import { BadRequestException } from "@nestjs/common"
 import { Args, Mutation, Resolver } from "@nestjs/graphql"
 import { PrismaService } from "@prisma1/prisma.service"
+import chargebee from "chargebee"
 import { pick } from "lodash"
 
 import { OrderService } from "../services/order.service"
@@ -20,11 +21,94 @@ export class OrderMutationsResolver {
 
   @Mutation()
   async createDraftedOrder(
-    @Args() { input: { orderType, productVariantID, productVariantIds } },
-    @Customer() customer,
-    @User() user,
+    @Args()
+    {
+      input: {
+        orderType,
+        productVariantID,
+        productVariantIds,
+        guest: { email, shippingAddress } = {
+          email: null,
+          shippingAddress: null,
+        },
+      },
+    },
+    @Customer() _customer,
+    @User() _user,
     @Select() select
   ) {
+    let user = _user
+    let customer = _customer
+
+    if (!!email) {
+      if (!!user) {
+        throw new Error("Do not pass guest input if user is logged in")
+      }
+      if (!shippingAddress) {
+        throw new Error("Must pass shippingAddress if doing guest checkout")
+      }
+      if (orderType !== "Used") {
+        throw new Error("Guest checkout only works for used orders")
+      }
+
+      // TODO: Account for edge case where a subscribing customer is doing guest checkout
+      const existingGuestCustomer = await this.prisma.client.customer.findFirst(
+        {
+          where: { user: { email } },
+          select: { id: true, user: { select: { id: true } } },
+        }
+      )
+      if (!!existingGuestCustomer) {
+        user = existingGuestCustomer.user
+        customer = existingGuestCustomer
+      } else {
+        user = await this.prisma.client.user.create({
+          data: {
+            email,
+            customer: {
+              create: {
+                status: "Guest",
+                detail: {
+                  create: {
+                    shippingAddress: {
+                      create: {
+                        city: shippingAddress.city,
+                        zipCode: shippingAddress.postalCode,
+                        state: shippingAddress.state,
+                        address1: shippingAddress.street1,
+                        address2: shippingAddress.street2 || "",
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+          select: {
+            id: true,
+            customer: {
+              select: {
+                id: true,
+              },
+            },
+          },
+        })
+        customer = user.customer
+        await chargebee.customer
+          .create({
+            id: user.id,
+            first_name: "",
+            last_name: "",
+            email,
+          })
+          .request()
+      }
+    }
+
+    if (!user) {
+      throw new Error("No user logged in and no guest user found or created")
+    }
+
     try {
       let draftOrder
       if (orderType === "New") {
@@ -45,13 +129,6 @@ export class OrderMutationsResolver {
         })
       }
 
-      this.segment.track(user.id, "Created Draft Order", {
-        orderType,
-        productVariantID,
-        orderID: draftOrder.id,
-        total: draftOrder.total,
-        ...pick(user, ["firstName", "lastName", "email", "id"]),
-      })
       return draftOrder
     } catch (e) {
       console.log(e)
