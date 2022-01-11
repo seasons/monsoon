@@ -78,6 +78,7 @@ export class OrderMutationsResolver {
                   create: {
                     shippingAddress: {
                       create: {
+                        name: shippingAddress.name,
                         city: shippingAddress.city,
                         zipCode: shippingAddress.postalCode,
                         state: shippingAddress.state,
