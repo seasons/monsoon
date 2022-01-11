@@ -1,7 +1,7 @@
 # import AddressInput from "../Customer/customer.graphql"
 type Mutation {
   createDraftedOrder(input: CreateDraftedOrderInput!): Order!
-  submitOrder(input: SubmitOrderInput!): Order! @hasRole(roles: [Customer])
+  submitOrder(input: SubmitOrderInput!): Order!
   updateOrderStatus(orderID: ID!, status: OrderStatus!): Order!
     @hasRole(roles: [Customer, Admin])
 }
@@ -99,6 +99,7 @@ input CreateDraftedOrderGuestInput {
 }
 
 input SubmitOrderGuestInput {
+  email: String!
   paymentMethodID: String!
   # billing: AddressInput!
 }

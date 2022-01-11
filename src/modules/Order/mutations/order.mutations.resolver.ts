@@ -58,7 +58,10 @@ export class OrderMutationsResolver {
           select: { id: true, status: true, user: { select: { id: true } } },
         }
       )
-      if (existingGuestCustomer.status !== "Guest") {
+      if (
+        existingGuestCustomer?.id &&
+        existingGuestCustomer?.status !== "Guest"
+      ) {
         throw new Error(
           "Customer is not a guest but guest params have been passed"
         )
