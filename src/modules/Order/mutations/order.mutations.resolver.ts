@@ -51,7 +51,6 @@ export class OrderMutationsResolver {
         throw new Error("Guest checkout only works for used orders")
       }
 
-      // TODO: Account for edge case where a subscribing customer is doing guest checkout
       const existingGuestCustomer = await this.prisma.client.customer.findFirst(
         {
           where: { user: { email } },
@@ -67,9 +66,41 @@ export class OrderMutationsResolver {
         )
       }
 
+      const shippingAddressPayload = {
+        name: shippingAddress.name,
+        city: shippingAddress.city,
+        zipCode: shippingAddress.postalCode,
+        state: shippingAddress.state,
+        address1: shippingAddress.street1,
+        address2: shippingAddress.street2 || "",
+      }
+      const userSelect = {
+        id: true,
+        customer: {
+          select: {
+            id: true,
+          },
+        },
+      }
       if (!!existingGuestCustomer) {
-        user = existingGuestCustomer.user
-        customer = existingGuestCustomer
+        user = await this.prisma.client.user.update({
+          where: { email },
+          data: {
+            customer: {
+              update: {
+                detail: {
+                  update: {
+                    shippingAddress: {
+                      update: shippingAddressPayload,
+                    },
+                  },
+                },
+              },
+            },
+          },
+          select: userSelect,
+        })
+        customer = user.customer
       } else {
         user = await this.prisma.client.user.create({
           data: {
@@ -80,28 +111,14 @@ export class OrderMutationsResolver {
                 detail: {
                   create: {
                     shippingAddress: {
-                      create: {
-                        name: shippingAddress.name,
-                        city: shippingAddress.city,
-                        zipCode: shippingAddress.postalCode,
-                        state: shippingAddress.state,
-                        address1: shippingAddress.street1,
-                        address2: shippingAddress.street2 || "",
-                      },
+                      create: shippingAddressPayload,
                     },
                   },
                 },
               },
             },
           },
-          select: {
-            id: true,
-            customer: {
-              select: {
-                id: true,
-              },
-            },
-          },
+          select: userSelect,
         })
         customer = user.customer
         await chargebee.customer
