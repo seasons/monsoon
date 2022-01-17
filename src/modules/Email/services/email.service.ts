@@ -95,7 +95,9 @@ export class EmailService {
       where: { id: { in: physicalProductIds } },
       select: {
         id: true,
-        productVariant: { select: { product: { select: { id: true } } } },
+        productVariant: {
+          select: { product: { select: { id: true } }, displayShort: true },
+        },
         price: { select: { buyUsedPrice: true } },
       },
     })
@@ -114,6 +116,7 @@ export class EmailService {
       return {
         ...p,
         buyUsedPrice: orderLineItem.price,
+        variantSize: physicalProduct.productVariant.displayShort,
       }
     })
 
