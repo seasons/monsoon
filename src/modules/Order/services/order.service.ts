@@ -10,6 +10,7 @@ import { ShippingService } from "@modules/Shipping/services/shipping.service"
 import { Injectable } from "@nestjs/common"
 import {
   BagItem,
+  CustomerMembership,
   OrderPaymentStatus,
   OrderStatus,
   OrderType,
@@ -96,7 +97,7 @@ export class OrderService {
     type,
   }: {
     productVariantIds: string[]
-    customer: Customer
+    customer: Pick<Customer, "id">
     type: "draft" | "order"
   }): Promise<{
     purchaseCreditsApplied: number
@@ -211,9 +212,9 @@ export class OrderService {
       ?.shippingAddress as Location
 
     const purchaseCreditsAvailable =
-      customerWithData.membership.purchaseCredits ?? 0
+      customerWithData.membership?.purchaseCredits ?? 0
 
-    const creditsAvailable = customerWithData.membership.creditBalance ?? 0
+    const creditsAvailable = customerWithData.membership?.creditBalance ?? 0
 
     const totalCreditsAvailable = creditsAvailable + purchaseCreditsAvailable
 
@@ -822,12 +823,38 @@ export class OrderService {
     order,
     customer,
     select,
+    paymentMethodID,
   }: {
     order: Pick<Order, "id">
     customer: Customer
     select: Prisma.OrderSelect
+    paymentMethodID?: string
   }): Promise<Order> {
     let promises = []
+    const customerWithData = await this.prisma.client.customer.findUnique({
+      where: {
+        id: customer.id,
+      },
+      select: {
+        status: true,
+        user: {
+          select: {
+            id: true,
+          },
+        },
+        membership: {
+          select: {
+            id: true,
+            creditBalance: true,
+          },
+        },
+      },
+    })
+    if (customerWithData.status !== "Guest" && !!paymentMethodID) {
+      throw new Error(
+        "If customer is not a guest, paymentMethodID must be undefined"
+      )
+    }
 
     const orderWithData = await this.prisma.client.order.findUnique({
       where: { id: order.id },
@@ -876,61 +903,14 @@ export class OrderService {
       type: "order",
     })
 
-    if (purchaseCreditsApplied > 0 || creditsApplied > 0) {
-      const customerWithData = await this.prisma.client.customer.findUnique({
-        where: {
-          id: customer.id,
-        },
-        select: {
-          user: {
-            select: {
-              id: true,
-            },
-          },
-          membership: {
-            select: {
-              id: true,
-              creditBalance: true,
-            },
-          },
-        },
-      })
-
-      await this.addPromotionalCredits({
-        purchaseCreditsApplied,
-        creditsApplied,
-        userId: customerWithData.user.id,
-      })
-
-      promises.push(
-        this.updatePurchaseCreditsUsed({
-          purchaseCreditsApplied,
-          creditsApplied,
-          customerMembershipId: customerWithData.membership.id,
-          creditBalance: customerWithData.membership.creditBalance,
-        })
-      )
-    }
-
-    const { invoice: chargebeeInvoice } = await chargebee.invoice
-      .create({ ...invoice, auto_collection: "on" })
-      .request()
-
-    if (chargebeeInvoice.status !== "paid") {
-      try {
-        // Disable dunning in favor of letting the user manually retry failed charges via the UI,
-        // as otherwise we run a risk of duplicate charges.
-        await chargebee.invoice.stop_dunning(chargebeeInvoice.id).request()
-      } catch (error) {
-        console.log(
-          "Warning: Unable to cancel dunning for failed invoice charge.",
-          chargebeeInvoice.id,
-          chargebeeInvoice.customer_id
-        )
-        throw error
-      }
-      throw new Error("Failed to collect payment for invoice.")
-    }
+    const chargePromises = await this.chargeBuyUsedOrder(
+      customerWithData,
+      invoice,
+      paymentMethodID,
+      purchaseCreditsApplied,
+      creditsApplied
+    )
+    promises.push(...chargePromises)
 
     const orderLineItemsWithShipping = orderWithData.lineItems.filter(
       orderLineItem =>
@@ -1123,8 +1103,7 @@ export class OrderService {
           where: { id: order.id },
           data: {
             status: orderNeedsShipping ? "Submitted" : "Fulfilled",
-            paymentStatus:
-              chargebeeInvoice.status === "paid" ? "Paid" : "NotPaid",
+            paymentStatus: "Paid",
             ...orderShippingUpdate,
           },
           select: merge(
@@ -1155,6 +1134,74 @@ export class OrderService {
     )
 
     return updatedOrder
+  }
+
+  private async chargeBuyUsedOrder(
+    customer: Pick<Customer, "status"> & { user: Pick<User, "id"> } & {
+      membership: Pick<CustomerMembership, "id" | "creditBalance">
+    },
+    invoice,
+    paymentMethodID,
+    purchaseCreditsApplied,
+    creditsApplied
+  ) {
+    let promises = []
+    let chargebeeInvoice
+    if (customer.status === "Guest") {
+      const createData = {
+        ...invoice,
+        auto_collection: "on",
+        payment_method: {
+          type: "card",
+          gateway_account_id: process.env.CHARGEBEE_GATEWAY_ACCOUNT_ID,
+          tmp_token: paymentMethodID,
+        },
+      }
+      const { invoice: _invoice } = await chargebee.invoice
+        .create(createData)
+        .request()
+      chargebeeInvoice = _invoice
+    } else {
+      if (purchaseCreditsApplied > 0 || creditsApplied > 0) {
+        await this.addPromotionalCredits({
+          purchaseCreditsApplied,
+          creditsApplied,
+          userId: customer.user.id,
+        })
+
+        promises.push(
+          this.updatePurchaseCreditsUsed({
+            purchaseCreditsApplied,
+            creditsApplied,
+            customerMembershipId: customer.membership.id,
+            creditBalance: customer.membership.creditBalance,
+          })
+        )
+      }
+
+      const { invoice: _invoice } = await chargebee.invoice
+        .create({ ...invoice, auto_collection: "on" })
+        .request()
+      chargebeeInvoice = _invoice
+    }
+
+    if (chargebeeInvoice.status !== "paid") {
+      try {
+        // Disable dunning in favor of letting the user manually retry failed charges via the UI,
+        // as otherwise we run a risk of duplicate charges.
+        await chargebee.invoice.stop_dunning(chargebeeInvoice.id).request()
+      } catch (error) {
+        console.log(
+          "Warning: Unable to cancel dunning for failed invoice charge.",
+          chargebeeInvoice.id,
+          chargebeeInvoice.customer_id
+        )
+        throw error
+      }
+      throw new Error("Failed to collect payment for invoice.")
+    }
+
+    return promises
   }
 
   async updateOrderStatus({

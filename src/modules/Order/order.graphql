@@ -1,7 +1,7 @@
+# import AddressInput from "../Customer/customer.graphql"
 type Mutation {
   createDraftedOrder(input: CreateDraftedOrderInput!): Order!
-    @hasRole(roles: [Customer])
-  submitOrder(input: SubmitOrderInput!): Order! @hasRole(roles: [Customer])
+  submitOrder(input: SubmitOrderInput!): Order!
   updateOrderStatus(orderID: ID!, status: OrderStatus!): Order!
     @hasRole(roles: [Customer, Admin])
 }
@@ -93,13 +93,24 @@ type OrderLineItem implements LineItemInterface {
   physicalProduct: PhysicalProduct
 }
 
+input CreateDraftedOrderGuestInput {
+  email: String!
+  shippingAddress: AddressInput!
+}
+
+input SubmitOrderGuestInput {
+  email: String!
+  paymentMethodID: String!
+}
 input CreateDraftedOrderInput {
   orderType: OrderType!
   # FIXME: Can eventually remove productVariantID as it's deprecated
   productVariantID: ID
   productVariantIds: [ID!]
+  guest: CreateDraftedOrderGuestInput
 }
 
 input SubmitOrderInput {
   orderID: ID!
+  guest: SubmitOrderGuestInput
 }

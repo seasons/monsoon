@@ -33,7 +33,6 @@ export class PaymentService {
     private readonly prisma: PrismaService,
     private readonly utils: UtilsService,
     private readonly segment: SegmentService,
-    private readonly error: ErrorService,
     private readonly subscription: SubscriptionService,
     private readonly paymentUtils: PaymentUtilsService
   ) {}
