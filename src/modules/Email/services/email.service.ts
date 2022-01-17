@@ -78,29 +78,44 @@ export class EmailService {
       where: { id: order.id },
       select: {
         lineItems: {
-          select: { recordID: true, recordType: true, needShipping: true },
+          select: {
+            recordID: true,
+            recordType: true,
+            needShipping: true,
+            price: true,
+          },
         },
       },
     })
     const orderLineItems = orderWithLineItems.lineItems
-    const physicalProductId = orderLineItems.find(
-      orderLineItem => orderLineItem.recordType === "PhysicalProduct"
-    ).recordID
-    const physicalProduct = await this.prisma.client.physicalProduct.findUnique(
-      {
-        where: { id: physicalProductId },
-        select: {
-          productVariant: { select: { product: { select: { id: true } } } },
-          price: { select: { buyUsedPrice: true } },
-        },
-      }
+    const physicalProductIds = orderLineItems
+      .filter(orderLineItem => orderLineItem.recordType === "PhysicalProduct")
+      .map(a => a.recordID)
+    const physicalProducts = await this.prisma.client.physicalProduct.findMany({
+      where: { id: { in: physicalProductIds } },
+      select: {
+        id: true,
+        productVariant: { select: { product: { select: { id: true } } } },
+        price: { select: { buyUsedPrice: true } },
+      },
+    })
+    let products = await this.emailUtils.createGridPayload(
+      physicalProducts.map(a => ({
+        id: a.productVariant.product.id,
+      }))
     )
-    const productPrice = physicalProduct.price?.buyUsedPrice
-    const productId = (physicalProduct.productVariant as any).product.id
-    const products = await this.emailUtils.createGridPayload([
-      { id: productId },
-    ])
-    products[0]["buyUsedPrice"] = productPrice
+    products = products.map(p => {
+      const physicalProduct = physicalProducts.find(
+        a => a.productVariant.product.id === p.id
+      )
+      const orderLineItem = orderLineItems.find(
+        a => a.recordID === physicalProduct.id
+      )
+      return {
+        ...p,
+        buyUsedPrice: orderLineItem.price,
+      }
+    })
 
     // Grab the appropriate order info
     const formattedOrderLineItems = await this.emailUtils.formatOrderLineItems(
