@@ -101,7 +101,6 @@ input CreateDraftedOrderGuestInput {
 input SubmitOrderGuestInput {
   email: String!
   paymentMethodID: String!
-  # billing: AddressInput!
 }
 input CreateDraftedOrderInput {
   orderType: OrderType!
