@@ -1,6 +1,5 @@
 import { EmailService } from "@app/modules/Email/services/email.service"
 import { ErrorService } from "@app/modules/Error/services/error.service"
-import { PaymentService } from "@app/modules/Payment/services/payment.service"
 import { BagService } from "@app/modules/Product/services/bag.service"
 import { ProductVariantService } from "@app/modules/Product/services/productVariant.service"
 import { ShopifyService } from "@app/modules/Shopify/services/shopify.service"
@@ -1149,18 +1148,18 @@ export class OrderService {
     let promises = []
     let chargebeeInvoice
     if (customer.status === "Guest") {
+      const createData = {
+        ...invoice,
+        auto_collection: "on",
+        payment_method: {
+          type: "card",
+          gateway_account_id: process.env.CHARGEBEE_GATEWAY_ACCOUNT_ID,
+          tmp_token: paymentMethodID,
+        },
+      }
       const { invoice: _invoice } = await chargebee.invoice
-        .create({
-          ...invoice,
-          auto_collection: "on",
-          payment_method: {
-            type: "card",
-            gateway_account_id: process.env.CHARGEBEE_GATEWAY_ACCOUNT_ID,
-            tmp_token: paymentMethodID,
-          },
-        })
+        .create(createData)
         .request()
-
       chargebeeInvoice = _invoice
     } else {
       if (purchaseCreditsApplied > 0 || creditsApplied > 0) {
