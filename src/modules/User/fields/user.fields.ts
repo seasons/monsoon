@@ -61,6 +61,16 @@ export class UserFieldsResolver {
   }
 
   @ResolveField()
+  async firstName(@Parent() user) {
+    return user.firstName || "Guest"
+  }
+
+  @ResolveField()
+  async lastName(@Parent() user) {
+    return user.lastName || ""
+  }
+
+  @ResolveField()
   async customer(
     @Parent() user,
     @Loader({
