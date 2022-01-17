@@ -37,21 +37,6 @@ export class PaymentService {
     private readonly paymentUtils: PaymentUtilsService
   ) {}
 
-  // TODO: If we don't end up using this, delete the func
-  async processAndConfirmBuyUsedPayment({ paymentMethodID, orderID }) {
-    const orderWithData = await this.prisma.client.order.findUnique({
-      where: { id: orderID },
-      select: {
-        total: true,
-      },
-    })
-    const intent = await this.paymentUtils.createPaymentIntent(
-      paymentMethodID,
-      orderWithData.total
-    )
-    await stripe.paymentIntents.confirm(intent.id)
-  }
-
   async processPayment({ planID, paymentMethodID, billing }) {
     const billingAddress = {
       first_name: billing.user.firstName || "",
