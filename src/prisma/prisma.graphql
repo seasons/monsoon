@@ -5616,6 +5616,7 @@ enum CustomerStatus {
   PaymentFailed
   Paused
   Deactivated
+  Guest
 }
 
 enum CustomerStyle {

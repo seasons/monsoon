@@ -202,8 +202,8 @@ type User {
   auth0Id: String!
   email: String!
   emails: [EmailReceipt!]!
-  firstName: String!
-  lastName: String!
+  firstName: String
+  lastName: String
   fullName: String!
   role: UserRole!
   roles: [UserRole!]!
