@@ -14,7 +14,7 @@ import { OrderService } from "../services/order.service"
 @Resolver("Order")
 export class OrderMutationsResolver {
   private readonly logger = (new Logger(
-    `Cron: ${OrderMutationsResolver.name}`
+    `${OrderMutationsResolver.name}`
   ) as unknown) as WinstonLogger
 
   constructor(
