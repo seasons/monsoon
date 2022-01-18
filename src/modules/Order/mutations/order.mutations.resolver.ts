@@ -1,8 +1,9 @@
 import { Customer, User } from "@app/decorators"
 import { Select } from "@app/decorators/select.decorator"
+import { WinstonLogger } from "@app/lib/logger"
 import { SegmentService } from "@app/modules/Analytics/services/segment.service"
 import { ErrorService } from "@app/modules/Error/services/error.service"
-import { BadRequestException } from "@nestjs/common"
+import { BadRequestException, Logger } from "@nestjs/common"
 import { Args, Mutation, Resolver } from "@nestjs/graphql"
 import { PrismaService } from "@prisma1/prisma.service"
 import chargebee from "chargebee"
@@ -12,6 +13,10 @@ import { OrderService } from "../services/order.service"
 
 @Resolver("Order")
 export class OrderMutationsResolver {
+  private readonly logger = (new Logger(
+    `${OrderMutationsResolver.name}`
+  ) as unknown) as WinstonLogger
+
   constructor(
     private readonly prisma: PrismaService,
     private readonly order: OrderService,
@@ -233,8 +238,12 @@ export class OrderMutationsResolver {
       return submittedOrder
     } catch (e) {
       console.log(e)
-      this.error.setExtraContext({ orderID, userEmail: user.email })
-      this.error.captureError(e)
+      this.logger.error(`Error while submitting order`, {
+        customer,
+        error: e,
+        user,
+        email: user.email,
+      })
       throw new BadRequestException()
     }
   }
