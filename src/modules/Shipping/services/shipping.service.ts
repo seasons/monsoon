@@ -47,7 +47,9 @@ export class ShippingService {
     productVariantIds: string[],
     customer: Pick<Customer, "id">
   ) {
-    return this.getShippingRateForVariantIDs(productVariantIds, { customer })
+    return await this.getShippingRateForVariantIDs(productVariantIds, {
+      customer,
+    })
   }
 
   async getShippingRateForVariantIDs(
