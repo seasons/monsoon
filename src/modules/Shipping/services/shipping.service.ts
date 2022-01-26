@@ -566,7 +566,9 @@ export class ShippingService {
 
     const customerAddressShippo = {
       ...this.locationDataToShippoAddress(customerShippingAddressPrisma),
-      name: `${user.firstName} ${user.lastName}`,
+      name:
+        customerShippingAddressPrisma.name ||
+        `${user.firstName} ${user.lastName}`,
       phone: customerData.detail.phoneNumber,
       country: "US",
       email: user.email,
