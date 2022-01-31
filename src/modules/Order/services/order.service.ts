@@ -1147,6 +1147,27 @@ export class OrderService {
   ) {
     let promises = []
     let chargebeeInvoice
+
+    const { list: invoicesForCustomer } = await chargebee.invoice
+      .list({
+        limit: 100,
+        "customer_id[is]": customer.user.id,
+      })
+      .request()
+    const existingPaidInvoice = invoicesForCustomer.filter(a => {
+      const isPaid = a.status === "paid"
+
+      // e.g "Purchased Used Hide Jacket"
+      // since the invoice note specifies the items being purchased,
+      // it should be sufficient to detect a collision.
+      let hasSameNote = a.notes?.[0]?.note === invoice.invoice_note
+
+      return isPaid && hasSameNote
+    })
+    if (existingPaidInvoice) {
+      throw new Error(`Customer already has a paid invoice for these items`)
+    }
+
     if (customer.status === "Guest") {
       const createData = {
         ...invoice,
@@ -1185,7 +1206,6 @@ export class OrderService {
       chargebeeInvoice = _invoice
     }
 
-    // if (chargebeeInvoice.status !== "paid") {
     try {
       // Disable dunning in favor of letting the user manually retry failed charges via the UI,
       // as otherwise we run a risk of duplicate charges.
@@ -1202,8 +1222,6 @@ export class OrderService {
       )
       throw error
     }
-    // throw new Error("Failed to collect payment for invoice.")
-    // }
 
     return promises
   }
