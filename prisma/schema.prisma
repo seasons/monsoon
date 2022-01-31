@@ -1206,6 +1206,7 @@ model Product {
   description                 String?
   externalURL                 String?
   retailPrice                 Int?
+  isRentable                  Boolean                  @default(true)
   wholesalePrice              Int?
   rentalPriceOverride         Int?
   computedRentalPrice         Int?

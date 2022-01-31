@@ -39,7 +39,7 @@ type InvoiceCharge = {
   amount: number
   description: string
   taxable: boolean
-  avalara_tax_code: string
+  // avalara_tax_code: string
 }
 
 type BuyUsedOrderItem = {
@@ -271,7 +271,7 @@ export class OrderService {
           amount: chargeAmount,
           taxable: true,
           description: orderItem.name,
-          avalara_tax_code: orderItem.productTaxCode,
+          // avalara_tax_code: orderItem.productTaxCode,
         })
       }
 
@@ -296,7 +296,7 @@ export class OrderService {
           amount: shippingCharge,
           taxable: true,
           description: shipping?.rate?.servicelevel?.name || "Shipping",
-          avalara_tax_code: "FR020000",
+          // avalara_tax_code: "FR020000",
         })
       }
 
@@ -1185,21 +1185,25 @@ export class OrderService {
       chargebeeInvoice = _invoice
     }
 
-    if (chargebeeInvoice.status !== "paid") {
-      try {
-        // Disable dunning in favor of letting the user manually retry failed charges via the UI,
-        // as otherwise we run a risk of duplicate charges.
-        await chargebee.invoice.stop_dunning(chargebeeInvoice.id).request()
-      } catch (error) {
-        console.log(
-          "Warning: Unable to cancel dunning for failed invoice charge.",
-          chargebeeInvoice.id,
-          chargebeeInvoice.customer_id
-        )
-        throw error
-      }
-      throw new Error("Failed to collect payment for invoice.")
+    // if (chargebeeInvoice.status !== "paid") {
+    try {
+      // Disable dunning in favor of letting the user manually retry failed charges via the UI,
+      // as otherwise we run a risk of duplicate charges.
+      const dunning = await chargebee.invoice
+        .stop_dunning(chargebeeInvoice.id)
+        .request()
+      console.log("dunning ", dunning)
+    } catch (error) {
+      console.log(
+        "Warning: Unable to cancel dunning for failed invoice charge.",
+        chargebeeInvoice.id,
+        chargebeeInvoice.customer_id,
+        error
+      )
+      throw error
     }
+    // throw new Error("Failed to collect payment for invoice.")
+    // }
 
     return promises
   }
@@ -1359,7 +1363,7 @@ export class OrderService {
         amount: price,
         taxable: true,
         description: productName,
-        avalara_tax_code: productTaxCode,
+        // avalara_tax_code: productTaxCode,
       }
     }
 
@@ -1368,7 +1372,7 @@ export class OrderService {
         amount: price,
         taxable: true,
         description: shippingDescription,
-        avalara_tax_code: "FR020000",
+        // avalara_tax_code: "FR020000",
       }
     }
   }
