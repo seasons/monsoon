@@ -119,7 +119,12 @@ export class ReserveService {
           select: {
             id: true,
             product: {
-              select: { id: true, name: true, computedRentalPrice: true },
+              select: {
+                id: true,
+                name: true,
+                computedRentalPrice: true,
+                isRentable: true,
+              },
             },
             physicalProducts: { select: { id: true } },
           },
@@ -167,6 +172,19 @@ export class ReserveService {
     const newProductVariantIDs = activeBagItemsWithData
       .filter(a => a.status === "Added")
       .map(a => a.productVariant.id)
+
+    const unReservableBagItems = activeBagItemsWithData.filter(
+      i => i.productVariant.product.isRentable === false
+    )
+
+    if (unReservableBagItems.length > 0) {
+      this.prisma.client.bagItem.deleteMany({
+        where: { id: { in: unReservableBagItems.map(bagItem => bagItem.id) } },
+      })
+      throw new Error(
+        `One or more of your bag items was not reservable, please try again`
+      )
+    }
 
     const [
       productVariantsCountsUpdatePromises,
