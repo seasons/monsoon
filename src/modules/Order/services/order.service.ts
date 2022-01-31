@@ -1185,21 +1185,25 @@ export class OrderService {
       chargebeeInvoice = _invoice
     }
 
-    if (chargebeeInvoice.status !== "paid") {
-      try {
-        // Disable dunning in favor of letting the user manually retry failed charges via the UI,
-        // as otherwise we run a risk of duplicate charges.
-        await chargebee.invoice.stop_dunning(chargebeeInvoice.id).request()
-      } catch (error) {
-        console.log(
-          "Warning: Unable to cancel dunning for failed invoice charge.",
-          chargebeeInvoice.id,
-          chargebeeInvoice.customer_id
-        )
-        throw error
-      }
-      throw new Error("Failed to collect payment for invoice.")
+    // if (chargebeeInvoice.status !== "paid") {
+    try {
+      // Disable dunning in favor of letting the user manually retry failed charges via the UI,
+      // as otherwise we run a risk of duplicate charges.
+      const dunning = await chargebee.invoice
+        .stop_dunning(chargebeeInvoice.id)
+        .request()
+      console.log("dunning ", dunning)
+    } catch (error) {
+      console.log(
+        "Warning: Unable to cancel dunning for failed invoice charge.",
+        chargebeeInvoice.id,
+        chargebeeInvoice.customer_id,
+        error
+      )
+      throw error
     }
+    // throw new Error("Failed to collect payment for invoice.")
+    // }
 
     return promises
   }

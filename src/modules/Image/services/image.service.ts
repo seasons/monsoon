@@ -195,7 +195,9 @@ export class ImageService {
   ): Promise<ImageData> {
     try {
       await this.purgeS3ImageFromImgix(imageURL)
-    } catch (err) {}
+    } catch (err) {
+      console.log("Error purging img ", err)
+    }
     return new Promise((resolve, reject) => {
       request(
         {
@@ -255,13 +257,15 @@ export class ImageService {
         },
         (err, res, body) => {
           const errors = body.errors
-          if (err || errors?.length > 0) {
+          const noResource = errors?.[0]?.title === "NotFound"
+          if (err || (errors?.length > 0 && !noResource)) {
             const error = err || errors?.[0]
             reject(error)
+            console.log("Error purging img ", error)
             this.logger.error("Error purging imgix cache", {
               url: imgixImageURL,
               s3Url: s3ImageURL,
-              error,
+              error: JSON.stringify(error),
             } as any)
           } else {
             resolve(body)

@@ -283,11 +283,16 @@ export class BagService {
       select: {
         product: {
           select: {
+            isRentable: true,
             status: true,
           },
         },
       },
     })
+
+    if (productVariant.product.isRentable === false) {
+      throw new Error("Product is unavailable for rental")
+    }
 
     if (productVariant.product.status === "Upcoming") {
       throw new Error("Upcoming products can not be added to bag")

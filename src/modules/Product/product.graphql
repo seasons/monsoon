@@ -236,6 +236,7 @@ type Product @cacheControl(maxAge: 200) {
   name: String!
   architecture: ProductArchitecture
   brand: Brand!
+  isRentable: Boolean!
   category: Category!
   type: ProductType
   description: String
@@ -358,6 +359,7 @@ type Brand @cacheControl(maxAge: 1000) {
 }
 
 input ProductCreateInput {
+  isRentable: Boolean!
   architecture: String
   internalSizeType: SizeType
   brandID: String!
@@ -395,6 +397,7 @@ input ProductCreateInput {
 
 input CustomProductUpdateInput {
   # Fields from ProductUpdateInput
+  isRentable: Boolean!
   architecture: ProductArchitecture
   category: CategoryUpdateOneRequiredWithoutProductsInput
   description: String
