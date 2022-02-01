@@ -1154,13 +1154,15 @@ export class OrderService {
         "customer_id[is]": customer.user.id,
       })
       .request()
-    const existingPaidInvoice = invoicesForCustomer.filter(a => {
-      const isPaid = a.status === "paid"
+    const existingPaidInvoice = invoicesForCustomer.find(a => {
+      const { invoice: chargebee_invoice } = a
+      const isPaid = chargebee_invoice.status === "paid"
 
       // e.g "Purchased Used Hide Jacket"
       // since the invoice note specifies the items being purchased,
       // it should be sufficient to detect a collision.
-      let hasSameNote = a.notes?.[0]?.note === invoice.invoice_note
+      let hasSameNote =
+        chargebee_invoice.notes?.[0]?.note === invoice.invoice_note
 
       return isPaid && hasSameNote
     })
@@ -1204,23 +1206,6 @@ export class OrderService {
         .create({ ...invoice, auto_collection: "on" })
         .request()
       chargebeeInvoice = _invoice
-    }
-
-    try {
-      // Disable dunning in favor of letting the user manually retry failed charges via the UI,
-      // as otherwise we run a risk of duplicate charges.
-      const dunning = await chargebee.invoice
-        .stop_dunning(chargebeeInvoice.id)
-        .request()
-      console.log("dunning ", dunning)
-    } catch (error) {
-      console.log(
-        "Warning: Unable to cancel dunning for failed invoice charge.",
-        chargebeeInvoice.id,
-        chargebeeInvoice.customer_id,
-        error
-      )
-      throw error
     }
 
     return promises
