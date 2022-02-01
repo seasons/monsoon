@@ -145,7 +145,7 @@ export class MeFieldsResolver {
     if (!customer) {
       return null
     }
-    const bagItems = await this.prisma.client.bagItem.findMany({
+    const bagItems = (await this.prisma.client.bagItem.findMany({
       where: {
         customer: {
           id: customer.id,
@@ -156,7 +156,7 @@ export class MeFieldsResolver {
       select: merge(select, {
         status: true,
       }),
-    })
+    })) as any[]
 
     const sortValues = {
       Added: 0,

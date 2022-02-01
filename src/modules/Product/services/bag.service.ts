@@ -97,7 +97,7 @@ export class BagService {
     addToCart: boolean
     select
   }) {
-    const existingBagItem = await this.prisma.client.bagItem.findFirst({
+    const existingBagItem = (await this.prisma.client.bagItem.findFirst({
       where: {
         customer: {
           id: customerId,
@@ -118,7 +118,7 @@ export class BagService {
         }),
         select
       ),
-    })
+    })) as any
 
     // @ts-ignore
     const rppAttached = existingBagItem?.reservationPhysicalProduct?.id

@@ -1113,7 +1113,7 @@ export class RentalService {
     const uniqueShippedOutboundPackagesCreatedInLastBillingCycle = uniqueShippedOutboundPackages.filter(
       a =>
         this.timeUtils.isBetweenDates(
-          a.createdAt,
+          (a as any).createdAt,
           previousRentalInvoice.billingStartAt,
           previousRentalInvoice.billingEndAt
         )
@@ -1142,9 +1142,10 @@ export class RentalService {
         return null
       }
 
-      const usedPremiumShipping = p.shippingMethod?.code === "UPSSelect"
+      const usedPremiumShipping =
+        (p as any).shippingMethod?.code === "UPSSelect"
       let price = this.shipping.discountShippingRate(
-        p.amount,
+        (p as any).amount,
         usedPremiumShipping ? "UPSSelect" : "UPSGround",
         "Outbound"
       )
@@ -1652,6 +1653,7 @@ export class RentalService {
 
     return this.utils.wrapPrismaPromise(
       this.prisma.client.chargebeeInvoice.create({
+        //@ts-ignore
         data,
       })
     )

@@ -189,6 +189,7 @@ export class PhysicalProductService {
         (
           await this.getUpdateVariantCountsPromiseIfNeeded({
             where,
+            //@ts-ignore
             inventoryStatus: newData.inventoryStatus,
           })
         ).promise

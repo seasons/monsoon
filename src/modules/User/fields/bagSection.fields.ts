@@ -84,7 +84,7 @@ export class BagSectionFieldsResolver {
   }) {
     const rppArgs = select?.reservationPhysicalProduct as Prisma.ReservationPhysicalProductArgs
     const rppSelect = merge(
-      Prisma.validator<Prisma.ReservationPhysicalProductSelect>()({
+      {
         id: true,
         createdAt: true,
         physicalProduct: merge(
@@ -104,7 +104,7 @@ export class BagSectionFieldsResolver {
           select.physicalProduct
         ),
         customer: true,
-      }),
+      },
       rppArgs?.select
     )
 

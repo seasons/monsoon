@@ -53,10 +53,10 @@ export interface LineItem {
   taxAmount?: Number
   taxRate?: Number
   discountAmount?: Number
-  description: String
-  entityDescription?: String
+  description: string
+  entityDescription?: string
   entityType: LineItemIdentityType
-  entityId?: String
+  entityId?: string
   amount: Number
 }
 export interface CreditNote {
@@ -100,10 +100,10 @@ export interface LoadAllRecordsWithListInput extends LoadRecordsWithListInput {
 }
 
 export interface RefundInvoiceInput {
-  invoiceId: String
+  invoiceId: string
   refundAmount?: number
-  comment?: String
-  customerNotes?: String
+  comment?: string
+  customerNotes?: string
   reasonCode?: CreditNoteReasonCode
 }
 
