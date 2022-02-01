@@ -302,6 +302,7 @@ export class ProductFieldsResolver {
         ...options,
         w: width,
         h: height,
+        //@ts-ignore
         updatedAt: image.updatedAt as string,
       })
 

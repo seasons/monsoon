@@ -83,7 +83,7 @@ export class CustomerMembershipFieldsResolver {
     const rentalInvoices = await rentalInvoiceLoader.load(customerMembership.id)
 
     if (rentalInvoices.length > 0) {
-      const currentInvoice = head(rentalInvoices)
+      const currentInvoice: any = head(rentalInvoices)
       if (currentInvoice.status !== "Draft") {
         return financeMetrics
       }

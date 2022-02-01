@@ -52,15 +52,18 @@ describe("Calculate Current Balance", () => {
         rentalService,
         "getOutboundPackageLineItemDatasFromPreviousBillingCycle"
       )
+      //@ts-ignore
       .mockResolvedValue([{ price: 10 }])
     jest
       .spyOn(
         rentalService,
         "getOutboundPackageLineItemDatasFromThisBillingCycle"
       )
+      //@ts-ignore
       .mockReturnValue([{ price: 30 }])
     jest
       .spyOn(rentalService, "getInboundPackageLineItemDatas")
+      //@ts-ignore
       .mockReturnValue([{ price: 30 }])
 
     currentBalance = await rentalService.calculateCurrentBalance("fakeId", {

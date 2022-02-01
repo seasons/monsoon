@@ -47,6 +47,7 @@ export class LaunchService {
 
     return await this.prisma.client.launch.upsert({
       where,
+      //@ts-ignore
       create: upsertdata,
       update: upsertdata,
       select,

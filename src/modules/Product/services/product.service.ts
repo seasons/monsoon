@@ -357,7 +357,7 @@ export class ProductService {
   }
 
   async saveProduct(item, save, select, customer) {
-    const existingBagItem = await this.prisma.client.bagItem.findFirst({
+    const existingBagItem: any = await this.prisma.client.bagItem.findFirst({
       where: {
         customer: {
           id: customer.id,

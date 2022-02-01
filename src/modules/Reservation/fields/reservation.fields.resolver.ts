@@ -185,7 +185,7 @@ export class ReservationFieldsResolver {
     )
     if (mostRecentReturnedPackage) {
       const returnedPackageWithData = await returnedPackageLoader.load(
-        mostRecentReturnedPackage.id
+        (mostRecentReturnedPackage as any).id
       )
       return returnedPackageWithData
     } else {
