@@ -291,7 +291,9 @@ export class BagService {
     })
 
     if (productVariant.product.isRentable === false) {
-      throw new Error("Product is unavailable for rental")
+      throw new Error(
+        "Seasons is shutting down March 11th. All items are exclusively for sale and unfortunately, rental is no longer supported."
+      )
     }
 
     if (productVariant.product.status === "Upcoming") {
