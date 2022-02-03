@@ -11,6 +11,7 @@ import {
   ReservationPhysicalProduct,
   ReservationPhysicalProductStatus,
 } from "@prisma/client"
+import chargebee from "chargebee"
 import { every, some } from "lodash"
 import { DateTime } from "luxon"
 
@@ -138,6 +139,39 @@ export class ReservationPhysicalProductService {
     promises.push(...updateProductPromises)
 
     const results = await this.prisma.client.$transaction(promises)
+
+    try {
+      const custWithData = await this.prisma.client.customer.findUnique({
+        where: { id: customerId },
+        select: {
+          bagItems: { where: { status: "Reserved" }, select: { id: true } },
+          membership: {
+            select: { subscription: { select: { id: true, status: true } } },
+          },
+        },
+      })
+      if (custWithData.bagItems.length === 0) {
+        const subId = custWithData.membership?.subscription?.id
+        const status = custWithData.membership?.subscription?.status
+        if (subId && status === "active") {
+          await chargebee.subscription
+            .cancel(subId, {
+              end_of_term: true,
+            })
+            .request((err, result) => {
+              if (err) {
+                return err
+              }
+              if (result) {
+                return result
+              }
+            })
+        }
+      }
+    } catch (err) {
+      // noop
+    }
+
     return !!results
   }
 
