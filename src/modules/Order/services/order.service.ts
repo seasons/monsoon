@@ -1531,7 +1531,7 @@ export class OrderService {
               where: { id: cartItem.id },
             })
             // Delete the bag item
-            throw "Could not find reservable unit to sell"
+            throw new ApolloError("Could not find reservable unit to sell")
           } else {
             throw new ApolloError(
               "Please remove unreservable unit from local cart",
