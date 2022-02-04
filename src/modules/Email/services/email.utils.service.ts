@@ -188,6 +188,14 @@ export class EmailUtilsService {
           lineItemName: "Shipping",
           lineItemValue: li.price,
         })
+      } else if (
+        li.recordType === "Credit" ||
+        li.recordType === "PurchaseCredit"
+      ) {
+        formattedLineItems.push({
+          lineItemName: "Credit",
+          lineItemValue: li.price,
+        })
       }
     }
     let totalTaxes = orderWithLineItems.lineItems.reduce(
