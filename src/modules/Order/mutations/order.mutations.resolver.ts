@@ -166,7 +166,7 @@ export class OrderMutationsResolver {
       console.log(e)
       this.error.setExtraContext({ productVariantID, userEmail: user.email })
       this.error.captureError(e)
-      throw new BadRequestException()
+      throw e
     }
   }
 

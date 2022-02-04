@@ -31,6 +31,7 @@ import {
   User,
 } from "@prisma/client"
 import { PrismaService } from "@prisma1/prisma.service"
+import { ApolloError } from "apollo-server"
 import chargebee from "chargebee"
 import cuid from "cuid"
 import { merge, pick } from "lodash"
@@ -1474,6 +1475,7 @@ export class OrderService {
       }
     >,
     customerWithData: {
+      id: string
       bagItems: Array<
         Pick<BagItem, "status"> & {
           productVariant: Pick<ProductVariant, "id">
@@ -1517,7 +1519,28 @@ export class OrderService {
             physicalProduct.inventoryStatus === "Reservable"
         )
         if (!physicalProduct) {
-          throw "Could not find reservable unit to sell"
+          const cartItem = await this.prisma.client.bagItem.findFirst({
+            where: {
+              customer: { id: customerWithData.id },
+              productVariant: { id: productVariant.id },
+              isInCart: true,
+            },
+          })
+          if (cartItem) {
+            await this.prisma.client.bagItem.delete({
+              where: { id: cartItem.id },
+            })
+            // Delete the bag item
+            throw new ApolloError("Could not find reservable unit to sell")
+          } else {
+            throw new ApolloError(
+              "Please remove unreservable unit from local cart",
+              "400",
+              {
+                productVariantId: productVariant.id,
+              }
+            )
+          }
         }
         physicalProductsWithShippingRequirements.push({
           physicalProduct: physicalProduct,
