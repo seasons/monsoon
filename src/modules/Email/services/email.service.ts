@@ -170,6 +170,104 @@ export class EmailService {
     })
   }
 
+  async sendOrderProcessedEmail(
+    user: EmailUser,
+    order: Pick<Order, "id" | "orderNumber">,
+    trackingInfo: {
+      trackingNumber: string
+      trackingURL: string
+    }
+  ) {
+    // Gather the appropriate product info
+    const orderWithLineItems = await this.prisma.client.order.findUnique({
+      where: { id: order.id },
+      select: {
+        lineItems: {
+          select: {
+            recordID: true,
+            recordType: true,
+            needShipping: true,
+            price: true,
+          },
+        },
+      },
+    })
+    const orderLineItems = orderWithLineItems.lineItems
+    const physicalProductIds = orderLineItems
+      .filter(orderLineItem => orderLineItem.recordType === "PhysicalProduct")
+      .map(a => a.recordID)
+    const physicalProducts = await this.prisma.client.physicalProduct.findMany({
+      where: { id: { in: physicalProductIds } },
+      select: {
+        id: true,
+        productVariant: {
+          select: { product: { select: { id: true } }, displayShort: true },
+        },
+        price: { select: { buyUsedPrice: true } },
+      },
+    })
+    let products = await this.emailUtils.createGridPayload(
+      physicalProducts.map(a => ({
+        id: a.productVariant.product.id,
+      }))
+    )
+    products = products.map(p => {
+      const physicalProduct = physicalProducts.find(
+        a => a.productVariant.product.id === p.id
+      )
+      const orderLineItem = orderLineItems.find(
+        a => a.recordID === physicalProduct.id
+      )
+      return {
+        ...p,
+        buyUsedPrice: orderLineItem.price,
+        variantSize: physicalProduct.productVariant.displayShort,
+      }
+    })
+
+    const custData = await this.prisma.client.customer.findFirst({
+      where: { user: { id: user.id } },
+      select: {
+        id: true,
+        detail: {
+          select: {
+            id: true,
+            shippingAddress: {
+              select: {
+                id: true,
+                name: true,
+                address1: true,
+                address2: true,
+                city: true,
+                state: true,
+                zipCode: true,
+              },
+            },
+          },
+        },
+        billingInfo: { select: { id: true, brand: true, last_digits: true } },
+      },
+    })
+
+    const formattedOrderLineItems = await this.emailUtils.formatOrderLineItems(
+      order
+    )
+
+    const payload = await RenderEmail.orderProcessed({
+      name: user.firstName,
+      orderNumber: order.orderNumber,
+      orderLineItems: formattedOrderLineItems,
+      shipping: custData.detail.shippingAddress as any,
+      products,
+      ...trackingInfo,
+    })
+    await this.sendPreRenderedTransactionalEmail({
+      user: user,
+      payload,
+      emailId: "OrderProcessed",
+    })
+  }
+
   async sendUnpaidMembershipEmail(user: EmailUser) {
     const payload = await RenderEmail.unpaidMembership({ name: user.firstName })
     await this.sendPreRenderedTransactionalEmail({

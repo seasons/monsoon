@@ -3376,6 +3376,7 @@ export type EmailId =
   | "FreeToReserve"
   | "Paused"
   | "PriorityAccess"
+  | "OrderProcessed"
   | "ReferralConfirmation"
   | "ReservationConfirmation"
   | "ReservationProcessed"
