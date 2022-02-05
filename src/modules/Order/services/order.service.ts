@@ -40,7 +40,7 @@ type InvoiceCharge = {
   amount: number
   description: string
   taxable: boolean
-  avalara_tax_code: string
+  avalara_tax_code?: string
 }
 
 type BuyUsedOrderItem = {
@@ -831,7 +831,7 @@ export class OrderService {
     select: Prisma.OrderSelect
     paymentMethodID?: string
   }): Promise<Order> {
-    let promises = []
+    const promises = []
     const customerWithData = await this.prisma.client.customer.findUnique({
       where: {
         id: customer.id,
@@ -1146,7 +1146,7 @@ export class OrderService {
     purchaseCreditsApplied,
     creditsApplied
   ) {
-    let promises = []
+    const promises = []
     let chargebeeInvoice
 
     const { list: invoicesForCustomer } = await chargebee.invoice
@@ -1162,7 +1162,7 @@ export class OrderService {
       // e.g "Purchased Used Hide Jacket"
       // since the invoice note specifies the items being purchased,
       // it should be sufficient to detect a collision.
-      let hasSameNote =
+      const hasSameNote =
         chargebee_invoice.notes?.[0]?.note === invoice.invoice_note
 
       return isPaid && hasSameNote
@@ -1234,9 +1234,21 @@ export class OrderService {
     const order = await this.prisma.client.order.findUnique({
       where: { id: orderID },
       select: {
+        id: true,
+        orderNumber: true,
         type: true,
         lineItems: { select: { recordID: true, recordType: true } },
-        customer: { select: { id: true } },
+        customer: { select: { id: true, user: true } },
+        sentPackage: {
+          select: {
+            shippingLabel: {
+              select: {
+                trackingNumber: true,
+                trackingURL: true,
+              },
+            },
+          },
+        },
       },
     })
     if (status === "Fulfilled" && order.type === "Used") {
@@ -1319,6 +1331,12 @@ export class OrderService {
     const [updateOrderResult] = await this.prisma.client.$transaction(
       finalPromises
     )
+
+    const shippingLabel = order.sentPackage.shippingLabel
+    await this.email.sendOrderProcessedEmail(order.customer.user, order, {
+      trackingNumber: shippingLabel.trackingNumber,
+      trackingURL: shippingLabel.trackingURL,
+    })
 
     return updateOrderResult
   }
