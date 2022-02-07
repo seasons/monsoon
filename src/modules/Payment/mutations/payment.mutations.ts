@@ -4,6 +4,7 @@ import { PaymentUtilsService } from "@app/modules/Utils/services/paymentUtils.se
 import { PaymentService } from "@modules/Payment/services/payment.service"
 import { UpdatePaymentService } from "@modules/Payment/services/updatePayment.service"
 import { Args, Mutation, Resolver } from "@nestjs/graphql"
+import { ApolloError } from "apollo-server"
 
 @Resolver()
 export class PaymentMutationsResolver {
@@ -20,12 +21,8 @@ export class PaymentMutationsResolver {
    * Platform: Web (flare)
    */
   @Mutation()
-  async processPayment(@Args() { planID, paymentMethodID, billing }) {
-    return this.paymentService.processPayment({
-      planID,
-      paymentMethodID,
-      billing,
-    })
+  async processPayment() {
+    throw new ApolloError("This method is deprecated")
   }
 
   /**
@@ -34,20 +31,8 @@ export class PaymentMutationsResolver {
    * Platform: Web (flare), Native mobile (harvest)
    */
   @Mutation()
-  async confirmPayment(
-    @Args() { planID, paymentIntentID, couponID, billing, shipping },
-    @Customer() customer,
-    @Application() application
-  ) {
-    return this.paymentService.confirmPayment({
-      paymentIntentID,
-      planID,
-      couponID,
-      billing,
-      customer,
-      application,
-      shipping,
-    })
+  async confirmPayment() {
+    throw new ApolloError("This method is deprecated")
   }
 
   /**
