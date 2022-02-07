@@ -4,7 +4,7 @@ import { Select } from "@app/decorators/select.decorator"
 import { SegmentService } from "@app/modules/Analytics/services/segment.service"
 import { PrismaService } from "@app/prisma/prisma.service"
 import { Args, Info, Mutation, Resolver } from "@nestjs/graphql"
-import { UserInputError } from "apollo-server"
+import { ApolloError, UserInputError } from "apollo-server"
 import { pick } from "lodash"
 
 import { CustomerService } from "../services/customer.service"
@@ -81,19 +81,8 @@ export class CustomerMutationsResolver {
   }
 
   @Mutation()
-  async triageCustomer(
-    @Customer() sessionCustomer,
-    @Application() application
-  ) {
-    const { status } = await this.customerService.triageCustomer(
-      {
-        id: sessionCustomer.id,
-      },
-      application,
-      false
-    )
-
-    return status
+  async triageCustomer() {
+    throw new ApolloError("Triage is not available anymore")
   }
 
   @Mutation()
