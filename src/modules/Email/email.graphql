@@ -26,4 +26,5 @@ enum EmailId {
   ReturnToGoodStanding
   RecommendedItemsNurture
   RestockNotification
+  OrderProcessed
 }
