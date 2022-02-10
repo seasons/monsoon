@@ -1147,8 +1147,6 @@ export class OrderService {
     creditsApplied
   ) {
     const promises = []
-    let chargebeeInvoice
-
     const { list: invoicesForCustomer } = await chargebee.invoice
       .list({
         limit: 100,
@@ -1167,9 +1165,6 @@ export class OrderService {
 
       return isPaid && hasSameNote
     })
-    if (existingPaidInvoice) {
-      throw new Error(`Customer already has a paid invoice for these items`)
-    }
 
     if (customer.status === "Guest") {
       const createData = {
@@ -1181,10 +1176,11 @@ export class OrderService {
           tmp_token: paymentMethodID,
         },
       }
-      const { invoice: _invoice } = await chargebee.invoice
-        .create(createData)
-        .request()
-      chargebeeInvoice = _invoice
+      if (!existingPaidInvoice) {
+        const { invoice: _invoice } = await chargebee.invoice
+          .create(createData)
+          .request()
+      }
     } else {
       if (purchaseCreditsApplied > 0 || creditsApplied > 0) {
         await this.addPromotionalCredits({
@@ -1202,11 +1198,11 @@ export class OrderService {
           })
         )
       }
-
-      const { invoice: _invoice } = await chargebee.invoice
-        .create({ ...invoice, auto_collection: "on" })
-        .request()
-      chargebeeInvoice = _invoice
+      if (!existingPaidInvoice) {
+        const { invoice: _invoice } = await chargebee.invoice
+          .create({ ...invoice, auto_collection: "on" })
+          .request()
+      }
     }
 
     return promises
