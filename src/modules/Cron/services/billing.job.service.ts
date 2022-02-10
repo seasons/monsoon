@@ -1,6 +1,4 @@
 import { WinstonLogger } from "@app/lib/logger"
-import { ErrorService } from "@app/modules/Error/services/error.service"
-import { AccessPlanID } from "@app/modules/Payment/payment.types"
 import {
   ProcessableRentalInvoiceArgs,
   RentalService,
@@ -8,6 +6,7 @@ import {
 import { PrismaService } from "@modules/../prisma/prisma.service"
 import { Injectable, Logger } from "@nestjs/common"
 import { Cron, CronExpression } from "@nestjs/schedule"
+import chargebee from "chargebee"
 
 @Injectable()
 export class BillingScheduledJobs {
@@ -19,6 +18,62 @@ export class BillingScheduledJobs {
     private readonly prisma: PrismaService,
     private readonly rental: RentalService
   ) {}
+
+  private sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms))
+  }
+
+  @Cron(CronExpression.EVERY_HOUR)
+  async stopBilling() {
+    const allActiveSubs = []
+    let offset = "start"
+    while (true) {
+      let list
+      ;({ next_offset: offset, list } = await chargebee.subscription
+        .list({
+          limit: 100,
+          ...(offset === "start" ? {} : { offset }),
+          "status[is]": "active",
+        })
+        .request())
+      allActiveSubs.push(...list?.map(a => a.subscription))
+      if (!offset) {
+        break
+      }
+    }
+
+    const numActiveSubs = allActiveSubs.length
+    let i = 0
+    for (const sub of allActiveSubs) {
+      console.log(`${i++}/${numActiveSubs}`)
+      const chargebeeCustId = sub.customer_id
+      const cust = await this.prisma.client.customer.findFirst({
+        where: { user: { id: chargebeeCustId } },
+        select: {
+          bagItems: { where: { status: "Reserved" }, select: { id: true } },
+        },
+      })
+      if (!cust) {
+        throw new Error(`no customer found for ${chargebeeCustId}`)
+      }
+      const hasNoReservedItems = cust.bagItems.length === 0
+      if (hasNoReservedItems) {
+        await chargebee.subscription
+          .cancel(sub.id, {
+            end_of_term: true,
+          })
+          .request((err, result) => {
+            if (err) {
+              return err
+            }
+            if (result) {
+              return result
+            }
+          })
+        await this.sleep(100)
+      }
+    }
+  }
 
   @Cron(CronExpression.EVERY_DAY_AT_1AM)
   async updateCurrentBalanceOnCustomers() {
