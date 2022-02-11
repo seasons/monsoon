@@ -99,7 +99,7 @@ const scheduleModule =
     : []
 
 const cache = (() => {
-  if (process.env.TEST === "true") {
+  if (process.env.TEST === "true" || process.env.ADMIN === "true") {
     return
   }
 
