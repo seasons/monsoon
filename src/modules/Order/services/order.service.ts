@@ -1166,6 +1166,10 @@ export class OrderService {
       return isPaid && hasSameNote
     })
 
+    if (existingPaidInvoice) {
+      return promises
+    }
+
     if (customer.status === "Guest") {
       const createData = {
         ...invoice,
@@ -1176,11 +1180,9 @@ export class OrderService {
           tmp_token: paymentMethodID,
         },
       }
-      if (!existingPaidInvoice) {
-        const { invoice: _invoice } = await chargebee.invoice
-          .create(createData)
-          .request()
-      }
+      const { invoice: _invoice } = await chargebee.invoice
+        .create(createData)
+        .request()
     } else {
       if (purchaseCreditsApplied > 0 || creditsApplied > 0) {
         await this.addPromotionalCredits({
@@ -1198,11 +1200,9 @@ export class OrderService {
           })
         )
       }
-      if (!existingPaidInvoice) {
-        const { invoice: _invoice } = await chargebee.invoice
-          .create({ ...invoice, auto_collection: "on" })
-          .request()
-      }
+      const { invoice: _invoice } = await chargebee.invoice
+        .create({ ...invoice, auto_collection: "on" })
+        .request()
     }
 
     return promises
