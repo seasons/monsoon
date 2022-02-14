@@ -397,7 +397,7 @@ input ProductCreateInput {
 
 input CustomProductUpdateInput {
   # Fields from ProductUpdateInput
-  isRentable: Boolean!
+  isRentable: Boolean
   architecture: ProductArchitecture
   category: CategoryUpdateOneRequiredWithoutProductsInput
   description: String
