@@ -881,23 +881,25 @@ export class ProductService {
       )
     }
 
-    const collision = await this.prisma.client.product.findFirst({
-      where: {
-        name,
-        description,
-        id: { not: productWithData.id },
-      },
-      select: {
-        name: true,
-        brand: {
-          select: { name: true },
+    if (!!name && !!description) {
+      const collision = await this.prisma.client.product.findFirst({
+        where: {
+          name,
+          description,
+          id: { not: productWithData.id },
         },
-      },
-    })
-    if (!!collision) {
-      throw new ApolloError(
-        `Possible product collision. Found product ${collision.name} from brand ${collision.brand.name} with same description`
-      )
+        select: {
+          name: true,
+          brand: {
+            select: { name: true },
+          },
+        },
+      })
+      if (!!collision) {
+        throw new ApolloError(
+          `Possible product collision. Found product ${collision.name} from brand ${collision.brand.name} with same description`
+        )
+      }
     }
   }
   /**
