@@ -31,7 +31,7 @@ export class PhysicalProductMutationsResolver {
 
   @Mutation()
   async undoOffload(@Args() { where }) {
-    await this.undoOffload(where)
+    await this.physicalProductService.undoOffload(where)
 
     return true
   }

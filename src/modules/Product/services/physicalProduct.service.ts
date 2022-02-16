@@ -761,6 +761,9 @@ export class PhysicalProductService {
       select: {
         inventoryStatus: true,
         warehouseLocation: { select: { id: true } },
+        productVariant: {
+          select: { id: true, product: { select: { id: true, status: true } } },
+        },
       },
     })
 
@@ -777,7 +780,7 @@ export class PhysicalProductService {
         await this.getUpdateVariantCountsPromiseIfNeeded({
           where,
           //@ts-ignore
-          inventoryStatus: newData.inventoryStatus,
+          inventoryStatus: newStatus,
         })
       ).promise
     )
@@ -792,6 +795,15 @@ export class PhysicalProductService {
         },
       })
     )
+
+    if (physProd.productVariant.product.status === "Offloaded") {
+      promises.push(
+        this.prisma.client.product.update({
+          where: { id: physProd.productVariant.product.id },
+          data: { status: "Available" },
+        })
+      )
+    }
 
     await this.prisma.client.$transaction(promises)
   }
