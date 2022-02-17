@@ -30,6 +30,13 @@ export class PhysicalProductMutationsResolver {
   }
 
   @Mutation()
+  async undoOffload(@Args() { where }) {
+    await this.physicalProductService.undoOffload(where)
+
+    return true
+  }
+
+  @Mutation()
   async updateManyPhysicalProducts(@Args() args) {
     const prisma2Where = makeWherePrisma2Compatible(args.where)
     return this.prisma.client.physicalProduct.updateMany({

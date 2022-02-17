@@ -8,7 +8,6 @@ import {
   InventoryStatus,
   PhysicalProductOffloadMethod,
   Product,
-  WarehouseLocationType,
 } from "@prisma/client"
 import {
   AdminActionLog,
@@ -752,6 +751,61 @@ export class PhysicalProductService {
     }
 
     return []
+  }
+
+  async undoOffload(where: Prisma.PhysicalProductWhereUniqueInput) {
+    const promises = []
+
+    const physProd = await this.prisma.client.physicalProduct.findUnique({
+      where,
+      select: {
+        inventoryStatus: true,
+        warehouseLocation: { select: { id: true } },
+        productVariant: {
+          select: { id: true, product: { select: { id: true, status: true } } },
+        },
+      },
+    })
+
+    if (physProd.inventoryStatus !== "Offloaded") {
+      throw new ApolloError(`Item is not offloaded. Can not undo offload`)
+    }
+
+    const newStatus = !!physProd.warehouseLocation
+      ? "Reservable"
+      : "NonReservable"
+
+    promises.push(
+      (
+        await this.getUpdateVariantCountsPromiseIfNeeded({
+          where,
+          //@ts-ignore
+          inventoryStatus: newStatus,
+        })
+      ).promise
+    )
+
+    promises.push(
+      this.prisma.client.physicalProduct.update({
+        where,
+        data: {
+          inventoryStatus: newStatus,
+          offloadMethod: null,
+          offloadNotes: null,
+        },
+      })
+    )
+
+    if (physProd.productVariant.product.status === "Offloaded") {
+      promises.push(
+        this.prisma.client.product.update({
+          where: { id: physProd.productVariant.product.id },
+          data: { status: "Available" },
+        })
+      )
+    }
+
+    await this.prisma.client.$transaction(promises)
   }
 
   private async getUpdateVariantCountsPromiseIfNeeded({

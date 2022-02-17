@@ -46,6 +46,8 @@ type Mutation {
     where: PhysicalProductWhereUniqueInput!
     data: PhysicalProductUpdateInput!
   ): PhysicalProduct @hasRole(roles: [Admin])
+  undoOffload(where: PhysicalProductWhereUniqueInput!): Boolean
+    @hasRole(roles: [Admin])
   updateManyPhysicalProducts(
     data: PhysicalProductUpdateManyMutationInput!
     where: PhysicalProductWhereInput
