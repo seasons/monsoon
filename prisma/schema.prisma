@@ -437,6 +437,7 @@ enum OrderStatus {
   Drafted
   Submitted
   Fulfilled
+  Hold
   Returned
   Cancelled
 }

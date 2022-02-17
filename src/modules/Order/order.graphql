@@ -28,6 +28,15 @@ type Query {
   ): OrderConnection! @cacheControl(maxAge: 0)
 }
 
+enum OrderStatus {
+  Drafted
+  Submitted
+  Fulfilled
+  Returned
+  Cancelled
+  Hold
+}
+
 enum OrderLineItemRecordType {
   PhysicalProduct
   ProductVariant
