@@ -1325,18 +1325,18 @@ export class OrderService {
           })
         )
       }
+
+      const shippingLabel = order.sentPackage?.shippingLabel
+      await this.email.sendOrderProcessedEmail(order.customer.user, order, {
+        trackingNumber: shippingLabel?.trackingNumber,
+        trackingURL: shippingLabel?.trackingURL,
+      })
     }
 
     const finalPromises = promises.filter(a => !!a)
     const [updateOrderResult] = await this.prisma.client.$transaction(
       finalPromises
     )
-
-    const shippingLabel = order.sentPackage.shippingLabel
-    await this.email.sendOrderProcessedEmail(order.customer.user, order, {
-      trackingNumber: shippingLabel.trackingNumber,
-      trackingURL: shippingLabel.trackingURL,
-    })
 
     return updateOrderResult
   }
