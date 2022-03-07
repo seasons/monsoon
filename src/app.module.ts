@@ -92,12 +92,6 @@ const addQueryMetadataToContext = (ctx, req, persistedQueryMap) => {
   return ctx
 }
 
-// Don't run cron jobs in dev mode, or on web workers. Only on production cron workers
-const scheduleModule =
-  process.env.NODE_ENV === "production" && process.env.DYNO?.includes("cron")
-    ? [ScheduleModule.forRoot()]
-    : []
-
 const cache = (() => {
   if (process.env.TEST === "true" || process.env.ADMIN === "true") {
     return
@@ -129,7 +123,6 @@ const cache = (() => {
 
 export const APP_MODULE_DEF = {
   imports: [
-    ...scheduleModule,
     GraphQLModule.forRootAsync({
       useFactory: async () =>
         (({
