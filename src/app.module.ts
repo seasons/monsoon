@@ -1,5 +1,4 @@
 import * as fs from "fs"
-import * as url from "url"
 import * as util from "util"
 
 import { CustomerModule } from "@modules/Customer/customer.module"
@@ -7,10 +6,8 @@ import { DataLoaderInterceptor } from "@modules/DataLoader/interceptors/dataload
 import { Logger, Module, forwardRef } from "@nestjs/common"
 import { APP_INTERCEPTOR } from "@nestjs/core"
 import { GqlModuleOptions, GraphQLModule } from "@nestjs/graphql"
-import { ScheduleModule } from "@nestjs/schedule"
 import { PrismaSelect } from "@paljs/plugins"
 import sgMail from "@sendgrid/mail"
-import { RedisCache } from "apollo-server-cache-redis"
 import { ApolloServerPluginInlineTrace } from "apollo-server-core"
 import responseCachePlugin from "apollo-server-plugin-response-cache"
 import chargebee from "chargebee"
@@ -92,35 +89,6 @@ const addQueryMetadataToContext = (ctx, req, persistedQueryMap) => {
   return ctx
 }
 
-const cache = (() => {
-  if (process.env.TEST === "true" || process.env.ADMIN === "true") {
-    return
-  }
-
-  try {
-    const URL = process.env.REDIS_URL
-    if (URL.includes("redis://")) {
-      return new RedisCache(URL)
-    }
-
-    const redis_uri = url.parse(URL)
-    const config = {
-      port: redis_uri.port,
-      host: redis_uri.hostname,
-      password: redis_uri.auth.split(":")[1],
-      db: 0,
-      tls: {
-        rejectUnauthorized: false,
-        requestCert: true,
-        agent: false,
-      },
-    }
-    return new RedisCache(config)
-  } catch (e) {
-    console.error(e)
-  }
-})()
-
 export const APP_MODULE_DEF = {
   imports: [
     GraphQLModule.forRootAsync({
@@ -153,9 +121,6 @@ export const APP_MODULE_DEF = {
             ApolloServerPluginInlineTrace(),
             apolloServerSentryPlugin,
           ],
-          persistedQueries: {
-            cache,
-          },
           cacheControl: {
             defaultMaxAge: process.env.CACHE_MAX_AGE || 5,
           },
@@ -171,8 +136,6 @@ export const APP_MODULE_DEF = {
           resolvers: {
             JSON: GraphQLJSON,
           },
-
-          cache,
         } as unknown) as GqlModuleOptions),
     }),
     AnalyticsModule,
